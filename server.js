@@ -2,27 +2,20 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 
-// Servir os arquivos do build (frontend)
-app.use(express.static(path.join(__dirname, "dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+// ✅ Rota simples só para teste no navegador
+app.get("/", (req, res) => {
+  res.send("🚀 Servidor Socket.IO rodando com sucesso no Render!");
 });
 
 // === Servidor HTTP + Socket.IO ===
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*", // 🔥 permite conexões do seu frontend (Vercel)
     methods: ["GET", "POST"],
   },
 });
@@ -40,12 +33,17 @@ io.on("connection", (socket) => {
 
   socket.on("novaMensagem", (msg) => {
     console.log("💬 Nova mensagem recebida:", msg);
+
+    // 🔁 Envia para o destinatário, se estiver online
     const destinatario = Object.entries(usuariosOnline).find(
       ([, nome]) => nome === msg.para
     );
+
     if (destinatario) {
       io.to(destinatario[0]).emit("novaMensagem", msg);
     }
+
+    // 🔁 Envia também de volta para o remetente
     io.to(socket.id).emit("novaMensagem", msg);
   });
 
@@ -57,7 +55,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// ✅ Usa a porta do Render ou 3001 local
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
