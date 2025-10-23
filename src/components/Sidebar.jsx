@@ -42,12 +42,17 @@ const [socket, setSocket] = useState(null);
 const usuarioLogado = localStorage.getItem("usuarioNome") || "Anônimo";
 
 useEffect(() => {
-  const s = io("http://localhost:3001", {
-    transports: ["websocket"],
-    reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 500,
-  });
+const socketURL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3001"
+    : "https://mantranweb-backend.onrender.com";
+
+const s = io(socketURL, {
+  transports: ["websocket"],
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 500,
+});
   setSocket(s);
 
   s.on("connect", () => {

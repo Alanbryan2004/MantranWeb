@@ -5,17 +5,19 @@ import cors from "cors";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-// ✅ Rota simples só para teste no navegador
+// Endpoint simples para testar
 app.get("/", (req, res) => {
-  res.send("🚀 Servidor Socket.IO rodando com sucesso no Render!");
+  res.send("✅ Servidor Socket.io está rodando!");
 });
 
 // === Servidor HTTP + Socket.IO ===
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: "*", // 🔥 permite conexões do seu frontend (Vercel)
+    origin: "*", // ou seu domínio da Vercel
     methods: ["GET", "POST"],
   },
 });
@@ -33,17 +35,10 @@ io.on("connection", (socket) => {
 
   socket.on("novaMensagem", (msg) => {
     console.log("💬 Nova mensagem recebida:", msg);
-
-    // 🔁 Envia para o destinatário, se estiver online
     const destinatario = Object.entries(usuariosOnline).find(
       ([, nome]) => nome === msg.para
     );
-
-    if (destinatario) {
-      io.to(destinatario[0]).emit("novaMensagem", msg);
-    }
-
-    // 🔁 Envia também de volta para o remetente
+    if (destinatario) io.to(destinatario[0]).emit("novaMensagem", msg);
     io.to(socket.id).emit("novaMensagem", msg);
   });
 
@@ -55,8 +50,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ✅ Usa a porta do Render ou 3001 local
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
