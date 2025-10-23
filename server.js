@@ -34,13 +34,27 @@ io.on("connection", (socket) => {
   });
 
   socket.on("novaMensagem", (msg) => {
-    console.log("💬 Nova mensagem recebida:", msg);
-    const destinatario = Object.entries(usuariosOnline).find(
-      ([, nome]) => nome === msg.para
-    );
-    if (destinatario) io.to(destinatario[0]).emit("novaMensagem", msg);
-    io.to(socket.id).emit("novaMensagem", msg);
-  });
+  console.log("💬 Nova mensagem recebida:", msg);
+
+  const destinatario = Object.entries(usuariosOnline).find(
+    ([, nome]) => nome.toLowerCase() === msg.para.toLowerCase()
+  );
+
+  // Envia apenas para o destinatário e o remetente, não para todos
+  if (destinatario) {
+    io.to(destinatario[0]).emit("novaMensagem", msg); // envia pra quem vai receber
+  }
+
+  // Reenvia apenas pro remetente, para confirmar o envio
+  const remetente = Object.entries(usuariosOnline).find(
+    ([, nome]) => nome.toLowerCase() === msg.de.toLowerCase()
+  );
+
+  if (remetente) {
+    io.to(remetente[0]).emit("novaMensagem", msg);
+  }
+});
+
 
   socket.on("disconnect", () => {
     const nomeUsuario = usuariosOnline[socket.id];
