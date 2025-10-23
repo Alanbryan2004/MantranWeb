@@ -516,11 +516,17 @@ const s = io(socketURL, {
             <div className="flex flex-col flex-1">
               <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
                {mensagens
-  .filter(
-    (m) =>
-      (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
-      (m.para === usuarioLogado && m.de === chatAtivo.nome)
-  )
+  .filter((m) => {
+    const de = m.de?.toLowerCase();
+    const para = m.para?.toLowerCase();
+    const logado = usuarioLogado.toLowerCase();
+    const ativo = chatAtivo?.nome?.toLowerCase();
+
+    return (
+      (de === logado && para === ativo) ||
+      (para === logado && de === ativo)
+    );
+  })
   .map((m, i) => {
     const isMinhaMsg = m.de === usuarioLogado;
     const nomeExibido = isMinhaMsg ? "Você" : m.de; // 👈 Mostra corretamente o remetente
