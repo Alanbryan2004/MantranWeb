@@ -515,22 +515,14 @@ const s = io(socketURL, {
           {chatAtivo && (
             <div className="flex flex-col flex-1">
               <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
-               {mensagens
-  .filter((m) => {
-    const de = m.de?.toLowerCase();
-    const para = m.para?.toLowerCase();
-    const logado = usuarioLogado.toLowerCase();
-    const ativo = chatAtivo?.nome?.toLowerCase();
-
-    return (
-      (de === logado && para === ativo) ||
-      (para === logado && de === ativo)
-    );
-  })
+              {mensagens
+  .filter(
+    (m) =>
+      (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
+      (m.para === usuarioLogado && m.de === chatAtivo.nome)
+  )
   .map((m, i) => {
     const isMinhaMsg = m.de === usuarioLogado;
-    const nomeExibido = isMinhaMsg ? "Você" : m.de; // 👈 Mostra corretamente o remetente
-
     return (
       <div
         key={i}
@@ -543,11 +535,11 @@ const s = io(socketURL, {
               : "bg-gray-100 text-gray-800 text-left"
           }`}
         >
-          {!isMinhaMsg && <b>{nomeExibido}: </b>}
+          {!isMinhaMsg && <b>{m.de}: </b>}
           {m.texto}
           <div
             className={`text-[10px] mt-1 ${
-              isMinhaMsg ? "text-gray-200 text-right" : "text-gray-400 text-right"
+              isMinhaMsg ? "text-gray-200" : "text-gray-400"
             }`}
           >
             {m.hora}

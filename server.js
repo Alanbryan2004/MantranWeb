@@ -36,24 +36,31 @@ io.on("connection", (socket) => {
   socket.on("novaMensagem", (msg) => {
   console.log("💬 Nova mensagem recebida:", msg);
 
+  // Garante que os nomes não diferenciem maiúsculas/minúsculas
   const destinatario = Object.entries(usuariosOnline).find(
     ([, nome]) => nome.toLowerCase() === msg.para.toLowerCase()
   );
 
-  // Envia apenas para o destinatário e o remetente, não para todos
-  if (destinatario) {
-    io.to(destinatario[0]).emit("novaMensagem", msg); // envia pra quem vai receber
-  }
-
-  // Reenvia apenas pro remetente, para confirmar o envio
   const remetente = Object.entries(usuariosOnline).find(
     ([, nome]) => nome.toLowerCase() === msg.de.toLowerCase()
   );
 
+  // ✅ Envia apenas para o destinatário e para o remetente
+  if (destinatario) {
+    io.to(destinatario[0]).emit("novaMensagem", {
+      ...msg,
+      recebido: true, // indica que foi recebido
+    });
+  }
+
   if (remetente) {
-    io.to(remetente[0]).emit("novaMensagem", msg);
+    io.to(remetente[0]).emit("novaMensagem", {
+      ...msg,
+      enviado: true, // indica que foi enviado
+    });
   }
 });
+
 
 
   socket.on("disconnect", () => {
