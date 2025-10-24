@@ -38,6 +38,7 @@ const [usuarios, setUsuarios] = useState([
   { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
   { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
 ]);
+const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
 
   // === Socket.IO Conexão ===
 const [socket, setSocket] = useState(null);
@@ -106,6 +107,14 @@ if (msg.para === usuarioLogado) {
     )
   );
 }
+// ✅ Atualiza contador de contatos com mensagens não lidas
+setContatosComMensagensNaoLidas((prev) => {
+  // Conta quantos usuários têm mensagens não lidas
+  const total = usuarios.filter((u) => u.naoLidas > 0).length;
+  return total;
+});
+
+
 
   }
 });
@@ -454,8 +463,15 @@ if (msg.para === usuarioLogado) {
           >
             <MessageSquare className="w-5 h-5 text-red-700" />
             {open && <span className="ml-3 flex-1 text-left">Chat</span>}
-            {/* Indicador de nova mensagem */}
-            <span className="absolute top-1 right-3 bg-red-600 w-2 h-2 rounded-full"></span>
+          {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}
+{contatosComMensagensNaoLidas > 0 && (
+  <span
+    className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
+    title={`${contatosComMensagensNaoLidas} contato(s) com novas mensagens`}
+  >
+    {contatosComMensagensNaoLidas}
+  </span>
+)}
           </button>
           {activeMenu === "usuario" && (
             <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
@@ -517,6 +533,13 @@ if (msg.para === usuarioLogado) {
     )
   );
 }}
+// ✅ Atualiza contador geral de contatos não lidos
+setContatosComMensagensNaoLidas((prev) => {
+  const total = usuarios.filter((x) => x.naoLidas > 0 && x.nome !== u.nome).length;
+  return Math.max(total, 0);
+});
+
+
 
                   className="relative flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer border-b"
 
