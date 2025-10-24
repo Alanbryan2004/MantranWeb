@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Comex from "./Comex";
 import InicioColetaModal from "./InicioColetaModal";
+import EncerraColetaModal from "./EncerraColetaModal";
 import {
   XCircle,
   RotateCcw,
@@ -52,7 +53,8 @@ function Sel({ children, ...rest }) {
 
 export default function Coleta({ open }) {
   const [showModalInicio, setShowModalInicio] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [showModalEncerrar, setShowModalEncerrar] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(null); // já usado no Iniciar
   const [activeTab, setActiveTab] = useState("cadastro");
   const [showNotaFiscal, setShowNotaFiscal] = useState(false);
   const [showComex, setShowComex] = useState(false);
@@ -704,9 +706,19 @@ export default function Coleta({ open }) {
 >
   Iniciar
 </button>
-        <button className="border border-gray-300 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-[2px] rounded">
-          Encerrar
-        </button>
+
+<button
+  disabled={selectedStatus !== "EM ANDAMENTO"}
+  onClick={() => selectedStatus === "EM ANDAMENTO" && setShowModalEncerrar(true)}
+  className={`border border-gray-300 px-3 py-[2px] rounded ${
+    selectedStatus === "EM ANDAMENTO"
+      ? "bg-green-50 hover:bg-green-100 text-green-700"
+      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+  }`}
+>
+  Encerrar
+</button>
+
         <button className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-[2px] rounded">
           Cancelar
         </button>
@@ -718,6 +730,10 @@ export default function Coleta({ open }) {
     <InicioColetaModal
   isOpen={showModalInicio}
   onClose={() => setShowModalInicio(false)}
+/>
+<EncerraColetaModal
+  isOpen={showModalEncerrar}
+  onClose={() => setShowModalEncerrar(false)}
 />
   </div>
 ) : (

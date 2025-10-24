@@ -380,6 +380,16 @@ setUsuarios((prev) => {
           </Link>
         </div>
       )}
+
+      {/* === Submenu de Manifesto === */}
+{item === "Manifesto" && (
+  <Link
+    to="/manifesto"
+    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+  >
+    Manifesto
+  </Link>
+)}
     </li>
   )
 )}

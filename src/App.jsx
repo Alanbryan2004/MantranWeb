@@ -7,8 +7,10 @@ import ClienteDivisao from "./pages/ClienteDivisao";
 import NFSEPage from "./pages/NFSEPage";
 import Login from "./components/Login";
 import Coleta from "./pages/Coleta";
+import Manifesto from "./pages/Manifesto";
 import Dashboard from "./pages/Dashboard"; // 👈 ADICIONAR ESTA LINHA
 import "./index.css";
+
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -56,6 +58,9 @@ export default function App() {
 
             {/* Coleta */}
             <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+            
+            {/* Manifesto */}
+            <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
 
             {/* Página padrão — Dashboard inicial */}
             <Route
