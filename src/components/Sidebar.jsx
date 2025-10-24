@@ -516,7 +516,8 @@ if (msg.para === usuarioLogado) {
   );
 }}
 
-                  className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer border-b"
+                  className="relative flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer border-b"
+
                 >
                   <div>
                     <div className="flex items-center gap-2">
@@ -530,10 +531,15 @@ if (msg.para === usuarioLogado) {
                     <div className="text-gray-500 text-xs truncate w-52">
                       {/* 🔴 Balão de mensagens não lidas */}
 {u.naoLidas > 0 && (
-  <div className="bg-red-600 text-white text-[11px] px-[6px] py-[2px] rounded-full">
+  <span
+    className="absolute right-3 top-2 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
+    title={`${u.naoLidas} mensagens não lidas`}
+  >
     {u.naoLidas}
-  </div>
+  </span>
 )}
+
+
 
                       {u.ultimaMsg}
                     </div>
