@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"; // ✅ adiciona o useEffect aqui
 import { io } from "socket.io-client"; // ✅ adiciona esta linha
+import EmojiPicker from "emoji-picker-react";
 
 import {
   FileText,
@@ -26,6 +27,7 @@ export default function Sidebar({ open }) {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatAtivo, setChatAtivo] = useState(null);
   const [novaMensagem, setNovaMensagem] = useState("");
+  const [mostrarEmoji, setMostrarEmoji] = useState(false);
   const [mensagens, setMensagens] = useState([]);
 const [usuarios, setUsuarios] = useState([
   { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
@@ -589,22 +591,49 @@ if (msg.para === usuarioLogado) {
 
 
               </div>
-              <div className="flex border-t p-2 gap-2">
-                <input
-                  type="text"
-                  value={novaMensagem}
-                  onChange={(e) => setNovaMensagem(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && enviarMensagem()}
-                  placeholder={`Mensagem para ${chatAtivo.nome}...`}
-                  className="flex-1 border rounded px-2 py-1 text-sm"
-                />
-                <button
-                  onClick={enviarMensagem}
-                  className="bg-red-700 text-white px-3 rounded flex items-center justify-center"
-                >
-                  <Send size={14} />
-                </button>
-              </div>
+              <div className="flex border-t p-2 gap-2 relative">
+  {/* Campo de texto */}
+  <input
+    type="text"
+    value={novaMensagem}
+    onChange={(e) => setNovaMensagem(e.target.value)}
+    onKeyDown={(e) => e.key === "Enter" && enviarMensagem()}
+    placeholder={`Mensagem para ${chatAtivo.nome}...`}
+    className="flex-1 border rounded px-2 py-1 text-sm"
+  />
+
+  {/* Botão de emoji */}
+  <button
+    onClick={() => setMostrarEmoji(!mostrarEmoji)}
+    className="text-gray-500 hover:text-red-700"
+    title="Inserir emoji"
+  >
+    😊
+  </button>
+
+  {/* Picker de emoji */}
+  {mostrarEmoji && (
+    <div className="absolute bottom-10 right-14 z-50 shadow-lg">
+      <EmojiPicker
+        onEmojiClick={(emojiData) => {
+          setNovaMensagem((prev) => prev + emojiData.emoji);
+          setMostrarEmoji(false);
+        }}
+        width={300}
+        height={350}
+      />
+    </div>
+  )}
+
+  {/* Botão de envio */}
+  <button
+    onClick={enviarMensagem}
+    className="bg-red-700 text-white px-3 rounded flex items-center justify-center"
+  >
+    <Send size={14} />
+  </button>
+</div>
+
             </div>
           )}
         </div>
