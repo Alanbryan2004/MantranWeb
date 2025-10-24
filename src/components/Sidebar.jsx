@@ -27,15 +27,15 @@ export default function Sidebar({ open }) {
   const [chatAtivo, setChatAtivo] = useState(null);
   const [novaMensagem, setNovaMensagem] = useState("");
   const [mensagens, setMensagens] = useState([]);
-  const [usuarios, setUsuarios] = useState([
-    { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?" },
-    { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso" },
-    { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?" },
-    { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍" },
-    { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados..." },
-    { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada" },
-    { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno" },
-  ]);
+const [usuarios, setUsuarios] = useState([
+  { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
+  { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
+  { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
+  { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍", naoLidas: 0 },
+  { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
+  { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
+  { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
+]);
 
   // === Socket.IO Conexão ===
 const [socket, setSocket] = useState(null);
@@ -85,15 +85,26 @@ const s = io(socketURL, {
     });
 
     // ✅ Atualiza a prévia apenas para o contato certo
-    setUsuarios((prev) =>
-      prev.map((u) => {
-        // Atualiza o contato com quem o logado está conversando
-        if (u.nome === (msg.de === usuarioLogado ? msg.para : msg.de)) {
-          return { ...u, ultimaMsg: msg.texto };
-        }
-        return u;
-      })
-    );
+setUsuarios((prev) =>
+  prev.map((u) => {
+    if (u.nome === (msg.de === usuarioLogado ? msg.para : msg.de)) {
+      return { ...u, ultimaMsg: msg.texto };
+    }
+    return u;
+  })
+);
+
+// 🔴 Incrementa contador de mensagens não lidas
+if (msg.para === usuarioLogado) {
+  setUsuarios((prev) =>
+    prev.map((u) =>
+      u.nome === msg.de
+        ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
+        : u
+    )
+  );
+}
+
   }
 });
 
@@ -124,24 +135,29 @@ const s = io(socketURL, {
   const msg = {
     de: usuarioLogado,
     para: chatAtivo.nome,
-    texto: novaMensagem,
-    hora: new Date().toLocaleTimeString(),
+    texto: novaMensagem.trim(),
+    hora: new Date().toLocaleTimeString("pt-BR", { hour12: false }),
   };
 
-  // Envia pro servidor (emit)
-  if (socket) socket.emit("novaMensagem", msg);
+  console.log("📤 Enviando mensagem:", msg);
 
-  // Atualiza localmente (pra aparecer instantâneo no remetente)
+  if (socket && socket.connected) {
+    socket.emit("novaMensagem", msg);
+  } else {
+    console.warn("⚠️ Socket não está conectado");
+  }
+
   setMensagens((prev) => [...prev, msg]);
   setNovaMensagem("");
 
-  // Atualiza prévia da última mensagem
+  // Atualiza a prévia da última mensagem na lista
   setUsuarios((prev) =>
     prev.map((u) =>
       u.nome === chatAtivo.nome ? { ...u, ultimaMsg: msg.texto } : u
     )
   );
 };
+
 
 
 
@@ -490,7 +506,16 @@ const s = io(socketURL, {
               {usuarios.map((u) => (
                 <div
                   key={u.nome}
-                  onClick={() => setChatAtivo(u)}
+                  onClick={() => {
+  setChatAtivo(u);
+  // ✅ Zera contador de mensagens não lidas
+  setUsuarios((prev) =>
+    prev.map((x) =>
+      x.nome === u.nome ? { ...x, naoLidas: 0 } : x
+    )
+  );
+}}
+
                   className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer border-b"
                 >
                   <div>
@@ -503,6 +528,13 @@ const s = io(socketURL, {
                       <span className="font-medium text-sm">{u.nome}</span>
                     </div>
                     <div className="text-gray-500 text-xs truncate w-52">
+                      {/* 🔴 Balão de mensagens não lidas */}
+{u.naoLidas > 0 && (
+  <div className="bg-red-600 text-white text-[11px] px-[6px] py-[2px] rounded-full">
+    {u.naoLidas}
+  </div>
+)}
+
                       {u.ultimaMsg}
                     </div>
                   </div>
