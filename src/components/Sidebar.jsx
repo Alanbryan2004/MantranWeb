@@ -107,12 +107,18 @@ if (msg.para === usuarioLogado) {
     )
   );
 }
-// ✅ Atualiza contador de contatos com mensagens não lidas
-setContatosComMensagensNaoLidas((prev) => {
-  // Conta quantos usuários têm mensagens não lidas
-  const total = usuarios.filter((u) => u.naoLidas > 0).length;
-  return total;
+// ✅ Atualiza contador de contatos com mensagens não lidas corretamente
+setUsuarios((prev) => {
+  const atualizados = prev.map((u) =>
+    u.nome === msg.de
+      ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
+      : u
+  );
+  const total = atualizados.filter((u) => u.naoLidas > 0).length;
+  setContatosComMensagensNaoLidas(total);
+  return atualizados;
 });
+
 
 
 
@@ -433,59 +439,62 @@ setContatosComMensagensNaoLidas((prev) => {
           {open && <span className="ml-3">Relatório</span>}
         </button>
 
-        {/* === USUÁRIO === */}
-        <div
-          className="group relative mt-1"
-          onMouseEnter={() => setActiveMenu("usuario")}
-          onMouseLeave={() => setActiveMenu(null)}
-        >
-          <button
-            onClick={() => handleToggle("usuario")}
-            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
-          >
-            <UserCircle2 className="w-5 h-5 text-red-700" />
-            {open && (
-              <>
-                <span className="ml-3 flex-1 text-left">Usuário</span>
-                <ChevronRight
-                  size={14}
-                  className={`text-gray-500 transition-transform ${
-                    activeMenu === "usuario" ? "rotate-90" : ""
-                  }`}
-                />
-              </>
-            )}
-          </button>
-          {/* === CHAT === */}
-          <button
-            onClick={() => setChatOpen(!chatOpen)}
-            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 relative"
-          >
-            <MessageSquare className="w-5 h-5 text-red-700" />
-            {open && <span className="ml-3 flex-1 text-left">Chat</span>}
-          {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}
-{contatosComMensagensNaoLidas > 0 && (
-  <span
-    className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
-    title={`${contatosComMensagensNaoLidas} contato(s) com novas mensagens`}
+       {/* === USUÁRIO === */}
+<div
+  className="group relative mt-1"
+  onMouseEnter={() => setActiveMenu("usuario")}
+  onMouseLeave={() => setActiveMenu(null)}
+>
+  <button
+    onClick={() => handleToggle("usuario")}
+    className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
   >
-    {contatosComMensagensNaoLidas}
-  </span>
-)}
-          </button>
-          {activeMenu === "usuario" && (
-            <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
-              {["Trocar Usuário", "Trocar Filial", "Alterar Senha"].map((sub) => (
-                <div
-                  key={sub}
-                  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-                >
-                  {sub}
-                </div>
-              ))}
-            </div>
-          )}
+    <UserCircle2 className="w-5 h-5 text-red-700" />
+    {open && (
+      <>
+        <span className="ml-3 flex-1 text-left">Usuário</span>
+        <ChevronRight
+          size={14}
+          className={`text-gray-500 transition-transform ${
+            activeMenu === "usuario" ? "rotate-90" : ""
+          }`}
+        />
+      </>
+    )}
+  </button>
+
+  {activeMenu === "usuario" && (
+    <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
+      {["Trocar Usuário", "Trocar Filial", "Alterar Senha"].map((sub) => (
+        <div
+          key={sub}
+          className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+        >
+          {sub}
         </div>
+      ))}
+    </div>
+  )}
+</div>
+
+{/* === CHAT === */}
+<button
+  onClick={() => setChatOpen(!chatOpen)}
+  className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 relative"
+>
+  <MessageSquare className="w-5 h-5 text-red-700" />
+  {open && <span className="ml-3 flex-1 text-left">Chat</span>}
+
+  {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}
+  {contatosComMensagensNaoLidas > 0 && (
+    <span
+      className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
+      title={`${contatosComMensagensNaoLidas} contato(s) com novas mensagens`}
+    >
+      {contatosComMensagensNaoLidas}
+    </span>
+  )}
+</button>
       </nav>
 
       {/* === BOTÃO DE LOGOUT === */}
@@ -524,20 +533,21 @@ setContatosComMensagensNaoLidas((prev) => {
               {usuarios.map((u) => (
                 <div
                   key={u.nome}
-                  onClick={() => {
+                 onClick={() => {
   setChatAtivo(u);
-  // ✅ Zera contador de mensagens não lidas
-  setUsuarios((prev) =>
-    prev.map((x) =>
+
+  // ✅ Zera contador de mensagens não lidas do contato
+  setUsuarios((prev) => {
+    const atualizados = prev.map((x) =>
       x.nome === u.nome ? { ...x, naoLidas: 0 } : x
-    )
-  );
+    );
+    // ✅ Atualiza contador geral (quantos contatos ainda têm mensagens não lidas)
+    const total = atualizados.filter((x) => x.naoLidas > 0).length;
+    setContatosComMensagensNaoLidas(total);
+    return atualizados;
+  });
 }}
-// ✅ Atualiza contador geral de contatos não lidos
-setContatosComMensagensNaoLidas((prev) => {
-  const total = usuarios.filter((x) => x.naoLidas > 0 && x.nome !== u.nome).length;
-  return Math.max(total, 0);
-});
+
 
 
 
