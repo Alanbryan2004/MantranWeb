@@ -1,4 +1,13 @@
 import { useState } from "react";
+import ManifestoDocs from "./ManifestoDocs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrafficLight } from "@fortawesome/free-solid-svg-icons";
+import ConsultaSefazMDFe from "../pages/ConsultaSefazMDFe";
+import BaixaManifesto from "../pages/BaixaManifesto";
+import PercursoModal from "../pages/PercursoModal";
+import ManifestoCargaPerigosa from "../pages/ManifestoCargaPerigosa";
+import ManifestoSeguro from "../pages/ManifestoSeguro";
+import ManifestoInfoComplementar from "../pages/ManifestoInfoComplementar";
 import {
   XCircle,
   RotateCcw,
@@ -12,6 +21,9 @@ import {
   ChevronDown,
   FileText,
   FileSpreadsheet,
+  Download,
+  Globe2,
+  HelpCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -67,11 +79,21 @@ function IconeLapis({ onClick, title }) {
 
 export default function Manifesto({ open }) {
   const [activeTab, setActiveTab] = useState("manifesto");
+  const [isPercursoOpen, setIsPercursoOpen] = useState(false);
+  const [isSeguroOpen, setIsSeguroOpen] = useState(false);
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInfoComplOpen, setIsInfoComplOpen] = useState(false);
+  const [isCargaPerigosaOpen, setIsCargaPerigosaOpen] = useState(false);
   const [isCollapsedConsulta, setIsCollapsedConsulta] = useState(false);
   const [isCollapsedEntregas, setIsCollapsedEntregas] = useState(false);
   const navigate = useNavigate();
   const [isCollapsedFilial, setIsCollapsedFilial] = useState(false);
   const [selectedCount, setSelectedCount] = useState(0);
+  const [isBaixaOpen, setIsBaixaOpen] = useState(false);
+  const [statusTransito, setStatusTransito] = useState("verde");
+// valores possíveis: "verde", "amarelo", "vermelho"
+
 
 const handleCheckboxChange = (e) => {
   if (e.target.checked) {
@@ -193,13 +215,15 @@ const handleCheckboxChange = (e) => {
         <Sel className="w-[calc(50%-150px)]">
           <option>001 - TESTE MANTRAN</option>
         </Sel>
-        <button
-          className="ml-auto border border-gray-300 text-gray-800 hover:bg-gray-100 rounded w-[140px] py-1 text-[12px] flex items-center justify-center gap-1"
-          title="Informar Carga Perigosa"
-        >
-          <i className="fa-solid fa-triangle-exclamation text-yellow-500"></i>
-          <span>Carga Perigosa</span>
-        </button>
+<button
+  onClick={() => setIsCargaPerigosaOpen(true)} // ✅ abre o modal
+  className="ml-auto border border-gray-300 text-gray-800 hover:bg-gray-100 rounded w-[140px] py-1 text-[12px] flex items-center justify-center gap-1"
+  title="Informar Carga Perigosa"
+>
+  <i className="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+  <span>Carga Perigosa</span>
+</button>
+
       </div>
 
       {/* Linha 04 */}
@@ -386,29 +410,33 @@ const handleCheckboxChange = (e) => {
       <Txt className="w-[50px] text-center" defaultValue="SP" />
 
       <div className="flex items-center gap-2 ml-auto">
-        <button
-          title="Percurso"
-          className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[100px] justify-center"
-        >
-          <i className="fa-solid fa-route text-green-600"></i>
-          <span>Percurso</span>
-        </button>
+       <button
+  title="Percurso"
+  onClick={() => setIsPercursoOpen(true)} // ✅ ABRE O MODAL
+  className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[100px] justify-center"
+>
+  <i className="fa-solid fa-route text-green-600"></i>
+  <span>Percurso</span>
+</button>
+
+
+<button
+  title="Seguro"
+  onClick={() => setIsSeguroOpen(true)} // ✅ abre o modal
+  className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[100px] justify-center"
+>
+  <i className="fa-solid fa-shield-halved text-orange-500"></i>
+  <span>Seguro</span>
+</button>
 
         <button
-          title="Seguro"
-          className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[100px] justify-center"
-        >
-          <i className="fa-solid fa-shield-halved text-orange-500"></i>
-          <span>Seguro</span>
-        </button>
-
-        <button
-          title="Informações Complementares"
-          className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[130px] justify-center"
-        >
-          <i className="fa-solid fa-circle-info text-blue-500"></i>
-          <span>Info. Compl.</span>
-        </button>
+  title="Informações Complementares"
+  onClick={() => setIsInfoComplOpen(true)} // ✅ abre o modal
+  className="border border-gray-300 px-3 py-[3px] rounded hover:bg-gray-100 text-gray-700 flex items-center gap-1 w-[130px] justify-center"
+>
+  <i className="fa-solid fa-circle-info text-blue-500"></i>
+  <span>Info. Compl.</span>
+</button>
       </div>
     </div>
 
@@ -475,19 +503,131 @@ const handleCheckboxChange = (e) => {
 </p>
 </div>
 
-            {/* Rodapé */}
-            <div className="border-t border-gray-300 bg-white py-0 px-3 flex items-center gap-3 text-red-700">
-              <button onClick={() => navigate(-1)}>
-                <XCircle title="Fechar Tela" />
-              </button>
-              <RotateCcw title="Limpar" />
-              <PlusCircle title="Incluir" />
-              <Edit title="Alterar" />
-              <Trash2 title="Excluir" />
-              <Printer title="Imprimir" />
-              <Copy title="Duplicar" />
-              <Search title="Pesquisar" />
-            </div>
+     
+          {/* Rodapé */}
+<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-5 text-red-700 justify-start">
+
+  {/* Fechar Tela */}
+  <button
+    onClick={() => navigate(-1)}
+    title="Fechar Tela"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <XCircle size={20} />
+    <span>Fechar</span>
+  </button>
+
+  {/* Limpar */}
+  <button
+    title="Limpar Campos"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <RotateCcw size={20} />
+    <span>Limpar</span>
+  </button>
+
+  {/* Incluir */}
+  <button
+    title="Incluir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <PlusCircle size={20} />
+    <span>Incluir</span>
+  </button>
+
+  {/* Alterar */}
+  <button
+    title="Alterar Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <Edit size={20} />
+    <span>Alterar</span>
+  </button>
+
+  {/* Excluir */}
+  <button
+    title="Excluir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <Trash2 size={20} />
+    <span>Excluir</span>
+  </button>
+
+  {/* Imprimir */}
+  <button
+    title="Imprimir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <Printer size={20} />
+    <span>Imprimir</span>
+  </button>
+
+  {/* Consulta Sefaz */}
+ <button
+   title="Consulta Sefaz"
+   onClick={() => setIsModalOpen(true)}
+   className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+ >
+   <Search size={20} />
+   <span>Sefaz</span>
+ </button>
+
+{/* Baixar Manifesto */}
+<button
+  title="Baixar Manifesto"
+  onClick={() => setIsBaixaOpen(true)}
+  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+>
+  <Download size={20} />
+  <span>Baixar</span>
+</button>
+
+
+{/* Documentos */}
+<button
+  title="Documentos Vinculados"
+  onClick={() => setIsDocsOpen(true)}
+  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+>
+  <FileText size={20} />
+  <span>Docs</span>
+</button>
+
+{/* Trânsito (dinâmico) */}
+<button
+  title={`Status de Trânsito (${statusTransito.toUpperCase()})`}
+  onClick={() => {
+    // alterna o status em loop
+    setStatusTransito((prev) =>
+      prev === "verde" ? "amarelo" : prev === "amarelo" ? "vermelho" : "verde"
+    );
+  }}
+  className="flex flex-col items-center text-[11px] hover:opacity-80 transition"
+>
+  <FontAwesomeIcon
+    icon={faTrafficLight}
+    className={`text-[18px] ${
+      statusTransito === "verde"
+        ? "text-green-600"
+        : statusTransito === "amarelo"
+        ? "text-yellow-500"
+        : "text-red-600"
+    }`}
+  />
+  <span>Trânsito</span>
+</button>
+
+
+  {/* Dúvidas */}
+  <button
+    title="Ajuda e Dúvidas"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <HelpCircle size={20} />
+    <span>Dúvidas</span>
+  </button>
+</div>
+
           </>
         )}
 
@@ -767,6 +907,30 @@ const handleCheckboxChange = (e) => {
           </>
         )}
       </div>
+        {/* === MODAL DE CONSULTA SEFAZ === */}
+      {isModalOpen && (
+        <ConsultaSefazMDFe onClose={() => setIsModalOpen(false)} />
+      )}
+{/* === MODAL DE DOCUMENTOS === */}
+{isDocsOpen && <ManifestoDocs onClose={() => setIsDocsOpen(false)} />}
+{/* === MODAL DE BAIXA DE MANIFESTO === */}
+{isBaixaOpen && <BaixaManifesto onClose={() => setIsBaixaOpen(false)} />}
+{/* === MODAL DE PERCURSO === */}
+{isPercursoOpen && <PercursoModal onClose={() => setIsPercursoOpen(false)} />}
+{/* === MODAL DE SEGURO === */}
+{isSeguroOpen && <ManifestoSeguro onClose={() => setIsSeguroOpen(false)} />}
+{/* === MODAL DE CARGA PERIGOSA === */}
+{isCargaPerigosaOpen && (
+  <ManifestoCargaPerigosa onClose={() => setIsCargaPerigosaOpen(false)} />
+)}
+
+
+{/* === MODAL DE INFORMAÇÕES COMPLEMENTARES === */}
+{isInfoComplOpen && (
+  <ManifestoInfoComplementar onClose={() => setIsInfoComplOpen(false)} />
+)}
+
+
     </div>
   );
 }
