@@ -155,7 +155,7 @@ const totais = docs.reduce(
 
       </div>
 
-      {/* ===== CARD 4 - GRID PRINCIPAL ===== */}
+      {/* ===== CARD 3 - GRID PRINCIPAL ===== */}
       <div className="border border-gray-300 rounded p-2 bg-white mt-3 overflow-auto max-h-[200px]">
         <table className="min-w-[1800px] text-[12px] border">
           <thead className="bg-gray-100 text-gray-700">
@@ -235,7 +235,7 @@ const totais = docs.reduce(
         </table>
       </div>
 
-      {/* ===== CARD 5 - Botões ===== */}
+      {/* ===== CARD 4 - Botões ===== */}
       <div className="border border-gray-300 rounded p-2 bg-white mt-2 flex justify-between">
         <div className="flex gap-2">
           <button
@@ -262,7 +262,7 @@ const totais = docs.reduce(
         </button>
       </div>
 
-      {/* ===== CARD 6 - Totais (automático) ===== */}
+      {/* ===== CARD 5 - Totais (automático) ===== */}
 <div className="border border-gray-300 rounded p-2 bg-white mt-3 flex justify-between items-center">
   {/* Totais à esquerda */}
   <div className="flex gap-3 text-[12px] text-gray-700">
@@ -307,7 +307,7 @@ const totais = docs.reduce(
   </div>
 </div>
 
-    {/* ===== CARD 7 - Relação de Doctos para Manifestar ===== */}
+    {/* ===== CARD 6 - Relação de Doctos para Manifestar ===== */}
 <fieldset className="border border-gray-300 rounded p-3 bg-white mt-3">
   <legend className="text-red-700 font-semibold text-[13px] px-2">
     Relação de Doctos para Manifestar
@@ -388,7 +388,7 @@ const totais = docs.reduce(
 </fieldset>
 
 
-{/* ===== CARD 8 - GRID SECUNDÁRIA ===== */}
+{/* ===== CARD 7 - GRID SECUNDÁRIA ===== */}
 <div className="border border-gray-300 rounded p-2 bg-white mt-2 overflow-auto max-h-[200px]">
   <table className="min-w-[1500px] text-[12px] border">
     <thead className="bg-gray-100 text-gray-700">
@@ -470,7 +470,7 @@ const totais = docs.reduce(
   </table>
 </div>
 
-{/* ===== CARD 9 - BOTÕES ===== */}
+{/* ===== CARD 8 - BOTÕES ===== */}
 <div className="border border-gray-300 rounded p-2 bg-white mt-2 flex justify-between">
   <div className="flex gap-2">
     <button

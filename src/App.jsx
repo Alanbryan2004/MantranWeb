@@ -8,6 +8,7 @@ import NFSEPage from "./pages/NFSEPage";
 import Login from "./components/Login";
 import Coleta from "./pages/Coleta";
 import Manifesto from "./pages/Manifesto";
+import Viagem from "./pages/Viagem";
 import Dashboard from "./pages/Dashboard"; // 👈 ADICIONAR ESTA LINHA
 import "./index.css";
 
@@ -61,7 +62,8 @@ export default function App() {
             
             {/* Manifesto */}
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
-
+             {/* Viagem */}
+            <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
             {/* Página padrão — Dashboard inicial */}
             <Route
               path="*"
