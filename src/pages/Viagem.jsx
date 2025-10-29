@@ -1,10 +1,14 @@
 import { useState } from "react";
 import ViagemDespesa from "./ViagemDespesa";
 import ViagemCustosOperacionais from "./ViagemCustosOperacionais";
+import ViagemInicio from "./ViagemInicio";
+import ViagemEncerramento from "./ViagemEncerramento";
+
 import {
   XCircle,
   CheckCircle,
   RotateCcw,
+  PlayCircle,
   PlusCircle,
   Edit,
   Trash2,
@@ -17,6 +21,7 @@ import {
   Truck,
   DollarSign,
   MapPin,
+  Eraser,
   PanelBottom,
 } from "lucide-react";
 
@@ -50,8 +55,10 @@ function Sel({ children, ...rest }) {
 export default function Viagem({ open }) {
   const [activeTab, setActiveTab] = useState("viagem");
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalEncerrarOpen, setModalEncerrarOpen] = useState(false);
   const [modalPagamentoOpen, setModalPagamentoOpen] = useState(false);
   const [modalCustosOpen, setModalCustosOpen] = useState(false);
+  const [modalInicioOpen, setModalInicioOpen] = useState(false);
 
   // Estados para o grid de adição e documentos da viagem
   const [docsAdicao, setDocsAdicao] = useState(
@@ -67,6 +74,35 @@ export default function Viagem({ open }) {
     }))
   );
 
+// === GRID CONSULTA ===
+const [gridConsulta, setGridConsulta] = useState(
+  [...Array(10)].map((_, i) => ({
+    id: i,
+    status:
+      i === 2
+        ? "EM ANDAMENTO"
+        : i === 5
+        ? "ENCERRADA"
+        : i === 7
+        ? "CANCELADA"
+        : "NÃO INICIADA",
+    selecionado: false,
+  }))
+);
+
+// Contadores
+const totalConsulta = gridConsulta.length;
+const totalSelConsulta = gridConsulta.filter((x) => x.selecionado).length;
+
+// Funções
+const selecionarTodosConsulta = () =>
+  setGridConsulta((prev) => prev.map((x) => ({ ...x, selecionado: true })));
+
+const limparSelecaoConsulta = () =>
+  setGridConsulta((prev) => prev.map((x) => ({ ...x, selecionado: false })));
+
+
+  
   const [docsViagem, setDocsViagem] = useState([]); // Documentos adicionados
  
   // === Estado das despesas ===
@@ -143,114 +179,208 @@ const handleRemoverDespesa = () => {
         {/* ===================== ABA VIAGEM ===================== */}
         {activeTab === "viagem" && (
           <>
-            {/* === CARD 1 - Dados da Viagem === */}
-            <fieldset className="border border-gray-300 rounded p-3">
-              <legend className="text-red-700 font-semibold px-2">Viagem</legend>
+         {/* === CARD 1 - Dados da Viagem === */}
+<fieldset className="border border-gray-300 rounded p-3">
+  <legend className="text-red-700 font-semibold px-2">Viagem</legend>
 
-              {/* Linha 1 */}
-              <div className="flex items-center gap-2">
-                <Label>Nº Viagem</Label>
-                <Txt className="w-32" />
+  {/* Linha 1 */}
+  <div className="grid grid-cols-12 gap-2 items-center">
+    {/* Nº Viagem */}
+    <div className="col-span-2 flex items-center gap-1">
+      <Label className="whitespace-nowrap">Nº Viagem</Label>
+      <Txt className="w-full" />
+    </div>
 
-                <Txt className="w-16 text-center" maxLength={1} />
-                <Txt className="w-40 text-center" defaultValue="TRANSFERÊNCIA" />
-                <Label className="w-16 text-right">Tipo</Label>
-                <Sel className="w-40">
-                  <option>Normal</option>
-                  <option>Complementar</option>
-                </Sel>
-                <Label className="ml-3">Manifesto</Label>
-                <Txt className="w-32" />
-                <Label className="w-16 text-right">Coleta</Label>
-                <Txt className="w-32" />
-                <Label className="w-16 text-right">Status</Label>
-                <Txt className="w-40 text-center bg-gray-100" defaultValue="Em Andamento" readOnly />
-              </div>
+    {/* SQ + Transferência + botão (+) */}
+    <div className="col-span-3 flex items-center gap-1">
+      <Txt className="w-[50px] text-center" maxLength={1} />
+      <Txt className="w-[130px] text-center" defaultValue="TRANSFERÊNCIA" />
+      <button
+        title="Adicionar"
+        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100 flex items-center justify-center"
+      >
+        <PlusCircle size={16} className="text-green-600" />
+      </button>
+    </div>
 
-              {/* Linha 2 */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Empresa</Label>
-                <Sel className="flex-1">
-                  <option>001 - MANTRAN TRANSPORTES LTDA</option>
-                </Sel>
-                <Label className="w-20 text-right">Filial</Label>
-                <Sel className="w-[300px]">
-                  <option>001 - CAMPINAS</option>
-                </Sel>
-                <Label className="w-24 text-right">Tipo Carga</Label>
-                <Sel className="w-[180px]">
-                  <option>Fracionada</option>
-                  <option>Fechada</option>
-                </Sel>
-              </div>
-            </fieldset>
+    {/* Tipo */}
+    <div className="col-span-2 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Tipo</Label>
+      <Sel className="w-full">
+        <option>Normal</option>
+        <option>Complementar</option>
+      </Sel>
+    </div>
 
-            {/* === CARD 2 - Origem === */}
-            <fieldset className="border border-gray-300 rounded p-3">
-              <legend className="text-red-700 font-semibold px-2">Origem</legend>
+    {/* Manifesto */}
+    <div className="col-span-2 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Manifesto</Label>
+      <Txt className="w-full" />
+    </div>
 
-              {/* Linha 1 */}
-              <div className="flex items-center gap-2">
-                <Label>Cliente</Label>
-                <Txt className="w-30" placeholder="CNPJ" />
-                <Txt className="flex-1" placeholder="Razão Social" />
-                <Label className="w-24 text-right">Expedidor</Label>
-                <Txt className="w-40" placeholder="CNPJ" />
-                <Txt className="flex-1" placeholder="Razão Social" />
-              </div>
+    {/* Coleta */}
+    <div className="col-span-1 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Coleta</Label>
+      <Txt className="w-full" />
+    </div>
 
-              {/* Linha 2 */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Remetente</Label>
-                <Txt className="w-40" placeholder="CNPJ" />
-                <Txt className="flex-1" placeholder="Razão Social" />
-                <Label className="w-24 text-right">Origem</Label>
-                <Txt className="w-32" placeholder="CEP" />
-                <Txt className="flex-1" placeholder="Cidade" />
-                <Txt className="w-12 text-center" placeholder="UF" />
-              </div>
+    {/* Status */}
+    <div className="col-span-2 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Status</Label>
+      <Txt
+        className="w-full text-center bg-gray-100 font-medium"
+        defaultValue="Em Andamento"
+        readOnly
+      />
+    </div>
+  </div>
 
-              {/* Linha 3 */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Tab. Frete</Label>
-                <Sel className="w-[140px]">
-                  <option>000083 - TABELA TESTE HNK</option>
-                </Sel>
-                <Sel className="w-[140px]">
-                  <option>CEVA</option>
-                  <option>GB</option>
-                  <option>NF</option>
-                </Sel>
-                <label className="flex items-center gap-1 text-[12px]">
-                  <input type="checkbox" /> Rateio Frete (Contrato)
-                </label>
-                <Label className="ml-auto">Veículo Solicitado</Label>
-                <Sel className="w-[180px]">
-                  <option>01 - UTILITARIO</option>
-                  <option>02 - VAN</option>
-                  <option>03 - 3/4</option>
-                  <option>04 - TOCO</option>
-                  <option>05 - TRUCK</option>
-                  <option>06 - BITRUCK</option>
-                  <option>07 - CAVALO MECÂNICO</option>
-                  <option>08 - CAVALO TRUCADO</option>
+  {/* Linha 2 */}
+  <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+    {/* Empresa */}
+    <div className="col-span-4 flex items-center gap-1">
+      <Label className="whitespace-nowrap">Empresa</Label>
+      <Sel className="w-full">
+        <option>001 - MANTRAN TRANSPORTES LTDA</option>
+      </Sel>
+    </div>
 
-                </Sel>
-                <button className="border border-gray-300 text-gray-700 hover:bg-gray-100 rounded px-3 py-[3px] flex items-center gap-1">
-                  <DollarSign size={14} className="text-red-700" />
-                  Custos Adicionais
-                </button>
-              </div>
+    {/* Filial (abaixo do Tipo e depois de Empresa) */}
+    <div className="col-span-3 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Filial</Label>
+      <Sel className="w-full">
+        <option>001 - MANTRAN TRANSPORTES LTDA</option>
+      </Sel>
+    </div>
 
-              {/* Linha 4 */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Divisão</Label>
-                <Sel className="w-[200px]">
-                  <option>Logística</option>
-                  <option>Administrativo</option>
-                </Sel>
-              </div>
-            </fieldset>
+    {/* Tipo Carga */}
+    <div className="col-span-3 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Tipo Carga</Label>
+      <Sel className="w-full">
+        <option>Fracionada</option>
+        <option>Fechada</option>
+      </Sel>
+    </div>
+
+    {/* Divisão (no final da linha) */}
+    <div className="col-span-2 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Divisão</Label>
+      <Sel className="w-full">
+        <option>Logística</option>
+        <option>Administrativo</option>
+      </Sel>
+    </div>
+  </div>
+</fieldset>
+
+
+           {/* === CARD 2 - Origem === */}
+<fieldset className="border border-gray-300 rounded p-3">
+  <legend className="text-red-700 font-semibold px-2">Origem</legend>
+
+  {/* Linha 1 */}
+  <div className="grid grid-cols-12 gap-2 items-center">
+    {/* Cliente */}
+    <div className="col-span-2 flex items-center gap-1">
+      <Label className="ml-[20px]" >Cliente</Label>
+      <Txt className="w-full" placeholder="CNPJ" />
+    </div>
+
+    <div className="col-span-3">
+      <Txt className="w-full" placeholder="Razão Social" />
+    </div>
+
+    {/* Expedidor */}
+    <div className="col-span-3 flex items-center gap-1 justify-end">
+      <Label className="ml-[5px]">Expedidor</Label>
+      <Txt className="w-[45%]" placeholder="CNPJ" />
+    </div>
+
+    <div className="col-span-4">
+      <Txt className="w-full" placeholder="Razão Social" />
+    </div>
+  </div>
+
+  {/* Linha 2 */}
+  <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+    {/* Remetente */}
+    <div className="col-span-2 flex items-center gap-1">
+      <Label>Remetente</Label>
+      <Txt className="w-full" placeholder="CNPJ" />
+    </div>
+
+    <div className="col-span-3">
+      <Txt className="w-full" placeholder="Razão Social" />
+    </div>
+
+    {/* Origem */}
+    <div className="col-span-1 flex justify-end">
+      <Label className="whitespace-nowrap">Origem</Label>
+    </div>
+
+    <div className="col-span-2">
+      <Txt className="w-[full]" placeholder="CEP" />
+    </div>
+
+    <div className="col-span-3">
+      <Txt className="w-full" placeholder="Cidade" />
+    </div>
+
+    <div className="col-span-1">
+      <Txt className="w-full text-center" placeholder="UF" />
+    </div>
+  </div>
+
+  {/* Linha 3 */}
+  <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+    {/* Tab. Frete */}
+    <div className="col-span-2 flex items-center gap-1">
+      <Label className="whitespace-nowrap">Tab. Frete</Label>
+      <Sel className="w-full">
+        <option>000083 - TABELA TESTE HNK</option>
+      </Sel>
+    </div>
+
+    <div className="col-span-2">
+      <Sel className="w-full">
+        <option>CEVA</option>
+        <option>GB</option>
+        <option>NF</option>
+      </Sel>
+    </div>
+
+    {/* Rateio Frete */}
+    <div className="col-span-3 flex items-center gap-1">
+      <label className="flex items-center gap-1 text-[12px]">
+        <input type="checkbox" /> Rateio Frete (Contrato)
+      </label>
+    </div>
+
+    {/* Veículo Solicitado */}
+    <div className="col-span-3 flex items-center gap-1 justify-end">
+      <Label className="whitespace-nowrap">Veículo Solicitado</Label>
+      <Sel className="w-full">
+        <option>01 - UTILITÁRIO</option>
+        <option>02 - VAN</option>
+        <option>03 - 3/4</option>
+        <option>04 - TOCO</option>
+        <option>05 - TRUCK</option>
+        <option>06 - BITRUCK</option>
+        <option>07 - CAVALO MECÂNICO</option>
+        <option>08 - CAVALO TRUCADO</option>
+      </Sel>
+    </div>
+
+    {/* Botão Custos Adicionais */}
+    <div className="col-span-2 flex justify-end">
+      <button className="border border-gray-300 text-gray-700 hover:bg-gray-100 rounded px-3 py-[4px] flex items-center gap-1">
+        <DollarSign size={14} className="text-red-700" />
+        Custos Adicionais
+      </button>
+    </div>
+  </div>
+</fieldset>
+
 
             {/* === CARD 3 - Destino === */}
             <fieldset className="border border-gray-300 rounded p-3">
@@ -562,7 +692,7 @@ const handleRemoverDespesa = () => {
       <Txt className="flex-1" placeholder="Nome do Agregado" />
 
       <Label className="ml-[160px] w-[56px] text-right">Divisão</Label>
-      <Sel className="w-[200px]">
+      <Sel className="w-[160px]">
         <option>TODAS</option>
         <option>LOGÍSTICA</option>
         <option>ADMINISTRATIVO</option>
@@ -582,7 +712,7 @@ const handleRemoverDespesa = () => {
     {/* Linha 7 (com wrap só dos campos do lado direito) */}
     <div className="flex items-center gap-1">
       <Label>Período</Label>
-      <Txt type="date" className="w-[130px]" />
+      <Txt type="date" className="w-[130px] ml-[30px]" />
       <Label>a</Label>
       <Txt type="date" className="w-[130px]" />
 
@@ -611,128 +741,187 @@ const handleRemoverDespesa = () => {
 
 
             {/* ====== CARD 2 - BOTÕES LATERAIS ====== */}
-            <div className="flex flex-col gap-2 w-[140px]">
-              <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700">
-                Pesquisar
-              </button>
-              <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700">
-                Limpar
-              </button>
-              <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700">
-                Tracking
-              </button>
-            </div>
+{/* ====== CARD 2 - BOTÕES LATERAIS ====== */}
+<div className="flex flex-col gap-2 w-[140px]">
+  <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+    <Search size={16} className="text-red-700" />
+    Pesquisar
+  </button>
+
+  <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+   <Eraser size={16} className="text-red-700" />
+    Limpar
+  </button>
+
+  <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+    <Truck size={16} className="text-red-700" />
+    Tracking
+  </button>
+</div>
           </div>
         )}
 
-        {/* ====== CARD 3 - GRID PRINCIPAL ====== */}
-        {activeTab === "consulta" && (
-          <div className="mt-2 border border-gray-300 rounded bg-white overflow-auto">
-            <table className="min-w-[2200px] text-[12px] border-collapse">
-              <thead className="bg-gray-100 text-gray-700">
-                <tr>
-                  {[
-                    "CK",
-                    "Status",
-                    "Filial",
-                    "Nº Viagem",
-                    "SQ",
-                    "Tração",
-                    "Reboque",
-                    "Motorista",
-                    "Origem",
-                    "Destino",
-                    "Início Viagem",
-                    "Remetente",
-                    "Destinatário",
-                    "Pagador Frete",
-                    "CNH",
-                    "Carga",
-                    "Nº Ficha",
-                    "Dt. Acerto",
-                    "Nº Acerto",
-                    "Nº Coleta",
-                    "Tp. Mot.",
-                    "Vr. Frete",
-                    "Frete Agregado",
-                  ].map((h) => (
-                    <th key={h} className="border px-2 py-1 whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...Array(10)].map((_, i) => (
-                  <tr
-                    key={i}
-                    className={i % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
-                  >
-                    <td className="border text-center px-2">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="border px-2 text-red-600 font-semibold">
-                      {i === 2 ? "EM ANDAMENTO" : "NÃO INICIADA"}
-                    </td>
-                    <td className="border px-2">001</td>
-                    <td className="border px-2">07903{i}</td>
-                    <td className="border px-2">1</td>
-                    <td className="border px-2">RXW4I56</td>
-                    <td className="border px-2">RKW3E53</td>
-                    <td className="border px-2">ALAN DA COSTA</td>
-                    <td className="border px-2">ITU</td>
-                    <td className="border px-2">SALVADOR</td>
-                    <td className="border px-2">20/10/2025 16:31</td>
-                    <td className="border px-2">HNK BR IND. BEBIDAS LTDA</td>
-                    <td className="border px-2">HNK BR IND. BEBIDAS LTDA RN</td>
-                    <td className="border px-2">HNK BR IND. BEBIDAS LTDA</td>
-                    <td className="border px-2">01628446760</td>
-                    <td className="border px-2">CARGA</td>
-                    <td className="border px-2">1</td>
-                    <td className="border px-2">26/10/2025</td>
-                    <td className="border px-2">123</td>
-                    <td className="border px-2">185704</td>
-                    <td className="border px-2">TP01</td>
-                    <td className="border px-2 text-right">1.250,00</td>
-                    <td className="border px-2 text-right">950,00</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+       {/* ====== CARD 3 - GRID PRINCIPAL ====== */}
+{activeTab === "consulta" && (
+  <div className="mt-2 border border-gray-300 rounded bg-white overflow-auto">
+    <table className="min-w-[2200px] text-[12px] border-collapse">
+      <thead className="bg-gray-100 text-gray-700">
+        <tr>
+          {[
+            "CK",
+            "Status",
+            "Filial",
+            "Nº Viagem",
+            "SQ",
+            "Tração",
+            "Reboque",
+            "Motorista",
+            "Origem",
+            "Destino",
+            "Início Viagem",
+            "Remetente",
+            "Destinatário",
+            "Pagador Frete",
+            "CNH",
+            "Carga",
+            "Nº Ficha",
+            "Dt. Acerto",
+            "Nº Acerto",
+            "Nº Coleta",
+            "Tp. Mot.",
+            "Vr. Frete",
+            "Frete Agregado",
+          ].map((h) => (
+            <th key={h} className="border px-2 py-1 whitespace-nowrap">
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {gridConsulta.map((row, i) => {
+          const corStatus =
+            row.status === "NÃO INICIADA"
+              ? "text-red-600"
+              : row.status === "EM ANDAMENTO"
+              ? "text-blue-600"
+              : row.status === "ENCERRADA"
+              ? "text-green-600"
+              : row.status === "CANCELADA"
+              ? "text-black"
+              : "text-gray-700";
 
-        {/* ====== CARD 4 - TOTAL / BOTÕES ====== */}
-        {activeTab === "consulta" && (
-          <div className="flex justify-between items-center mt-2">
-            <div className="text-[13px] text-gray-700">
-              Total Selecionados: <b>2</b> de <b>3</b>
-            </div>
-            <div className="flex gap-2">
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
-                Selecionar Todos
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
-                Limpar Seleção
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] text-blue-600">
-                Iniciar
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] text-green-600">
-                Encerrar
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] text-yellow-600">
-                Cancelar
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] text-red-600">
-                Estornar
-              </button>
-              <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] text-gray-600">
-                Excluir
-              </button>
-            </div>
-          </div>
-        )}
+          return (
+            <tr
+              key={row.id}
+              className={i % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
+            >
+              <td className="border text-center px-2">
+                <input
+                  type="checkbox"
+                  checked={row.selecionado}
+                  onChange={() =>
+                    setGridConsulta((prev) =>
+                      prev.map((x) =>
+                        x.id === row.id
+                          ? { ...x, selecionado: !x.selecionado }
+                          : x
+                      )
+                    )
+                  }
+                />
+              </td>
+              <td className={`border px-2 font-semibold ${corStatus}`}>
+                {row.status}
+              </td>
+              <td className="border px-2">001</td>
+              <td className="border px-2">07903{i}</td>
+              <td className="border px-2">1</td>
+              <td className="border px-2">RXW4I56</td>
+              <td className="border px-2">RKW3E53</td>
+              <td className="border px-2">ALAN DA COSTA</td>
+              <td className="border px-2">ITU</td>
+              <td className="border px-2">SALVADOR</td>
+              <td className="border px-2">20/10/2025 16:31</td>
+              <td className="border px-2">HNK BR IND. BEBIDAS LTDA</td>
+              <td className="border px-2">HNK BR IND. BEBIDAS LTDA RN</td>
+              <td className="border px-2">HNK BR IND. BEBIDAS LTDA</td>
+              <td className="border px-2">01628446760</td>
+              <td className="border px-2">CARGA</td>
+              <td className="border px-2">1</td>
+              <td className="border px-2">26/10/2025</td>
+              <td className="border px-2">123</td>
+              <td className="border px-2">185704</td>
+              <td className="border px-2">TP01</td>
+              <td className="border px-2 text-right">1.250,00</td>
+              <td className="border px-2 text-right">950,00</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{/* ====== CARD 4 - TOTAL / BOTÕES ====== */}
+{activeTab === "consulta" && (
+  <div className="flex justify-between items-center mt-2 flex-wrap">
+    <div className="text-[13px] text-gray-700">
+      Total Selecionados: <b>{totalSelConsulta}</b> de <b>{totalConsulta}</b>
+    </div>
+
+    <div className="flex flex-wrap justify-between w-full mt-2">
+      {/* === Botões à esquerda === */}
+      <div className="flex gap-2">
+        <button
+          onClick={selecionarTodosConsulta}
+          className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1"
+        >
+          <CheckCircle size={14} className="text-green-600" />
+          Selecionar Todos
+        </button>
+        <button
+          onClick={limparSelecaoConsulta}
+          className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1"
+        >
+          <RotateCcw size={14} className="text-red-600" />
+          Limpar Seleção
+        </button>
+      </div>
+
+      {/* === Botões à direita === */}
+      <div className="flex gap-2">
+     <button
+  onClick={() => setModalInicioOpen(true)} 
+  className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1 text-black-600"
+>
+  <PlayCircle size={14} className="text-red-700" />
+  Iniciar
+</button>
+        <button
+  onClick={() => setModalEncerrarOpen(true)} 
+  className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1 text-black-600"
+>
+  <CheckCircle size={14} className="text-green-600" />
+  Encerrar
+</button>
+        <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1 text-black-600">
+          <XCircle size={14} className="text-red-700"/>
+          Cancelar
+        </button>
+        <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1 text-black-600">
+          <RotateCcw size={14} className="text-red-700"/>
+          Estornar
+        </button>
+        <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1 text-black-600">
+          <Trash2 size={14} className="text-red-700"/>
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
 
         {/* ===================== ABA DOCTOS ===================== */}
@@ -1492,6 +1681,21 @@ const handleRemoverDespesa = () => {
           />
         )}
       
+{modalEncerrarOpen && (
+  <ViagemEncerramento
+    isOpen={modalEncerrarOpen}
+    onClose={() => setModalEncerrarOpen(false)}
+    onConfirm={(dados) => console.log("Encerramento da viagem:", dados)}
+  />
+)}
+
+      {modalInicioOpen && (
+  <ViagemInicio
+    isOpen={modalInicioOpen}
+    onClose={() => setModalInicioOpen(false)}
+    onConfirm={(dados) => console.log("Início da viagem:", dados)}
+  />
+)}
       </div> 
     </div> 
   );
