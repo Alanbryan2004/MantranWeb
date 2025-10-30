@@ -10,6 +10,7 @@ import Coleta from "./pages/Coleta";
 import Manifesto from "./pages/Manifesto";
 import Viagem from "./pages/Viagem";
 import Dashboard from "./pages/Dashboard"; // 👈 ADICIONAR ESTA LINHA
+import Parametro from "./pages/Parametro";
 import "./index.css";
 
 
@@ -30,10 +31,10 @@ export default function App() {
     return <Login onLogin={() => setIsLogged(true)} />;
   }
 
-  // 🔄 Garante que ao logar, o sistema sempre inicie na tela padrão
-  if (window.location.pathname !== "/") {
-    window.history.pushState({}, "", "/");
-  }
+// 🔄 Garante que ao logar, o sistema sempre inicie na tela padrão
+if (isLogged && window.location.pathname === "/login") {
+  window.history.pushState({}, "", "/");
+}
 
   // 🏠 Tela principal com rotas
   return (
@@ -62,8 +63,13 @@ export default function App() {
             
             {/* Manifesto */}
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
-             {/* Viagem */}
+            
+            {/* Viagem */}
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
+
+            {/* 👇 NOVA ROTA ADICIONADA */}
+            <Route path="/parametros" element={<Parametro open={sidebarOpen}/>} />
+
             {/* Página padrão — Dashboard inicial */}
             <Route
               path="*"

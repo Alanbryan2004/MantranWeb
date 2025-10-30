@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"; // ✅ adiciona o useEffect aqui
 import { io } from "socket.io-client"; // ✅ adiciona esta linha
 import EmojiPicker from "emoji-picker-react";
+import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 
 import {
   FileText,
@@ -29,7 +30,8 @@ export default function Sidebar({ open }) {
   const [novaMensagem, setNovaMensagem] = useState("");
   const [mostrarEmoji, setMostrarEmoji] = useState(false);
   const [mensagens, setMensagens] = useState([]);
-const [usuarios, setUsuarios] = useState([
+  const [showAlterarSenha, setShowAlterarSenha] = useState(false);
+  const [usuarios, setUsuarios] = useState([
   { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
   { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
   { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
@@ -475,14 +477,18 @@ setUsuarios((prev) => {
 
   {activeMenu === "usuario" && (
     <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
-      {["Trocar Usuário", "Trocar Filial", "Alterar Senha"].map((sub) => (
-        <div
-          key={sub}
-          className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-        >
-          {sub}
-        </div>
-      ))}
+      {["Trocar Filial", "Alterar Senha"].map((sub) => (
+  <div
+    key={sub}
+    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+    onClick={() => {
+      if (sub === "Alterar Senha") setShowAlterarSenha(true);
+    }}
+  >
+    {sub}
+  </div>
+))}
+
     </div>
   )}
 </div>
@@ -520,6 +526,11 @@ setUsuarios((prev) => {
         </button>
       </div>
     </aside>
+
+    {showAlterarSenha && (
+  <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+)}
+
       {/* === PAINEL LATERAL DO CHAT === */}
       {chatOpen && (
         <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] bg-white border-l border-gray-200 shadow-2xl z-30 flex flex-col">

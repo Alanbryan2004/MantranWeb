@@ -13,18 +13,25 @@ import Logo from "../assets/logo_mantran.png";
 import { useState } from "react";
 import { Link } from "react-router-dom"; // 👈 Import para navegação
 import { useNavigate } from "react-router-dom";
+import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
+
+
 
 export default function Header({ toggleSidebar }) {
   const usuarioLogado = localStorage.getItem("usuarioNome") || "Suporte";
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+  const [showAlterarSenha, setShowAlterarSenha] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, message: "Novo CT-e emitido com sucesso.", read: false },
     { id: 2, message: "Backup concluído às 14:00h.", read: false },
     { id: 3, message: "Manifesto encerrado.", read: true },
   ]);
 
+
+
+  
   const markAsRead = (id) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
@@ -32,6 +39,7 @@ export default function Header({ toggleSidebar }) {
   };
 
   return (
+      <>
     <header className="flex justify-between items-center bg-white shadow-sm px-6 py-1.5 border-b h-[48px] fixed top-0 left-0 right-0 z-50">
       {/* Botão + Logo + Atalhos principais */}
       <div className="flex items-center gap-5">
@@ -149,18 +157,18 @@ export default function Header({ toggleSidebar }) {
 
           {showUserMenu && (
             <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 py-1">
-              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <RefreshCcw className="text-red-700" size={16} />
-                Trocar Usuário
-              </button>
+              
               <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <Building2 className="text-red-700" size={16} />
                 Trocar Filial
               </button>
-              <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <Lock className="text-red-700" size={16} />
-                Alterar Senha
-              </button>
+             <button
+  onClick={() => setShowAlterarSenha(true)}
+  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+>
+  <Lock className="text-red-700" size={16} />
+  Alterar Senha
+</button>
               <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <ImageIcon className="text-red-700" size={16} />
                 Alterar Foto
@@ -177,5 +185,9 @@ export default function Header({ toggleSidebar }) {
         </div>
       </div>
     </header>
+    {showAlterarSenha && (
+  <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+)}
+</>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, ChevronLeft, CheckCircle, XCircle, Palette, LayoutGrid, SlidersHorizontal } from "lucide-react";
+import { ChevronRight,RotateCcw, ChevronLeft, CheckCircle, XCircle, Palette, LayoutGrid, SlidersHorizontal } from "lucide-react";
 
 export default function Parametro() {
   const [modoCards, setModoCards] = useState(false);
