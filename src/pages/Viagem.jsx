@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState,useEffect  } from "react";
 import ViagemDespesa from "./ViagemDespesa";
 import ViagemCustosOperacionais from "./ViagemCustosOperacionais";
 import ViagemInicio from "./ViagemInicio";
 import ViagemEncerramento from "./ViagemEncerramento";
+import { useNavigate } from "react-router-dom";
+import ViagemMontarCte from "./ViagemMontarCte";
+import ViagemMontarMinuta from "./ViagemMontarMinuta";
+
 
 import {
   XCircle,
@@ -12,6 +16,7 @@ import {
   PlusCircle,
   Edit,
   Trash2,
+  Pencil,
   Printer,
   Copy,
   Search,
@@ -22,10 +27,12 @@ import {
   DollarSign,
   MapPin,
   Eraser,
+  RefreshCcw, 
+  UserCheck,
   PanelBottom,
 } from "lucide-react";
 
-
+    
 
 function Label({ children, className = "" }) {
   return <label className={`text-[12px] text-gray-600 ${className}`}>{children}</label>;
@@ -53,13 +60,25 @@ function Sel({ children, ...rest }) {
 }
 
 export default function Viagem({ open }) {
+  const [modalMontarCteOpen, setModalMontarCteOpen] = useState(false);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("viagem");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEncerrarOpen, setModalEncerrarOpen] = useState(false);
   const [modalPagamentoOpen, setModalPagamentoOpen] = useState(false);
   const [modalCustosOpen, setModalCustosOpen] = useState(false);
   const [modalInicioOpen, setModalInicioOpen] = useState(false);
+  const [modalMontarMinutaOpen, setModalMontarMinutaOpen] = useState(false);
 
+
+const [valorFrete, setValorFrete] = useState(1000);
+const [custoViagem, setCustoViagem] = useState(600);
+
+const lucratividade = valorFrete
+  ? (((valorFrete - custoViagem) / valorFrete) * 100).toFixed(2)
+  : 0;
+
+ 
   // Estados para o grid de adição e documentos da viagem
   const [docsAdicao, setDocsAdicao] = useState(
     [...Array(8)].map((_, i) => ({
@@ -313,22 +332,25 @@ const handleRemoverDespesa = () => {
       <Txt className="w-full" placeholder="Razão Social" />
     </div>
 
-    {/* Origem */}
-    <div className="col-span-1 flex justify-end">
-      <Label className="whitespace-nowrap">Origem</Label>
-    </div>
+    {/* Linha Origem: começa na col 2 e ocupa 8 cols (ajuste à vontade) */}
+<div className="col-start-7 col-span-8 grid grid-cols-8 gap-2 items-center">
+  <div className="col-span-1 flex justify-end">
+    <Label className="whitespace-nowrap">Origem</Label>
+  </div>
 
-    <div className="col-span-2">
-      <Txt className="w-[full]" placeholder="CEP" />
-    </div>
+  <div className="col-span-2">
+    <Txt className="w-full" placeholder="CEP" />
+  </div>
 
-    <div className="col-span-3">
-      <Txt className="w-full" placeholder="Cidade" />
-    </div>
+  <div className="col-span-4">
+    <Txt className="w-full" placeholder="Cidade" />
+  </div>
 
-    <div className="col-span-1">
-      <Txt className="w-full text-center" placeholder="UF" />
-    </div>
+  <div className="col-span-1">
+    <Txt className="w-full text-center" placeholder="UF" />
+  </div>
+</div>
+
   </div>
 
   {/* Linha 3 */}
@@ -382,169 +404,262 @@ const handleRemoverDespesa = () => {
 </fieldset>
 
 
-            {/* === CARD 3 - Destino === */}
-            <fieldset className="border border-gray-300 rounded p-3">
-              <legend className="text-red-700 font-semibold px-2">Destino</legend>
+        {/* === CARD 3 - Destino === */}
+<fieldset className="border border-gray-300 rounded p-3">
+  <legend className="text-red-700 font-semibold px-2">Destino</legend>
 
-              {/* Linha 1 — Destinatário + Cidade (à direita) */}
-              <div className="flex items-center gap-2">
-                <Label>Destinatário</Label>
-                <Txt className="w-40" placeholder="CNPJ" defaultValue="05254957006551" />
-                <Txt className="flex-1" placeholder="Razão Social" defaultValue="HNK-SALVADOR-AGUA MI" />
+  {/* ===== Linha 1 - Destinatário + Cidade Dest ===== */}
+  <div className="grid grid-cols-12 gap-2 items-center">
+    {/* Grupo esquerdo */}
+    <div className="col-span-7 flex items-center gap-2">
+      <Label className="whitespace-nowrap">Destinatário</Label>
+      <Txt className="w-[230px]" placeholder="CNPJ" defaultValue="10.545.575/0001-43" />
+      <Txt className="flex-1" placeholder="Razão Social" defaultValue="HNK-SALVADOR-AGUA MI" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+    </div>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[88px] text-right">Cidade Dest.</Label>
-                  <Txt className="w-[120px]" placeholder="CEP" defaultValue="40000000" />
-                  <Txt className="w-[280px]" placeholder="Cidade" defaultValue="SALVADOR" />
-                  <Txt className="w-[50px] text-center" placeholder="UF" defaultValue="BA" />
-                </div>
-              </div>
+    {/* Grupo direito */}
+    <div className="col-span-5 flex items-center justify-end gap-2">
+      <Label className="whitespace-nowrap text-right">Cidade Dest.</Label>
+      <Txt className="w-[110px]" placeholder="CEP" defaultValue="40009900" />
+      <Txt className="w-[220px]" placeholder="Cidade" defaultValue="SALVADOR" />
+      <Txt className="w-[45px] text-center" placeholder="UF" defaultValue="BA" />
+    </div>
+  </div>
 
-              {/* Linha 2 — Motorista + (Agregado, KM Inicial, Nº Ficha à direita) */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Motorista</Label>
-                <Txt className="w-[160px]" placeholder="CNH" defaultValue="01628446760" />
-                <Txt className="flex-1" placeholder="Nome" defaultValue="ALAN DA COSTA" />
+  {/* ===== Linha 2 - Motorista + Agregado ===== */}
+  <div className="grid grid-cols-12 gap-2 items-center mt-2">
+    {/* Grupo esquerdo */}
+    <div className="col-span-6 flex items-center gap-2">
+      <Label className="whitespace-nowrap">Motorista</Label>
+      <Txt className="w-[200px] ml-[14px]" placeholder="CNH" defaultValue="01628446760" />
+      <Txt className="flex-1" placeholder="Nome do Motorista" defaultValue="ALAN DA COSTA" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+    </div>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[80px] text-right">Agregado</Label>
-                  <Txt className="w-[180px]" defaultValue="AGREGADO" />
-                  <Label className="w-[70px] text-right">KM Inicial</Label>
-                  <Txt className="w-[80px] text-center" defaultValue="1" />
-                  <Label className="w-[70px] text-right">Nº Ficha</Label>
-                  <Txt className="w-[120px]" defaultValue="" />
-                </div>
-              </div>
+    {/* Grupo direito */}
+    <div className="col-span-6 flex items-center justify-end gap-2">
+      <Txt className="w-[220px]" placeholder="Agregado" defaultValue="TRANSPORTADORA MOEDENSE LTDA" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+      <Label className="whitespace-nowrap text-right">KM Inicial</Label>
+      <Txt className="w-[90px] text-center" defaultValue="35719" />
+      <button
+        className="flex items-center gap-1 border border-gray-300 rounded px-2 py-[4px] hover:bg-gray-100 text-[12px] text-blue-700"
+        title="Trocar Empresa Agregado"
+      >
+        <RefreshCcw size={14} /> 
+      </button>
+      <Label className="whitespace-nowrap text-right">Nº Ficha</Label>
+      <Txt className="w-[90px] text-center" placeholder="000001" />
+    </div>
+  </div>
 
-              {/* Linha 3 — Tração + Tipo (Agregado) + Reboque */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Tração</Label>
-                <Txt className="w-[110px]" placeholder="Cód." defaultValue="0035719" />
-                <Txt
-                  className="flex-1"
-                  placeholder="Placa / Descrição"
-                  defaultValue="RXW4I56 - CAVALO MEC - CAVALO TRUCADO - ITAJAÍ"
-                />
+  {/* ===== Linha 3 - Tração + Reboque ===== */}
+  <div className="grid grid-cols-12 gap-2 items-center mt-2">
+    {/* Esquerda */}
+    <div className="col-span-6 flex items-center gap-2">
+      <Label className="whitespace-nowrap">Tração</Label>
+      <Txt className="w-[100px] ml-[25px]" placeholder="Código" defaultValue="0035719" />
+      <Txt className="flex-1" placeholder="Placa / Descrição" defaultValue="RXW4I56 - CAVALO MEC - CAVALO TRUCADO - ITAJAÍ" />
+      <Txt className="w-[160px]" placeholder="Tipo" defaultValue="CAVALO TRUCADO" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+    </div>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[140px] text-right">Tipo de Veículo</Label>
-                  <Txt className="w-[140px]" defaultValue="CAVALO TRUCADO" />
-                  <Label className="w-[80px] text-right">Reboque</Label>
-                  <Txt className="w-[110px]" placeholder="Cód." defaultValue="0034811" />
-                  <Txt
-                    className="w-[360px]"
-                    placeholder="Placa / Descrição"
-                    defaultValue="RKW3E53 - CARRETA SIDER - CARRETA SYDER - ITAJAÍ"
-                  />
-                </div>
-              </div>
+    {/* Direita */}
+    <div className="col-span-6 flex items-center justify-end gap-2">
+      <Label className="whitespace-nowrap text-right">Reboque</Label>
+      <Txt className="w-[100px]" placeholder="Código" defaultValue="0034811" />
+      <Txt className="w-[280px]" placeholder="Placa / Descrição" defaultValue="RKW3E53 - CARRETA SIDER - ITAJAÍ" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+    </div>
+  </div>
 
-              {/* Linha 4 — Recebedor + (Km Atual, Classe à direita) */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Recebedor</Label>
-                <Txt className="w-[160px]" placeholder="CNPJ" defaultValue="05254957006551" />
-                <Txt className="flex-1" placeholder="Razão Social" defaultValue="HNK-SALVADOR-AGUA MI" />
+  {/* ===== Linha 4 - Recebedor ===== */}
+  <div className="grid grid-cols-12 gap-2 items-center mt-2">
+    <div className="col-span-7 flex items-center gap-2">
+      <Label className="whitespace-nowrap">Recebedor</Label>
+      <Txt className="w-[220px] ml-[3px]" placeholder="CNPJ" defaultValue="05254957006551" />
+      <Txt className="flex-1" placeholder="Razão Social" defaultValue="HNK-SALVADOR-AGUA MI" />
+      <button className="border border-gray-300 rounded p-[4px] hover:bg-gray-100">
+        <Pencil size={14} className="text-red-700" />
+      </button>
+    </div>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[70px] text-right">Km Atual</Label>
-                  <Txt className="w-[90px] text-center" defaultValue="1" />
-                  <Label className="w-[110px] text-right">1ª Classe</Label>
-                  <Txt className="w-[70px]" placeholder="Cód." defaultValue="13" />
-                  <Txt className="w-[200px]" placeholder="Descrição" defaultValue="CAVALO TRUCADO" />
-                </div>
-              </div>
+    <div className="col-span-5 flex items-center justify-end gap-2">
+      <Label className="whitespace-nowrap text-right">Km Atual</Label>
+      <Txt className="w-[90px] text-center" defaultValue="1" />
+      <Label className="whitespace-nowrap text-right">Classe</Label>
+      <Txt className="w-[70px] text-center" defaultValue="13" />
+      <Txt className="w-[220px]" placeholder="Classe Veículo" defaultValue="CAVALO TRUCADO" />
+    </div>
+  </div>
 
-              {/* Linha 5 — Datas/Horas e KM Final */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Cadastro</Label>
-                <Txt type="date" className="w-[150px]" defaultValue="2025-10-20" />
+  {/* ===== Linha 5 - Datas / KM Final ===== */}
+  <div className="grid grid-cols-12 gap-2 items-center mt-2">
+    <div className="col-span-7 flex items-center gap-2">
+      <Label>Cadastro</Label>
+      <Txt type="date" className="w-[160px] ml-[13px]" defaultValue="2025-10-20" />
+      <Label>Início Prev.</Label>
+      <Txt type="date" className="w-[160px]" defaultValue="2025-10-20" />
+      <Label>Hs</Label>
+      <Txt type="time" className="w-[80px]" defaultValue="16:31" />
+    </div>
 
-                <Label className="w-[88px] text-right">Início Prev.</Label>
-                <Txt type="date" className="w-[150px]" defaultValue="2025-10-20" />
-                <Label className="w-[30px] text-right">Hs</Label>
-                <Txt type="time" className="w-[90px]" defaultValue="16:31" />
+    <div className="col-span-5 flex items-center justify-end gap-2">
+      <Label>Chegada Prev.</Label>
+      <Txt type="date" className="w-[160px]" defaultValue="2025-10-26" />
+      <Label>Hs</Label>
+      <Txt type="time" className="w-[80px]" defaultValue="16:00" />
+      <Label>KM Final</Label>
+      <Txt className="w-[90px] text-center" defaultValue="0" />
+    </div>
+  </div>
 
-                <Label className="w-[70px] text-right">KM Final</Label>
-                <Txt className="w-[90px] text-center" defaultValue="0" />
+  {/* ===== Linha 6 - Observação + Tab. Agregado ===== */}
+<div className="grid grid-cols-12 gap-2 items-center mt-2">
+  {/* Observação (à esquerda) */}
+  <div className="col-span-7 flex items-center gap-2">
+    <Label className="whitespace-nowrap text-right">Observação</Label>
+    <Txt
+      className="flex-1 ml-[-2px]"
+      placeholder="Observações gerais da viagem"
+      defaultValue="Teste"
+    />
+  </div>
 
-                <Label className="w-[110px] text-right">Chegada Prev.</Label>
-                <Txt type="date" className="w-[150px]" defaultValue="2025-10-26" />
-                <Label className="w-[30px] text-right">Hs</Label>
-                <Txt type="time" className="w-[90px]" defaultValue="16:00" />
-              </div>
+  {/* Tab. Agregado (à direita) */}
+  <div className="col-span-5 flex items-center justify-end gap-2">
+    <Label className="whitespace-nowrap">Tab. Agreg.</Label>
+    <Sel className="w-[180px]">
+      <option>000077 - TABELA AGREGADO</option>
+    </Sel>
+    <button
+      title="Trocar Tabela Agregado"
+      className="flex items-center gap-1 border border-gray-300 rounded px-2 py-[4px] hover:bg-gray-100 text-[12px] text-blue-700"
+    >
+      <FileSpreadsheet size={14} />
+      
+    </button>
+  </div>
+</div>
 
-              {/* Linha 6 — Observação */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Observação</Label>
-                <Txt className="flex-1" defaultValue="" placeholder="Observações gerais da viagem" />
-              </div>
+{/* ===== Linha 7 - Totais ===== */}
+<div className="grid grid-cols-12 gap-2 items-center mt-2">
+  <div className="col-span-12 flex items-center justify-between gap-4">
+    <div className="flex items-center gap-2">
+ 
+  
+    </div>
 
-              {/* Linha 7 — Tab. Agreg., Lucratividade, Peso Total (peso à direita) */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Tab. Agreg.</Label>
-                <Sel className="w-[260px]">
-                  <option>000000 - FRETE COMBINADO</option>
-                </Sel>
+   
+  </div>
+    </div>
 
-                <Label className="w-[120px] text-right">Lucratividade (%)</Label>
-                <Txt className="w-[120px] text-center" defaultValue="0,00" />
+ 
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[80px] text-right">Peso Total</Label>
-                  <Txt className="w-[180px]" defaultValue="" />
-                </div>
-              </div>
 
-              {/* Linha 8 — Rota/KM Prev + (Custo/Valor à direita) */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Rota Viagem</Label>
-                <Sel className="w-[320px]">
-                  <option>0003 - SHOPEE</option>
-                </Sel>
 
-                <Label className="w-[110px] text-right">Km Rota Prev</Label>
-                <Txt className="w-[90px] text-center" defaultValue="0" />
+</fieldset>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <Label className="w-[100px] text-right">Custo Viagem</Label>
-                  <Txt className="w-[160px]" defaultValue="0" />
-                  <Label className="w-[90px] text-right">Valor Frete</Label>
-                  <Txt className="w-[160px]" defaultValue="0" />
-                </div>
-              </div>
+{/* === CARD 4 - Ações === */}
+<fieldset className="border border-gray-300 rounded p-3 mt-3">
+  <div className="flex justify-between items-center">
 
-              {/* Linha 9 — Operador/Data + botões à direita */}
-              <div className="flex items-center gap-2 mt-2">
-                <Label>Operador</Label>
-                <Txt className="w-[200px]" defaultValue="SUPORTE" />
-                <Txt type="date" className="w-[150px]" defaultValue="2025-10-20" />
+    {/* === CAMPOS ALINHADOS À ESQUERDA === */}
+    <div className="flex items-center gap-3">
+      <Label>Lucratividade (%)</Label>
+      <Txt
+        className={`w-[70px] text-center font-semibold ${
+          lucratividade >= 0
+            ? "text-green-700 bg-green-50 border-green-300"
+            : "text-red-700 bg-red-50 border-red-300"
+        }`}
+        value={`${lucratividade}%`}
+        readOnly
+      />
 
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    className="border border-gray-300 text-gray-800 hover:bg-gray-100 rounded px-3 py-[6px] text-[12px] flex items-center gap-1"
-                    title="Montar Minuta"
-                  >
-                    Montar Minuta
-                  </button>
-                  <button
-                    className="border border-gray-300 text-gray-800 hover:bg-gray-100 rounded px-3 py-[6px] text-[12px] flex items-center gap-1"
-                    title="Montar CTe"
-                  >
-                    Montar CTe
-                  </button>
-                </div>
-              </div>
-            </fieldset>
+      <Label>Peso Total</Label>
+      <Txt
+        className="w-[80px] bg-gray-100 text-right"
+        defaultValue="0"
+        readOnly
+      />
+
+      <Label>Custo Viagem</Label>
+      <Txt
+        className="w-[120px] text-right"
+        readOnly
+        value={custoViagem.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+          
+        })}
+        onChange={(e) => {
+          const val = e.target.value
+            .replace(/[R$\s.]/g, "")
+            .replace(",", ".");
+          setCustoViagem(parseFloat(val) || 0);
+        }}
+      />
+
+      <Label>Valor Frete</Label>
+      <Txt
+        className="w-[140px] text-right"
+        readOnly
+        value={valorFrete.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })}
+        onChange={(e) => {
+          const val = e.target.value
+            .replace(/[R$\s.]/g, "")
+            .replace(",", ".");
+          setValorFrete(parseFloat(val) || 0);
+        }}
+      />
+    </div>
+
+    {/* === BOTÕES ALINHADOS À DIREITA === */}
+    <div className="flex items-center gap-2">
+<button
+  onClick={() => setModalMontarMinutaOpen(true)}
+  className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
+  title="Montar Minuta"
+>
+  <FileText size={14} />
+  Montar Minuta
+</button>
+
+
+<button
+  onClick={() => setModalMontarCteOpen(true)}
+  className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
+  title="Montar CTe"
+>
+  <Truck size={14} className="text-red-700" />
+  Montar CTe
+</button>
+    </div>
+
+  </div>
+</fieldset>
 
 
             {/* === CARD 4 - Notas Fiscais === */}
             <fieldset className="border border-gray-300 rounded p-3">
               <legend className="text-red-700 font-semibold px-2">Notas Fiscais</legend>
 
-              <div className="flex items-center gap-2">
-                <Label>Quantidade NFs</Label>
-                <Txt className="w-24 text-center" defaultValue="0" />
-              </div>
+           
 
               <div className="overflow-auto mt-2">
                 <table className="min-w-full border text-[12px]">
@@ -567,14 +682,14 @@ const handleRemoverDespesa = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...Array(5)].map((_, i) => (
+                    {[...Array(2)].map((_, i) => (
                       <tr key={i}>
                         <td className="border px-2 py-1">001</td>
-                        <td className="border px-2 py-1">12345</td>
+                        <td className="border px-2 py-1">00012345</td>
                         <td className="border px-2 py-1">1</td>
                         <td className="border px-2 py-1">NF-e</td>
                         <td className="border px-2 py-1">000987</td>
-                        <td className="border px-2 py-1">IMP-01</td>
+                        <td className="border px-2 py-1">000534</td>
                         <td className="border px-2 py-1">45.333.888/0001-10</td>
                         <td className="border px-2 py-1">10/10/2025</td>
                       </tr>
@@ -584,35 +699,95 @@ const handleRemoverDespesa = () => {
               </div>
             </fieldset>
 
-            {/* === CARD 5 - Botões Rodapé === */}
-            <div className="flex justify-between mt-3">
-              <div className="flex gap-2">
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <XCircle size={16} className="text-red-600" /> Fechar
-                </button>
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <RotateCcw size={16} /> Limpar
-                </button>
-              </div>
+           {/* === CARD 5 - Rodapé === */}
+<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between text-red-700 mt-3">
 
-              <div className="flex gap-2">
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <PlusCircle size={16} className="text-green-600" /> Incluir
-                </button>
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <Edit size={16} className="text-blue-600" /> Alterar
-                </button>
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <Trash2 size={16} className="text-red-600" /> Excluir
-                </button>
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <DollarSign size={16} className="text-yellow-600" /> Pagtos
-                </button>
-                <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 flex items-center gap-1">
-                  <Truck size={16} className="text-red-600" /> Monitoramento
-                </button>
-              </div>
-            </div>
+  {/* === ÍCONES DE AÇÃO (à esquerda) === */}
+  <div className="flex items-center gap-5 text-red-700">
+    {/* Fechar Tela */}
+<button
+  onClick={() => navigate(-1)}
+  title="Fechar Tela"
+  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+>
+  <XCircle size={20} />
+  <span>Fechar</span>
+</button>
+
+
+  {/* Limpar */}
+  <button
+    title="Limpar Campos"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <RotateCcw size={20} />
+    <span>Limpar</span>
+  </button>
+
+  {/* Incluir */}
+  <button
+    title="Incluir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <PlusCircle size={20} />
+    <span>Incluir</span>
+  </button>
+
+  {/* Alterar */}
+  <button
+    title="Alterar Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <Edit size={20} />
+    <span>Alterar</span>
+  </button>
+
+  {/* Excluir */}
+  <button
+    title="Excluir Viagem"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+    <Trash2 size={20} />
+    <span>Excluir</span>
+  </button>
+
+   {/* Pagto */}
+  <button
+    title="Excluir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+      <DollarSign size={20} />
+      <span>Pagto</span>
+    </button>
+
+    
+    {/* Monitoramento */}
+  <button
+    title="Excluir Manifesto"
+    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+  >
+      <Truck size={18} />
+      <span>Monitorar</span>
+</button>
+
+{/* Buonny */}
+   <button 
+   title="Buonny"
+   className="flex flex-col items-center text-[11px] hover:text-red-800 transition">
+      <UserCheck size={18} /> 
+      <span>Buonny</span>
+    </button>
+
+  </div>
+
+  {/* === OPERADOR E DATA (à direita) === */}
+  <div className="flex items-center gap-2 text-[12px] text-gray-700">
+    <Label>Operador</Label>
+    <Txt className="w-[150px] text-center bg-gray-100" defaultValue="SUPORTE" readOnly />
+    <Txt className="w-[100px] text-center bg-gray-100" defaultValue="29/10/2025" readOnly />
+  </div>
+</div>
+
           </>
         )}
 
@@ -1686,6 +1861,21 @@ const handleRemoverDespesa = () => {
     isOpen={modalEncerrarOpen}
     onClose={() => setModalEncerrarOpen(false)}
     onConfirm={(dados) => console.log("Encerramento da viagem:", dados)}
+  />
+)}
+
+{modalMontarCteOpen && (
+  <ViagemMontarCte
+    isOpen={modalMontarCteOpen}
+    onClose={() => setModalMontarCteOpen(false)}
+  />
+)}
+
+
+{modalMontarMinutaOpen && (
+  <ViagemMontarMinuta
+    isOpen={modalMontarMinutaOpen}
+    onClose={() => setModalMontarMinutaOpen(false)}
   />
 )}
 
