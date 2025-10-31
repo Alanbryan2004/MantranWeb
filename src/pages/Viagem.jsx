@@ -6,6 +6,7 @@ import ViagemEncerramento from "./ViagemEncerramento";
 import { useNavigate } from "react-router-dom";
 import ViagemMontarCte from "./ViagemMontarCte";
 import ViagemMontarMinuta from "./ViagemMontarMinuta";
+import ViagemPagamento from "./ViagemPagamento";
 
 
 import {
@@ -69,6 +70,7 @@ export default function Viagem({ open }) {
   const [modalCustosOpen, setModalCustosOpen] = useState(false);
   const [modalInicioOpen, setModalInicioOpen] = useState(false);
   const [modalMontarMinutaOpen, setModalMontarMinutaOpen] = useState(false);
+  const [modalDespesaOpen, setModalDespesaOpen] = useState(false);
 
 
 const [valorFrete, setValorFrete] = useState(1000);
@@ -123,6 +125,35 @@ const limparSelecaoConsulta = () =>
 
   
   const [docsViagem, setDocsViagem] = useState([]); // Documentos adicionados
+    // === Funções e cálculos da aba Doctos ===
+  const [todosSelecionados, setTodosSelecionados] = useState(false);
+
+useEffect(() => {
+  // Atualiza o flag quando todos os docs forem selecionados
+  if (docsViagem.length > 0) {
+    const allSelected = docsViagem.every((d) => d.selecionado);
+    setTodosSelecionados(allSelected);
+  } else {
+    setTodosSelecionados(false);
+  }
+}, [docsViagem]);
+
+const handleToggleSelecionarTodos = () => {
+  const novoEstado = !todosSelecionados;
+  setTodosSelecionados(novoEstado);
+  setDocsViagem((prev) => prev.map((d) => ({ ...d, selecionado: novoEstado })));
+};
+
+// Cálculo automático dos totais
+const qtDocs = docsViagem.length;
+const totalVrMercadoria = docsViagem.reduce(
+  (acc, d) => acc + (parseFloat(d.vrMercadoria || 0) || 0),
+  0
+);
+const totalFrete = docsViagem.reduce(
+  (acc, d) => acc + (parseFloat(d.valorFrete || 0) || 0),
+  0
+);
  
   // === Estado das despesas ===
 const [despesas, setDespesas] = useState([
@@ -136,11 +167,18 @@ const handleAdicionar = () => {
   const selecionados = docsAdicao.filter((d) => d.selecionado);
   if (selecionados.length === 0) return;
 
-  setDocsViagem((prev) => [...prev, ...selecionados]);
-  setDocsAdicao((prev) =>
-    prev.map((d) => ({ ...d, selecionado: false }))
-  );
+  // 🔹 Cria IDs únicos para evitar seleção duplicada entre linhas
+  const docsComIdUnico = selecionados.map((d) => ({
+    ...d,
+    id: `${Date.now()}-${Math.random()}`, // garante ID único
+    selecionado: false,
+  }));
+
+  // 🔹 Adiciona à grid principal e limpa seleção
+  setDocsViagem((prev) => [...prev, ...docsComIdUnico]);
+  setDocsAdicao((prev) => prev.map((d) => ({ ...d, selecionado: false })));
 };
+
 
 // Remove os documentos selecionados da grid principal
 const handleRemover = () => {
@@ -752,13 +790,14 @@ const handleRemoverDespesa = () => {
   </button>
 
    {/* Pagto */}
-  <button
-    title="Excluir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-      <DollarSign size={20} />
-      <span>Pagto</span>
-    </button>
+ <button
+  onClick={() => setModalPagamentoOpen(true)}  // <-- correto
+  title="Pagamento"
+  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+>
+  <DollarSign size={20} />
+  <span>Pagto</span>
+</button>
 
     
     {/* Monitoramento */}
@@ -1100,142 +1139,202 @@ const handleRemoverDespesa = () => {
 
 
         {/* ===================== ABA DOCTOS ===================== */}
+     
+
         {activeTab === "doctos" && (
           <div className="flex flex-col gap-2 p-2 min-w-0">
             {/* <div className="flex flex-row gap-2"> */}
-            {/* === CARD 1 - Documentos da Viagem === */}
-            <fieldset className="border border-gray-300 rounded p-3 w-full min-w-0">
-              <legend className="text-red-700 font-semibold px-2">Documentos da Viagem</legend>
+           {/* === CARD 1 - Documentos da Viagem === */}
+<fieldset className="border border-gray-300 rounded p-3 w-full min-w-0">
+  <legend className="text-red-700 font-semibold px-2">
+    Documentos da Viagem
+  </legend>
 
-              {/* ===== GRID COM ROLAGEM ===== */}
-              <div className="block border border-gray-300 rounded bg-white mt-2 max-h-[300px] overflow-x-auto overflow-y-auto">
-                <table className="min-w-[2400px] text-[12px] border-collapse">
-                  <thead className="bg-gray-100 text-gray-700">
-                    <tr>
-                      {[
-                        "OK",
-                        "St.",
-                        "Emp.",
-                        "Filial Doc.",
-                        "Razão Social Destinatário",
-                        "Nº Controle",
-                        "Nº Impresso",
-                        "Dt. Emissão",
-                        "Vols",
-                        "Peso Real",
-                        "Valor Frete",
-                        "Tp Cif/Fob",
-                        "Vr. Mercadoria",
-                        "Data Entrega",
-                        "Série CT",
-                        "Manifesto",
-                        "VR ICMS",
-                        "Status",
-                        "Doc",
-                        "Chave CTe",
-                        "Filial Viagem",
-                        "Substituído",
-                      ].map((h) => (
-                        <th key={h} className="border px-2 py-1 whitespace-nowrap">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {docsViagem.map((doc, i) => (
-                      <tr key={i} className="bg-white hover:bg-gray-100 transition">
-                        <td className="border text-center">
-                          <input type="checkbox" />
-                        </td>
-                        <td className="border text-center">I</td>
-                        <td className="border text-center">{doc.empresa}</td>
-                        <td className="border text-center">{doc.filial}</td>
-                        <td className="border px-2">{doc.razao}</td>
-                        <td className="border text-center">{doc.controle}</td>
-                        <td className="border text-center">{doc.impresso}</td>
-                        <td className="border text-center">{doc.emissao}</td>
-                        <td className="border text-right">1,000</td>
-                        <td className="border text-right">1,000</td>
-                        <td className="border text-right">125,00</td>
-                        <td className="border text-center">CIF</td>
-                        <td className="border text-right">1,00</td>
-                        <td className="border text-center">--</td>
-                        <td className="border text-center">001</td>
-                        <td className="border text-center">--</td>
-                        <td className="border text-right">8,75</td>
-                        <td className="border text-center">I</td>
-                        <td className="border text-center">CT</td>
-                        <td className="border text-center font-mono">--</td>
-                        <td className="border text-center">001</td>
-                        <td className="border text-center"></td>
-                      </tr>
-                    ))}
-                  </tbody>
+  {/* ===== GRID COM ROLAGEM ===== */}
+  <div className="block border border-gray-300 rounded bg-white mt-2 max-h-[300px] overflow-x-auto overflow-y-auto">
+    <table className="min-w-[2400px] text-[12px] border-collapse">
+      <thead className="bg-gray-100 text-gray-700">
+        <tr>
+          {[
+            "OK",
+            "St.",
+            "Emp.",
+            "Filial Doc.",
+            "Razão Social Destinatário",
+            "Nº Controle",
+            "Nº Impresso",
+            "Dt. Emissão",
+            "Vols",
+            "Peso Real",
+            "Valor Frete",
+            "Tp Cif/Fob",
+            "Vr. Mercadoria",
+            "Data Entrega",
+            "Série CT",
+            "Manifesto",
+            "VR ICMS",
+            "Status",
+            "Doc",
+            "Chave CTe",
+            "Filial Viagem",
+            "Substituído",
+          ].map((h) => (
+            <th key={h} className="border px-2 py-1 whitespace-nowrap">
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
 
-                </table>
-              </div>
+      <tbody>
+        {docsViagem.map((doc) => (
+          <tr
+            key={doc.id}
+            className={`${
+              doc.selecionado ? "bg-green-50" : "bg-white"
+            } hover:bg-gray-100 transition`}
+          >
+            <td className="border text-center">
+              <input
+                type="checkbox"
+                checked={doc.selecionado}
+                onChange={() =>
+                  setDocsViagem((prev) =>
+                    prev.map((d) =>
+                      d.id === doc.id
+                        ? { ...d, selecionado: !d.selecionado }
+                        : d
+                    )
+                  )
+                }
+              />
+            </td>
+            <td className="border text-center">I</td>
+            <td className="border text-center">{doc.empresa}</td>
+            <td className="border text-center">{doc.filial}</td>
+            <td className="border px-2">{doc.razao}</td>
+            <td className="border text-center">{doc.controle}</td>
+            <td className="border text-center">{doc.impresso}</td>
+            <td className="border text-center">{doc.emissao}</td>
+            <td className="border text-right">1,000</td>
+            <td className="border text-right">1,000</td>
+            <td className="border text-right">125,00</td>
+            <td className="border text-center">CIF</td>
+            <td className="border text-right">1,00</td>
+            <td className="border text-center">--</td>
+            <td className="border text-center">001</td>
+            <td className="border text-center">--</td>
+            <td className="border text-right">8,75</td>
+            <td className="border text-center">I</td>
+            <td className="border text-center">CT</td>
+            <td className="border text-center font-mono">--</td>
+            <td className="border text-center">001</td>
+            <td className="border text-center"></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
-              {/* === LEGENDA DE STATUS === */}
-              <div className="flex items-center gap-3 mt-2 text-[12px] flex-wrap">
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 bg-gray-300 border"></div>
-                  <span>Não Iniciada</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 bg-green-400 border"></div>
-                  <span>Entregues</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 bg-blue-400 border"></div>
-                  <span>Circs c/ IDR</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 bg-red-400 border"></div>
-                  <span>Não Entregues</span>
-                </div>
+  {/* === LEGENDA DE STATUS + BOTÕES === */}
+  <div className="flex items-center gap-3 mt-2 text-[12px] flex-wrap">
+    <div className="flex items-center gap-1">
+      <div className="w-3 h-3 bg-gray-300 border"></div>
+      <span>Não Iniciada</span>
+    </div>
+    <div className="flex items-center gap-1">
+      <div className="w-3 h-3 bg-green-400 border"></div>
+      <span>Entregues</span>
+    </div>
+    <div className="flex items-center gap-1">
+      <div className="w-3 h-3 bg-blue-400 border"></div>
+      <span>Circs c/ IDR</span>
+    </div>
+    <div className="flex items-center gap-1">
+      <div className="w-3 h-3 bg-red-400 border"></div>
+      <span>Não Entregues</span>
+    </div>
 
-                <div className="flex items-center gap-2 ml-auto flex-wrap">
-                  {[
-                    "Selecionar Todos",
-                    "Minuta",
-                    "Baixar",
-                    "Manifestar",
-                    "Imprimir",
-                    "SEFAZ",
-                    "Remover",
-                  ].map((btn) => (
-                    <button
-                      key={btn}
-                      className={`border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] ${btn === "Remover" ? "text-red-600" : ""
-                        }`}
-                    >
-                      {btn}
-                    </button>
-                  ))}
-                </div>
-              </div>
+    <div className="flex items-center gap-2 ml-auto flex-wrap">
+      {/* Selecionar/Limpar Todos */}
+      <button
+        onClick={handleToggleSelecionarTodos}
+        className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px] flex items-center gap-1"
+      >
+        {todosSelecionados ? (
+          <>
+            <RotateCcw size={14} className="text-red-600" />
+            Limpar Seleção
+          </>
+        ) : (
+          <>
+            <CheckCircle size={14} className="text-green-600" />
+            Selecionar Todos
+          </>
+        )}
+      </button>
 
-              {/* === TOTAIS === */}
-              <div className="flex items-center justify-between mt-3 flex-wrap">
-                <div className="flex items-center gap-3 text-[13px] flex-wrap">
-                  <Label>QT Docs</Label>
-                  <Txt className="w-[60px]" defaultValue="1" />
-                  <Label>Vr. Mercadoria</Label>
-                  <Txt className="w-[80px]" defaultValue="125" />
-                  <Label>Frete</Label>
-                  <Txt className="w-[80px]" defaultValue="125,00" />
-                  <Label>Cubagem</Label>
-                  <Txt className="w-[80px]" defaultValue="0" />
-                  <Label>Frete Peso</Label>
-                  <Txt className="w-[80px]" defaultValue="125,00" />
-                  <Label>Frete Líquido</Label>
-                  <Txt className="w-[80px]" defaultValue="116,25" />
-                </div>
-              </div>
-            </fieldset>
+      {/* Outros botões */}
+      <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
+        Minuta
+      </button>
+      <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
+        Baixar
+      </button>
+      <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
+        Manifestar
+      </button>
+      <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
+        Imprimir
+      </button>
+      <button className="border border-gray-300 rounded px-3 py-1 hover:bg-gray-100 text-[13px]">
+        SEFAZ
+      </button>
 
-            {/* === CARD 2 - Adicionar CTRC's === */}
+      {/* Remover */}
+      <button
+        onClick={handleRemover}
+        className="border border-gray-300 rounded px-3 py-1 hover:bg-red-50 text-[13px] text-red-600 flex items-center gap-1"
+      >
+        <Trash2 size={14} />
+        Remover
+      </button>
+    </div>
+  </div>
+
+  {/* === TOTAIS === */}
+  <div className="flex items-center justify-between mt-3 flex-wrap">
+    <div className="flex items-center gap-3 text-[13px] flex-wrap">
+      <Label>QT Docs</Label>
+      <Txt className="w-[60px] text-center" value={qtDocs} readOnly />
+      <Label>Vr. Mercadoria</Label>
+      <Txt
+        className="w-[100px] text-right"
+        value={totalVrMercadoria.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+        })}
+        readOnly
+      />
+      <Label>Frete</Label>
+      <Txt
+        className="w-[100px] text-right"
+        value={totalFrete.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+        })}
+        readOnly
+      />
+      <Label>Cubagem</Label>
+      <Txt className="w-[80px]" defaultValue="0" />
+      <Label>Frete Peso</Label>
+      <Txt className="w-[80px]" defaultValue="125,00" />
+      <Label>Frete Líquido</Label>
+      <Txt className="w-[80px]" defaultValue="116,25" />
+    </div>
+  </div>
+</fieldset>
+
+
+ 
             {/* === CARD 2 - Adicionar CTRC's === */}
             <fieldset className="border border-gray-300 rounded p-3 w-full min-w-0">
               <legend className="text-red-700 font-semibold px-2">Adicionar CTRC's na Viagem</legend>
@@ -1667,7 +1766,7 @@ const handleRemoverDespesa = () => {
 {/* ===== LINHA 8 - BOTÕES ===== */}
 <div className="flex justify-end gap-2 mt-2">
 <button
-  onClick={() => setModalPagamentoOpen(true)}
+  onClick={() => setModalDespesaOpen(true)}   // <-- aqui está a correção
   className="border border-gray-300 rounded px-3 py-[4px] text-[12px] flex items-center gap-1 text-green-700"
 >
   <DollarSign size={14} /> Pagamento
@@ -1842,20 +1941,22 @@ const handleRemoverDespesa = () => {
           </div> 
         )} 
   {/* === MODAIS === */}
-        {modalPagamentoOpen && (
-          <ViagemDespesa
-            isOpen={modalPagamentoOpen}
-            onClose={() => setModalPagamentoOpen(false)}
-          />
-        )}
 
-        {modalCustosOpen && (
-          <ViagemCustosOperacionais
-            isOpen={modalCustosOpen}
-            onClose={() => setModalCustosOpen(false)}
-          />
-        )}
-      
+
+{modalDespesaOpen && (
+  <ViagemDespesa
+    isOpen={modalDespesaOpen}
+    onClose={() => setModalDespesaOpen(false)}
+  />
+)}
+
+{modalCustosOpen && (
+  <ViagemCustosOperacionais
+    isOpen={modalCustosOpen}
+    onClose={() => setModalCustosOpen(false)}
+  />
+)}
+
 {modalEncerrarOpen && (
   <ViagemEncerramento
     isOpen={modalEncerrarOpen}
@@ -1864,6 +1965,7 @@ const handleRemoverDespesa = () => {
   />
 )}
 
+
 {modalMontarCteOpen && (
   <ViagemMontarCte
     isOpen={modalMontarCteOpen}
@@ -1871,6 +1973,12 @@ const handleRemoverDespesa = () => {
   />
 )}
 
+{modalPagamentoOpen && (
+  <ViagemPagamento
+    isOpen={modalPagamentoOpen}
+    onClose={() => setModalPagamentoOpen(false)}
+  />
+)}
 
 {modalMontarMinutaOpen && (
   <ViagemMontarMinuta
@@ -1879,13 +1987,14 @@ const handleRemoverDespesa = () => {
   />
 )}
 
-      {modalInicioOpen && (
+{modalInicioOpen && (
   <ViagemInicio
     isOpen={modalInicioOpen}
     onClose={() => setModalInicioOpen(false)}
     onConfirm={(dados) => console.log("Início da viagem:", dados)}
   />
 )}
+
       </div> 
     </div> 
   );
