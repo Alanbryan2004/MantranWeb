@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import ViagemMontarCte from "./ViagemMontarCte";
 import ViagemMontarMinuta from "./ViagemMontarMinuta";
 import ViagemPagamento from "./ViagemPagamento";
+import ViagemMonitoramento from "./ViagemMonitoramento";
 
 
 import {
@@ -71,6 +72,7 @@ export default function Viagem({ open }) {
   const [modalInicioOpen, setModalInicioOpen] = useState(false);
   const [modalMontarMinutaOpen, setModalMontarMinutaOpen] = useState(false);
   const [modalDespesaOpen, setModalDespesaOpen] = useState(false);
+  const [modalMonitoramentoOpen, setModalMonitoramentoOpen] = useState(false);
 
 
 const [valorFrete, setValorFrete] = useState(1000);
@@ -801,12 +803,13 @@ const handleRemoverDespesa = () => {
 
     
     {/* Monitoramento */}
-  <button
-    title="Excluir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-      <Truck size={18} />
-      <span>Monitorar</span>
+<button
+  onClick={() => setModalMonitoramentoOpen(true)}
+  title="Monitoramento"
+  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+>
+  <MapPin size={18} className="text-red-700" />
+  <span>Monitorar</span>
 </button>
 
 {/* Buonny */}
@@ -1940,6 +1943,139 @@ const handleRemoverDespesa = () => {
 </fieldset>
           </div> 
         )} 
+
+{/* ===================== ABA ENTREGAS ===================== */}
+{activeTab === "entregas" && (
+  <>
+    {/* === CARD 1 - FILTROS === */}
+    <fieldset className="border border-gray-300 rounded p-3 bg-white">
+      <legend className="text-red-700 font-semibold px-2">Filtros</legend>
+
+      <div className="grid grid-cols-12 gap-2 items-center text-[13px]">
+        {/* Filial */}
+        <div className="col-span-3 flex items-center gap-1">
+          <Label className="whitespace-nowrap">Filial</Label>
+          <Sel className="flex-1">
+            <option>001 - TESTE MANTRAN</option>
+          </Sel>
+        </div>
+
+        {/* Veículo */}
+        <div className="col-span-3 flex items-center gap-1">
+          <Label>Veículo</Label>
+          <Sel className="flex-1">
+            <option>REN5J17 - VW 24280 CRM 6X2 - BITRUCK - BRASÍLIA</option>
+          </Sel>
+        </div>
+
+        {/* Período */}
+        <div className="col-span-3 flex items-center gap-1">
+          <Label>Período</Label>
+          <Txt type="date" className="flex-1" defaultValue="2025-01-01" />
+          <Label className="mx-1">até</Label>
+          <Txt type="date" className="flex-1" defaultValue="2025-01-03" />
+        </div>
+
+        {/* Ocorrência */}
+        <div className="col-span-1 flex items-center gap-1">
+          <Label>Ocorrência</Label>
+          <Txt className="w-full text-center" defaultValue="2" />
+        </div>
+
+        {/* Motorista */}
+        <div className="col-span-2 flex items-center gap-1">
+          <Label>Motorista</Label>
+          <Txt className="flex-1" defaultValue="01628446760" />
+        </div>
+
+        <div className="col-span-2">
+          <Txt className="w-full" defaultValue="ALAN DA COSTA" />
+        </div>
+
+        {/* Botões */}
+        <div className="col-span-2 flex justify-end gap-2">
+          <button className="border border-gray-300 rounded px-3 py-[4px] text-[13px] hover:bg-gray-100 flex items-center gap-1">
+            <Search size={14} className="text-red-700" />
+            Pesquisar
+          </button>
+          <button className="border border-gray-300 rounded px-3 py-[4px] text-[13px] hover:bg-gray-100 flex items-center gap-1">
+            <FileSpreadsheet size={14} className="text-blue-700" />
+            Rel Ocorrência
+          </button>
+        </div>
+      </div>
+    </fieldset>
+
+    {/* === CARD 2 - GRID === */}
+    <fieldset className="border border-gray-300 rounded p-3 bg-white mt-3 flex-1 min-h-0">
+      <legend className="text-red-700 font-semibold px-2">Entregas da Viagem</legend>
+
+      {/* 🔹 Grid com rolagem interna apenas nela */}
+      <div className="flex-1 min-h-[300px] max-h-[400px] overflow-auto border border-gray-200 rounded min-w-0">
+        <table className="w-full text-[12px] border-collapse">
+          <thead className="bg-gray-100 sticky top-0 z-10">
+            <tr>
+              {[
+                "Filial",
+                "Nº Documento",
+                "Tipo Documento",
+                "Nº Placa",
+                "Motorista",
+                "Cliente",
+                "Destinatário",
+                "Cidade Entrega",
+                "UF",
+                "DT Entrega Fim",
+                "HR Entrega Fim",
+                "Cód. Ocorrência",
+                "Descrição Ocorrência",
+              ].map((h) => (
+                <th key={h} className="border px-2 py-1 text-left whitespace-nowrap">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(10)].map((_, i) => (
+              <tr
+                key={i}
+                className={`${
+                  i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                } hover:bg-red-50 cursor-pointer transition`}
+              >
+                <td className="border px-2 py-1 text-center">001</td>
+                <td className="border px-2 py-1 text-center">{`18570${i}`}</td>
+                <td className="border px-2 py-1 text-center">CT</td>
+                <td className="border px-2 py-1 text-center">RXW4I56</td>
+                <td className="border px-2 py-1">ALAN DA COSTA</td>
+                <td className="border px-2 py-1">HNK-ITU (1) MATRIZ</td>
+                <td className="border px-2 py-1">HNK-ITU (1) MATRIZ</td>
+                <td className="border px-2 py-1">SALVADOR</td>
+                <td className="border px-2 py-1 text-center">BA</td>
+                <td className="border px-2 py-1 text-center">03/01/2025</td>
+                <td className="border px-2 py-1 text-center">15:45</td>
+                <td className="border px-2 py-1 text-center">2</td>
+                <td className="border px-2 py-1 text-left">Descarga Parcial</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Rodapé de total */}
+      <div className="flex justify-between items-center mt-2 text-[13px] text-gray-700">
+        <div>
+          Total de Registros Exibidos: <b>10</b>
+        </div>
+      </div>
+    </fieldset>
+  </>
+)}
+
+
+
+        
   {/* === MODAIS === */}
 
 
@@ -1977,6 +2113,12 @@ const handleRemoverDespesa = () => {
   <ViagemPagamento
     isOpen={modalPagamentoOpen}
     onClose={() => setModalPagamentoOpen(false)}
+  />
+)}
+
+{modalMonitoramentoOpen && (
+  <ViagemMonitoramento
+    onClose={() => setModalMonitoramentoOpen(false)}
   />
 )}
 
