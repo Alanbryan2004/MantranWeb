@@ -402,10 +402,15 @@ setUsuarios((prev) => {
         </div>
 
         {/* === TABELA FRETE === */}
-        <button className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1">
-          <FileSpreadsheet className="w-5 h-5 text-red-700" />
-          {open && <span className="ml-3">Tabela Frete</span>}
-        </button>
+      <Link
+  to="/tabelafrete"
+  className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700"
+>
+  <FileSpreadsheet className="w-5 h-5 text-red-700" />
+  {open && <span className="ml-3">Tabela Frete</span>}
+</Link>
+
+        
 
         {/* === FATURAMENTO === */}
         <div

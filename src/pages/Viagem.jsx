@@ -1947,66 +1947,80 @@ const handleRemoverDespesa = () => {
 {/* ===================== ABA ENTREGAS ===================== */}
 {activeTab === "entregas" && (
   <>
-    {/* === CARD 1 - FILTROS === */}
-    <fieldset className="border border-gray-300 rounded p-3 bg-white">
-      <legend className="text-red-700 font-semibold px-2">Filtros</legend>
+    {/* === CARD 1 E CARD 2 - FILTROS === */}
+<div className="flex gap-3">
+  {/* === CARD 1 - FILTROS === */}
+  <fieldset className="border border-gray-300 rounded p-3 bg-white flex-1">
+    <legend className="text-red-700 font-semibold px-2">Filtros</legend>
 
-      <div className="grid grid-cols-12 gap-2 items-center text-[13px]">
-        {/* Filial */}
-        <div className="col-span-3 flex items-center gap-1">
+    <div className="flex flex-col gap-2 text-[13px]">
+      {/* === Linha 1 - Filial / Ocorrência === */}
+      <div className="grid grid-cols-12 gap-2 items-center">
+        {/* Filial à esquerda */}
+        <div className="col-span-9 flex items-center gap-2">
           <Label className="whitespace-nowrap">Filial</Label>
           <Sel className="flex-1">
-            <option>001 - TESTE MANTRAN</option>
+            <option>001 - ENTREGATEX LOGISTICA E TECNOLO</option>
           </Sel>
         </div>
 
-        {/* Veículo */}
-        <div className="col-span-3 flex items-center gap-1">
-          <Label>Veículo</Label>
-          <Sel className="flex-1">
-            <option>REN5J17 - VW 24280 CRM 6X2 - BITRUCK - BRASÍLIA</option>
-          </Sel>
-        </div>
-
-        {/* Período */}
-        <div className="col-span-3 flex items-center gap-1">
-          <Label>Período</Label>
-          <Txt type="date" className="flex-1" defaultValue="2025-01-01" />
-          <Label className="mx-1">até</Label>
-          <Txt type="date" className="flex-1" defaultValue="2025-01-03" />
-        </div>
-
-        {/* Ocorrência */}
-        <div className="col-span-1 flex items-center gap-1">
-          <Label>Ocorrência</Label>
-          <Txt className="w-full text-center" defaultValue="2" />
-        </div>
-
-        {/* Motorista */}
-        <div className="col-span-2 flex items-center gap-1">
-          <Label>Motorista</Label>
-          <Txt className="flex-1" defaultValue="01628446760" />
-        </div>
-
-        <div className="col-span-2">
-          <Txt className="w-full" defaultValue="ALAN DA COSTA" />
-        </div>
-
-        {/* Botões */}
-        <div className="col-span-2 flex justify-end gap-2">
-          <button className="border border-gray-300 rounded px-3 py-[4px] text-[13px] hover:bg-gray-100 flex items-center gap-1">
-            <Search size={14} className="text-red-700" />
-            Pesquisar
-          </button>
-          <button className="border border-gray-300 rounded px-3 py-[4px] text-[13px] hover:bg-gray-100 flex items-center gap-1">
-            <FileSpreadsheet size={14} className="text-blue-700" />
-            Rel Ocorrência
-          </button>
+        {/* Ocorrência à direita */}
+        <div className="col-span-3 flex items-center gap-2 justify-end">
+          <Label className="whitespace-nowrap">Ocorrência</Label>
+          <Txt className="w-[80px] text-center" defaultValue="0" />
         </div>
       </div>
-    </fieldset>
 
-    {/* === CARD 2 - GRID === */}
+      {/* === Linha 2 - Veículo / Motorista === */}
+      <div className="grid grid-cols-12 gap-2 items-center">
+        {/* Veículo à esquerda */}
+        <div className="col-span-6 flex items-center gap-2">
+          <Label>Veículo</Label>
+          <Txt className="w-[100px] text-center" defaultValue="0000008" />
+          <Txt
+            className="flex-1"
+            defaultValue="EQA3A89 - FORD CARGO 1517 E - TOCO - IMPERATRIZ"
+          />
+        </div>
+
+        {/* Motorista à direita */}
+        <div className="col-span-6 flex items-center gap-2 justify-end">
+          <Label>Motorista</Label>
+          <Txt className="w-[130px] text-center" defaultValue="03521315904" />
+          <Txt className="flex-1" defaultValue="CLEBSON PEREIRA DE SOUSA" />
+        </div>
+      </div>
+
+      {/* === Linha 3 - Período === */}
+      <div className="grid grid-cols-12 gap-2 items-center">
+        <div className="col-span-12 flex items-center gap-2">
+          <Label>Período</Label>
+          <Txt type="date" className="w-[160px]" defaultValue="2025-11-01" />
+          <Label className="mx-1">até</Label>
+          <Txt type="date" className="w-[160px]" defaultValue="2025-11-04" />
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  {/* === CARD 2 - BOTÕES === */}
+  <fieldset className="border border-gray-300 rounded p-3 bg-white w-[150px] flex flex-col justify-start items-stretch gap-2">
+    <legend className="text-red-700 font-semibold px-2">Ações</legend>
+
+    <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+      <Search size={16} className="text-red-700" />
+      Pesquisar
+    </button>
+
+    <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+      <FileSpreadsheet size={16} className="text-blue-700" />
+      Rel Ocorrência
+    </button>
+  </fieldset>
+</div>
+
+
+    {/* === CARD 3 - GRID === */}
     <fieldset className="border border-gray-300 rounded p-3 bg-white mt-3 flex-1 min-h-0">
       <legend className="text-red-700 font-semibold px-2">Entregas da Viagem</legend>
 
@@ -2073,6 +2087,166 @@ const handleRemoverDespesa = () => {
   </>
 )}
 
+{/* ===================== ABA FICHA VIAGEM ===================== */}
+{activeTab === "ficha" && (
+  <div className="flex flex-col gap-3 p-2">
+    {/* === LINHA SUPERIOR (CARD 1 + CARD 2) === */}
+    <div className="flex gap-3">
+      {/* === CARD 1 - FILTROS === */}
+      <fieldset className="border border-gray-300 rounded p-3 bg-white flex-1">
+        <legend className="text-red-700 font-semibold px-2">
+          Filtros
+        </legend>
+
+        <div className="flex flex-col gap-2 text-[13px]">
+          {/* === Linha 1 - Filial / Motorista === */}
+          <div className="grid grid-cols-12 gap-2 items-center">
+            {/* Filial à esquerda */}
+            <div className="col-span-7 flex items-center gap-2">
+              <Label className="whitespace-nowrap">Filial</Label>
+              <Sel className="flex-1">
+                <option>001 - TESTE MANTRAN</option>
+              </Sel>
+            </div>
+
+            {/* Motorista à direita */}
+            <div className="col-span-5 flex items-center gap-2 justify-end">
+              <Label>Motorista</Label>
+              <Txt className="w-[130px] text-center" defaultValue="02986891869" />
+              <Txt
+                className="flex-1"
+                defaultValue="ABSON FRANCISCO PEREIRA ESTEVE"
+              />
+            </div>
+          </div>
+
+          {/* === Linha 2 - Status Ficha / Período === */}
+          <div className="grid grid-cols-12 gap-2 items-center">
+            {/* Status Ficha à esquerda */}
+            <div className="col-span-7 flex items-center gap-2">
+              <Label className="whitespace-nowrap">Status Ficha</Label>
+              <Sel className="flex-1">
+                <option>ABERTA</option>
+                <option>ENCERRADA</option>
+                <option>TODAS</option>
+              </Sel>
+            </div>
+
+            {/* Período à direita */}
+            <div className="col-span-5 flex items-center gap-2 justify-end">
+              <Label>Período</Label>
+              <Txt type="date" className="w-[140px]" defaultValue="2024-01-01" />
+              <Label>Até</Label>
+              <Txt type="date" className="w-[140px]" defaultValue="2025-11-04" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      {/* === CARD 2 - BOTÕES === */}
+      <fieldset className="border border-gray-300 rounded p-3 bg-white w-[150px] flex flex-col justify-start items-stretch gap-2">
+        <legend className="text-red-700 font-semibold px-2">Ações</legend>
+
+        <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+          <Search size={16} className="text-red-700" />
+          Pesquisar
+        </button>
+
+        <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
+          <Printer size={16} className="text-blue-700" />
+          Imprimir
+        </button>
+      </fieldset>
+    </div>
+
+    {/* === CARD 3 - GRID === */}
+    <fieldset className="border border-gray-300 rounded p-3 bg-white">
+      <legend className="text-red-700 font-semibold px-2">
+        Fichas de Viagem
+      </legend>
+
+      <div className="border border-gray-300 rounded bg-white max-h-[300px] overflow-y-auto overflow-x-auto min-w-0">
+        <table className="min-w-[1000px] text-[12px] border-collapse">
+          <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10">
+            <tr>
+              {[
+                "Status Ficha",
+                "Nº Viagem",
+                "Motorista",
+                "Valor Crédito",
+                "Valor Débito",
+                "Saldo Atual",
+                "Data Fechamento",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="border px-2 py-1 text-left whitespace-nowrap"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {[
+              {
+                status: "ENCERRADA",
+                viagem: "035417",
+                motorista: "FERNANDO JOSE NASCIMENTO BIAO",
+                credito: "0,00",
+                debito: "100,00",
+                saldo: "-100",
+                fechamento: "17/01/2024 00:00:00",
+               
+              },
+              {
+                status: "ABERTA",
+                viagem: "035418",
+                motorista: "FERNANDO JOSE NASCIMENTO BIAO",
+                credito: "0,00",
+                debito: "100,00",
+                saldo: "-100",
+                fechamento: "",
+               
+              },
+              {
+                status: "ABERTA",
+                viagem: "039126",
+                motorista: "MATHEUS VINICIUS",
+                credito: "0,00",
+                debito: "10,00",
+                saldo: "-10",
+                fechamento: "",
+                
+              },
+            ].map((row, i) => (
+              <tr
+                key={i}
+                className={`${row.cor} hover:bg-gray-100 transition`}
+              >
+                <td className="border px-2">{row.status}</td>
+                <td className="border px-2 text-center">{row.viagem}</td>
+                <td className="border px-2">{row.motorista}</td>
+                <td className="border px-2 text-right">{row.credito}</td>
+                <td className="border px-2 text-right">{row.debito}</td>
+                <td className="border px-2 text-right">{row.saldo}</td>
+                <td className="border px-2 text-center">
+                  {row.fechamento || "--"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* === TOTAL DE REGISTROS === */}
+      <div className="text-[13px] text-gray-700 mt-2">
+        Total de Registros: <b>3</b>
+      </div>
+    </fieldset>
+  </div>
+)}
 
 
         

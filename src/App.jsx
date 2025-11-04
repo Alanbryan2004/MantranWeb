@@ -12,6 +12,7 @@ import Viagem from "./pages/Viagem";
 import Dashboard from "./pages/Dashboard"; // 👈 ADICIONAR ESTA LINHA
 import Parametro from "./pages/Parametro";
 import "./index.css";
+import TabelaFrete from "./pages/TabelaFrete";
 
 
 export default function App() {
@@ -54,6 +55,9 @@ if (isLogged && window.location.pathname === "/login") {
 
             {/* Página Cliente Divisão */}
             <Route path="/cliente-divisao" element={<ClienteDivisao />} />
+
+            {/* Página Tabela Frete */}
+            <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
 
             {/* NFSE */}
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
