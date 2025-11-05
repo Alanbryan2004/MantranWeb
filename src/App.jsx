@@ -9,10 +9,11 @@ import Login from "./components/Login";
 import Coleta from "./pages/Coleta";
 import Manifesto from "./pages/Manifesto";
 import Viagem from "./pages/Viagem";
-import Dashboard from "./pages/Dashboard"; // 👈 ADICIONAR ESTA LINHA
+import Dashboard from "./pages/Dashboard"; 
 import Parametro from "./pages/Parametro";
 import "./index.css";
 import TabelaFrete from "./pages/TabelaFrete";
+import NotaFiscalEDI from "./pages/NotaFiscalEDI";
 
 
 export default function App() {
@@ -71,8 +72,12 @@ if (isLogged && window.location.pathname === "/login") {
             {/* Viagem */}
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
 
-            {/* 👇 NOVA ROTA ADICIONADA */}
+            {/*  PARAMETROS */}
             <Route path="/parametros" element={<Parametro open={sidebarOpen}/>} />
+            
+            {/*  NOTA FISCAL EDI */}
+            <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
+
 
             {/* Página padrão — Dashboard inicial */}
             <Route

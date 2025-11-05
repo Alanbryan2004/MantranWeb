@@ -314,16 +314,19 @@ setUsuarios((prev) => {
           {activeMenu === "operacao" && (
 <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
     <ul className="text-[13px] text-gray-700">
-      {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto", "Minuta"].map(
+    {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto", "Minuta"].map(
   (item) => (
-    <li
-      key={item}
-      className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-      onMouseEnter={() => setActiveSubMenu(item)}
-      onMouseLeave={() => setActiveSubMenu(null)}
-    >
+   <li
+  key={item}
+  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+  onMouseEnter={() => setActiveSubMenu(item)}
+  onMouseLeave={() => setActiveSubMenu(null)}
+>
+
       {item}
-      {["Conhecimento", "Viagem", "Nota Fiscal", "Manifesto"].includes(item) && (
+      {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto"].includes(
+        item
+      ) && (
         <ChevronRight
           size={13}
           className="absolute right-3 top-2 text-gray-500"
@@ -331,18 +334,26 @@ setUsuarios((prev) => {
       )}
 
       {/* === Submenu de Coleta === */}
-      {item === "Coleta" && (
-        <Link
-          to="/coleta"
-          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-        >
-      Coleta
-        </Link>
+      {item === "Coleta" && activeSubMenu === item && (
+        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+          <Link
+            to="/coleta"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Coleta
+          </Link>
+          <Link
+            to="/motivocoleta"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Motivo Coleta
+          </Link>
+        </div>
       )}
 
       {/* === Submenu de Conhecimento === */}
       {item === "Conhecimento" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
           <Link
             to="/cte"
             className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
@@ -368,12 +379,33 @@ setUsuarios((prev) => {
         </div>
       )}
 
+      {/* === Submenu de Viagem === */}
+      {item === "Viagem" && activeSubMenu === item && (
+        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+          <Link
+            to="/viagem"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Viagem
+          </Link>
+          <Link
+            to="/acertocontas"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Acerto de Contas
+          </Link>
+        </div>
+      )}
+
       {/* === Submenu de Nota Fiscal === */}
       {item === "Nota Fiscal" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+          <Link
+            to="/notafiscaledi"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
             Nota Fiscal EDI
-          </div>
+          </Link>
           <Link
             to="/nfse"
             className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
@@ -384,17 +416,38 @@ setUsuarios((prev) => {
       )}
 
       {/* === Submenu de Manifesto === */}
-{item === "Manifesto" && (
-  <Link
-    to="/manifesto"
-    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-  >
-    Manifesto
-  </Link>
-)}
+      {item === "Manifesto" && activeSubMenu === item && (
+        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+          <Link
+            to="/manifesto"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Manifesto
+          </Link>
+          <Link
+            to="/consultasefazmdfe"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Consulta Sefaz
+          </Link>
+          <Link
+            to="/parametromanifesto"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Parâmetro
+          </Link>
+          <Link
+            to="/baixamanifesto"
+            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+          >
+            Baixar Manifesto
+          </Link>
+        </div>
+      )}
     </li>
   )
 )}
+
 
     </ul>
   </div>
