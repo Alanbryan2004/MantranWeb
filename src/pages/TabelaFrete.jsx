@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import TabelaFreteTarifa from "./TabelaFreteTarifa";
 import TabelaFreteIncluirTarifa from "./TabelaFreteIncluirTarifa";
 import TabelaFreteIncluirFaixa from "./TabelaFreteIncluirFaixa";
+import TabelaFretePercurso from "./TabelaFretePercurso";
+import TabelaFreteReajuste from "./TabelaFreteReajuste";
+import TabelaFreteImportacao from "./TabelaFreteImportacao";
 
 
 import {
@@ -52,6 +55,17 @@ export default function TabelaFrete({ open }) {
   const [mostrarTarifa, setMostrarTarifa] = useState(false);
   const [mostrarIncluirTarifa, setMostrarIncluirTarifa] = useState(false);
   const [mostrarIncluirFaixa, setMostrarIncluirFaixa] = useState(false);
+  const [mostrarPercurso, setMostrarPercurso] = useState(false);
+  const [mostrarReajuste, setMostrarReajuste] = useState(false);
+  const [mostrarImportacao, setMostrarImportacao] = useState(false);
+
+
+useEffect(() => {
+  const abrirPercurso = () => setMostrarPercurso(true);
+  window.addEventListener("abrirPercurso", abrirPercurso);
+  return () => window.removeEventListener("abrirPercurso", abrirPercurso);
+}, []);
+
 
 useEffect(() => {
   const abrirIncluirTarifa = () => setMostrarIncluirTarifa(true);
@@ -71,6 +85,50 @@ useEffect(() => {
   window.addEventListener("abrirIncluirTarifa", abrirModal);
   return () => window.removeEventListener("abrirIncluirTarifa", abrirModal);
 }, []);
+
+// === LÓGICA DA ABA CONSULTA ===
+const [filtroDescricao, setFiltroDescricao] = useState("");
+const [filtroTipoTabela, setFiltroTipoTabela] = useState("");
+const [filtroTipos, setFiltroTipos] = useState([]);
+const [filtroDataInicio, setFiltroDataInicio] = useState("");
+const [filtroDataFim, setFiltroDataFim] = useState("");
+const [filtroVigencia, setFiltroVigencia] = useState("vigentes");
+
+const tabelas = [
+  { empresa: "001", tabela: "000001", descricao: "TABELA PADRAO", inicio: "01/01/2018", termino: "12/12/2026", faixas: 6, cubagem: 300, tpFrete: "Peso", tipo: "C" },
+  { empresa: "001", tabela: "000002", descricao: "TABELA VENDA", inicio: "01/03/2024", termino: "30/06/2024", faixas: 2, cubagem: 300, tpFrete: "Veiculo", tipo: "A" },
+  { empresa: "001", tabela: "000009", descricao: "IMPORTAÇÃO COMPRA", inicio: "01/01/2024", termino: "04/01/2025", faixas: 5, cubagem: 300, tpFrete: "NF", tipo: "O" },
+  { empresa: "001", tabela: "000014", descricao: "TABELA HNK", inicio: "01/01/2018", termino: "12/12/2026", faixas: 6, cubagem: 300, tpFrete: "Peso", tipo: "C" },
+  { empresa: "001", tabela: "000016", descricao: "TABELA MARFRIG", inicio: "10/12/2023", termino: "30/06/2026", faixas: 2, cubagem: 300, tpFrete: "Cubagem", tipo: "A" },
+  { empresa: "001", tabela: "000020", descricao: "TABELA CASAS BAHIA", inicio: "03/07/2022", termino: "04/12/2025", faixas: 5, cubagem: 300, tpFrete: "NF", tipo: "O" },
+    { empresa: "001", tabela: "000025", descricao: "TABELA SAMSUNG", inicio: "01/01/2018", termino: "12/12/2026", faixas: 6, cubagem: 300, tpFrete: "Cubagem", tipo: "C" },
+  { empresa: "001", tabela: "000032", descricao: "TABELA JFK", inicio: "01/01/2025", termino: "30/06/2026", faixas: 2, cubagem: 300, tpFrete: "Veiculo", tipo: "A" },
+  { empresa: "001", tabela: "000040", descricao: "TABELA MAGAZINE LUIZA", inicio: "01/04/2024", termino: "04/12/2025", faixas: 5, cubagem: 300, tpFrete: "Palets", tipo: "O" },
+];
+
+const toggleTipoFiltro = (tipo) => {
+  setFiltroTipos((prev) =>
+    prev.includes(tipo) ? prev.filter((t) => t !== tipo) : [...prev, tipo]
+  );
+};
+
+const handleLimpar = () => {
+  setFiltroDescricao("");
+  setFiltroTipoTabela("");
+  setFiltroTipos([]);
+  setFiltroDataInicio("");
+  setFiltroDataFim("");
+  setFiltroVigencia("vigentes");
+};
+
+const tabelasFiltradas = tabelas.filter((t) => {
+  const descMatch = t.descricao.toLowerCase().includes(filtroDescricao.toLowerCase());
+  const tipoMatch = !filtroTipoTabela || t.tipo === filtroTipoTabela;
+  const tipoTabelaMatch = filtroTipos.length === 0 || filtroTipos.includes(t.tpFrete);
+  const inicioOk = !filtroDataInicio || new Date(t.inicio) >= new Date(filtroDataInicio);
+  const fimOk = !filtroDataFim || new Date(t.termino) <= new Date(filtroDataFim);
+  return descMatch && tipoMatch && tipoTabelaMatch && inicioOk && fimOk;
+});
 
 
   return (
@@ -430,9 +488,161 @@ useEffect(() => {
           </>
         )}
 
+{/* ===================== ABA CONSULTA ===================== */}
+{activeTab === "consulta" && (
+  <>
+    <div className="flex gap-3">
+      {/* === CARD 1 - FILTROS === */}
+      <fieldset className="border border-gray-300 rounded p-3 flex-[2]">
+        <legend className="text-red-700 font-semibold px-2">Filtros</legend>
+
+        <div className="flex items-center gap-2 mb-2">
+          <Label className="w-[90px] text-right">Descrição</Label>
+          <Txt
+            type="text"
+            placeholder="Pesquisar descrição..."
+            value={filtroDescricao}
+            onChange={(e) => setFiltroDescricao(e.target.value)}
+            className="flex-1"
+          />
+          <Sel
+            value={filtroTipoTabela}
+            onChange={(e) => setFiltroTipoTabela(e.target.value)}
+            className="w-[180px]"
+          >
+            <option value="">Todos</option>
+            <option value="C">C - Cliente</option>
+            <option value="A">A - Agregado</option>
+            <option value="O">O - Compra</option>
+          </Sel>
+        </div>
+
+        <div className="flex flex-wrap gap-4 pl-[90px]">
+          {["Peso", "Cubagem", "Palets", "% Sobre NF", "Veiculo", "Km"].map((tipo) => (
+            <label key={tipo} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={filtroTipos.includes(tipo)}
+                onChange={() => toggleTipoFiltro(tipo)}
+              />
+              {tipo}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {/* === CARD 2 - PERÍODO === */}
+      <fieldset className="border border-gray-300 rounded p-3 flex-[1.5]">
+        <legend className="text-red-700 font-semibold px-2">Período de Vigência</legend>
+
+        <div className="flex items-center gap-2 mb-2">
+          <Label className="w-[60px] text-right">De</Label>
+          <Txt
+            type="date"
+            value={filtroDataInicio}
+            onChange={(e) => setFiltroDataInicio(e.target.value)}
+          />
+          <Label className="w-[40px] text-right">Até</Label>
+          <Txt
+            type="date"
+            value={filtroDataFim}
+            onChange={(e) => setFiltroDataFim(e.target.value)}
+          />
+        </div>
+
+        <div className="flex gap-4 justify-center">
+          <label className="flex items-center gap-1">
+            <input
+              type="radio"
+              name="vigencia"
+              value="vigentes"
+              checked={filtroVigencia === "vigentes"}
+              onChange={(e) => setFiltroVigencia(e.target.value)}
+            />
+            Somente Vigentes
+          </label>
+          <label className="flex items-center gap-1">
+            <input
+              type="radio"
+              name="vigencia"
+              value="vencidas"
+              checked={filtroVigencia === "vencidas"}
+              onChange={(e) => setFiltroVigencia(e.target.value)}
+            />
+            Vencidas / Não Vigentes
+          </label>
+        </div>
+      </fieldset>
+
+      {/* === CARD 3 - BOTÕES === */}
+      <fieldset className="border border-gray-300 rounded p-3 flex-[0.8] flex flex-col justify-center items-center gap-3">
+        <button
+          onClick={() => {}}
+          className="flex items-center gap-2 border border-gray-300 rounded px-4 py-1 hover:bg-gray-100 text-red-700 text-sm font-medium"
+        >
+          <Navigation2 size={16} /> Pesquisar
+        </button>
+        <button
+          onClick={handleLimpar}
+          className="flex items-center gap-2 border border-gray-300 rounded px-4 py-1 hover:bg-gray-100 text-red-700 text-sm font-medium"
+        >
+          <RotateCcw size={16} /> Limpar
+        </button>
+      </fieldset>
+    </div>
+
+    {/* === CARD 4 - GRID === */}
+    <fieldset className="border border-gray-300 rounded p-0 mt-3 overflow-hidden">
+      <legend className="text-red-700 font-semibold px-2">Resultados</legend>
+      <table className="min-w-full border-collapse text-[13px]">
+        <thead className="bg-gray-200 text-gray-800 font-semibold text-center">
+          <tr>
+            <th className="border border-gray-300 px-2 py-1">Empresa</th>
+            <th className="border border-gray-300 px-2 py-1">Tabela</th>
+            <th className="border border-gray-300 px-2 py-1">Descrição</th>
+            <th className="border border-gray-300 px-2 py-1">Início</th>
+            <th className="border border-gray-300 px-2 py-1">Término</th>
+            <th className="border border-gray-300 px-2 py-1">Faixas</th>
+            <th className="border border-gray-300 px-2 py-1">Cubagem</th>
+            <th className="border border-gray-300 px-2 py-1">TP Frete</th>
+            <th className="border border-gray-300 px-2 py-1">Tabela</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tabelasFiltradas.map((t, i) => (
+            <tr
+              key={i}
+              className={`text-center ${
+                i % 2 === 0 ? "bg-gray-50" : "bg-white"
+              } hover:bg-gray-100`}
+            >
+              <td className="border border-gray-300 px-2 py-[3px]">{t.empresa}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.tabela}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.descricao}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.inicio}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.termino}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.faixas}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.cubagem}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.tpFrete}</td>
+              <td className="border border-gray-300 px-2 py-[3px]">{t.tipo}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="text-right text-[12px] px-3 py-1 bg-gray-50 border-t border-gray-300">
+        Total de Registros: {tabelasFiltradas.length}
+      </div>
+    </fieldset>
+  </>
+)}
+
+
+
         {/* ===================== RODAPÉ ===================== */}
         <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between text-red-700 
   sticky bottom-0 left-0 right-0 z-50 shadow-md">
+
+    
 
           <div className="flex items-center gap-5 text-red-700">
             {[
@@ -442,9 +652,9 @@ useEffect(() => {
               { icon: Edit, label: "Alterar" },
               { icon: Trash2, label: "Excluir" },
               { icon: DollarSign, label: "Tarifa", action: () => setMostrarTarifa(true) },
-              { icon: Navigation2, label: "Percurso" },
-              { icon: Percent, label: "Reajuste" },
-              { icon: Upload, label: "Importar" },
+              { icon: Navigation2, label: "Percurso", action: () => window.dispatchEvent(new CustomEvent("abrirPercurso")) },
+              { icon: Percent, label: "Reajuste", action: () => setMostrarReajuste(true) },
+              { icon: Upload, label: "Importar", action: () => setMostrarImportacao(true) },
             ].map(({ icon: Icon, label, action }) => (
               <button
                 key={label}
@@ -472,6 +682,21 @@ useEffect(() => {
         {mostrarIncluirFaixa && (
   <TabelaFreteIncluirFaixa onClose={() => setMostrarIncluirFaixa(false)} />
 )}    
+
+{mostrarPercurso && (
+  <TabelaFretePercurso onClose={() => setMostrarPercurso(false)} />
+)}
+
+{mostrarReajuste && (
+  <TabelaFreteReajuste onClose={() => setMostrarReajuste(false)} />
+)}
+
+
+{mostrarImportacao && (
+  <TabelaFreteImportacao onClose={() => setMostrarImportacao(false)} />
+)}
+
+
 
 
           </div>
