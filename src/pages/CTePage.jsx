@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CustosAdicionaisModal from "./CustosAdicionaisModal";
 import NotasFiscalModal from "./NotasFiscalModal";
+import ValoresCte from "./ValoresCte";
+import NotaFiscalCte from "./NotaFiscalCte";
 import Comex from "./Comex";
+import ConsultaSefazCte from "./ConsultaSefazCte";
 import {
   XCircle,
   RotateCcw,
@@ -74,6 +77,11 @@ export default function CTePage({ open }) {
   const [showCustos, setShowCustos] = useState(false);
   const [showNotaFiscal, setShowNotaFiscal] = useState(false);
   const [showComex, setShowComex] = useState(false);
+  const [showValoresCte, setShowValoresCte] = useState(false);
+  const [showNotaFiscalCte, setShowNotaFiscalCte] = useState(false);
+  const [showConsultaSefaz, setShowConsultaSefaz] = useState(false);
+
+
   const abrirModal = (nome) => {
   if (nome === "custos") {
     setShowCustos(true); // abre o modal de Custos Adicionais
@@ -465,24 +473,88 @@ export default function CTePage({ open }) {
 </div>
 
             {/* Rodapé */}
-            <div className="border-t border-gray-300 bg-white py-1 px-3 flex items-center gap-3 text-red-700">
-              <button onClick={() => navigate("/")}>
-  <XCircle title="Fechar Tela" />
+<div className="border-t border-gray-300 bg-white py-1 px-3 flex items-center justify-between text-red-700">
+  {/* Ícones com legendas */}
+  <div className="flex items-center gap-4">
+    <button onClick={() => navigate("/")} className="flex flex-col items-center text-[11px]">
+      <XCircle size={18} />
+      <span>Fechar</span>
+    </button>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <RotateCcw size={18} />
+      <span>Limpar</span>
+    </div>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <PlusCircle size={18} />
+      <span>Incluir</span>
+    </div>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <Edit size={18} />
+      <span>Alterar</span>
+    </div>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <Trash2 size={18} />
+      <span>Excluir</span>
+    </div>
+
+   <button
+  onClick={() => setShowNotaFiscalCte(true)}
+  className="flex flex-col items-center text-[11px]"
+  title="Notas Fiscais do CTe"
+>
+  <FileText size={18} />
+  <span>Nota Fiscal</span>
 </button>
-              <RotateCcw title="Limpar" />
-              <PlusCircle title="Incluir" />
-              <Edit title="Alterar" />
-              <Trash2 title="Excluir" />
-              <FileText title="Nota Fiscal" />
-              <DollarSign title="Valores do CTe" />
-              <button onClick={() => setShowComex(true)} title="Comex">
-  <Globe2 />
+
+    {/* === Botão que abre a tela de Valores do CTe === */}
+   <button
+  onClick={() => setShowValoresCte(true)}
+  title="Valores do CTe"
+  className="flex flex-col items-center text-[11px]"
+>
+  <DollarSign size={18} />
+  <span>Valores</span>
 </button>
-              <FileSpreadsheet title="GNRE" />
-              <Printer title="Imprimir" />
-              <Copy title="Duplicar CTe" />
-              <Search title="Consulta Sefaz" />
-            </div>
+
+
+    <button
+      onClick={() => setShowComex(true)}
+      className="flex flex-col items-center text-[11px]"
+    >
+      <Globe2 size={18} />
+      <span>Comex</span>
+    </button>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <FileSpreadsheet size={18} />
+      <span>GNRE</span>
+    </div>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <Printer size={18} />
+      <span>Imprimir</span>
+    </div>
+
+    <div className="flex flex-col items-center text-[11px]">
+      <Copy size={18} />
+      <span>Duplicar</span>
+    </div>
+
+  <button
+  onClick={() => setShowConsultaSefaz(true)}
+  className="flex flex-col items-center text-[11px]"
+  title="Consulta SEFAZ do CTe"
+>
+  <Search size={18} />
+  <span>Sefaz</span>
+</button>
+  </div>
+</div>
+
           </>
         ) : (
           <div className="flex-1 flex flex-col gap-2 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto">
@@ -670,6 +742,13 @@ export default function CTePage({ open }) {
 />
 
 {showComex && <Comex onClose={() => setShowComex(false)} />}
+
+{showValoresCte && <ValoresCte onClose={() => setShowValoresCte(false)} />}
+
+  {showNotaFiscalCte && <NotaFiscalCte onClose={() => setShowNotaFiscalCte(false)} />}
+
+  {showConsultaSefaz && <ConsultaSefazCte onClose={() => setShowConsultaSefaz(false)} />}      
+
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import GerarColetaModal from "./GerarColetaModal";
+import ValoresCte from "./ValoresCte";
 import {
   XCircle,
   RotateCcw,
@@ -37,12 +39,15 @@ function Sel({ children, ...rest }) {
 
 export default function NotaFiscalEDI({ open }) {
   const navigate = useNavigate();
+  const [showGerarColeta, setShowGerarColeta] = useState(false);
+  const [showValoresCte, setShowValoresCte] = useState(false);
 const [notas, setNotas] = useState(
   [...Array(8)].map((_, i) => ({
     id: i,
     filial: "001",
-    nota: `0000${i + 1}`,
+    nota: `1871005${i + 1}`,
     serie: "1",
+    emissao:"12/10/2025",
     cnpjEmissor: "50763606001408",
     cliente: "50763606001408",
     remetente: "RAMUTH E RAMUTH LTDA - CD 2",
@@ -189,12 +194,19 @@ const [notas, setNotas] = useState(
     <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1">
       <Search size={14} /> Pesquisar
     </button>
-    <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1">
-      <Truck size={14} /> Gerar Coleta
-    </button>
-    <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1">
-      <FileSpreadsheet size={14} /> Gerar CT-e
-    </button>
+    <button
+  onClick={() => setShowGerarColeta(true)}
+  className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1"
+>
+  <Truck size={14} /> Gerar Coleta
+</button>
+    <button
+  onClick={() => setShowValoresCte(true)}
+  className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1"
+>
+  <FileSpreadsheet size={14} /> Gerar CT-e
+</button>
+
   </div>
 </fieldset>
 
@@ -368,7 +380,7 @@ const [notas, setNotas] = useState(
           { icon: PlusCircle, label: "Incluir" },
           { icon: Edit, label: "Alterar" },
           { icon: Trash2, label: "Excluir" },
-          { icon: Search, label: "Pesquisa Avançada" },
+          { icon: Search, label: "Avançada" },
           { icon: FileSpreadsheet, label: "Exportar" },
           { icon: Truck, label: "Romaneio" },
         ].map(({ icon: Icon, label, action }, i) => (
@@ -381,6 +393,14 @@ const [notas, setNotas] = useState(
             <span>{label}</span>
           </button>
         ))}
+        
+        {/* === Gerar Coleta === */}
+        {showGerarColeta && <GerarColetaModal onClose={() => setShowGerarColeta(false)} />}
+
+        {/* === Gerar Cte === */}
+        {showValoresCte && <ValoresCte onClose={() => setShowValoresCte(false)} />}
+  
+
       </div>
     </div>
   );

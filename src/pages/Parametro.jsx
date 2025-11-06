@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { ChevronRight,RotateCcw, ChevronLeft, CheckCircle, XCircle, Palette, LayoutGrid, SlidersHorizontal } from "lucide-react";
+import {
+  ChevronRight,
+  RotateCcw,
+  ChevronLeft,
+  CheckCircle,
+  XCircle,
+  Palette,
+  LayoutGrid,
+  SlidersHorizontal,
+  Settings2,
+} from "lucide-react";
+import ParametroTaxa from "./ParametroTaxa"; // ⬅️ Import do novo modal
 
 export default function Parametro() {
   const [modoCards, setModoCards] = useState(false);
@@ -7,6 +18,7 @@ export default function Parametro() {
   const [telaInicial, setTelaInicial] = useState("CTe");
   const [exibirDashboard, setExibirDashboard] = useState(true);
   const [corFundo, setCorFundo] = useState("#f3f4f6");
+  const [abrirModalTaxas, setAbrirModalTaxas] = useState(false); // ⬅️ Controle do modal
 
   const salvarParametros = () => {
     localStorage.setItem("param_telaInicial", telaInicial);
@@ -24,7 +36,6 @@ export default function Parametro() {
     localStorage.removeItem("param_corFundo");
   };
 
-  // Componentes reutilizáveis
   const Card = ({ title, children }) => (
     <div className="border border-gray-300 rounded-lg bg-white p-4 shadow-sm space-y-2">
       <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">{title}</h2>
@@ -32,7 +43,6 @@ export default function Parametro() {
     </div>
   );
 
-  // Conteúdo compartilhado
   const campos = (
     <>
       {/* Campo: Tela inicial */}
@@ -83,18 +93,26 @@ export default function Parametro() {
           Exemplo
         </div>
       </div>
+
+      {/* NOVO: Botão de configuração de taxas */}
+      <div className="flex items-center gap-3 mt-2">
+        <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
+          Taxas do CT-e:
+        </label>
+        <button
+          onClick={() => setAbrirModalTaxas(true)}
+          className="flex items-center gap-1 text-sm border border-gray-300 rounded px-2 py-[4px] text-red-700 hover:bg-gray-100"
+        >
+          <Settings2 size={14} /> Selecionar Taxas
+        </button>
+      </div>
     </>
   );
 
-  // Exibição em cards por etapas
   const renderPorCards = () => (
     <div className="space-y-3">
-      {step === 1 && (
-        <Card title="Configuração da Tela Inicial">{campos}</Card>
-      )}
-      {step === 2 && (
-        <Card title="Visualização">{campos}</Card>
-      )}
+      {step === 1 && <Card title="Configuração da Tela Inicial">{campos}</Card>}
+      {step === 2 && <Card title="Visualização">{campos}</Card>}
       {step === 3 && (
         <Card title="Finalização">
           <p className="text-sm text-gray-700 mb-2">
@@ -130,10 +148,7 @@ export default function Parametro() {
     </div>
   );
 
-  // Exibição completa (tudo em uma tela)
-  const renderCompleto = () => (
-    <div className="space-y-3">{campos}</div>
-  );
+  const renderCompleto = () => <div className="space-y-3">{campos}</div>;
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -189,6 +204,9 @@ export default function Parametro() {
           )}
         </div>
       </div>
+
+      {/* Modal de seleção de taxas */}
+      {abrirModalTaxas && <ParametroTaxa onClose={() => setAbrirModalTaxas(false)} />}
     </div>
   );
 }

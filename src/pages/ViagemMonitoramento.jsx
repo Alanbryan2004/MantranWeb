@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 const iconCaminhao = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/726/726455.png",
   iconSize: [32, 32],
 });
 const iconEntrega = new L.Icon({
