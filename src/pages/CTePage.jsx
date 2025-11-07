@@ -182,7 +182,9 @@ export default function CTePage({ open }) {
                     <Label className="w-12 text-right">Tipo</Label>
                     <Sel className="w-32" defaultValue="0 - Normal">
                       <option>0 - Normal</option>
-                      <option>1 - Subcontratado</option>
+                      <option>1 - Complementar</option>
+                      <option>3 - Substituição</option>
+                      <option>4 - Simplificado</option>
                     </Sel>
                     <Label className="w-20 text-right ml-auto">Nº Controle</Label>
                     <Txt className="w-24" defaultValue="002444" />
@@ -386,7 +388,7 @@ export default function CTePage({ open }) {
     <Sel className="w-[140px]" defaultValue="01 - Rodoviário">
       <option>01 - Rodoviário</option>
       <option>02 - Aéreo</option>
-      <option>03 - Aquaviário</option>
+      <option>06 - Multimodal</option>
     </Sel>
   </div>
 </div>
@@ -409,8 +411,10 @@ export default function CTePage({ open }) {
   <Label className="w-20 text-right">Tp. Serviço</Label>
   <Sel className="w-[160px]" defaultValue="0 - Frete Normal">
     <option>0 - Frete Normal</option>
-    <option>1 - Coleta</option>
-    <option>2 - Entrega</option>
+    <option>1 - Subcontratado</option>
+    <option>2 - Redespacho</option>
+    <option>3 - Redespacho Intermediário</option>
+    <option>4 - Serv. Vinc. Multimodal</option>
   </Sel>
 
   <div className="flex items-center gap-2 flex-grow justify-end">
