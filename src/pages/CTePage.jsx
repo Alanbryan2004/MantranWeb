@@ -6,6 +6,10 @@ import ValoresCte from "./ValoresCte";
 import NotaFiscalCte from "./NotaFiscalCte";
 import Comex from "./Comex";
 import ConsultaSefazCte from "./ConsultaSefazCte";
+import CteComplementar from "./CteComplementar";
+import CteSubstituicao from "./CteSubstituicao";
+import CteSubcontratado from "./CteSubcontratado";
+
 import {
   XCircle,
   RotateCcw,
@@ -36,16 +40,17 @@ function Txt(props) {
     />
   );
 }
-function Sel({ children, ...rest }) {
+function Sel({ children, className = "", ...rest }) {
   return (
     <select
       {...rest}
-      className="border border-gray-300 rounded px-1 py-[2px] h-[26px]"
+      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] ${className}`}
     >
       {children}
     </select>
   );
 }
+
 
 // Ícone lápis reutilizável
 function IconeLapis({ title = "", onClick }) {
@@ -80,6 +85,12 @@ export default function CTePage({ open }) {
   const [showValoresCte, setShowValoresCte] = useState(false);
   const [showNotaFiscalCte, setShowNotaFiscalCte] = useState(false);
   const [showConsultaSefaz, setShowConsultaSefaz] = useState(false);
+  const [showComplementar, setShowComplementar] = useState(false);
+  const [showSubstituicao, setShowSubstituicao] = useState(false);
+  const [showDocs, setShowDocs] = useState(false);
+  const [tpServico, setTpServico] = useState("0"); // armazena o código do Tp. Serviço
+
+
 
 
   const abrirModal = (nome) => {
@@ -180,49 +191,59 @@ export default function CTePage({ open }) {
                       <option>002 - RODOVIÁRIO VTA LTDA EPP</option>
                     </Sel>
                     <Label className="w-12 text-right">Tipo</Label>
-                    <Sel className="w-32" defaultValue="0 - Normal">
-                      <option>0 - Normal</option>
-                      <option>1 - Complementar</option>
-                      <option>3 - Substituição</option>
-                      <option>4 - Simplificado</option>
-                    </Sel>
-                    <Label className="w-20 text-right ml-auto">Nº Controle</Label>
-                    <Txt className="w-24" defaultValue="002444" />
+                    <Sel
+  className="w-32"
+  defaultValue="0 - Normal"
+  onChange={(e) => {
+    const valor = e.target.value;
+    if (valor.startsWith("1")) setShowComplementar(true);
+    else if (valor.startsWith("3")) setShowSubstituicao(true);
+  }}
+>
+  <option>0 - Normal</option>
+  <option>1 - Complementar</option>
+  <option>3 - Substituição</option>
+  <option>4 - Simplificado</option>
+</Sel>
+                    <Label className="w-20 text-right ml-auto">Controle</Label>
+                    <Txt className="w-20" defaultValue="002444" />
                     <IconeLapis title="Abrir controle" onClick={() => abrirModal("controle")} />
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Label className="w-20 text-right">Nº Coleta</Label>
-                    <Txt className="w-28" />
-                    <Label className="w-20 text-right">Nº Viagem</Label>
-                    <Txt className="w-28" defaultValue="000298" />
-                    <Label className="w-16 text-right">Nº Minuta</Label>
+                    <Label className="w-20 text-right">Coleta</Label>
+                    <Txt className="w-20" />
+                    <Label className="w-20 text-right">Viagem</Label>
+                    <Txt className="w-20" defaultValue="000298" />
+                    <Label className="w-16 text-right">Minuta</Label>
                     <Txt className="w-20" defaultValue="0" />
                     <Label className="w-20 text-right ml-auto">Nº CTe</Label>
                     <Txt className="w-24" defaultValue="002420" />
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Label className="w-20 text-right">Reboque</Label>
-                    <Txt className="w-36" defaultValue="0000033" />
+                    <Label className="w-20 text-right ml-[-25px]">Reboque</Label>
+                    <Txt className="w-20" defaultValue="0000033" />
                     <Txt
                       className="flex-1"
                       defaultValue="GFN1J43 - CARRETA BRANCA 7 EIXOS - SEMI REBOQUE"
                     />
                     <IconeLapis title="Abrir cadastro reboque" onClick={() => abrirModal("reboque")} />
                     <Label className="w-16 text-right ml-auto">Série</Label>
-                    <Txt className="w-20" defaultValue="001" />
+                    <Txt className="w-24" defaultValue="001" />
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Label className="w-28 text-right">Veículo Solicit.</Label>
                     <Sel className="w-48" defaultValue="Truck">
+                      <option>3/4</option>
                       <option>Truck</option>
                       <option>Toco</option>
-                      <option>Carreta</option>
+                      <option>Cavalo Mecânico</option>
+                      <option>Vuc</option>
                     </Sel>
-                    <Label className="w-24 text-right">Nº Romaneio</Label>
-                    <Txt className="flex-1" />
+                    <Label className="w-20 text-right ml-auto">Nº Romaneio</Label>
+                    <Txt className="w-24" />
                   </div>
                 </div>
               </div>
@@ -409,22 +430,37 @@ export default function CTePage({ open }) {
   <Txt className="w-[25ch]" maxLength={25} defaultValue="Sem Ocorrência" />
 
   <Label className="w-20 text-right">Tp. Serviço</Label>
-  <Sel className="w-[160px]" defaultValue="0 - Frete Normal">
-    <option>0 - Frete Normal</option>
-    <option>1 - Subcontratado</option>
-    <option>2 - Redespacho</option>
-    <option>3 - Redespacho Intermediário</option>
-    <option>4 - Serv. Vinc. Multimodal</option>
-  </Sel>
+<Sel
+  className="w-[160px]"
+  value={tpServico}
+  onChange={(e) => setTpServico(e.target.value.split(" ")[0])}
+>
+  <option value="0">0 - Frete Normal</option>
+  <option value="1">1 - Subcontratado</option>
+  <option value="2">2 - Redespacho</option>
+  <option value="3">3 - Redespacho Intermediário</option>
+  <option value="4">4 - Serv. Vinc. Multimodal</option>
+</Sel>
+
 
   <div className="flex items-center gap-2 flex-grow justify-end">
-    <button
-      onClick={() => abrirModal("docs")}
-      className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded px-1 h-[24px] text-[12px] shrink-0"
-      title="Documentos"
-    >
-      Docs
-    </button>
+
+
+<button
+  onClick={() => setShowDocs(true)}
+  disabled={!["1", "2", "3", "4"].includes(tpServico)}
+  className={`border border-gray-300 rounded px-2 h-[24px] text-[12px] ${
+    ["1", "2", "3", "4"].includes(tpServico)
+      ? "bg-gray-50 hover:bg-gray-100 text-gray-700"
+      : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
+  }`}
+>
+  Docs
+</button>
+
+
+
+
   </div>
 </div>
 
@@ -458,7 +494,7 @@ export default function CTePage({ open }) {
     <Txt type="date" className="w-[110px] flex-shrink-0" defaultValue="2025-10-15" />
 
     <Label className="w-[80px] text-right">Operador</Label>
-    <Txt className="flex-1 min-w-[100px]" defaultValue="SUPORTE" />
+    <Txt className="flex-1 min-w-[80px]" defaultValue="SUPORTE" />
 
     <Label className="w-[90px] text-right">Nº Cotação</Label>
     <Txt className="w-[100px] flex-shrink-0" />
@@ -752,6 +788,25 @@ export default function CTePage({ open }) {
   {showNotaFiscalCte && <NotaFiscalCte onClose={() => setShowNotaFiscalCte(false)} />}
 
   {showConsultaSefaz && <ConsultaSefazCte onClose={() => setShowConsultaSefaz(false)} />}      
+  
+  {showComplementar && (
+  <CteComplementar onClose={() => setShowComplementar(false)} />
+)}
+
+{showSubstituicao && (
+  <CteSubstituicao onClose={() => setShowSubstituicao(false)} />
+)}
+
+
+
+{showDocs && (
+  <CteSubcontratado
+    tpServico={tpServico} // passa o tipo de serviço
+    onClose={() => setShowDocs(false)}
+  />
+)}
+
+
 
     </div>
   );
