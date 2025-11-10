@@ -89,6 +89,46 @@ export default function CTePage({ open }) {
   const [showSubstituicao, setShowSubstituicao] = useState(false);
   const [showDocs, setShowDocs] = useState(false);
   const [tpServico, setTpServico] = useState("0"); // armazena o código do Tp. Serviço
+  // === Estados e funções da ABA CONSULTA ===
+const [showCheckboxes, setShowCheckboxes] = useState(false);
+const [selecionados, setSelecionados] = useState([]);
+
+const dados = [
+  ["001","001","I","058840","000001","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
+  ["001","001","I","058839","000002","001","Autorizado o uso do CT-e","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
+   ["001","001","I","058838","000003","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
+  ["001","001","I","058837","000004","001","540 - Rejeição","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
+   ["001","001","I","058836","000005","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
+  ["001","001","I","058835","000006","001","Autorizado o uso do CT-e5","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
+   ["001","001","I","058834","000007","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
+  ["001","001","I","058833","000008","001","240 - Evento Vinculado ao CT-e","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
+];
+
+const toggleSelecionado = (index) => {
+  setSelecionados((prev) =>
+    prev.includes(index)
+      ? prev.filter((i) => i !== index)
+      : [...prev, index]
+  );
+};
+
+const toggleSelecionarTodos = () => {
+  if (selecionados.length === dados.length) setSelecionados([]);
+  else setSelecionados(dados.map((_, i) => i));
+};
+
+const handleExcluir = () => {
+  if (selecionados.length === 0) {
+    alert("Selecione pelo menos um CT-e para excluir.");
+    return;
+  }
+  if (window.confirm("Deseja realmente excluir os CT-es selecionados?")) {
+    const novos = dados.filter((_, i) => !selecionados.includes(i));
+    console.log("CT-es excluídos:", selecionados);
+    setSelecionados([]);
+    // Aqui futuramente fará integração com backend
+  }
+};
 
 
 
@@ -306,203 +346,193 @@ export default function CTePage({ open }) {
 </div>
 
 
-           {/* CARD 3 — Entrega e Modalidade */}
+ {/* === CARD 3 — Entrega e Modalidade === */}
 <div className="border border-gray-300 rounded p-1 bg-white space-y-2">
-  <h2 className="text-red-700 font-semibold text-[13px] mb-1">Entrega e Modalidade</h2>
+  <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+    Entrega e Modalidade
+  </h2>
 
-  {/* Linha 1 */}
-  <div className="flex flex-wrap items-center gap-2">
-    <Label className="w-24 text-right">End. Entrega</Label>
-    <Txt className="w-[700px]" defaultValue="AV JEQUITAIÁ" />
-    <Label className="w-6 text-right">UF</Label>
-    <Txt className="w-[40px] text-center" defaultValue="SP" />
-    <Label className="w-8 text-right">Nº</Label>
-    <Txt className="w-[60px]" defaultValue="92" />
-    <Label className="w-14 text-right">Bairro</Label>
-    <Txt className="flex-1" defaultValue="AGUA DE MENINOS" />
+  {/* Linha Endereço Entrega */}
+  <div className="grid grid-cols-[100px_1.5fr_40px_80px_70px_0.5fr] gap-2 items-center">
+    <Label className="text-right">End. Entrega</Label>
+    <Txt className="w-full" defaultValue="AV JEQUITAIÁ" />
+
+    <Label className="text-right">Nº</Label>
+    <Txt className="w-full" defaultValue="92" />
+
+    <Label className="text-right">Bairro</Label>
+    <Txt className="w-full" defaultValue="AGUA DE MENINOS" />
   </div>
 
- <div className="flex items-center gap-2 w-full flex-wrap">
-  <Label className="w-28 text-right">Origem Frete</Label>
-  <Txt className="flex-1 min-w-[180px] max-w-[260px]" defaultValue="ITU" />
-  <Label className="w-6 text-right">UF</Label>
-  <Txt className="w-[50px] text-center" defaultValue="SP" />
-  <Label className="w-32 text-right">Cidade Entrega</Label>
-  <Txt className="flex-1 min-w-[200px] max-w-[260px]" defaultValue="SALVADOR" />
-  <Label className="w-6 text-right">UF</Label>
-  <Txt className="w-[50px] text-center" defaultValue="BA" />
+  {/* Linha Origem Frete */}
+  <div className="grid grid-cols-[100px_1fr_40px_60px_130px_1fr_40px_60px_160px_1fr] gap-2 items-center w-full">
+    <Label className="text-right">Origem Frete</Label>
+    <Txt className="w-full" defaultValue="ITU" />
 
-  <div className="flex items-center gap-2 flex-grow justify-end">
-    <Label className="w-32 text-right">Divisão/Loja</Label>
-    <Sel className="flex-1 min-w-[160px] max-w-[220px]" defaultValue="1054 - Leo Campinas">
+    <Label className="text-right">UF</Label>
+    <Txt className="w-full text-center" defaultValue="SP" />
+
+    <Label className="text-right">Cidade Entrega</Label>
+    <Txt className="w-full" defaultValue="SALVADOR" />
+
+    <Label className="text-right">UF</Label>
+    <Txt className="w-full text-center" defaultValue="BA" />
+
+    <Label className="text-right">Divisão/Loja</Label>
+    <Sel className="w-full" defaultValue="1054 - Leo Campinas">
       <option>1054 - Leo Campinas</option>
       <option>1500 - Leo CD</option>
     </Sel>
   </div>
-</div>
 
-
-  {/* Linha 3 */}
-  <div className="flex flex-wrap items-center gap-2">
-    <Label className="w-24 text-right">Modalidade</Label>
-    <Sel className="w-[180px]" defaultValue="C-CIF">
+  {/* Linha Modalidade */}
+  <div className="grid grid-cols-[100px_180px_90px_160px_60px_160px_60px_40px_100px_1fr] gap-2 items-center w-full">
+    <Label className="text-right">Modalidade</Label>
+    <Sel className="w-full" defaultValue="C-CIF">
       <option>C-CIF</option>
       <option>F-FOB</option>
     </Sel>
-    <Label className="w-20 text-right">Tp. Frete</Label>
-    <Sel className="w-[160px]" defaultValue="F - FATURADO" disabled>
+
+    <Label className="text-right">Tp. Frete</Label>
+    <Sel className="w-full" defaultValue="F - FATURADO" disabled>
       <option>F - FATURADO</option>
     </Sel>
-    <Label className="w-10 text-right">Rota</Label>
-    <Sel className="w-[160px]" disabled>
+
+    <Label className="text-right">Rota</Label>
+    <Sel className="w-full" disabled>
       <option></option>
     </Sel>
-    <Label className="w-10 text-right">Tipo</Label>
-    <Txt className="w-[40px] text-center" defaultValue="N" />
-    <Label className="w-16 text-right">Situação</Label>
-    <Txt className="flex-1" defaultValue="I - Impresso" />
+
+    <Label className="text-right">Tipo</Label>
+    <Txt className="w-full text-center" defaultValue="N" />
+
+    <Label className="text-right">Situação</Label>
+    <Txt className="w-full" defaultValue="I - Impresso" />
   </div>
 </div>
 
-
-{/* CARD 4 — Dados Complementares (4 linhas ajustadas) */}
+{/* === CARD 4 — Dados Complementares === */}
 <div className="border border-gray-300 rounded p-1 bg-white space-y-2">
   <h2 className="text-red-700 font-semibold text-[13px] mb-1">
     Dados Complementares
   </h2>
 
-  {/* Linha 1: Centro Custo - Carga Imo - Custos Adicionais - Tab. Frete - Modal */}
-<div className="flex items-center gap-2 w-full">
-  {/* Centro de Custo */}
-  <Label className="w-24 text-right">Centro Custo</Label>
-  <Sel className="flex-1 min-w-[250px] max-w-[400px]" defaultValue="Operacional">
-    <option>Operacional</option>
-    <option>Administrativo</option>
-    <option>Financeiro</option>
-    <option>Comercial</option>
-  </Sel>
+  {/* Linha 1: Centro Custo - Carga IMO - Custos - Tab Frete - Modal */}
+  <div className="grid grid-cols-[100px_1fr_100px_130px_90px_1fr_80px_160px] gap-2 items-center w-full">
+    <Label className="text-right">Centro Custo</Label>
+    <Sel className="w-full" defaultValue="Operacional">
+      <option>Operacional</option>
+      <option>Administrativo</option>
+      <option>Financeiro</option>
+      <option>Comercial</option>
+    </Sel>
 
-  {/* Checkbox e botão */}
-  <div className="flex items-center gap-1">
-    <input type="checkbox" className="w-4 h-4" id="cargaImo" />
-    <Label htmlFor="cargaImo">Carga IMO</Label>
-  </div>
+    <div className="flex items-center justify-center gap-1">
+      <input type="checkbox" className="w-4 h-4 accent-red-700" id="cargaImo" />
+      <Label htmlFor="cargaImo">Carga IMO</Label>
+    </div>
 
-  <button
-    onClick={() => abrirModal("custos")}
-    className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded px-2 h-[24px] text-[12px]"
-  >
-    Custos Adicionais
-  </button>
+    <button
+      onClick={() => abrirModal("custos")}
+      className="flex items-center justify-center gap-1 border border-gray-300 bg-white hover:bg-red-50 text-red-700 font-medium rounded-md h-[26px] px-3 text-[12px] shadow-sm transition"
+    >
+      <span>Custos Adicionais</span>
+    </button>
 
-  {/* Tab. Frete */}
-  <Label className="w-20 text-right">Tab. Frete</Label>
-  <Sel className="flex-1 min-w-[300px] max-w-[600px]" defaultValue="000083 - TESTE HNK">
-    <option>000083 - TESTE HNK</option>
-    <option>000084 - MATRIZ</option>
-    <option>000085 - CLIENTES MG</option>
-  </Sel>
+    <Label className="text-right">Tab. Frete</Label>
+    <Sel className="w-full" defaultValue="000083 - TESTE HNK">
+      <option>000083 - TESTE HNK</option>
+      <option>000084 - MATRIZ</option>
+      <option>000085 - CLIENTES MG</option>
+    </Sel>
 
-  {/* Modal alinhado à direita */}
-  <div className="flex items-center justify-end flex-grow">
-    <Label className="w-12 text-right">Modal</Label>
-    <Sel className="w-[140px]" defaultValue="01 - Rodoviário">
+    <Label className="text-right">Modal</Label>
+    <Sel className="w-full" defaultValue="01 - Rodoviário">
       <option>01 - Rodoviário</option>
       <option>02 - Aéreo</option>
       <option>06 - Multimodal</option>
     </Sel>
   </div>
-</div>
 
-  {/* Linha 2: CEP Origem - CEP Destino Calc - Peso Cálculo - Ocorrência (25) - Tp Serviço - Docs */}
-<div className="flex items-center gap-2 w-full flex-wrap">
-  <Label className="w-24 text-right">CEP Origem</Label>
-  <Txt className="w-[100px] text-center" defaultValue="13300-000" />
+  {/* Linha 2: CEP - Peso - Ocorrência - Tp Serv - Docs */}
+  <div className="grid grid-cols-[100px_100px_130px_100px_110px_80px_100px_1fr_110px_160px_80px] gap-2 items-center w-full">
+    <Label className="text-right">CEP Origem</Label>
+    <Txt className="text-center w-full" defaultValue="13300-000" />
 
-  <Label className="w-28 text-right">CEP Destino Cálc</Label>
-  <Txt className="w-[100px] text-center" defaultValue="40000-000" />
+    <Label className="text-right">CEP Destino Cálc</Label>
+    <Txt className="text-center w-full" defaultValue="40000-000" />
 
-  <Label className="w-24 text-right">Peso Cálculo</Label>
-  <Txt className="w-[80px] text-center" defaultValue="1.0000" />
+    <Label className="text-right">Peso Cálculo</Label>
+    <Txt className="text-center w-full" defaultValue="1.0000" />
 
-  <Label className="w-24 text-right">Ocorrência</Label>
-  {/* 25 caracteres visuais */}
-  <Txt className="w-[25ch]" maxLength={25} defaultValue="Sem Ocorrência" />
+    <Label className="text-right">Ocorrência</Label>
+    <Txt className="w-full" maxLength={25} defaultValue="Sem Ocorrência" />
 
-  <Label className="w-20 text-right">Tp. Serviço</Label>
-<Sel
-  className="w-[160px]"
-  value={tpServico}
-  onChange={(e) => setTpServico(e.target.value.split(" ")[0])}
->
-  <option value="0">0 - Frete Normal</option>
-  <option value="1">1 - Subcontratado</option>
-  <option value="2">2 - Redespacho</option>
-  <option value="3">3 - Redespacho Intermediário</option>
-  <option value="4">4 - Serv. Vinc. Multimodal</option>
-</Sel>
+    <Label className="text-right">Tp. Serviço</Label>
+    <Sel
+      className="w-full"
+      value={tpServico}
+      onChange={(e) => setTpServico(e.target.value.split(" ")[0])}
+    >
+      <option value="0">0 - Frete Normal</option>
+      <option value="1">1 - Subcontratado</option>
+      <option value="2">2 - Redespacho</option>
+      <option value="3">3 - Redespacho Intermediário</option>
+      <option value="4">4 - Serv. Vinc. Multimodal</option>
+    </Sel>
 
-
-  <div className="flex items-center gap-2 flex-grow justify-end">
-
-
-<button
-  onClick={() => setShowDocs(true)}
-  disabled={!["1", "2", "3", "4"].includes(tpServico)}
-  className={`border border-gray-300 rounded px-2 h-[24px] text-[12px] ${
-    ["1", "2", "3", "4"].includes(tpServico)
-      ? "bg-gray-50 hover:bg-gray-100 text-gray-700"
-      : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
-  }`}
->
-  Docs
-</button>
-
-
-
-
+    <button
+      onClick={() => setShowDocs(true)}
+      disabled={!["1", "2", "3", "4"].includes(tpServico)}
+      className={`justify-self-end border border-gray-300 rounded-md px-3 h-[26px] text-[12px] font-medium transition shadow-sm ${
+        ["1", "2", "3", "4"].includes(tpServico)
+          ? "bg-white hover:bg-red-50 text-red-700"
+          : "bg-gray-100 text-gray-400 cursor-not-allowed opacity-60"
+      }`}
+    >
+      Docs
+    </button>
   </div>
-</div>
 
-
-  {/* Linha 3: Seguro - Chave CTe - Tarifa */}
-  <div className="flex items-center gap-2 w-full flex-wrap">
-    <Label className="w-24 text-right">Seguro</Label>
-    <Sel className="w-[300px]" defaultValue="4 - Por conta do Emissor CTe">
+  {/* Linha 3: Seguro - Chave - Tarifa */}
+  <div className="grid grid-cols-[100px_280px_110px_1fr_60px_60px] gap-2 items-center w-full">
+    <Label className="text-right">Seguro</Label>
+    <Sel className="w-full" defaultValue="4 - Por conta do Emissor CTe">
       <option>4 - Por conta do Emissor CTe</option>
     </Sel>
 
-    <Label className="w-28 text-right">Chave CTe</Label>
+    <Label className="text-right">Chave CTe</Label>
     <Txt
-      className="flex-1 text-[12px]"
+      className="w-full text-[12px]"
       defaultValue="35251004086140014157001000058801393009188"
     />
 
-    <Label className="w-[60px] text-right">Tarifa</Label>
-    <Txt className="w-[40px] text-center" defaultValue="1" />
+    <Label className="text-right">Tarifa</Label>
+    <Txt className="w-full text-center" defaultValue="1" />
   </div>
 
-  {/* Linha 4: Cadastro - Atualizado em - Prev. Entrega - Operador - Nº Cotação - Nº Fatura */}
-  <div className="flex items-center gap-2 w-full flex-wrap">
-    <Label className="w-[70px] text-right">Cadastro</Label>
-    <Txt type="date" className="w-[110px] flex-shrink-0" defaultValue="2025-10-15" />
+  {/* Linha 4: Cadastro - Atualizado - Prev. Entrega - Operador - Cotação - Fatura */}
+  <div className="grid grid-cols-[100px_110px_110px_110px_110px_110px_80px_1fr_90px_100px_80px_100px] gap-2 items-center w-full overflow-hidden">
+    <Label className="text-right">Cadastro</Label>
+    <Txt type="date" className="w-full" defaultValue="2025-10-15" />
 
-    <Label className="w-[95px] text-right">Atualizado em</Label>
-    <Txt type="date" className="w-[110px] flex-shrink-0" defaultValue="2025-10-15" />
+    <Label className="text-right">Atualizado em</Label>
+    <Txt type="date" className="w-full" defaultValue="2025-10-15" />
 
-    <Label className="w-[95px] text-right">Prev. Entrega</Label>
-    <Txt type="date" className="w-[110px] flex-shrink-0" defaultValue="2025-10-15" />
+    <Label className="text-right">Prev. Entrega</Label>
+    <Txt type="date" className="w-full" defaultValue="2025-10-15" />
 
-    <Label className="w-[80px] text-right">Operador</Label>
-    <Txt className="flex-1 min-w-[80px]" defaultValue="SUPORTE" />
+    <Label className="text-right">Operador</Label>
+    <Txt className="w-full min-w-[80px]" defaultValue="SUPORTE" />
 
-    <Label className="w-[90px] text-right">Nº Cotação</Label>
-    <Txt className="w-[100px] flex-shrink-0" />
+    <Label className="text-right">Nº Cotação</Label>
+    <Txt className="w-full min-w-[80px]" />
 
-    <Label className="w-[80px] text-right">Nº Fatura</Label>
-    <Txt className="w-[100px] flex-shrink-0" />
+    <Label className="text-right">Nº Fatura</Label>
+    <Txt className="w-full min-w-[80px]" />
   </div>
 </div>
+
 
 
             {/* Faixa de Averbação */}
@@ -599,6 +629,9 @@ export default function CTePage({ open }) {
         ) : (
           <div className="flex-1 flex flex-col gap-2 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto">
 
+ 
+  {/* ABA CONSULTA */}
+ 
   {/* CARD 1 — Filtros */}
   <div className="border border-gray-300 rounded p-2 bg-white">
     <h2 className="text-red-700 font-semibold text-[13px] mb-2">Parâmetros de Pesquisa</h2>
@@ -720,55 +753,112 @@ export default function CTePage({ open }) {
     </div>
   </div>
 
-  {/* CARD 2 — Grid */}
-  <div className="border border-gray-300 rounded p-2 bg-white">
-    <h2 className="text-red-700 font-semibold text-[13px] mb-1">
-      Relação de Conhecimentos Emitidos
-    </h2>
+  {/* CARD 2 — Grid de Conhecimentos */}
+<div className="border border-gray-300 rounded p-2 bg-white">
+  <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+    Relação de Conhecimentos Emitidos
+  </h2>
 
-    <div className="border border-gray-300 rounded overflow-auto">
-      <table className="min-w-full text-[12px] border-collapse">
-        <thead className="bg-gray-100 text-gray-700 border-b border-gray-300">
-          <tr>
-            <th className="px-2 py-1 border-r">Empresa</th>
-            <th className="px-2 py-1 border-r">Filial</th>
-            <th className="px-2 py-1 border-r">St.</th>
-            <th className="px-2 py-1 border-r">Nº Controle</th>
-            <th className="px-2 py-1 border-r">Nº Impresso</th>
-            <th className="px-2 py-1 border-r">Série</th>
-            <th className="px-2 py-1 border-r">Retorno SEFAZ</th>
-            <th className="px-2 py-1 border-r">Dt. Emissão</th>
-            <th className="px-2 py-1 border-r">Dt. Últ. Atualização</th>
-            <th className="px-2 py-1 border-r">Remetente [Fantasia]</th>
-            <th className="px-2 py-1 border-r">Destinatário [Fantasia]</th>
-            <th className="px-2 py-1 border-r">Endereço Entrega</th>
-            <th className="px-2 py-1 border-r">Bairro Entrega</th>
-            <th className="px-2 py-1">Cidade Entrega</th>
+  <div className="border border-gray-300 rounded overflow-auto">
+    <table className="min-w-full text-[12px] border-collapse">
+      <thead className="bg-gray-100 text-gray-700 border-b border-gray-300">
+        <tr>
+          {showCheckboxes && <th className="px-2 py-1 border-r w-[30px] text-center">✓</th>}
+          <th className="px-2 py-1 border-r">Empresa</th>
+          <th className="px-2 py-1 border-r">Filial</th>
+          <th className="px-2 py-1 border-r">St.</th>
+          <th className="px-2 py-1 border-r">Nº Controle</th>
+          <th className="px-2 py-1 border-r">Nº Impresso</th>
+          <th className="px-2 py-1 border-r">Série</th>
+          <th className="px-2 py-1 border-r">Retorno SEFAZ</th>
+          <th className="px-2 py-1 border-r">Dt. Emissão</th>
+          <th className="px-2 py-1 border-r">Dt. Últ. Atualização</th>
+          <th className="px-2 py-1 border-r">Remetente [Fantasia]</th>
+          <th className="px-2 py-1 border-r">Destinatário [Fantasia]</th>
+          <th className="px-2 py-1 border-r">Endereço Entrega</th>
+          <th className="px-2 py-1">Cidade Entrega</th>
+        </tr>
+      </thead>
+      <tbody>
+        {dados.map((r, i) => (
+          <tr key={i} className="hover:bg-gray-50">
+            {showCheckboxes && (
+              <td className="border-t border-gray-200 px-2 text-center">
+                <input
+                  type="checkbox"
+                  checked={selecionados.includes(i)}
+                  onChange={() => toggleSelecionado(i)}
+                />
+              </td>
+            )}
+            {r.map((c, j) => (
+              <td key={j} className="border-t border-gray-200 px-2 py-[3px]">{c}</td>
+            ))}
           </tr>
-        </thead>
-        <tbody>
-          {[
-            ["001","001","I","058840","058808","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR-AGUA MI","HNK-ITU (1) MATRIZ","AVENIDA PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
-            ["001","001","I","058839","058807","001","540 - Rejeição: Grupo de documentos","15/10/2025","15/10/2025","HNK-ITU (1) MATRIZ","HNK BR IN PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
-          ].map((r, i) => (
-            <tr key={i} className="hover:bg-gray-50">
-              {r.map((c, j) => (
-                <td key={j} className="border-t border-gray-200 px-2 py-[3px]">{c}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   </div>
+</div>
 
-  {/* CARD 3 — Rodapé / Ações */}
-  <div className="border border-gray-300 rounded p-2 bg-white flex items-center justify-between text-[12px]">
-    <span className="text-gray-600">Total de registros: 9</span>
-    <button className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-[2px] rounded">
+{/* CARD 3 — Rodapé / Ações */}
+<div className="border border-gray-300 rounded p-2 bg-white flex items-center justify-between text-[12px]">
+  <span className="text-gray-600">Total de registros: {dados.length}</span>
+
+  {!showCheckboxes ? (
+    // Botão principal (⚙️ Ações)
+    <button
+      onClick={() => setShowCheckboxes(true)}
+      className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-[2px] rounded"
+    >
       ⚙️ Ações
     </button>
-  </div>
+  ) : (
+    // Quando clica em Ações → mostra todos os botões abaixo
+    <div className="flex items-center gap-2 flex-wrap justify-end">
+      <button
+        onClick={toggleSelecionarTodos}
+        className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-2 py-[2px] rounded"
+      >
+        {selecionados.length === dados.length ? "☐ Limpar Seleção" : "☑ Selecionar Todos"}
+      </button>
+
+      <button className="border border-gray-300 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-[2px] rounded">
+        ✏️ Alterar Status
+      </button>
+
+      <button
+        onClick={() => {
+          setShowCheckboxes(false);
+          setSelecionados([]);
+        }}
+        className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-[2px] rounded"
+      >
+        🔙 Cancelar
+      </button>
+
+      <button className="border border-gray-300 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-[2px] rounded">
+        🔄 Manifestar
+      </button>
+
+      <button className="border border-gray-300 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-[2px] rounded">
+        📨 Env. Sefaz
+      </button>
+
+      <button className="border border-gray-300 bg-orange-50 hover:bg-orange-100 text-orange-700 px-3 py-[2px] rounded">
+        🔐 Averbar
+      </button>
+
+      <button
+        onClick={handleExcluir}
+        className="border border-gray-300 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-[2px] rounded"
+      >
+        ❌ Excluir
+      </button>
+    </div>
+  )}
+</div>
+
 </div>
 
         )}
