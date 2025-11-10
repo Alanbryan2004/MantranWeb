@@ -94,14 +94,14 @@ const [showCheckboxes, setShowCheckboxes] = useState(false);
 const [selecionados, setSelecionados] = useState([]);
 
 const dados = [
-  ["001","001","I","058840","000001","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
-  ["001","001","I","058839","000002","001","Autorizado o uso do CT-e","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
-   ["001","001","I","058838","000003","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
-  ["001","001","I","058837","000004","001","540 - Rejeição","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
-   ["001","001","I","058836","000005","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
-  ["001","001","I","058835","000006","001","Autorizado o uso do CT-e5","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
-   ["001","001","I","058834","000007","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM","ITU/SP"],
-  ["001","001","I","058833","000008","001","240 - Evento Vinculado ao CT-e","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","EMAUS","NATAL/RN"],
+  ["001","001","I","058840","000001","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITAIM"],
+  ["001","001","I","058839","000002","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","NATAL/RN"],
+   ["001","001","I","058838","000003","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITU/SP"],
+  ["001","001","I","058837","000004","001","540 - Rejeição","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","NATAL/RN"],
+   ["001","001","I","058836","000005","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITU/SP"],
+  ["001","001","I","058835","000006","001","Autorizado o uso do CT-e5","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","NATAL/RN"],
+   ["001","001","I","058834","000007","001","Autorizado o uso do CT-e","15/10/2025","15/10/2025","HNK-SALVADOR","HNK-ITU","AV. PRIMO SCHINCARIOL","ITU/SP"],
+  ["001","001","I","058833","000008","001","240 - Evento Vinculado ao CT-e","15/10/2025","15/10/2025","HNK-ITU","HNK PARNAMIRIM","R RIO JORDAO","NATAL/RN"],
 ];
 
 const toggleSelecionado = (index) => {
