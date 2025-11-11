@@ -14,6 +14,7 @@ import Parametro from "./pages/Parametro";
 import "./index.css";
 import TabelaFrete from "./pages/TabelaFrete";
 import NotaFiscalEDI from "./pages/NotaFiscalEDI";
+import Cliente from "./pages/Cliente";
 
 
 export default function App() {
@@ -68,6 +69,9 @@ if (isLogged && window.location.pathname === "/login") {
             
             {/* Manifesto */}
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
+            
+            {/* Página Cliente */}
+            <Route path="/cliente" element={<Cliente open={sidebarOpen} />} />
             
             {/* Viagem */}
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />

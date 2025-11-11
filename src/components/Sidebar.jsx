@@ -245,38 +245,60 @@ setUsuarios((prev) => {
                   >
                     {item}
 
-                    {/* Submenu do CLIENTE */}
-                    {item === "Cliente" && activeSubMenu === item && (
-                      <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-                        {[
-                          "Cliente",
-                          "Atividade Econômica",
-                          "Condição de Pagamento",
-                          "Divisão Empresarial",
-                          "Embalagem",
-                          "Grupo Econômico",
-                          "Produto",
-                          "Operação",
-                        ].map((sub) =>
-                          sub === "Divisão Empresarial" ? (
-                            <Link
-                              key={sub}
-                              to="/cliente-divisao"
-                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-                            >
-                              {sub}
-                            </Link>
-                          ) : (
-                            <div
-                              key={sub}
-                              className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-                            >
-                              {sub}
-                            </div>
-                          )
-                        )}
-                      </div>
-                    )}
+                   {/* Submenu do CLIENTE */}
+{item === "Cliente" && activeSubMenu === item && (
+  <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+    <Link
+      to="/cliente"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Cliente
+    </Link>
+    <Link
+      to="/atividade-economica"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Atividade Econômica
+    </Link>
+    <Link
+      to="/condicao-pagamento"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Condição de Pagamento
+    </Link>
+    <Link
+      to="/cliente-divisao"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Divisão Empresarial
+    </Link>
+    <Link
+      to="/embalagem"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Embalagem
+    </Link>
+    <Link
+      to="/grupo-economico"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Grupo Econômico
+    </Link>
+    <Link
+      to="/produto"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Produto
+    </Link>
+    <Link
+      to="/operacao"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Operação
+    </Link>
+  </div>
+)}
+
                   </li>
                 ))}
               </ul>
