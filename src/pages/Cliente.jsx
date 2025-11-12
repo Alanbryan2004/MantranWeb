@@ -1,4 +1,10 @@
 import { useState } from "react";
+import CobrancaBancariaModal from "./CobrancaBancariaModal";
+import ClienteContato from "./ClienteContato";
+import ClienteAgenda from "./ClienteAgenda";
+import ClienteContrato from "./ClienteContrato";
+
+
 import {
   XCircle,
   RotateCcw,
@@ -48,6 +54,12 @@ const [endereco, setEndereco] = useState("");
 const [bairro, setBairro] = useState("");
 const [cidade, setCidade] = useState("");
 const [uf, setUf] = useState("");
+const [showCobranca, setShowCobranca] = useState(false);
+const [showContato, setShowContato] = useState(false);
+const [showAgenda, setShowAgenda] = useState(false);
+const [showContrato, setShowContrato] = useState(false);
+
+
 
 async function buscarEndereco(valorCep) {
   try {
@@ -555,7 +567,7 @@ const handleLimpar = () => {
 
             </div>
 
-           {/* === RODAPÉ FIXO VISÍVEL AO FINAL === */}
+          {/* === RODAPÉ FIXO VISÍVEL AO FINAL === */}
 <div className="sticky bottom-0 bg-white border-t border-gray-200 p-2 flex justify-between mt-auto z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
   <div className="flex gap-3">
     {[
@@ -567,7 +579,7 @@ const handleLimpar = () => {
     ].map(({ icon: Icon, label }) => (
       <button
         key={label}
-        className="flex items-center gap-1 text-gray-700 hover:text-red-700 text-[13px]"
+        className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]"
       >
         <Icon size={16} />
         {label}
@@ -575,25 +587,53 @@ const handleLimpar = () => {
     ))}
   </div>
 
+  {/* Botões à direita */}
   <div className="flex gap-3">
     {[
-      { icon: FileText, label: "Cobrança Bancária" },
-      { icon: BookUser, label: "Contato" },
-      { icon: CalendarDays, label: "Agenda" },
-      { icon: Briefcase, label: "Contrato" },
-      { icon: FileSpreadsheet, label: "Tabela Frete" },
-      { icon: FileUp, label: "Exportar Excel" },
-    ].map(({ icon: Icon, label }) => (
-      <button
-        key={label}
-        className="flex items-center gap-1 text-gray-700 hover:text-red-700 text-[13px]"
-      >
-        <Icon size={16} />
-        {label}
-      </button>
-    ))}
+  { icon: FileText, label: "Cobrança Bancária", action: () => setShowCobranca(true) },
+  { icon: BookUser, label: "Contato", action: () => setShowContato(true) },
+  { icon: CalendarDays, label: "Agenda", action: () => setShowAgenda(true) },
+  { icon: Briefcase, label: "Contrato", action: () => setShowContrato(true) },
+  { icon: FileSpreadsheet, label: "Tabela Frete" },
+  { icon: FileUp, label: "Exportar Excel" },
+].map(({ icon: Icon, label, action }) => (
+  <button
+    key={label}
+    onClick={action}
+    className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]"
+  >
+    <Icon size={16} />
+    {label}
+  </button>
+))}
+
   </div>
 </div>
+
+{/* === MODAL DE COBRANÇA BANCÁRIA === */}
+<CobrancaBancariaModal
+  isOpen={showCobranca}
+  onClose={() => setShowCobranca(false)}
+/>
+
+{/* === MODAL DE CONTATO === */}
+<ClienteContato
+  isOpen={showContato}
+  onClose={() => setShowContato(false)}
+/>
+
+{/* === MODAL DE AGENDA === */}
+<ClienteAgenda
+  isOpen={showAgenda}
+  onClose={() => setShowAgenda(false)}
+/>
+
+
+{/* === MODAL DE CONTRATO === */}
+<ClienteContrato
+  isOpen={showContrato}
+  onClose={() => setShowContrato(false)}
+/>
 
 
           </>
