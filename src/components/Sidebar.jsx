@@ -237,69 +237,55 @@ setUsuarios((prev) => {
                   "Ocorrência",
                   "Colaboradores",
                 ].map((item) => (
-                  <li
-                    key={item}
-                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-                    onMouseEnter={() => setActiveSubMenu(item)}
-                    onMouseLeave={() => setActiveSubMenu(null)}
-                  >
-                    {item}
+                 
+                 <li
+  key={item}
+  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+ onMouseEnter={() => {
+  if (item === "Cliente") setActiveSubMenu("Cliente");
+}}
 
-                   {/* Submenu do CLIENTE */}
-{item === "Cliente" && activeSubMenu === item && (
-  <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-    <Link
-      to="/cliente"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Cliente
-    </Link>
-    <Link
-      to="/atividade-economica"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Atividade Econômica
-    </Link>
-    <Link
-      to="/condicao-pagamento"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Condição de Pagamento
-    </Link>
-    <Link
-      to="/cliente-divisao"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Divisão Empresarial
-    </Link>
-    <Link
-      to="/embalagem"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Embalagem
-    </Link>
-    <Link
-      to="/grupo-economico"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Grupo Econômico
-    </Link>
-    <Link
-      to="/produto"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Produto
-    </Link>
-    <Link
-      to="/operacao"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Operação
-    </Link>
-  </div>
-)}
 
-                  </li>
+  onMouseLeave={() => setActiveSubMenu(null)}
+>
+  {/* Item padrão */}
+ <Link
+  to={
+    item === "Empresa"
+      ? "/empresa"
+      : item === "Empresa Agregado"
+      ? "/empresa-agregado"
+      : "#"
+  }
+  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+  onClick={(e) => {
+    if (!["Empresa", "Empresa Agregado"].includes(item)) {
+      e.preventDefault();
+    }
+  }}
+>
+  {item}
+</Link>
+
+
+
+
+  {/* Submenu Cliente */}
+  {item === "Cliente" && activeSubMenu === "Cliente" && (
+    <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+      <Link to="/cliente" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Cliente</Link>
+      <Link to="/atividade-economica" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Atividade Econômica</Link>
+      <Link to="/condicao-pagamento" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Condição de Pagamento</Link>
+      <Link to="/cliente-divisao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Divisão Empresarial</Link>
+      <Link to="/embalagem" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Embalagem</Link>
+      <Link to="/grupo-economico" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Grupo Econômico</Link>
+      <Link to="/produto" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Produto</Link>
+      <Link to="/operacao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Operação</Link>
+    </div>
+  )}
+</li>
+
+
                 ))}
               </ul>
             </div>

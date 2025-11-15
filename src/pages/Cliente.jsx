@@ -3,6 +3,8 @@ import CobrancaBancariaModal from "./CobrancaBancariaModal";
 import ClienteContato from "./ClienteContato";
 import ClienteAgenda from "./ClienteAgenda";
 import ClienteContrato from "./ClienteContrato";
+import ClienteTabelaFrete from "./ClienteTabelaFrete";
+import { useNavigate } from "react-router-dom";
 
 
 import {
@@ -44,9 +46,12 @@ function Sel({ children, ...rest }) {
   );
 }
 
-export default function Cliente({ open }) {
+export default function Cliente({ open })
+
+{
   const [activeTab, setActiveTab] = useState("cliente");
   const [showParametros, setShowParametros] = useState(false);
+  const navigate = useNavigate();
 
   // 🏠 Endereço (ViaCEP)
 const [cep, setCep] = useState("");
@@ -58,6 +63,7 @@ const [showCobranca, setShowCobranca] = useState(false);
 const [showContato, setShowContato] = useState(false);
 const [showAgenda, setShowAgenda] = useState(false);
 const [showContrato, setShowContrato] = useState(false);
+const [showTabelaFrete, setShowTabelaFrete] = useState(false);
 
 
 
@@ -571,16 +577,19 @@ const handleLimpar = () => {
 <div className="sticky bottom-0 bg-white border-t border-gray-200 p-2 flex justify-between mt-auto z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
   <div className="flex gap-3">
     {[
-      { icon: XCircle, label: "Fechar" },
+      { icon: XCircle, label: "Fechar", action: () => navigate(-1) },
+
       { icon: RotateCcw, label: "Limpar" },
       { icon: PlusCircle, label: "Incluir" },
       { icon: Edit, label: "Alterar" },
       { icon: Trash2, label: "Excluir" },
-    ].map(({ icon: Icon, label }) => (
-      <button
-        key={label}
-        className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]"
-      >
+    ].map(({ icon: Icon, label, action }) => (
+  <button
+    key={label}
+    onClick={action}
+    className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]"
+  >
+
         <Icon size={16} />
         {label}
       </button>
@@ -594,7 +603,7 @@ const handleLimpar = () => {
   { icon: BookUser, label: "Contato", action: () => setShowContato(true) },
   { icon: CalendarDays, label: "Agenda", action: () => setShowAgenda(true) },
   { icon: Briefcase, label: "Contrato", action: () => setShowContrato(true) },
-  { icon: FileSpreadsheet, label: "Tabela Frete" },
+  { icon: FileSpreadsheet, label: "Tabela Frete", action: () => setShowTabelaFrete(true) },
   { icon: FileUp, label: "Exportar Excel" },
 ].map(({ icon: Icon, label, action }) => (
   <button
@@ -635,6 +644,11 @@ const handleLimpar = () => {
   onClose={() => setShowContrato(false)}
 />
 
+{/* === MODAL DE TABELA FRETE === */}
+<ClienteTabelaFrete
+  isOpen={showTabelaFrete}
+  onClose={() => setShowTabelaFrete(false)}
+/>
 
           </>
         )}

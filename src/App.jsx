@@ -15,6 +15,8 @@ import "./index.css";
 import TabelaFrete from "./pages/TabelaFrete";
 import NotaFiscalEDI from "./pages/NotaFiscalEDI";
 import Cliente from "./pages/Cliente";
+import Empresa from "./pages/Empresa";
+import EmpresaAgregado from "./pages/EmpresaAgregado";
 
 
 export default function App() {
@@ -49,6 +51,9 @@ if (isLogged && window.location.pathname === "/login") {
       <div className="flex flex-1">
         <Sidebar open={sidebarOpen} />
 
+        
+
+
         {/* ÁREA CENTRAL */}
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
@@ -72,6 +77,12 @@ if (isLogged && window.location.pathname === "/login") {
             
             {/* Página Cliente */}
             <Route path="/cliente" element={<Cliente open={sidebarOpen} />} />
+            {/* Página Empresa */}
+        <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
+            {/* Página Empresa Agregado */}
+          <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
+
+
             
             {/* Viagem */}
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
