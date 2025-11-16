@@ -10,7 +10,10 @@ import {
   SlidersHorizontal,
   Settings2,
 } from "lucide-react";
-import ParametroTaxa from "./ParametroTaxa"; // ⬅️ Import do novo modal
+import ParametroTaxa from "./ParametroTaxa";
+
+// 🔥 Usa APENAS o contexto unificado
+import { useIconColor } from "../context/IconColorContext";
 
 export default function Parametro() {
   const [modoCards, setModoCards] = useState(false);
@@ -18,34 +21,112 @@ export default function Parametro() {
   const [telaInicial, setTelaInicial] = useState("CTe");
   const [exibirDashboard, setExibirDashboard] = useState(true);
   const [corFundo, setCorFundo] = useState("#f3f4f6");
-  const [abrirModalTaxas, setAbrirModalTaxas] = useState(false); // ⬅️ Controle do modal
+  const [abrirModalTaxas, setAbrirModalTaxas] = useState(false);
 
+  // 🔥 Contexto unificado
+  const {
+    iconColor,
+    setIconColor,
+
+    footerIconColorNormal,
+    footerIconColorHover,
+    setFooterIconColorNormal,
+    setFooterIconColorHover,
+
+    DEFAULT_ICON_COLOR,
+    DEFAULT_FOOTER_NORMAL,
+    DEFAULT_FOOTER_HOVER,
+  } = useIconColor();
+
+  // === Cores base para Tailwind ===
+  const coresBase = [
+    { value: "red", label: "Vermelho" },
+    { value: "blue", label: "Azul" },
+    { value: "emerald", label: "Verde" },
+    { value: "amber", label: "Laranja" },
+    { value: "slate", label: "Cinza" },
+    { value: "pink", label: "Rosa" },
+  ];
+
+  // === Estado dos ícones HEADER/SIDEBAR ===
+  const [corBase, setCorBase] = useState(iconColor.split("-")[1]);
+  const [intensidade, setIntensidade] = useState(iconColor.split("-")[2]);
+
+  const atualizarCorIcones = (cor, nivel) => {
+    const nova = `text-${cor}-${nivel}`;
+    setCorBase(cor);
+    setIntensidade(nivel);
+    setIconColor(nova);
+  };
+
+  // === Estado do rodapé normal ===
+  const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
+  const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
+
+  const atualizarRodapeNormal = (cor, nivel) => {
+    const nova = `text-${cor}-${nivel}`;
+    setFooterBase(cor);
+    setFooterInt(nivel);
+    setFooterIconColorNormal(nova);
+  };
+
+  // === Estado do rodapé hover ===
+  const [footerHoverBase, setFooterHoverBase] = useState(
+    footerIconColorHover.split("-")[1]
+  );
+  const [footerHoverInt, setFooterHoverInt] = useState(
+    footerIconColorHover.split("-")[2]
+  );
+
+  const atualizarRodapeHover = (cor, nivel) => {
+    const nova = `text-${cor}-${nivel}`;
+    setFooterHoverBase(cor);
+    setFooterHoverInt(nivel);
+    setFooterIconColorHover(nova);
+  };
+
+  // === Salvar ===
   const salvarParametros = () => {
     localStorage.setItem("param_telaInicial", telaInicial);
-    localStorage.setItem("param_exibirDashboard", exibirDashboard ? "true" : "false");
+    localStorage.setItem(
+      "param_exibirDashboard",
+      exibirDashboard ? "true" : "false"
+    );
     localStorage.setItem("param_corFundo", corFundo);
     alert("✅ Parâmetros salvos com sucesso!");
   };
 
+  // === Limpar ===
   const limparParametros = () => {
     setTelaInicial("CTe");
     setExibirDashboard(true);
     setCorFundo("#f3f4f6");
+
+    setIconColor(DEFAULT_ICON_COLOR);
+    setFooterIconColorNormal(DEFAULT_FOOTER_NORMAL);
+    setFooterIconColorHover(DEFAULT_FOOTER_HOVER);
+
     localStorage.removeItem("param_telaInicial");
     localStorage.removeItem("param_exibirDashboard");
     localStorage.removeItem("param_corFundo");
+    localStorage.removeItem("param_iconColor");
+    localStorage.removeItem("param_footerIconColorNormal");
+    localStorage.removeItem("param_footerIconColorHover");
   };
 
+  // === Card Wrapper ===
   const Card = ({ title, children }) => (
     <div className="border border-gray-300 rounded-lg bg-white p-4 shadow-sm space-y-2">
-      <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">{title}</h2>
+      <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">
+        {title}
+      </h2>
       {children}
     </div>
   );
 
   const campos = (
     <>
-      {/* Campo: Tela inicial */}
+      {/* Tela inicial */}
       <div className="flex items-center gap-3">
         <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
           Tela Inicial:
@@ -62,7 +143,7 @@ export default function Parametro() {
         </select>
       </div>
 
-      {/* Campo: Exibir Dashboard */}
+      {/* Dashboard */}
       <div className="flex items-center gap-3">
         <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
           Exibir Dashboard ao Logar:
@@ -75,17 +156,19 @@ export default function Parametro() {
         />
       </div>
 
-      {/* Campo: Cor de Fundo */}
+      {/* Cor Fundo */}
       <div className="flex items-center gap-3">
         <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
           Cor de Fundo:
         </label>
+
         <input
           type="color"
           value={corFundo}
           onChange={(e) => setCorFundo(e.target.value)}
           className="w-[60px] h-[28px] border border-gray-300 rounded"
         />
+
         <div
           className="ml-3 px-4 py-2 rounded text-sm"
           style={{ backgroundColor: corFundo }}
@@ -94,7 +177,7 @@ export default function Parametro() {
         </div>
       </div>
 
-      {/* NOVO: Botão de configuração de taxas */}
+      {/* Taxas */}
       <div className="flex items-center gap-3 mt-2">
         <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
           Taxas do CT-e:
@@ -106,49 +189,144 @@ export default function Parametro() {
           <Settings2 size={14} /> Selecionar Taxas
         </button>
       </div>
-    </>
-  );
 
-  const renderPorCards = () => (
-    <div className="space-y-3">
-      {step === 1 && <Card title="Configuração da Tela Inicial">{campos}</Card>}
-      {step === 2 && <Card title="Visualização">{campos}</Card>}
-      {step === 3 && (
-        <Card title="Finalização">
-          <p className="text-sm text-gray-700 mb-2">
-            Revise suas configurações e clique em <strong>Salvar</strong> para aplicar.
-          </p>
-          <button
-            onClick={salvarParametros}
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
-          >
-            <CheckCircle size={14} className="inline mr-1" />
-            Salvar
-          </button>
-        </Card>
-      )}
+      {/* ============================== */}
+      {/*   COR DOS ÍCONES TOPO/SIDEBAR  */}
+      {/* ============================== */}
+      <div className="flex items-center gap-3 mt-4">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+          Cor dos Ícones:
+        </label>
 
-      {/* Navegação */}
-      <div className="flex justify-between mt-3">
-        <button
-          onClick={() => setStep((s) => Math.max(s - 1, 1))}
-          disabled={step === 1}
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
+        <select
+          value={corBase}
+          onChange={(e) => atualizarCorIcones(e.target.value, intensidade)}
+          className="border border-gray-300 rounded px-2 py-[4px] h-[28px] text-[13px]"
         >
-          <ChevronLeft size={16} /> Voltar
-        </button>
+          {coresBase.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="range"
+          min="100"
+          max="900"
+          step="100"
+          value={intensidade}
+          onChange={(e) => atualizarCorIcones(corBase, e.target.value)}
+          className="w-[120px]"
+        />
+
+        <Palette size={22} className={`ml-2 text-${corBase}-${intensidade}`} />
+
+        <span className="text-xs">text-{corBase}-{intensidade}</span>
+
         <button
-          onClick={() => setStep((s) => Math.min(s + 1, 3))}
-          disabled={step === 3}
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
+          onClick={() => atualizarCorIcones("red", "700")}
+          className="ml-2 text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
         >
-          Avançar <ChevronRight size={16} />
+          Padrão
         </button>
       </div>
-    </div>
-  );
 
-  const renderCompleto = () => <div className="space-y-3">{campos}</div>;
+      {/* ============================== */}
+      {/*     RODAPÉ — NORMAL            */}
+      {/* ============================== */}
+      <div className="flex items-center gap-3 mt-4">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+          Cor Rodapé (Normal):
+        </label>
+
+        <select
+          value={footerBase}
+          onChange={(e) => atualizarRodapeNormal(e.target.value, footerInt)}
+          className="border border-gray-300 rounded px-2 py-[4px] h-[28px] text-[13px]"
+        >
+          {coresBase.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="range"
+          min="100"
+          max="900"
+          step="100"
+          value={footerInt}
+          onChange={(e) => atualizarRodapeNormal(footerBase, e.target.value)}
+          className="w-[120px]"
+        />
+
+        <Palette
+          size={22}
+          className={`ml-2 text-${footerBase}-${footerInt}`}
+        />
+
+        <span className="text-xs">
+          text-{footerBase}-{footerInt}
+        </span>
+
+        <button
+          onClick={() => atualizarRodapeNormal("red", "700")}
+          className="ml-2 text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
+        >
+          Padrão
+        </button>
+      </div>
+
+      {/* ============================== */}
+      {/*     RODAPÉ — HOVER             */}
+      {/* ============================== */}
+      <div className="flex items-center gap-3 mt-4">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+          Cor Rodapé (Hover):
+        </label>
+
+        <select
+          value={footerHoverBase}
+          onChange={(e) => atualizarRodapeHover(e.target.value, footerHoverInt)}
+          className="border border-gray-300 rounded px-2 py-[4px] h-[28px] text-[13px]"
+        >
+          {coresBase.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="range"
+          min="100"
+          max="900"
+          step="100"
+          value={footerHoverInt}
+          onChange={(e) => atualizarRodapeHover(footerHoverBase, e.target.value)}
+          className="w-[120px]"
+        />
+
+        <Palette
+          size={22}
+          className={`ml-2 text-${footerHoverBase}-${footerHoverInt}`}
+        />
+
+        <span className="text-xs">
+          text-{footerHoverBase}-{footerHoverInt}
+        </span>
+
+        <button
+          onClick={() => atualizarRodapeHover("red", "900")}
+          className="ml-2 text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
+        >
+          Padrão
+        </button>
+      </div>
+    </>
+  );
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -168,7 +346,7 @@ export default function Parametro() {
           </button>
         </div>
 
-        {/* Alternância modo */}
+        {/* Modo Cards */}
         <div className="flex justify-end p-2 text-sm text-gray-600">
           <label className="flex items-center gap-2">
             <input
@@ -182,18 +360,56 @@ export default function Parametro() {
         </div>
 
         {/* Conteúdo */}
-        <div className="p-4">{modoCards ? renderPorCards() : renderCompleto()}</div>
+        <div className="p-4">{modoCards ? (
+          <div className="space-y-3">
+            {step === 1 && <Card title="Configuração">{campos}</Card>}
+            {step === 2 && <Card title="Visualização">{campos}</Card>}
+            {step === 3 && (
+              <Card title="Finalização">
+                <p className="text-sm text-gray-700 mb-2">
+                  Revise suas configurações e clique em <strong>Salvar</strong>.
+                </p>
+                <button
+                  onClick={salvarParametros}
+                  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                >
+                  <CheckCircle size={14} className="inline mr-1" />
+                  Salvar
+                </button>
+              </Card>
+            )}
+
+            <div className="flex justify-between mt-3">
+              <button
+                onClick={() => setStep((s) => Math.max(s - 1, 1))}
+                disabled={step === 1}
+                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
+              >
+                <ChevronLeft size={16} /> Voltar
+              </button>
+
+              <button
+                onClick={() => setStep((s) => Math.min(s + 1, 3))}
+                disabled={step === 3}
+                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
+              >
+                Avançar <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">{campos}</div>
+        )}</div>
 
         {/* Rodapé */}
         <div className="flex justify-between items-center bg-white border-t border-gray-300 px-4 py-2">
-          <div className="flex gap-3">
-            <button
-              onClick={limparParametros}
-              className="flex items-center gap-1 text-red-700 hover:text-red-800 text-sm"
-            >
-              <RotateCcw size={14} /> Limpar
-            </button>
-          </div>
+          <button
+            onClick={limparParametros}
+            className="flex items-center gap-1 text-red-700 hover:text-red-800 text-sm"
+          >
+            <RotateCcw size={14} /> Limpar
+          </button>
+
           {!modoCards && (
             <button
               onClick={salvarParametros}
@@ -205,8 +421,9 @@ export default function Parametro() {
         </div>
       </div>
 
-      {/* Modal de seleção de taxas */}
-      {abrirModalTaxas && <ParametroTaxa onClose={() => setAbrirModalTaxas(false)} />}
+      {abrirModalTaxas && (
+        <ParametroTaxa onClose={() => setAbrirModalTaxas(false)} />
+      )}
     </div>
   );
 }

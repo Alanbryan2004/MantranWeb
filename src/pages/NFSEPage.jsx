@@ -2,6 +2,7 @@ import { useState } from "react";
 import NotasFiscalModal from "./NotasFiscalModal";
 import { useNavigate } from "react-router-dom";
 import ConsultaNFSE from "./ConsultaNFSE";
+import { useIconColor } from "../context/IconColorContext";
 import {
   XCircle,
   RotateCcw,
@@ -44,7 +45,7 @@ export default function NFSEPage({ open }) {
   const [showNotaFiscal, setShowNotaFiscal] = useState(false);
   const [showConsultaNFSE, setShowConsultaNFSE] = useState(false);
   const navigate = useNavigate();
-
+  const { footerIconColorNormal, footerIconColorHover } = useIconColor();  
   return (
     <div
       className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
@@ -319,37 +320,101 @@ export default function NFSEPage({ open }) {
 </div>
 
 
-           {/* RODAPÉ */}
-<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-start gap-4 text-red-700">
-  <button title="Fechar Tela" onClick={() => navigate("/")}>
-    <XCircle />
-  </button>
-  <button title="Limpar Tela">
-    <RotateCcw />
-  </button>
-  <button title="Incluir">
-    <PlusCircle />
-  </button>
-  <button title="Alterar">
-    <Edit />
-  </button>
-  <button title="Excluir">
-    <Trash2 />
-  </button>
-  <button title="Cancelar">
-    <Ban />
-  </button>
-  <button title="Estornar">
-    <Undo2 />
-  </button>
-  <button title="Enviar" onClick={() => setShowConsultaNFSE(true)}>
-    <Send />
-  </button>
-  <button title="Imprimir">
-    <Printer />
-  </button>
-</div>
+           <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
 
+  {/* FECHAR */}
+  <button
+    onClick={() => navigate("/")}
+    title="Fechar Tela"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <XCircle size={18} />
+    <span>Fechar</span>
+  </button>
+
+  {/* LIMPAR */}
+  <button
+    title="Limpar Tela"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <RotateCcw size={18} />
+    <span>Limpar</span>
+  </button>
+
+  {/* INCLUIR */}
+  <button
+    title="Incluir"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <PlusCircle size={18} />
+    <span>Incluir</span>
+  </button>
+
+  {/* ALTERAR */}
+  <button
+    title="Alterar"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Edit size={18} />
+    <span>Alterar</span>
+  </button>
+
+  {/* EXCLUIR */}
+  <button
+    title="Excluir"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Trash2 size={18} />
+    <span>Excluir</span>
+  </button>
+
+  {/* CANCELAR */}
+  <button
+    title="Cancelar"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Ban size={18} />
+    <span>Cancelar</span>
+  </button>
+
+  {/* ESTORNAR */}
+  <button
+    title="Estornar"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Undo2 size={18} />
+    <span>Estornar</span>
+  </button>
+
+  {/* ENVIAR */}
+  <button
+    onClick={() => setShowConsultaNFSE(true)}
+    title="Enviar"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Send size={18} />
+    <span>Enviar</span>
+  </button>
+
+  {/* IMPRIMIR */}
+  <button
+    title="Imprimir"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Printer size={18} />
+    <span>Imprimir</span>
+  </button>
+
+</div>
           </>
         ) : (
           <>

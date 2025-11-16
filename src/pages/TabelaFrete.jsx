@@ -5,6 +5,7 @@ import TabelaFreteIncluirFaixa from "./TabelaFreteIncluirFaixa";
 import TabelaFretePercurso from "./TabelaFretePercurso";
 import TabelaFreteReajuste from "./TabelaFreteReajuste";
 import TabelaFreteImportacao from "./TabelaFreteImportacao";
+import { useIconColor } from "../context/IconColorContext";
 
 
 import {
@@ -58,7 +59,7 @@ export default function TabelaFrete({ open }) {
   const [mostrarPercurso, setMostrarPercurso] = useState(false);
   const [mostrarReajuste, setMostrarReajuste] = useState(false);
   const [mostrarImportacao, setMostrarImportacao] = useState(false);
-
+  const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
 useEffect(() => {
   const abrirPercurso = () => setMostrarPercurso(true);
@@ -660,7 +661,8 @@ const tabelasFiltradas = tabelas.filter((t) => {
                 key={label}
                 onClick={action}
                 title={label}
-                className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+               className={`flex flex-col items-center text-[11px] transition ${footerIconColorNormal} hover:${footerIconColorHover}`}
+
               >
                 <Icon size={20} />
                 <span>{label}</span>

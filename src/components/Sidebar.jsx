@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"; // ✅ adiciona o useEffect aqui
 import { io } from "socket.io-client"; // ✅ adiciona esta linha
 import EmojiPicker from "emoji-picker-react";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
+import { useIconColor } from "../context/IconColorContext";
+
 
 import {
   FileText,
@@ -23,6 +25,7 @@ import { Link } from "react-router-dom";
 export default function Sidebar({ open }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
+  const { iconColor } = useIconColor()
 
   // === Estados do Chat ===
   const [chatOpen, setChatOpen] = useState(false);
@@ -200,7 +203,8 @@ setUsuarios((prev) => {
             onClick={() => handleToggle("cadastros")}
             className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
           >
-            <FileText className="w-5 h-5 text-red-700" />
+            <FileText className={`w-5 h-5 ${iconColor}`} />
+
             {open && (
               <>
                 <span className="ml-3 flex-1 text-left">Cadastros</span>
@@ -255,17 +259,20 @@ setUsuarios((prev) => {
       ? "/empresa"
       : item === "Empresa Agregado"
       ? "/empresa-agregado"
+      : item === "Veículo"
+      ? "/veiculo"
       : "#"
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
   onClick={(e) => {
-    if (!["Empresa", "Empresa Agregado"].includes(item)) {
+    if (!["Empresa", "Empresa Agregado", "Veículo"].includes(item)) {
       e.preventDefault();
     }
   }}
 >
   {item}
 </Link>
+
 
 
 
@@ -305,7 +312,8 @@ setUsuarios((prev) => {
             onClick={() => handleToggle("operacao")}
             className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
           >
-            <ClipboardList className="w-5 h-5 text-red-700" />
+            <ClipboardList className={`w-5 h-5 ${iconColor}`} />
+
             {open && (
               <>
                 <span className="ml-3 flex-1 text-left">Operação</span>
@@ -467,7 +475,8 @@ setUsuarios((prev) => {
   to="/tabelafrete"
   className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700"
 >
-  <FileSpreadsheet className="w-5 h-5 text-red-700" />
+  <FileSpreadsheet className={`w-5 h-5 ${iconColor}`} />
+
   {open && <span className="ml-3">Tabela Frete</span>}
 </Link>
 
@@ -483,7 +492,8 @@ setUsuarios((prev) => {
             onClick={() => handleToggle("faturamento")}
             className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
           >
-            <DollarSign className="w-5 h-5 text-red-700" />
+            <DollarSign className={`w-5 h-5 ${iconColor}`} />
+
             {open && (
               <>
                 <span className="ml-3 flex-1 text-left">Faturamento</span>
@@ -513,7 +523,8 @@ setUsuarios((prev) => {
 
         {/* === RELATÓRIO === */}
         <button className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1">
-          <BarChart3 className="w-5 h-5 text-red-700" />
+          <BarChart3 className={`w-5 h-5 ${iconColor}`} />
+
           {open && <span className="ml-3">Relatório</span>}
         </button>
 
@@ -527,7 +538,8 @@ setUsuarios((prev) => {
     onClick={() => handleToggle("usuario")}
     className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
   >
-    <UserCircle2 className="w-5 h-5 text-red-700" />
+    <UserCircle2 className={`w-5 h-5 ${iconColor}`} />
+
     {open && (
       <>
         <span className="ml-3 flex-1 text-left">Usuário</span>
@@ -564,7 +576,8 @@ setUsuarios((prev) => {
   onClick={() => setChatOpen(!chatOpen)}
   className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 relative"
 >
-  <MessageSquare className="w-5 h-5 text-red-700" />
+  <MessageSquare className={`w-5 h-5 ${iconColor}`} />
+
   {open && <span className="ml-3 flex-1 text-left">Chat</span>}
 
   {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}

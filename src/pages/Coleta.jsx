@@ -2,6 +2,8 @@ import { useState } from "react";
 import Comex from "./Comex";
 import InicioColetaModal from "./InicioColetaModal";
 import EncerraColetaModal from "./EncerraColetaModal";
+import { useIconColor } from "../context/IconColorContext";
+
 import {
   XCircle,
   RotateCcw,
@@ -61,6 +63,11 @@ export default function Coleta({ open }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigate = useNavigate();
+
+  const {
+  footerIconColorNormal,
+  footerIconColorHover
+} = useIconColor();
 
   return (
     <div
@@ -352,50 +359,95 @@ export default function Coleta({ open }) {
 </div>
 
 
-        {/* CARD 5 — Botões */}
-<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-4 text-red-700">
-  {/* alinhado à esquerda */}
+        {/* CARD 5 — Rodapé */}
+
+
+<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
+
+  {/* FECHAR */}
   <button
     title="Fechar Tela"
     onClick={() => navigate(-1)}
-    className="hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
-    <Undo2 />
+    <Undo2 size={18} />
+    <span>Fechar</span>
   </button>
 
-  <button title="Limpar Tela" className="hover:text-red-800 transition">
-    <RotateCcw />
+  {/* LIMPAR */}
+  <button
+    title="Limpar Tela"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <RotateCcw size={18} />
+    <span>Limpar</span>
   </button>
 
-  <button title="Incluir" className="hover:text-red-800 transition">
-    <PlusCircle />
+  {/* INCLUIR */}
+  <button
+    title="Incluir"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <PlusCircle size={18} />
+    <span>Incluir</span>
   </button>
 
-  <button title="Alterar" className="hover:text-red-800 transition">
-    <Edit />
+  {/* ALTERAR */}
+  <button
+    title="Alterar"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Edit size={18} />
+    <span>Alterar</span>
   </button>
 
- <button
+  {/* COMEX */}
+  <button
     title="Comex"
     onClick={() => setShowComex(true)}
-    className="hover:text-red-800"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
-    <Globe2 />
+    <Globe2 size={18} />
+    <span>Comex</span>
   </button>
 
-  <button title="Duplicar Coleta" className="hover:text-red-800 transition">
-    <Copy />
+  {/* DUPLICAR */}
+  <button
+    title="Duplicar Coleta"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Copy size={18} />
+    <span>Duplicar</span>
   </button>
 
-  {/* Usando FileText para 'Imprimir Etiquetas em Lote' */}
-  <button title="Imprimir Etiquetas em Lote" className="hover:text-red-800 transition">
-    <FileText />
+  {/* ETIQUETAS EM LOTE */}
+  <button
+    title="Imprimir Etiquetas em Lote"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <FileText size={18} />
+    <span>Etiquetas</span>
   </button>
 
-  <button title="Imprimir Coleta" className="hover:text-red-800 transition">
-    <Printer />
+  {/* IMPRIMIR COLETA */}
+  <button
+    title="Imprimir Coleta"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Printer size={18} />
+    <span>Imprimir</span>
   </button>
+
 </div>
+
 
 {showNotaFiscal && (
   <NotasFiscalModal

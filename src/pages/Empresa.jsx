@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EmpresaParametro from "./EmpresaParametro";
 import EmpresaCIOT from "./EmpresaCIOT";
-
+import { useIconColor } from "../context/IconColorContext";
 import {
   XCircle,
   RotateCcw,
@@ -85,7 +85,7 @@ export default function Empresa({ open }) {
   });
 
   const [lista, setLista] = useState([]);
-
+const { footerIconColorNormal, footerIconColorHover } = useIconColor();
   const [showParametro, setShowParametro] = useState(false);
   const [showCIOT, setShowCIOT] = useState(false);
 
@@ -362,39 +362,99 @@ export default function Empresa({ open }) {
 
       {/* ================= FOOTER FIXO ================== */}
       {/* === RODAPÉ FIXO VISÍVEL AO FINAL === */}
+
+
+
 <div className="sticky bottom-0 bg-white border-t border-gray-200 p-2 flex justify-between mt-auto z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
-  <div className="flex gap-3">
-    <button onClick={() => window.history.back()} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <XCircle size={16} /> Fechar
+
+  {/* === AÇÕES ESQUERDA === */}
+  <div className="flex gap-6">
+
+    {/* Fechar */}
+    <button
+      onClick={() => window.history.back()}
+      title="Fechar"
+      className={`flex flex-col items-center text-[11px] transition 
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <XCircle size={18} />
+      <span>Fechar</span>
     </button>
 
-    <button onClick={handleLimpar} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <RotateCcw size={16} /> Limpar
+    {/* Limpar */}
+    <button
+      onClick={handleLimpar}
+      title="Limpar"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <RotateCcw size={18} />
+      <span>Limpar</span>
     </button>
 
-    <button onClick={handleIncluir} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <PlusCircle size={16} /> Incluir
+    {/* Incluir */}
+    <button
+      onClick={handleIncluir}
+      title="Incluir"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <PlusCircle size={18} />
+      <span>Incluir</span>
     </button>
 
-    <button onClick={handleAlterar} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <Edit size={16} /> Alterar
+    {/* Alterar */}
+    <button
+      onClick={handleAlterar}
+      title="Alterar"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <Edit size={18} />
+      <span>Alterar</span>
     </button>
 
-    <button onClick={handleExcluir} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <Trash2 size={16} /> Excluir
+    {/* Excluir */}
+    <button
+      onClick={handleExcluir}
+      title="Excluir"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <Trash2 size={18} />
+      <span>Excluir</span>
     </button>
   </div>
 
-  <div className="flex gap-3">
-    <button onClick={() => setShowParametro(true)} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <Settings size={16} /> Parâmetros
+  {/* === AÇÕES DIREITA === */}
+  <div className="flex gap-6">
+
+    {/* Parâmetros */}
+    <button
+      onClick={() => setShowParametro(true)}
+      title="Parâmetros"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <Settings size={18} />
+      <span>Parâmetros</span>
     </button>
 
-    <button onClick={() => setShowCIOT(true)} className="flex items-center gap-1 text-red-700 hover:text-gray-700 text-[13px]">
-      <Waypoints size={16} /> CIOT
+    {/* CIOT */}
+    <button
+      onClick={() => setShowCIOT(true)}
+      title="CIOT"
+      className={`flex flex-col items-center text-[11px] transition
+        ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <Waypoints size={18} />
+      <span>CIOT</span>
     </button>
+
   </div>
+
 </div>
+
 
 
       {/* ========== MODAIS ========== */}

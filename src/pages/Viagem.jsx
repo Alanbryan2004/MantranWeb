@@ -8,6 +8,8 @@ import ViagemMontarCte from "./ViagemMontarCte";
 import ViagemMontarMinuta from "./ViagemMontarMinuta";
 import ViagemPagamento from "./ViagemPagamento";
 import ViagemMonitoramento from "./ViagemMonitoramento";
+import { useIconColor } from "../context/IconColorContext";
+
 
 
 import {
@@ -73,6 +75,10 @@ export default function Viagem({ open }) {
   const [modalMontarMinutaOpen, setModalMontarMinutaOpen] = useState(false);
   const [modalDespesaOpen, setModalDespesaOpen] = useState(false);
   const [modalMonitoramentoOpen, setModalMonitoramentoOpen] = useState(false);
+const {
+  footerIconColorNormal,
+  footerIconColorHover
+} = useIconColor();
 
 
 const [valorFrete, setValorFrete] = useState(1000);
@@ -740,85 +746,86 @@ const handleRemoverDespesa = () => {
             </fieldset>
 
            {/* === CARD 5 - Rodapé === */}
-<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between text-red-700 mt-3">
+<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between mt-3">
 
   {/* === ÍCONES DE AÇÃO (à esquerda) === */}
-  <div className="flex items-center gap-5 text-red-700">
-    {/* Fechar Tela */}
-<button
-  onClick={() => navigate(-1)}
-  title="Fechar Tela"
-  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
->
-  <XCircle size={20} />
-  <span>Fechar</span>
-</button>
+  <div className="flex items-center gap-5">
 
+    {/* Fechar */}
+    <button
+      onClick={() => navigate(-1)}
+      title="Fechar Tela"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <XCircle size={20} />
+      <span>Fechar</span>
+    </button>
 
-  {/* Limpar */}
-  <button
-    title="Limpar Campos"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-    <RotateCcw size={20} />
-    <span>Limpar</span>
-  </button>
+    {/* Limpar */}
+    <button
+      title="Limpar Campos"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <RotateCcw size={20} />
+      <span>Limpar</span>
+    </button>
 
-  {/* Incluir */}
-  <button
-    title="Incluir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-    <PlusCircle size={20} />
-    <span>Incluir</span>
-  </button>
+    {/* Incluir */}
+    <button
+      title="Incluir Viagem"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <PlusCircle size={20} />
+      <span>Incluir</span>
+    </button>
 
-  {/* Alterar */}
-  <button
-    title="Alterar Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-    <Edit size={20} />
-    <span>Alterar</span>
-  </button>
+    {/* Alterar */}
+    <button
+      title="Alterar Viagem"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <Edit size={20} />
+      <span>Alterar</span>
+    </button>
 
-  {/* Excluir */}
-  <button
-    title="Excluir Viagem"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
-  >
-    <Trash2 size={20} />
-    <span>Excluir</span>
-  </button>
+    {/* Excluir */}
+    <button
+      title="Excluir Viagem"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <Trash2 size={20} />
+      <span>Excluir</span>
+    </button>
 
-   {/* Pagto */}
- <button
-  onClick={() => setModalPagamentoOpen(true)}  // <-- correto
-  title="Pagamento"
-  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
->
-  <DollarSign size={20} />
-  <span>Pagto</span>
-</button>
+    {/* Pagamento */}
+    <button
+      onClick={() => setModalPagamentoOpen(true)}
+      title="Pagamento"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <DollarSign size={20} />
+      <span>Pagto</span>
+    </button>
 
-    
     {/* Monitoramento */}
-<button
-  onClick={() => setModalMonitoramentoOpen(true)}
-  title="Monitoramento"
-  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
->
-  <MapPin size={18} className="text-red-700" />
-  <span>Monitorar</span>
-</button>
+    <button
+      onClick={() => setModalMonitoramentoOpen(true)}
+      title="Monitoramento"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <MapPin size={20} />
+      <span>Monitorar</span>
+    </button>
 
-{/* Buonny */}
-   <button 
-   title="Buonny"
-   className="flex flex-col items-center text-[11px] hover:text-red-800 transition">
-      <UserCheck size={18} /> 
+    {/* Buonny */}
+    <button
+      title="Buonny"
+      className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    >
+      <UserCheck size={20} />
       <span>Buonny</span>
     </button>
+
 
   </div>
 

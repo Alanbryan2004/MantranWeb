@@ -8,6 +8,7 @@ import PercursoModal from "../pages/PercursoModal";
 import ManifestoCargaPerigosa from "../pages/ManifestoCargaPerigosa";
 import ManifestoSeguro from "../pages/ManifestoSeguro";
 import ManifestoInfoComplementar from "../pages/ManifestoInfoComplementar";
+import { useIconColor } from "../context/IconColorContext";
 import {
   XCircle,
   RotateCcw,
@@ -93,6 +94,8 @@ export default function Manifesto({ open }) {
   const [isBaixaOpen, setIsBaixaOpen] = useState(false);
   const [statusTransito, setStatusTransito] = useState("verde");
 // valores possíveis: "verde", "amarelo", "vermelho"
+
+const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
 
 const handleCheckboxChange = (e) => {
@@ -504,14 +507,17 @@ const handleCheckboxChange = (e) => {
 </div>
 
      
-          {/* Rodapé */}
-<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-5 text-red-700 justify-start">
+          
 
-  {/* Fechar Tela */}
+  {/* Rodapé */}
+<div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
+
+  {/* Fechar */}
   <button
     onClick={() => navigate(-1)}
     title="Fechar Tela"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <XCircle size={20} />
     <span>Fechar</span>
@@ -520,7 +526,8 @@ const handleCheckboxChange = (e) => {
   {/* Limpar */}
   <button
     title="Limpar Campos"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <RotateCcw size={20} />
     <span>Limpar</span>
@@ -529,7 +536,8 @@ const handleCheckboxChange = (e) => {
   {/* Incluir */}
   <button
     title="Incluir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <PlusCircle size={20} />
     <span>Incluir</span>
@@ -538,7 +546,8 @@ const handleCheckboxChange = (e) => {
   {/* Alterar */}
   <button
     title="Alterar Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <Edit size={20} />
     <span>Alterar</span>
@@ -547,7 +556,8 @@ const handleCheckboxChange = (e) => {
   {/* Excluir */}
   <button
     title="Excluir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <Trash2 size={20} />
     <span>Excluir</span>
@@ -556,77 +566,86 @@ const handleCheckboxChange = (e) => {
   {/* Imprimir */}
   <button
     title="Imprimir Manifesto"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <Printer size={20} />
     <span>Imprimir</span>
   </button>
 
   {/* Consulta Sefaz */}
- <button
-   title="Consulta Sefaz"
-   onClick={() => setIsModalOpen(true)}
-   className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
- >
-   <Search size={20} />
-   <span>Sefaz</span>
- </button>
+  <button
+    title="Consulta Sefaz"
+    onClick={() => setIsModalOpen(true)}
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Search size={20} />
+    <span>Sefaz</span>
+  </button>
 
-{/* Baixar Manifesto */}
-<button
-  title="Baixar Manifesto"
-  onClick={() => setIsBaixaOpen(true)}
-  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
->
-  <Download size={20} />
-  <span>Baixar</span>
-</button>
+  {/* Baixar */}
+  <button
+    title="Baixar Manifesto"
+    onClick={() => setIsBaixaOpen(true)}
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <Download size={20} />
+    <span>Baixar</span>
+  </button>
 
+  {/* Docs */}
+  <button
+    title="Documentos Vinculados"
+    onClick={() => setIsDocsOpen(true)}
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <FileText size={20} />
+    <span>Docs</span>
+  </button>
 
-{/* Documentos */}
-<button
-  title="Documentos Vinculados"
-  onClick={() => setIsDocsOpen(true)}
-  className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
->
-  <FileText size={20} />
-  <span>Docs</span>
-</button>
-
-{/* Trânsito (dinâmico) */}
-<button
-  title={`Status de Trânsito (${statusTransito.toUpperCase()})`}
-  onClick={() => {
-    // alterna o status em loop
-    setStatusTransito((prev) =>
-      prev === "verde" ? "amarelo" : prev === "amarelo" ? "vermelho" : "verde"
-    );
-  }}
-  className="flex flex-col items-center text-[11px] hover:opacity-80 transition"
->
-  <FontAwesomeIcon
-    icon={faTrafficLight}
-    className={`text-[18px] ${
-      statusTransito === "verde"
-        ? "text-green-600"
-        : statusTransito === "amarelo"
-        ? "text-yellow-500"
-        : "text-red-600"
-    }`}
-  />
-  <span>Trânsito</span>
-</button>
-
+  {/* Trânsito (semaforo) */}
+  <button
+    title={`Status de Trânsito (${statusTransito.toUpperCase()})`}
+    onClick={() =>
+      setStatusTransito(prev =>
+        prev === "verde"
+          ? "amarelo"
+          : prev === "amarelo"
+          ? "vermelho"
+          : "verde"
+      )
+    }
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+  >
+    <FontAwesomeIcon
+      icon={faTrafficLight}
+      className={`text-[18px] ${
+        statusTransito === "verde"
+          ? "text-green-600"
+          : statusTransito === "amarelo"
+          ? "text-yellow-500"
+          : "text-red-600"
+      }`}
+    />
+    <span>Trânsito</span>
+  </button>
 
   {/* Dúvidas */}
   <button
     title="Ajuda e Dúvidas"
-    className="flex flex-col items-center text-[11px] hover:text-red-800 transition"
+    className={`flex flex-col items-center text-[11px]
+      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
   >
     <HelpCircle size={20} />
     <span>Dúvidas</span>
   </button>
+
 </div>
+
 
           </>
         )}

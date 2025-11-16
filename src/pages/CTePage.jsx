@@ -9,6 +9,9 @@ import ConsultaSefazCte from "./ConsultaSefazCte";
 import CteComplementar from "./CteComplementar";
 import CteSubstituicao from "./CteSubstituicao";
 import CteSubcontratado from "./CteSubcontratado";
+import { useIconColor } from "../context/IconColorContext";
+
+
 
 import {
   XCircle,
@@ -78,6 +81,7 @@ function IconeLapis({ title = "", onClick }) {
 
 export default function CTePage({ open }) {
   const [activeTab, setActiveTab] = useState("cte");
+  const { footerIconColorNormal, footerIconColorHover } = useIconColor();
   const navigate = useNavigate();
   const [showCustos, setShowCustos] = useState(false);
   const [showNotaFiscal, setShowNotaFiscal] = useState(false);
@@ -542,86 +546,111 @@ const handleExcluir = () => {
   <span className="text-green-700 font-semibold">TESTE</span>
 </div>
 
-            {/* Rodapé */}
-<div className="border-t border-gray-300 bg-white py-1 px-3 flex items-center justify-between text-red-700">
-  {/* Ícones com legendas */}
+{/* Rodapé */}
+<div className="border-t border-gray-300 bg-white py-1 px-3 flex items-center justify-between">
   <div className="flex items-center gap-4">
-    <button onClick={() => navigate("/")} className="flex flex-col items-center text-[11px]">
+
+    {/* FECHAR */}
+    <button
+      onClick={() => navigate("/")}
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <XCircle size={18} />
       <span>Fechar</span>
     </button>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* LIMPAR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <RotateCcw size={18} />
       <span>Limpar</span>
     </div>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* INCLUIR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <PlusCircle size={18} />
       <span>Incluir</span>
     </div>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* ALTERAR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <Edit size={18} />
       <span>Alterar</span>
     </div>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* EXCLUIR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <Trash2 size={18} />
       <span>Excluir</span>
     </div>
 
-   <button
-  onClick={() => setShowNotaFiscalCte(true)}
-  className="flex flex-col items-center text-[11px]"
-  title="Notas Fiscais do CTe"
->
-  <FileText size={18} />
-  <span>Nota Fiscal</span>
-</button>
+    {/* NOTA FISCAL */}
+    <button
+      onClick={() => setShowNotaFiscalCte(true)}
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <FileText size={18} />
+      <span>Nota Fiscal</span>
+    </button>
 
-    {/* === Botão que abre a tela de Valores do CTe === */}
-   <button
-  onClick={() => setShowValoresCte(true)}
-  title="Valores do CTe"
-  className="flex flex-col items-center text-[11px]"
->
-  <DollarSign size={18} />
-  <span>Valores</span>
-</button>
+    {/* VALORES */}
+    <button
+      onClick={() => setShowValoresCte(true)}
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <DollarSign size={18} />
+      <span>Valores</span>
+    </button>
 
-
+    {/* COMEX */}
     <button
       onClick={() => setShowComex(true)}
-      className="flex flex-col items-center text-[11px]"
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
     >
       <Globe2 size={18} />
       <span>Comex</span>
     </button>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* GNRE */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <FileSpreadsheet size={18} />
       <span>GNRE</span>
     </div>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* IMPRIMIR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <Printer size={18} />
       <span>Imprimir</span>
     </div>
 
-    <div className="flex flex-col items-center text-[11px]">
+    {/* DUPLICAR */}
+    <div
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
       <Copy size={18} />
       <span>Duplicar</span>
     </div>
 
-  <button
-  onClick={() => setShowConsultaSefaz(true)}
-  className="flex flex-col items-center text-[11px]"
-  title="Consulta SEFAZ do CTe"
->
-  <Search size={18} />
-  <span>Sefaz</span>
-</button>
+    {/* SEFAZ */}
+    <button
+      onClick={() => setShowConsultaSefaz(true)}
+      className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+    >
+      <Search size={18} />
+      <span>Sefaz</span>
+    </button>
+
   </div>
 </div>
 

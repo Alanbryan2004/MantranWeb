@@ -1,4 +1,12 @@
 import { useState } from "react";
+import EmpresaAgregadoTabelaFrete from "./EmpresaAgregadoTabelaFrete";
+import EmpresaAgregadoVeiculos from "./EmpresaAgregadoVeiculos";
+import EmpresaAgregadoMotorista from "./EmpresaAgregadoMotorista";
+import { useIconColor } from "../context/IconColorContext";
+
+
+
+
 import {
   XCircle,
   RotateCcw,
@@ -108,7 +116,13 @@ async function buscarCEP(cep) {
 export default function EmpresaAgregado({ open }) {
   const [aba, setAba] = useState("cadastro");
   const [showAdicionais, setShowAdicionais] = useState(true);
-
+  const [showTabelaFrete, setShowTabelaFrete] = useState(false);
+  const [showVeiculos, setShowVeiculos] = useState(false);
+  const [showMotoristas, setShowMotoristas] = useState(false);
+const {
+  footerIconColorNormal,
+  footerIconColorHover
+} = useIconColor();
 
   /* ======== ESTADO DO CADASTRO ======== */
   const [tpDoc, setTpDoc] = useState("CNPJ");
@@ -793,15 +807,25 @@ export default function EmpresaAgregado({ open }) {
                 CARD 3 - BOTÕES ESPECIAIS
             --------------------------------------------------- */}
             <div className="flex gap-3 mb-4">
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
-                <FileSpreadsheet size={14} /> Tabela Frete
-              </button>
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
-                <Truck size={14} /> Veículos
-              </button>
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
-                <Users size={14} /> Motoristas
-              </button>
+              <button
+  onClick={() => setShowTabelaFrete(true)}
+  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+>
+  <FileSpreadsheet size={14} /> Tabela Frete
+</button>
+              <button
+  onClick={() => setShowVeiculos(true)}
+  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+>
+  <Truck size={14} /> Veículos
+</button>
+<button
+  onClick={() => setShowMotoristas(true)}
+  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+>
+  <Users size={14} /> Motoristas
+</button>
+
               <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
                 <FileSpreadsheet size={14} /> Conta Corrente
               </button>
@@ -814,38 +838,62 @@ export default function EmpresaAgregado({ open }) {
                 RODAPÉ
             --------------------------------------------------- */}
             <div className="flex gap-2 justify-end mt-4">
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100">
-                <XCircle size={14} /> Fechar
-              </button>
-
               <button
-                onClick={handleLimpar}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100"
-              >
-                <RotateCcw size={14} /> Limpar
-              </button>
+    onClick={() => window.history.back()}
+    className={`flex flex-col items-center text-[11px] transition 
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <XCircle size={18} />
+    <span>Fechar</span>
+  </button>
 
-              <button
-                onClick={handleIncluir}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100"
-              >
-                <PlusCircle size={14} /> Incluir
-              </button>
+  {/* Limpar */}
+  <button
+    onClick={handleLimpar}
+    className={`flex flex-col items-center text-[11px] transition
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <RotateCcw size={18} />
+    <span>Limpar</span>
+  </button>
 
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100">
-                <Edit size={14} /> Alterar
-              </button>
+  {/* Incluir */}
+  <button
+    onClick={handleIncluir}
+    className={`flex flex-col items-center text-[11px] transition
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <PlusCircle size={18} />
+    <span>Incluir</span>
+  </button>
 
-              <button
-                onClick={handleExcluir}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100"
-              >
-                <Trash2 size={14} /> Excluir
-              </button>
+  {/* Alterar */}
+  <button
+    className={`flex flex-col items-center text-[11px] transition
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <Edit size={18} />
+    <span>Alterar</span>
+  </button>
 
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100">
-                <FileSpreadsheet size={14} /> Exportar Excel
-              </button>
+  {/* Excluir */}
+  <button
+    onClick={handleExcluir}
+    className={`flex flex-col items-center text-[11px] transition
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <Trash2 size={18} />
+    <span>Excluir</span>
+  </button>
+
+  {/* Exportar Excel */}
+  <button
+    className={`flex flex-col items-center text-[11px] transition
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+  >
+    <FileSpreadsheet size={18} />
+    <span>Excel</span>
+  </button>
             </div>
           </>
         )}
@@ -1086,6 +1134,40 @@ export default function EmpresaAgregado({ open }) {
           </>
         )}
       </div>
+
+  {/* === CHAMADA DO MODAL TABELA FRETE === */}
+      {showTabelaFrete && (
+        <EmpresaAgregadoTabelaFrete
+          onClose={() => setShowTabelaFrete(false)}
+          cnpj={doc}
+          razao={dados.razao}
+        />
+      )}
+
+      {showVeiculos && (
+  <EmpresaAgregadoVeiculos
+    onClose={() => setShowVeiculos(false)}
+    onCadastroVeiculo={() => {
+      setShowVeiculos(false);     // fecha a lista
+      alert("Abrir tela Veiculo.jsx");  // aqui você chama sua tela real
+    }}
+  />
+)}
+
+{showMotoristas && (
+  <EmpresaAgregadoMotorista
+    onClose={() => setShowMotoristas(false)}
+    onCadastroMotorista={() => {
+      setShowMotoristas(false);
+      alert("Abrir tela CadastroMotorista.jsx");
+    }}
+    onContratoCooperativa={() => {
+      alert("Abrir tela ContratoCooperativa.jsx");
+    }}
+  />
+)}
+
+
     </div>
   );
 }
