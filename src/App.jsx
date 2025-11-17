@@ -58,7 +58,7 @@ function TailwindColorHelper() {
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLogged, setIsLogged] = useState(false);
-
+  const bgLogo = localStorage.getItem("param_logoBg");
   // controla dashboard inicial
   const [showDashboard, setShowDashboard] = useState(
     localStorage.getItem("hideDashboard") !== "true"
@@ -133,9 +133,24 @@ export default function App() {
                     }}
                   />
                 ) : (
-                  <div className="flex items-center justify-center text-gray-500 italic text-lg h-full">
-                    Selecione a Opção Desejada
-                  </div>
+                 <div className="flex flex-col items-center justify-center h-full text-gray-500">
+
+  {/* Logo do cliente (se existir) */}
+  {bgLogo && (
+    <img
+      src={bgLogo}
+      alt="Marca d’água"
+      className="opacity-40 mb-4"
+      style={{ width: "220px" }} // tamanho ajustável
+    />
+  )}
+
+  {/* Texto abaixo */}
+  <span className="italic text-lg">
+    Selecione a Opção Desejada
+  </span>
+</div>
+
                 )
               }
             />

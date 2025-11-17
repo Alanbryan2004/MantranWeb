@@ -177,6 +177,42 @@ export default function Parametro() {
         </div>
       </div>
 
+      {/* Logo de Fundo */}
+<div className="flex items-center gap-3 mt-3">
+  <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
+    Logo de Fundo:
+  </label>
+
+  <input
+    type="file"
+    accept="image/png"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        localStorage.setItem("param_logoBg", reader.result);
+        alert("✅ Logo salva com sucesso!");
+      };
+      reader.readAsDataURL(file);
+    }}
+    className="text-[13px]"
+  />
+
+  <button
+    onClick={() => {
+      localStorage.removeItem("param_logoBg");
+      alert("Logo removida.");
+    }}
+    className="text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
+  >
+    Remover
+  </button>
+</div>
+
+
+
       {/* Taxas */}
       <div className="flex items-center gap-3 mt-2">
         <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
