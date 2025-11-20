@@ -18,6 +18,7 @@ import Cliente from "./pages/Cliente";
 import Empresa from "./pages/Empresa";
 import EmpresaAgregado from "./pages/EmpresaAgregado";
 import Veiculo from "./pages/Veiculo";
+import Motorista from "./pages/Motorista";
 
 
 
@@ -112,6 +113,8 @@ export default function App() {
             <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
 
             <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
+
+            <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
 
 
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />

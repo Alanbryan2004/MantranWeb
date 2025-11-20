@@ -261,17 +261,20 @@ setUsuarios((prev) => {
       ? "/empresa-agregado"
       : item === "Veículo"
       ? "/veiculo"
+      : item === "Motorista"
+      ? "/motorista"
       : "#"
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
   onClick={(e) => {
-    if (!["Empresa", "Empresa Agregado", "Veículo"].includes(item)) {
+    if (!["Empresa", "Empresa Agregado", "Veículo", "Motorista"].includes(item)) {
       e.preventDefault();
     }
   }}
 >
   {item}
 </Link>
+
 
 
 
