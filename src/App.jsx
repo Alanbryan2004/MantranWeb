@@ -19,6 +19,9 @@ import Empresa from "./pages/Empresa";
 import EmpresaAgregado from "./pages/EmpresaAgregado";
 import Veiculo from "./pages/Veiculo";
 import Motorista from "./pages/Motorista";
+import ViagemPagamento from "./pages/ViagemPagamento";
+import Faturamento from "./pages/Faturamento";
+import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
 
 
 
@@ -115,9 +118,20 @@ export default function App() {
             <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
 
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
+            
+            <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
+
+            <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
+
 
 
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
+            <Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
+            {/* <ViagemPagamento
+                isOpen={modalPagamentoOpen}
+                onClose={() => setModalPagamentoOpen(false)}
+              /> */}
+
 
             <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
 

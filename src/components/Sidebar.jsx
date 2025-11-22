@@ -5,6 +5,7 @@ import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 import { useIconColor } from "../context/IconColorContext";
 
 
+
 import {
   FileText,
   FileSpreadsheet,
@@ -512,14 +513,26 @@ setUsuarios((prev) => {
 
           {activeMenu === "faturamento" && (
             <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
-              {["Manual", "Automático"].map((sub) => (
-                <div
-                  key={sub}
-                  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-                >
-                  {sub}
-                </div>
-              ))}
+              {["Manual", "Automático"].map((sub) =>
+  sub === "Manual" ? (
+    <Link
+      key={sub}
+      to="/faturamento"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+    >
+      Manual
+    </Link>
+  ) : (
+    <Link
+      key={sub}
+      to="/faturamento-automatico"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+    >
+      Automático
+    </Link>
+  )
+)}
+
             </div>
           )}
         </div>

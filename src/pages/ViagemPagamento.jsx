@@ -23,11 +23,14 @@ function Txt(props) {
     />
   );
 }
-function Sel({ children, ...rest }) {
+function Sel({ children, className = "", ...rest }) {
   return (
     <select
       {...rest}
-      className="border border-gray-300 rounded px-2 py-[3px] h-[26px] text-[13px]"
+      className={
+        "border border-gray-300 rounded px-2 py-[3px] h-[26px] text-[13px] " +
+        className
+      }
     >
       {children}
     </select>
@@ -149,36 +152,45 @@ useEffect(() => {
 
                 {/* L1 */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-6 flex items-center gap-2">
+                  <div className="col-span-7 flex items-center gap-2">
                     <Label>Filial</Label>
-                    <Sel className="flex-1">
+                    <Sel className="flex-1 ml-[60px]">
                       <option>001 - TESTE MANTRAN</option>
                     </Sel>
                   </div>
-                  <div className="col-span-6 flex items-center gap-2">
+                  <div className="col-span-5 flex items-center gap-2">
                     <Label>Data</Label>
-                    <Txt type="date" className="w-[160px]" defaultValue="2025-10-01" />
+                    <Txt type="date" className="w-[140px]" defaultValue="2025-10-01" />
                     <Label>a</Label>
-                    <Txt type="date" className="w-[160px]" defaultValue="2025-10-31" />
+                    <Txt type="date" className="w-[140px]" defaultValue="2025-10-31" />
                   </div>
                 </div>
 
                 {/* L2 */}
                 <div className="grid grid-cols-12 gap-2 items-center mt-2">
                   <div className="col-span-7 flex items-center gap-2">
-                    <Label>Empresa</Label>
-                    <Txt className="w-[180px] text-center" defaultValue="1646494700193" />
-                    <Txt className="flex-1" defaultValue="BEVANNI TRANSPORTES LTDA" />
-                  </div>
-                  <div className="col-span-3 flex items-center gap-2">
+  <Label>Empresa</Label>
+
+  <Txt
+    className="w-[150px] text-center ml-[36px]"
+    defaultValue="1646494700193"
+  />
+
+  <Txt
+    className="flex-1 bg-gray-200 text-gray-700"
+    defaultValue="BEVANNI TRANSPORTES LTDA"
+    readOnly
+  />
+</div>
+                  <div className="col-span-2 flex items-center gap-2">
                     <Label>Tipo</Label>
                     <Sel className="w-full">
                       <option>Agregado</option>
                       <option>Empresa</option>
                     </Sel>
                   </div>
-                  <div className="col-span-2 flex items-center gap-2">
-                    <label className="flex items-center gap-1 text-[12px]">
+                  <div className="col-span-3 flex items-center gap-2 ">
+                    <label className="flex items-center gap-2 text-[12px] ml-[25px]">
                       <input type="checkbox" /> Viagens c/ Protocolo Entrega
                     </label>
                   </div>
@@ -188,12 +200,12 @@ useEffect(() => {
                 <div className="grid grid-cols-12 gap-2 items-center mt-2">
                   <div className="col-span-7 flex items-center gap-2">
                     <Label>Motorista</Label>
-                    <Txt className="w-[180px] text-center" defaultValue="01628446760" />
-                    <Txt className="flex-1" defaultValue="ALAN DA COSTA" />
+                    <Txt className="w-[150px] text-center ml-[35px]" defaultValue="01628446760" />
+                    <Txt className="flex-1 bg-gray-200 text-gray-700" defaultValue="ALAN DA COSTA" readOnly/>
                   </div>
                   <div className="col-span-5 flex items-center gap-2">
                     <Label>CPF</Label>
-                    <Txt className="w-[220px] text-center" defaultValue="—" />
+                    <Txt className="w-full text-center bg-gray-200" defaultValue="—" readOnly/>
                   </div>
                 </div>
 
@@ -204,7 +216,7 @@ useEffect(() => {
                     <Sel
                       value={tpConf}
                       onChange={(e) => setTpConf(e.target.value)}
-                      className="w-[260px]"
+                      className="w-[400px]"
                     >
                       <option value="pendente">Viagem pendente de acerto</option>
                       <option value="todas">Todas</option>
