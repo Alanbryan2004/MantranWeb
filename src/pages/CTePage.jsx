@@ -301,7 +301,7 @@ const handleExcluir = () => {
   <div className="grid grid-cols-[100px_180px_1fr_180px_60px_30px] gap-[4px] mb-1 items-center">
     <div></div>
     <div className="font-semibold text-xs text-gray-600">CGC / CPF</div>
-    <div className="font-semibold text-xs text-gray-600">Razão Social</div>
+    <div className="font-semibold text-xs text-gray-600 ">Razão Social</div>
     <div className="font-semibold text-xs text-gray-600">Cidade</div>
     <div className="font-semibold text-xs text-gray-600">UF</div>
     <div></div>
@@ -340,7 +340,7 @@ const handleExcluir = () => {
 
       <Txt defaultValue={razao} />
       <Txt defaultValue={cidade} />
-      <Txt defaultValue={uf} className="text-center" />
+      <Txt defaultValue={uf} className="text-center bg-gray-200" />
       <IconeLapis
         title={`Abrir cadastro ${label}`}
         onClick={() => abrirModal(label.toLowerCase())}

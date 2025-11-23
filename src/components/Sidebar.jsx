@@ -464,6 +464,16 @@ setUsuarios((prev) => {
           </Link>
         </div>
       )}
+
+     {item === "Minuta" && (
+  <Link
+    to="/minuta"
+    className="absolute inset-0 px-3 py-[2px] flex items-center hover:bg-gray-100 rounded text-gray-700"
+  >
+    Minuta
+  </Link>
+)}
+
     </li>
   )
 )}

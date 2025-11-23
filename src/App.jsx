@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import Coleta from "./pages/Coleta";
 import Manifesto from "./pages/Manifesto";
 import Viagem from "./pages/Viagem";
+import Minuta from "./pages/Minuta";
 import Dashboard from "./pages/Dashboard";
 import Parametro from "./pages/Parametro";
 import "./index.css";
@@ -102,6 +103,8 @@ export default function App() {
             <Route path="/cliente-divisao" element={<ClienteDivisao />} />
 
             <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
+
+            <Route path="/minuta" element={<Minuta open={sidebarOpen} />} />
 
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
 
