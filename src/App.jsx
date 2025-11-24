@@ -23,6 +23,8 @@ import Motorista from "./pages/Motorista";
 import ViagemPagamento from "./pages/ViagemPagamento";
 import Faturamento from "./pages/Faturamento";
 import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
+import Filial from "./pages/Filial";
+
 
 
 
@@ -121,6 +123,8 @@ export default function App() {
             <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
 
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
+
+            <Route path="/filial" element={<Filial open={sidebarOpen} />} />
             
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
 

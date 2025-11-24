@@ -258,6 +258,8 @@ setUsuarios((prev) => {
   to={
     item === "Empresa"
       ? "/empresa"
+      : item === "Filial"
+      ? "/filial"
       : item === "Empresa Agregado"
       ? "/empresa-agregado"
       : item === "Veículo"
@@ -268,7 +270,15 @@ setUsuarios((prev) => {
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
   onClick={(e) => {
-    if (!["Empresa", "Empresa Agregado", "Veículo", "Motorista"].includes(item)) {
+    if (
+      ![
+        "Empresa",
+        "Filial",
+        "Empresa Agregado",
+        "Veículo",
+        "Motorista"
+      ].includes(item)
+    ) {
       e.preventDefault();
     }
   }}
