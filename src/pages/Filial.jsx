@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 import { useIconColor } from "../context/IconColorContext";
 import FilialParametro from "./FilialParametro";
 import FilialNumeracao from "./FilialNumeracao";
@@ -22,7 +21,9 @@ import {
 /* ========================= Helpers ========================= */
 function Label({ children, className = "" }) {
   return (
-    <label className={`text-[12px] text-gray-700 ${className}`}>{children}</label>
+    <label className={`text-[12px] text-gray-700 ${className}`}>
+      {children}
+    </label>
   );
 }
 
@@ -52,7 +53,54 @@ function Sel({ children, className = "", ...rest }) {
   );
 }
 
-// input com máscara, reaproveitando o mesmo estilo do Txt
+/* ========================= Máscaras (padrão Empresa.jsx) ========================= */
+const onlyDigits = (v = "") => v.replace(/\D+/g, "");
+
+const maskCNPJ = (v) =>
+  onlyDigits(v)
+    .slice(0, 14)
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, "$1.$2.$3/$4")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+
+const maskCEP = (v) =>
+  onlyDigits(v)
+    .slice(0, 8)
+    .replace(/^(\d{5})(\d)/, "$1-$2");
+
+const maskPhone = (v) => {
+  v = onlyDigits(v).slice(0, 11);
+  if (v.length <= 10)
+    return v
+      .replace(/^(\d{0,2})/, "($1")
+      .replace(/^\((\d{2})(\d{0,4})/, "($1) $2")
+      .replace(/^\((\d{2})\) (\d{4})(\d{0,4})/, "($1) $2-$3");
+  return v
+    .replace(/^(\d{0,2})/, "($1")
+    .replace(/^\((\d{2})(\d{0,5})/, "($1) $2")
+    .replace(/^\((\d{2})\) (\d{5})(\d{0,4})/, "($1) $2-$3");
+};
+
+/* ========================= Buscar CEP ========================= */
+async function buscarCEP(cep, setFilial) {
+  try {
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await response.json();
+
+    if (!data.erro) {
+      setFilial((prev) => ({
+        ...prev,
+        endereco: data.logradouro || "",
+        bairro: data.bairro || "",
+        cidade: data.localidade || "",
+        uf: data.uf || "",
+      }));
+    }
+  } catch (err) {
+    console.log("Erro ao buscar CEP:", err);
+  }
+}
 
 
 /* ========================= Component ========================= */
@@ -123,8 +171,21 @@ export default function Filial({ open }) {
   const [showNumeracaoModal, setShowNumeracaoModal] = useState(false);
 
   const handleChange = (field) => (e) => {
-    const value =
+    let value =
       e.target.type === "checkbox" ? e.target.checked : e.target.value;
+
+    if (field === "cnpj") value = maskCNPJ(value);
+    if (field === "cep") {
+  value = maskCEP(value);
+  const dig = onlyDigits(value);
+
+  if (dig.length === 8) {
+    buscarCEP(dig, setFilial);
+  }
+}
+
+    if (field === "fone" || field === "fone2") value = maskPhone(value);
+
     setFilial((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -137,12 +198,12 @@ export default function Filial({ open }) {
     setFilial((prev) => ({
       ...prev,
       codigo: row.codigo,
-      cnpj: row.cgc,
+      cnpj: maskCNPJ(row.cgc),
       razao: row.nome,
       sigla: row.sigla,
       endereco: row.endereco,
       cidade: row.cidade,
-      cep: row.cep,
+      cep: maskCEP(row.cep),
     }));
   };
 
@@ -186,260 +247,214 @@ export default function Filial({ open }) {
               </legend>
 
               <div className="space-y-2">
-                {/* Linha 1 - Código, CNPJ, Razão, Sigla, Empresa */}
+                {/* Linha 1 - Código, CNPJ, Sigla, Empresa */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-1 flex items-center">
-                    <Label className="mr-1">Código</Label>
-                    <Txt
-                      className="w-full text-center"
-                      value={filial.codigo}
-                      onChange={handleChange("codigo")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Código</Label>
+                  <Txt
+                    className="col-span-1 text-center"
+                    value={filial.codigo}
+                    onChange={handleChange("codigo")}
+                  />
 
-                  <div className="col-span-3 flex items-center">
-                    <Label className="mr-1 min-w-[40px]">CNPJ</Label>
-                    <Txt
-                      mask="99.999.999/9999-99"
-                      className="w-full"
-                      value={filial.cnpj}
-                      onChange={handleChange("cnpj")}
-                    />
-                  </div>
+                  <Label className="col-span-1">CNPJ</Label>
+                  <Txt
+                    className="col-span-2"
+                    value={filial.cnpj}
+                    onChange={handleChange("cnpj")}
+                    placeholder="00.000.000/0000-00"
+                  />
 
-                  <div className="col-span-5 flex items-center">
-                    <Label className="mr-1 min-w-[80px]">Razão Social</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.razao}
-                      onChange={handleChange("razao")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Sigla</Label>
+                  <Txt
+                    className="col-span-1 text-center"
+                    value={filial.sigla}
+                    onChange={handleChange("sigla")}
+                  />
 
-                  <div className="col-span-1 flex items-center">
-                    <Label className="mr-1">Sigla</Label>
-                    <Txt
-                      className="w-full text-center"
-                      value={filial.sigla}
-                      onChange={handleChange("sigla")}
-                    />
-                  </div>
-
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1">Empresa</Label>
-                    <Sel
-                      className="w-full"
-                      value={filial.empresa}
-                      onChange={handleChange("empresa")}
-                    >
-                      <option>001 - MANTRAN TRANSPORTES LTDA</option>
-                      <option>002 - OUTRA EMPRESA</option>
-                    </Sel>
-                  </div>
+                  <Label className="col-span-1">Empresa</Label>
+                  <Sel
+                    className="col-span-4"
+                    value={filial.empresa}
+                    onChange={handleChange("empresa")}
+                  >
+                    <option>001 - MANTRAN TRANSPORTES LTDA</option>
+                    <option>002 - OUTRA EMPRESA</option>
+                  </Sel>
                 </div>
 
-                {/* Linha 2 - CEP, Endereço, Nº */}
+                {/* Linha 2 - Razão Social */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1 min-w-[40px]">CEP</Label>
-                    <Txt
-                      mask="99999-999"
-                      className="w-full"
-                      value={filial.cep}
-                      onChange={handleChange("cep")}
-                    />
-                  </div>
-
-                  <div className="col-span-8 flex items-center">
-                    <Label className="mr-1 min-w-[70px]">Endereço</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.endereco}
-                      onChange={handleChange("endereco")}
-                    />
-                  </div>
-
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1">Nº</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.numero}
-                      onChange={handleChange("numero")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Razão Social</Label>
+                  <Txt
+                    className="col-span-7"
+                    value={filial.razao}
+                    onChange={handleChange("razao")}
+                  />
+                  <Label className="col-span-1">IE</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.ie}
+                    onChange={handleChange("ie")}
+                  />
                 </div>
 
-                {/* Linha 3 - Cidade, UF, Bairro, CNAE, IM */}
+                {/* Linha 3 - CEP, Endereço, Nº */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[55px]">Cidade</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.cidade}
-                      onChange={handleChange("cidade")}
-                    />
-                  </div>
+                  <Label className="col-span-1">CEP</Label>
+                  <Txt
+                    className="col-span-2"
+                    value={filial.cep}
+                    onChange={handleChange("cep")}
+                    placeholder="00000-000"
+                  />
 
-                  <div className="col-span-1 flex items-center">
-                    <Label className="mr-1">UF</Label>
-                    <Txt
-                      className="w-full text-center bg-gray-200"
-                      readOnly
-                      value={filial.uf}
-                    />
-                  </div>
+                  <Label className="col-span-1">Endereço</Label>
+                  <Txt
+                    className="col-span-6"
+                    value={filial.endereco}
+                    onChange={handleChange("endereco")}
+                  />
 
-                  <div className="col-span-3 flex items-center">
-                    <Label className="mr-1">Bairro</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.bairro}
-                      onChange={handleChange("bairro")}
-                    />
-                  </div>
-
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1">CNAE</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.cnae}
-                      onChange={handleChange("cnae")}
-                    />
-                  </div>
-
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1">I.M</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.im}
-                      onChange={handleChange("im")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Nº</Label>
+                  <Txt
+                    className="col-span-1"
+                    value={filial.numero}
+                    onChange={handleChange("numero")}
+                  />
                 </div>
 
-                {/* Linha 4 - Email / Email Ocor */}
+                {/* Linha 4 - Cidade, UF, Bairro */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-6 flex items-center">
-                    <Label className="mr-1 min-w-[45px]">E-mail</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.email}
-                      onChange={handleChange("email")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Cidade</Label>
+                  <Txt
+                    className="col-span-4"
+                    value={filial.cidade}
+                    onChange={handleChange("cidade")}
+                  />
 
-                  <div className="col-span-6 flex items-center">
-                    <Label className="mr-1 min-w-[70px]">E-mail Ocor</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.emailOcor}
-                      onChange={handleChange("emailOcor")}
-                    />
-                  </div>
+                  <Label className="col-span-1">UF</Label>
+                  <Txt
+                    className="col-span-1 text-center bg-gray-200"
+                    readOnly
+                    value={filial.uf}
+                  />
+
+                  <Label className="col-span-1">Bairro</Label>
+                  <Txt
+                    className="col-span-4"
+                    value={filial.bairro}
+                    onChange={handleChange("bairro")}
+                  />
                 </div>
 
-                {/* Linha 5 - Fones e IE */}
+                {/* Linha 5 - CNAE, IM */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[45px]">Fone</Label>
-                    <Txt
-                      mask="(99) 9999-9999"
-                      className="w-full"
-                      value={filial.fone}
-                      onChange={handleChange("fone")}
-                    />
-                  </div>
+                  <Label className="col-span-1">CNAE</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.cnae}
+                    onChange={handleChange("cnae")}
+                  />
 
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[45px]">Fone 2</Label>
-                    <Txt
-                      mask="(99) 9999-9999"
-                      className="w-full"
-                      value={filial.fone2}
-                      onChange={handleChange("fone2")}
-                    />
-                  </div>
-
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1">Inscrição Estadual</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.ie}
-                      onChange={handleChange("ie")}
-                    />
-                  </div>
+                  <Label className="col-span-1">I.M</Label>
+                  <Txt
+                    className="col-span-7"
+                    value={filial.im}
+                    onChange={handleChange("im")}
+                  />
                 </div>
 
-                {/* Linha 6 - Envio, Receb., Autotrac */}
+                {/* Linha 6 - Email / Email Ocor */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[45px]">Envio</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.envio}
-                      onChange={handleChange("envio")}
-                    />
-                  </div>
+                  <Label className="col-span-1">E-mail</Label>
+                  <Txt
+                    className="col-span-5"
+                    value={filial.email}
+                    onChange={handleChange("email")}
+                  />
 
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[55px]">Receb.</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.receb}
-                      onChange={handleChange("receb")}
-                    />
-                  </div>
-
-                  <div className="col-span-4 flex items-center">
-                    <Label className="mr-1 min-w-[70px]">Autotrac.</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.autotrac}
-                      onChange={handleChange("autotrac")}
-                    />
-                  </div>
+                  <Label className="col-span-1">E-mail Ocor</Label>
+                  <Txt
+                    className="col-span-5"
+                    value={filial.emailOcor}
+                    onChange={handleChange("emailOcor")}
+                  />
                 </div>
 
-                {/* Linha 7 - Apólice, OTM, ANTT, PIX, Flag */}
+                {/* Linha 7 - Fones e IE */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-3 flex items-center">
-                    <Label className="mr-1 min-w-[70px]">Nº Apólice</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.apolice}
-                      onChange={handleChange("apolice")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Fone</Label>
+                  <Txt
+                    className="col-span-2"
+                    value={filial.fone}
+                    onChange={handleChange("fone")}
+                    placeholder="(00) 00000-0000"
+                  />
 
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1 min-w-[60px]">Cód. OTM</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.codOtm}
-                      onChange={handleChange("codOtm")}
-                    />
-                  </div>
+                  <Label className="col-span-1">Fone 2</Label>
+                  <Txt
+                    className="col-span-2"
+                    value={filial.fone2}
+                    onChange={handleChange("fone2")}
+                    placeholder="(00) 00000-0000"
+                  />
+                    <Label className="col-span-1">PIX</Label>
+                  <Txt
+                    className="col-span-5"
+                    value={filial.pix}
+                    onChange={handleChange("pix")}
+                  />
 
-                  <div className="col-span-2 flex items-center">
-                    <Label className="mr-1 min-w-[60px]">Nº ANTT</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.antt}
-                      onChange={handleChange("antt")}
-                    />
-                  </div>
+                  
+                </div>
 
-                  <div className="col-span-3 flex items-center">
-                    <Label className="mr-1 min-w-[40px]">PIX</Label>
-                    <Txt
-                      className="w-full"
-                      value={filial.pix}
-                      onChange={handleChange("pix")}
-                    />
-                  </div>
+                {/* Linha 8 - Envio, Receb., Autotrac */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1">Envio</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.envio}
+                    onChange={handleChange("envio")}
+                  />
 
-                  <div className="col-span-2 flex items-center justify-end">
-                    <label className="flex items-center gap-1 text-[12px]">
+                  <Label className="col-span-1">Receb.</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.receb}
+                    onChange={handleChange("receb")}
+                  />
+
+                  <Label className="col-span-1">Autotrac</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.autotrac}
+                    onChange={handleChange("autotrac")}
+                  />
+                </div>
+
+                {/* Linha 9 - Apólice, OTM, ANTT */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1">Nº Apólice</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.apolice}
+                    onChange={handleChange("apolice")}
+                  />
+
+                  <Label className="col-span-1">Cód. OTM</Label>
+                  <Txt
+                    className="col-span-2"
+                    value={filial.codOtm}
+                    onChange={handleChange("codOtm")}
+                  />
+
+                  <Label className="col-span-1">Nº ANTT</Label>
+                  <Txt
+                    className="col-span-3"
+                    value={filial.antt}
+                    onChange={handleChange("antt")}
+                  />
+                  <label className="flex items-center gap-1 text-[12px]">
                       <input
                         type="checkbox"
                         className="accent-red-700"
@@ -448,249 +463,303 @@ export default function Filial({ open }) {
                       />
                       Filial Terceiros
                     </label>
-                  </div>
                 </div>
-              </div>
+</div>
             </fieldset>
 
-            {/* CARD 2 - Tributos (retrátil) */}
-            <div className="border border-gray-300 rounded bg-white">
-              <div
-                className="flex justify-between items-center px-3 py-1 bg-gray-50 cursor-pointer select-none rounded-t"
-                onClick={() => setShowTributos((prev) => !prev)}
-              >
-                <h2 className="text-red-700 font-semibold text-[13px]">
-                  Tributos
-                </h2>
-                {showTributos ? (
-                  <ChevronUp size={16} className="text-gray-600" />
-                ) : (
-                  <ChevronDown size={16} className="text-gray-600" />
-                )}
-              </div>
+           {/* CARD 2 - Tributos (retrátil) */}
+<div className="border border-gray-300 rounded bg-white">
+  <div
+    className="flex justify-between items-center px-3 py-1 bg-gray-50 cursor-pointer select-none rounded-t"
+    onClick={() => setShowTributos((prev) => !prev)}
+  >
+    <h2 className="text-red-700 font-semibold text-[13px]">Tributos</h2>
+    {showTributos ? (
+      <ChevronUp size={16} className="text-gray-600" />
+    ) : (
+      <ChevronDown size={16} className="text-gray-600" />
+    )}
+  </div>
 
-              <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  showTributos ? "max-h-[500px]" : "max-h-[0px]"
-                }`}
-              >
-                <div className="p-3 grid md:grid-cols-4 gap-3 text-[12px]">
-                  {/* Tributação */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      TRIBUTAÇÃO
-                    </legend>
-                    <div className="space-y-1 mt-1">
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Optante Simples Nacional
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Lucro Real
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Lucro Presumido
-                      </label>
-                    </div>
-                  </fieldset>
+  <div
+    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+      showTributos ? "max-h-[800px]" : "max-h-[0px]"
+    }`}
+  >
+    <div className="p-3 grid grid-cols-12 gap-3 text-[12px]">
 
-                  {/* Outros Tributos */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      OUTROS TRIBUTOS
-                    </legend>
-                    <div className="space-y-2 mt-1">
-                      <div className="flex items-center gap-1">
-                        <span>% KG Col.</span>
-                        <Txt className="w-[80px] text-right" defaultValue="0,000" />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>% Entrega</span>
-                        <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>% Total Tributos - IBPT</span>
-                      </div>
-                      <Txt className="w-[100px] text-right" defaultValue="0,00" />
-                    </div>
-                  </fieldset>
+      {/* ================= TRIBUTAÇÃO ================= */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">TRIBUTAÇÃO</legend>
 
-                  {/* Imposto */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      IMPOSTO
-                    </legend>
-                    <div className="grid grid-cols-2 gap-1 mt-1 items-center">
-                      <span>PIS</span>
-                      <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                      <span>Cofins</span>
-                      <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                      <span>Sest/Senat</span>
-                      <Txt className="w-[80px] text-right" defaultValue="2,50" />
-                      <span>ISS</span>
-                      <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                      <span>CSSL</span>
-                      <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                      <span>IR</span>
-                      <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                    </div>
-                  </fieldset>
+        <div className="grid grid-cols-12 gap-2 mt-1">
+          <label className="col-span-12 flex items-center gap-1">
+            <input type="radio" name="tributacao" className="accent-red-700" />
+            Optante Simples Nacional
+          </label>
 
-                  {/* Coleta */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      COLETA
-                    </legend>
-                    <div className="space-y-2 mt-1">
-                      <div className="flex items-center gap-1">
-                        <span>Valor Coleta</span>
-                        <Txt className="w-[80px] text-right" defaultValue="10,00" />
-                      </div>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Rateio
-                      </label>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-            </div>
+          <label className="col-span-12 flex items-center gap-1">
+            <input type="radio" name="tributacao" className="accent-red-700" />
+            Lucro Real
+          </label>
 
-            {/* CARD 3 - Documentos / Parâmetros diversos (retrátil) */}
-            <div className="border border-gray-300 rounded bg-white">
-              <div
-                className="flex justify-between items-center px-3 py-1 bg-gray-50 cursor-pointer select-none rounded-t"
-                onClick={() => setShowDocumentos((prev) => !prev)}
-              >
-                <h2 className="text-red-700 font-semibold text-[13px]">
-                  Documentos / Regras
-                </h2>
-                {showDocumentos ? (
-                  <ChevronUp size={16} className="text-gray-600" />
-                ) : (
-                  <ChevronDown size={16} className="text-gray-600" />
-                )}
-              </div>
+          <label className="col-span-12 flex items-center gap-1">
+            <input
+              type="radio"
+              name="tributacao"
+              className="accent-red-700"
+              defaultChecked
+            />
+            Lucro Presumido
+          </label>
+        </div>
+      </fieldset>
 
-              <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  showDocumentos ? "max-h-[600px]" : "max-h-[0px]"
-                }`}
-              >
-                <div className="p-3 grid md:grid-cols-3 gap-3 text-[12px]">
-                  {/* CTE */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">CTE</legend>
-                    <div className="space-y-1 mt-1">
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Permite Faturar CTe sem Baixa
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Fazer Rateio por Loja/Divisão
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Emitir CTe/MDFe em Contingência
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Permite Alterar Valores do CTe
-                      </label>
-                    </div>
-                  </fieldset>
+      {/* ================= OUTROS TRIBUTOS ================= */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">OUTROS TRIBUTOS</legend>
 
-                  {/* Viagem */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      VIAGEM
-                    </legend>
-                    <div className="space-y-1 mt-1">
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Permite Tabela de Agregado p/ Frotista
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Inicia Viagem com outra em Andamento
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Não permitir despesa sem saldo
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Numeração Automática Viagem
-                      </label>
-                    </div>
-                  </fieldset>
+        <div className="grid grid-cols-12 gap-2 mt-1">
 
-                  {/* Outros */}
-                  <fieldset className="border border-gray-300 rounded p-2">
-                    <legend className="px-1 text-[11px] font-semibold">
-                      OUTROS
-                    </legend>
-                    <div className="space-y-1 mt-1">
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox"
-                          className="accent-red-700"
-                          defaultChecked
-                        />
-                        Permite Faturamento de Minutas
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Numeração de Fatura por Filial
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Bloquear Documentos Vencidos
-                      </label>
-                      <label className="flex items-center gap-1">
-                        <input type="checkbox" className="accent-red-700" />
-                        Validação de GRIS do Motorista
-                      </label>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-            </div>
+          {/* Linha 1 */}
+          <div className="col-span-12 grid grid-cols-12 gap-2 items-center">
+            <span className="col-span-4">% KG Col.</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,000" />
+
+            <span className="col-span-4">% Entrega</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+          </div>
+
+          {/* Linha 2 */}
+          <div className="col-span-12 grid grid-cols-12 gap-2 items-center">
+            <span className="col-span-6">% Total Tributos - IBPT</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+          </div>
+
+        </div>
+      </fieldset>
+
+      {/* ================= IMPOSTO ================= */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">IMPOSTO</legend>
+
+        <div className="grid grid-cols-12 gap-2 mt-1">
+
+          {/* Linha 1 */}
+          <div className="col-span-12 grid grid-cols-12 gap-2 items-center">
+            <span className="col-span-4">PIS</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+
+            <span className="col-span-4">Cofins</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+          </div>
+
+          {/* Linha 2 */}
+          <div className="col-span-12 grid grid-cols-12 gap-2 items-center">
+            <span className="col-span-4">Sest/Senat</span>
+            <Txt className="col-span-2 text-right" defaultValue="2,50" />
+
+            <span className="col-span-4">ISS</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+          </div>
+
+          {/* Linha 3 */}
+          <div className="col-span-12 grid grid-cols-12 gap-2 items-center">
+            <span className="col-span-4">CSSL</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+
+            <span className="col-span-4">IR</span>
+            <Txt className="col-span-2 text-right" defaultValue="0,00" />
+          </div>
+
+        </div>
+      </fieldset>
+
+      {/* ================= COLETA ================= */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">COLETA</legend>
+
+        <div className="grid grid-cols-12 gap-2 mt-1">
+
+          <div className="col-span-12 flex items-center gap-2">
+            <span>Valor Coleta</span>
+            <Txt className="w-[100px] text-right" defaultValue="10,00" />
+          </div>
+
+          <label className="col-span-12 flex items-center gap-2">
+            <input type="checkbox" className="accent-red-700" defaultChecked />
+            Rateio
+          </label>
+
+        </div>
+      </fieldset>
+
+    </div>
+  </div>
+</div>
+
+
+            {/* CARD 3 - Documentos / Regras (retrátil) */}
+<div className="border border-gray-300 rounded bg-white">
+  <div
+    className="flex justify-between items-center px-3 py-1 bg-gray-50 cursor-pointer select-none rounded-t"
+    onClick={() => setShowDocumentos((prev) => !prev)}
+  >
+    <h2 className="text-red-700 font-semibold text-[13px]">
+      Documentos / Regras
+    </h2>
+    {showDocumentos ? (
+      <ChevronUp size={16} className="text-gray-600" />
+    ) : (
+      <ChevronDown size={16} className="text-gray-600" />
+    )}
+  </div>
+
+  <div
+    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+      showDocumentos ? "max-h-[600px]" : "max-h-[0px]"
+    }`}
+  >
+    {/* === GRID DE 12 COLUNAS PARA OS CARDS === */}
+    <div className="p-3 grid grid-cols-12 gap-3 text-[12px]">
+
+{/* CTE */}
+<fieldset className="border border-gray-300 rounded p-2 col-span-6">
+  <legend className="px-1 text-[11px] font-semibold">CTE</legend>
+
+  {/* GRID INTERNO COM 2 COLUNAS */}
+  <div className="grid grid-cols-2 gap-4 mt-1">
+
+    {/* COLUNA 1 */}
+    <div className="space-y-1">
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Permite Faturar CTe sem Baixa
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Fazer Rateio por Loja/Divisão
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Emitir CTe/MDFe em Contingência
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Permite Alterar Valores do CTe
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Não Cobrar ICMS dentro da UF
+      </label>
+    </div>
+
+    {/* COLUNA 2 */}
+    <div className="space-y-1">
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Controlar Baixa de Docs por NF
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Numeração Automática CTRC
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Isento ICMS tomador dentro do Estado
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Emite Nota Fiscal de Serviço
+      </label>
+
+      <label className="flex items-center gap-1">
+        <input type="checkbox" className="accent-red-700" />
+        Cobrar taxa de coleta sem geração de coleta
+      </label>
+    </div>
+
+  </div>
+</fieldset>
+
+      {/* ================== CARD VIAGEM ================== */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">VIAGEM</legend>
+
+        <div className="space-y-1 mt-1">
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Permite Tabela de Agregado p/ Frotista
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Inicia Viagem com outra em Andamento
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Não permitir despesa de viagem sem saldo
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Numeração Automática Viagem
+          </label>
+
+          {/* === ITEM QUE FALTAVA === */}
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Inicia Viagem na Coleta
+          </label>
+        </div>
+      </fieldset>
+
+      {/* ================== CARD OUTROS ================== */}
+      <fieldset className="border border-gray-300 rounded p-2 col-span-3">
+        <legend className="px-1 text-[11px] font-semibold">OUTROS</legend>
+
+        <div className="space-y-1 mt-1">
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Permite Faturamento de Minutas
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Numeração de Fatura por Filial
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Acerto de Conta Mediante Protocolo Entrega
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Limpar Tela Contas Pagar
+          </label>
+
+          <label className="flex items-center gap-1">
+            <input type="checkbox" className="accent-red-700" />
+            Mostrar Apólice Cte
+          </label>
+
+        </div>
+      </fieldset>
+
+    </div>
+  </div>
+</div>
+
           </>
         )}
 

@@ -24,6 +24,8 @@ import ViagemPagamento from "./pages/ViagemPagamento";
 import Faturamento from "./pages/Faturamento";
 import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
 import Filial from "./pages/Filial";
+import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
+
 
 
 
@@ -111,6 +113,10 @@ export default function App() {
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
 
             <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+            
+           <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
+
+
 
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
 

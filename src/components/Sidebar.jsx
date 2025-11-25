@@ -221,7 +221,7 @@ setUsuarios((prev) => {
 
           {/* Submenus de Cadastros */}
           {activeMenu === "cadastros" && (
-            <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+            <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
               <ul className="text-[13px] text-gray-700">
                 {[
                   "Empresa",
@@ -260,6 +260,8 @@ setUsuarios((prev) => {
       ? "/empresa"
       : item === "Filial"
       ? "/filial"
+      : item === "Filial Parâmetro"
+      ? "/empresa-filial-parametro"
       : item === "Empresa Agregado"
       ? "/empresa-agregado"
       : item === "Veículo"
@@ -270,17 +272,19 @@ setUsuarios((prev) => {
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
   onClick={(e) => {
-    if (
-      ![
-        "Empresa",
-        "Filial",
-        "Empresa Agregado",
-        "Veículo",
-        "Motorista"
-      ].includes(item)
-    ) {
-      e.preventDefault();
-    }
+   if (
+  ![
+    "Empresa",
+    "Filial",
+    "Filial Parâmetro",
+    "Empresa Agregado",
+    "Veículo",
+    "Motorista"
+  ].includes(item)
+) {
+  e.preventDefault();
+}
+
   }}
 >
   {item}
@@ -293,7 +297,7 @@ setUsuarios((prev) => {
 
   {/* Submenu Cliente */}
   {item === "Cliente" && activeSubMenu === "Cliente" && (
-    <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+    <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
       <Link to="/cliente" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Cliente</Link>
       <Link to="/atividade-economica" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Atividade Econômica</Link>
       <Link to="/condicao-pagamento" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Condição de Pagamento</Link>
@@ -342,7 +346,7 @@ setUsuarios((prev) => {
           </button>
 
           {activeMenu === "operacao" && (
-<div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+<div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
     <ul className="text-[13px] text-gray-700">
     {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto", "Minuta"].map(
   (item) => (
@@ -532,7 +536,7 @@ setUsuarios((prev) => {
           </button>
 
           {activeMenu === "faturamento" && (
-            <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+            <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
               {["Manual", "Automático"].map((sub) =>
   sub === "Manual" ? (
     <Link
@@ -590,7 +594,7 @@ setUsuarios((prev) => {
   </button>
 
   {activeMenu === "usuario" && (
-    <div className="absolute top-0 left-full ml-1 bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
+    <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
       {["Trocar Filial", "Alterar Senha"].map((sub) => (
   <div
     key={sub}
