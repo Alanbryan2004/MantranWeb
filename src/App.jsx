@@ -3,6 +3,9 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import CTePage from "./pages/CTePage";
+import AliquotaICMS from "./pages/AliquotaICMS";
+import CFOP from "./pages/CFOP";
+import IRRF from "./pages/IRRF";
 import ClienteDivisao from "./pages/ClienteDivisao";
 import NFSEPage from "./pages/NFSEPage";
 import Login from "./components/Login";
@@ -107,6 +110,13 @@ export default function App() {
             <Route path="/cliente-divisao" element={<ClienteDivisao />} />
 
             <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
+            
+            <Route path="/aliquota-icms" element={<AliquotaICMS open={sidebarOpen} />} />
+
+            <Route path="/cfop" element={<CFOP open={sidebarOpen} />} />
+
+            <Route path="/irrf" element={<IRRF open={sidebarOpen} />} />
+
 
             <Route path="/minuta" element={<Minuta open={sidebarOpen} />} />
 

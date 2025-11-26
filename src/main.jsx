@@ -5,14 +5,17 @@ import "./index.css";
 import App from "./App.jsx";
 
 import { IconColorProvider } from "./context/IconColorContext";
-import { FooterIconColorProvider } from "./context/FooterIconColorContext"; // 👈 NOVO IMPORT
+import { FooterIconColorProvider } from "./context/FooterIconColorContext";
+import { ModulosProvider } from "./context/ModulosContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <IconColorProvider>
         <FooterIconColorProvider>
-          <App />
+          <ModulosProvider>
+            <App />
+          </ModulosProvider>
         </FooterIconColorProvider>
       </IconColorProvider>
     </BrowserRouter>

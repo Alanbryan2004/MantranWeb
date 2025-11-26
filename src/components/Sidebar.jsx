@@ -3,7 +3,7 @@ import { io } from "socket.io-client"; // ✅ adiciona esta linha
 import EmojiPicker from "emoji-picker-react";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 import { useIconColor } from "../context/IconColorContext";
-
+import { useModulos } from "../context/ModulosContext";
 
 
 import {
@@ -27,6 +27,8 @@ export default function Sidebar({ open }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [activeSubMenu, setActiveSubMenu] = useState(null);
   const { iconColor } = useIconColor()
+  const { modulos } = useModulos();
+
 
   // === Estados do Chat ===
   const [chatOpen, setChatOpen] = useState(false);
@@ -246,8 +248,9 @@ setUsuarios((prev) => {
                  <li
   key={item}
   className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
- onMouseEnter={() => {
+onMouseEnter={() => {
   if (item === "Cliente") setActiveSubMenu("Cliente");
+  if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
 }}
 
 
@@ -279,7 +282,8 @@ setUsuarios((prev) => {
     "Filial Parâmetro",
     "Empresa Agregado",
     "Veículo",
-    "Motorista"
+    "Motorista",
+    "Parâmetro Fiscal" 
   ].includes(item)
 ) {
   e.preventDefault();
@@ -308,6 +312,35 @@ setUsuarios((prev) => {
       <Link to="/operacao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Operação</Link>
     </div>
   )}
+
+  {/* Submenu Parâmetro Fiscal */}
+{item === "Parâmetro Fiscal" && activeSubMenu === "Parâmetro Fiscal" && (
+  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+
+    <Link
+      to="/aliquota-icms"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Alíquota ICMS
+    </Link>
+
+    <Link
+      to="/cfop"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      CFOP
+    </Link>
+
+    <Link
+      to="/irrf"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Tabela IRRF
+    </Link>
+
+  </div>
+)}
+
 </li>
 
 
@@ -507,6 +540,106 @@ setUsuarios((prev) => {
 
   {open && <span className="ml-3">Tabela Frete</span>}
 </Link>
+
+        {/* === E-COMMERCE (DINÂMICO) === */}
+        {modulos?.ecommerce && (
+          <div
+            className="group relative mt-1"
+            onMouseEnter={() => setActiveMenu("ecommerce")}
+            onMouseLeave={() => {
+              setActiveMenu(null);
+              setActiveSubMenu(null);
+            }}
+          >
+            <button
+              onClick={() => handleToggle("ecommerce")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+            >
+              <ClipboardList className={`w-5 h-5 ${iconColor}`} />
+
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">E-Commerce</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${
+                      activeMenu === "ecommerce" ? "rotate-90" : ""
+                    }`}
+                  />
+                </>
+              )}
+            </button>
+
+            {activeMenu === "ecommerce" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-60 p-1 z-[999]">
+                <ul className="text-[13px] text-gray-700">
+                  {/* Operação Shopee */}
+                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                    Operação Shopee
+                  </li>
+
+                  {/* IMPORTAÇÃO */}
+                  <li
+                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                    onMouseEnter={() => setActiveSubMenu("ec-importacao")}
+                  >
+                    Importação
+                    <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
+                  </li>
+
+                  {activeSubMenu === "ec-importacao" && (
+                    <div className="absolute top-8 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
+                      {[
+                        "Planilha Shopee",
+                        "Planilha Agregado",
+                        "Planilha Nota Fiscal Serviço",
+                        "Planilha Fatura",
+                        "Excluir Importação Shopee",
+                      ].map((txt) => (
+                        <div
+                          key={txt}
+                          className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                        >
+                          {txt}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* EXPORTAÇÃO */}
+                  <li
+                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                    onMouseEnter={() => setActiveSubMenu("ec-exportacao")}
+                  >
+                    Exportação
+                    <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
+                  </li>
+
+                  {activeSubMenu === "ec-exportacao" && (
+                    <div className="absolute top-16 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
+                      <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                        Planilha Shopee
+                      </div>
+                      <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                        Planilha NFSE/Fatura
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Liberação NFSE */}
+                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                    Liberação NFSE
+                  </li>
+
+                  {/* Auditoria */}
+                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                    Auditoria
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
 
         
 
