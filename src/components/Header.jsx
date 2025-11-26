@@ -6,15 +6,7 @@ import {
   Building2,
   Lock,
   Settings,
-  Image as ImageIcon,
-  Grid3x3,
-  Truck,
-  DollarSign,
-  BarChart3,
-  Key,
-  FileText,
-  PieChart,
-  Boxes,
+  Image as ImageIcon
 } from "lucide-react";
 
 import Logo from "../assets/logo_mantran.png";
@@ -23,10 +15,12 @@ import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 import { useIconColor } from "../context/IconColorContext";
 
+// ⬅️ IMPORTA O CONTEXTO CORRETO
+import { useMenuRapido } from "../context/MenuRapidoContext";
 
 function AppDotsIcon({ size = 20, color = "#b91c1c" }) {
-  const dotSize = size / 5;       // tamanho ideal da bolinha
-  const gap = dotSize * 0.8;      // espaçamento entre elas
+  const dotSize = size / 5;
+  const gap = dotSize * 0.8;
 
   return (
     <div
@@ -57,12 +51,15 @@ export default function Header({ toggleSidebar }) {
   const usuarioLogado = localStorage.getItem("usuarioNome") || "Suporte";
 
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showAppsMenu, setShowAppsMenu] = useState(false); // 👈 Novo
+  const [showAppsMenu, setShowAppsMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAlterarSenha, setShowAlterarSenha] = useState(false);
 
   const navigate = useNavigate();
   const { iconColor } = useIconColor();
+
+  // ⬅️ AQUI — agora usamos o contexto correto
+  const { atalhos } = useMenuRapido();
 
   const [notifications, setNotifications] = useState([
     { id: 1, message: "Novo CT-e emitido com sucesso.", read: false },
@@ -82,6 +79,7 @@ export default function Header({ toggleSidebar }) {
 
         {/* --- LADO ESQUERDO (logo, menu, atalhos) --- */}
         <div className="flex items-center gap-5">
+
           <button
             onClick={toggleSidebar}
             className={`text-gray-700 hover:text-black ${iconColor}`}
@@ -91,32 +89,20 @@ export default function Header({ toggleSidebar }) {
 
           <img src={Logo} alt="Mantran" className="h-7" />
 
+          {/* ATALHOS DO MENU RÁPIDO — AGORA FUNCIONANDO */}
           <div className={`flex gap-8 text-sm ml-6 ${iconColor}`}>
-            <Link to="/viagem" className="flex flex-col items-center cursor-pointer hover:text-black">
-              <i className="fa-solid fa-truck-fast text-lg" />
-              <span>Viagem</span>
-            </Link>
-
-            <Link to="/nfse" className="flex flex-col items-center cursor-pointer hover:text-black">
-              <i className="fa-solid fa-file-invoice text-lg" />
-              <span>NFSe</span>
-            </Link>
-
-            <Link to="/cte" className="flex flex-col items-center cursor-pointer hover:text-black">
-              <i className="fa-solid fa-file-lines text-lg" />
-              <span>CTe</span>
-            </Link>
-
-            <Link to="/coleta" className="flex flex-col items-center cursor-pointer hover:text-black">
-              <i className="fa-solid fa-boxes-packing text-lg" />
-              <span>Coleta</span>
-            </Link>
-
-            <Link to="/manifesto" className="flex flex-col items-center cursor-pointer hover:text-black">
-              <i className="fa-solid fa-file-contract text-lg" />
-              <span>Manifesto</span>
-            </Link>
+            {atalhos.slice(0, 7).map((item) => (
+              <Link
+                key={item.id}
+                to={item.rota}
+                className="flex flex-col items-center cursor-pointer hover:text-black"
+              >
+                <i className={`fa-solid ${item.icone} text-lg`} />
+                <span>{item.label}</span>
+              </Link>
+            ))}
           </div>
+
         </div>
 
         {/* --- LADO DIREITO (notificações, apps, usuário) --- */}
@@ -143,6 +129,7 @@ export default function Header({ toggleSidebar }) {
                 <div className="p-3 font-semibold border-b text-gray-700">
                   Notificações
                 </div>
+
                 {notifications.length === 0 ? (
                   <p className="text-sm text-center text-gray-500 p-4">
                     Nenhuma notificação
@@ -172,81 +159,43 @@ export default function Header({ toggleSidebar }) {
             )}
           </div>
 
-          {/* 🟦 NOVO — MENU DE APPS (9 quadradinhos) */}
+          {/* 🟦 MENU DE APPS */}
           <div className="relative">
-           <button
-  onClick={() => {
-    setShowAppsMenu(!showAppsMenu);
-    setShowNotifications(false);
-    setShowUserMenu(false);
-  }}
-  className={`${iconColor} hover:text-black flex items-center justify-center`}
-  style={{ height: "20px" }}   // garante alinhamento vertical
->
-  <AppDotsIcon size={18} />   
-</button>
-
+            <button
+              onClick={() => {
+                setShowAppsMenu(!showAppsMenu);
+                setShowNotifications(false);
+                setShowUserMenu(false);
+              }}
+              className={`${iconColor} hover:text-black flex items-center justify-center`}
+              style={{ height: "20px" }}
+            >
+              <AppDotsIcon size={18} />
+            </button>
 
             {showAppsMenu && (
-  <div className="absolute right-0 mt-2 w-64 bg-white rounded shadow-lg border z-50 p-3 grid grid-cols-3 gap-4">
-
-    {/* Operação */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-truck-fast text-xl"></i>
-      <span>Operação</span>
-    </button>
-
-    {/* Financeiro */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-money-check-dollar text-xl"></i>
-      <span>Financeiro</span>
-    </button>
-
-    {/* BI Relatórios */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-chart-pie text-xl"></i>
-      <span>BI Relatórios</span>
-    </button>
-
-    {/* Segurança */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-key text-xl"></i>
-      <span>Segurança</span>
-    </button>
-
-    {/* EDI */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-file-contract text-xl"></i>
-      <span>EDI</span>
-    </button>
-
-    {/* Indicadores */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-chart-column text-xl"></i>
-      <span>Indicadores</span>
-    </button>
-
-    {/* Container */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-box text-xl"></i>
-      <span>Container</span>
-    </button>
-
-    {/* Oficina */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-screwdriver-wrench text-xl"></i>
-      <span>Oficina</span>
-    </button>
-
-    {/* Baixa XML */}
-    <button className="flex flex-col items-center text-red-700 hover:text-black text-sm">
-      <i className="fa-solid fa-file-circle-check text-xl"></i>
-      <span>Baixa XML</span>
-    </button>
-
-  </div>
-)}
-
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded shadow-lg border z-50 p-3 grid grid-cols-3 gap-4">
+                {[
+                  { icon: "fa-truck-fast", label: "Operação" },
+                  { icon: "fa-money-check-dollar", label: "Financeiro" },
+                  { icon: "fa-chart-pie", label: "BI Relatórios" },
+                  { icon: "fa-key", label: "Segurança" },
+                  { icon: "fa-file-contract", label: "EDI" },
+                  { icon: "fa-chart-column", label: "Indicadores" },
+                  { icon: "fa-box", label: "Container" },
+                  { icon: "fa-screwdriver-wrench", label: "Oficina" },
+                  { icon: "fa-file-circle-check", label: "Baixa XML" },
+                ].map((item, idx) => (
+                  <button
+                    key={idx}
+                    className="flex flex-col items-center text-red-700 hover:text-black text-sm"
+                  >
+                    <i className={`fa-solid ${item.icon} text-xl`} />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 👤 Menu do Usuário */}
@@ -294,6 +243,7 @@ export default function Header({ toggleSidebar }) {
               </div>
             )}
           </div>
+
         </div>
       </header>
 

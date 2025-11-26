@@ -275,21 +275,22 @@ onMouseEnter={() => {
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
   onClick={(e) => {
-   if (
-  ![
-    "Empresa",
-    "Filial",
-    "Filial Parâmetro",
-    "Empresa Agregado",
-    "Veículo",
-    "Motorista",
-    "Parâmetro Fiscal" 
-  ].includes(item)
-) {
-  e.preventDefault();
-}
+  // Só trava itens que realmente não têm rota
+  if (
+    ![
+      "Empresa",
+      "Filial",
+      "Filial Parâmetro",
+      "Empresa Agregado",
+      "Veículo",
+      "Motorista",
+      "Parâmetro Fiscal"
+    ].includes(item)
+  ) {
+    return; 
+  }
+}}
 
-  }}
 >
   {item}
 </Link>
@@ -635,6 +636,16 @@ onMouseEnter={() => {
                   <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                     Auditoria
                   </li>
+{/* Dashboard Shopee */}
+<li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+  <Link
+    to="/dashboard-shopee"
+    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+  >
+    Dashboard
+  </Link>
+</li>
+
                 </ul>
               </div>
             )}

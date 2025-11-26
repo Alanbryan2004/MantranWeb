@@ -11,19 +11,36 @@ import {
   Settings2,
 } from "lucide-react";
 import ParametroTaxa from "./ParametroTaxa";
+import { useMenuRapido } from "../context/MenuRapidoContext";
 
-// 🔥 Usa APENAS o contexto unificado
+
+// 🔥 Usa o contexto unificado
 import { useIconColor } from "../context/IconColorContext";
 
 export default function Parametro() {
   const [modoCards, setModoCards] = useState(false);
-  const [step, setStep] = useState(1);
-  const [telaInicial, setTelaInicial] = useState("CTe");
   const [exibirDashboard, setExibirDashboard] = useState(true);
   const [corFundo, setCorFundo] = useState("#f3f4f6");
   const [abrirModalTaxas, setAbrirModalTaxas] = useState(false);
+const { atalhos, adicionarAtalho, removerAtalho, restaurarPadrao } = useMenuRapido();
+const [showMenuRapido, setShowMenuRapido] = useState(false);
 
-  // 🔥 Contexto unificado
+const opcoesMenuRapido = [
+  { label: "Viagem", rota: "/viagem", icone: "fa-truck-fast" },
+  { label: "NFSe", rota: "/nfse", icone: "fa-file-invoice" },
+  { label: "CTe", rota: "/cte", icone: "fa-file-lines" },
+  { label: "Coleta", rota: "/coleta", icone: "fa-boxes-packing" },
+  { label: "Manifesto", rota: "/manifesto", icone: "fa-file-contract" },
+  { label: "Minuta", rota: "/minuta", icone: "fa-file-pen" },
+  { label: "Veículo", rota: "/veiculo", icone: "fa-truck" },
+  { label: "Motorista", rota: "/motorista", icone: "fa-id-card" },
+  { label: "Agregado", rota: "/empresa-agregado", icone: "fa-people-carry-box" },
+  { label: "Cliente", rota: "/cliente", icone: "fa-user-tie" },
+  { label: "Fatura", rota: "/faturamento", icone: "fa-file-invoice-dollar" },
+  { label: "Dashboard", rota: "/dashboard", icone: "fa-chart-line" },
+];
+
+  // === CONTEXTO UNIFICADO ===
   const {
     iconColor,
     setIconColor,
@@ -38,7 +55,7 @@ export default function Parametro() {
     DEFAULT_FOOTER_HOVER,
   } = useIconColor();
 
-  // === Cores base para Tailwind ===
+  // === CORES — BASE TAILWIND ===
   const coresBase = [
     { value: "red", label: "Vermelho" },
     { value: "blue", label: "Azul" },
@@ -48,7 +65,7 @@ export default function Parametro() {
     { value: "pink", label: "Rosa" },
   ];
 
-  // === Estado dos ícones HEADER/SIDEBAR ===
+  // === COR DOS ÍCONES HEADER/SIDEBAR ===
   const [corBase, setCorBase] = useState(iconColor.split("-")[1]);
   const [intensidade, setIntensidade] = useState(iconColor.split("-")[2]);
 
@@ -59,7 +76,7 @@ export default function Parametro() {
     setIconColor(nova);
   };
 
-  // === Estado do rodapé normal ===
+  // === RODAPÉ NORMAL ===
   const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
   const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
 
@@ -70,7 +87,7 @@ export default function Parametro() {
     setFooterIconColorNormal(nova);
   };
 
-  // === Estado do rodapé hover ===
+  // === RODAPÉ HOVER ===
   const [footerHoverBase, setFooterHoverBase] = useState(
     footerIconColorHover.split("-")[1]
   );
@@ -85,20 +102,15 @@ export default function Parametro() {
     setFooterIconColorHover(nova);
   };
 
-  // === Salvar ===
+  // === SALVAR ===
   const salvarParametros = () => {
-    localStorage.setItem("param_telaInicial", telaInicial);
-    localStorage.setItem(
-      "param_exibirDashboard",
-      exibirDashboard ? "true" : "false"
-    );
+    localStorage.setItem("param_exibirDashboard", exibirDashboard ? "true" : "false");
     localStorage.setItem("param_corFundo", corFundo);
     alert("✅ Parâmetros salvos com sucesso!");
   };
 
-  // === Limpar ===
+  // === LIMPAR ===
   const limparParametros = () => {
-    setTelaInicial("CTe");
     setExibirDashboard(true);
     setCorFundo("#f3f4f6");
 
@@ -106,46 +118,28 @@ export default function Parametro() {
     setFooterIconColorNormal(DEFAULT_FOOTER_NORMAL);
     setFooterIconColorHover(DEFAULT_FOOTER_HOVER);
 
-    localStorage.removeItem("param_telaInicial");
     localStorage.removeItem("param_exibirDashboard");
     localStorage.removeItem("param_corFundo");
+    localStorage.removeItem("param_logoBg");
     localStorage.removeItem("param_iconColor");
     localStorage.removeItem("param_footerIconColorNormal");
     localStorage.removeItem("param_footerIconColorHover");
   };
 
-  // === Card Wrapper ===
+  // === COMPONENTE CARD ===
   const Card = ({ title, children }) => (
     <div className="border border-gray-300 rounded-lg bg-white p-4 shadow-sm space-y-2">
-      <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">
-        {title}
-      </h2>
+      <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">{title}</h2>
       {children}
     </div>
   );
 
+  // === CAMPOS PRINCIPAIS ===
   const campos = (
     <>
-      {/* Tela inicial */}
-      <div className="flex items-center gap-3">
-        <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
-          Tela Inicial:
-        </label>
-        <select
-          value={telaInicial}
-          onChange={(e) => setTelaInicial(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-[2px] h-[28px] text-[13px]"
-        >
-          <option>CTe</option>
-          <option>Coleta</option>
-          <option>NFSe</option>
-          <option>Manifesto</option>
-        </select>
-      </div>
-
       {/* Dashboard */}
       <div className="flex items-center gap-3">
-        <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Exibir Dashboard ao Logar:
         </label>
         <input
@@ -156,9 +150,68 @@ export default function Parametro() {
         />
       </div>
 
-      {/* Cor Fundo */}
+      {/* MENU RÁPIDO (COMBOBOX CLEAN) */}
+<div className="mt-4">
+  <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+    Menu Rápido:
+  </label>
+
+  <div className="relative mt-1">
+    <button
+      onClick={() => setShowMenuRapido((prev) => !prev)}
+      className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
+    >
+      Selecionar Atalhos
+      <span className="text-gray-500">▼</span>
+    </button>
+
+    {showMenuRapido && (
+      <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
+        {opcoesMenuRapido.map((op, idx) => {
+          const ativo = atalhos.some((a) => a.rota === op.rota);
+
+          return (
+            <label
+              key={idx}
+              className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
+            >
+              <input
+                type="checkbox"
+                checked={ativo}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    adicionarAtalho({
+                      id: Date.now(),
+                      label: op.label,
+                      rota: op.rota,
+                      icone: op.icone,
+                    });
+                  } else {
+                    removerAtalho(op.rota); // removendo por rota
+                  }
+                }}
+              />
+              <i className={`fa-solid ${op.icone} text-gray-700`} />
+              {op.label}
+            </label>
+          );
+        })}
+
+        <button
+          onClick={restaurarPadrao}
+          className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
+        >
+          Restaurar Padrão
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
+
+      {/* Cor de Fundo */}
       <div className="flex items-center gap-3">
-        <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor de Fundo:
         </label>
 
@@ -169,66 +222,62 @@ export default function Parametro() {
           className="w-[60px] h-[28px] border border-gray-300 rounded"
         />
 
-        <div
-          className="ml-3 px-4 py-2 rounded text-sm"
-          style={{ backgroundColor: corFundo }}
-        >
+        <div className="ml-3 px-4 py-2 rounded text-sm" style={{ backgroundColor: corFundo }}>
           Exemplo
         </div>
       </div>
 
       {/* Logo de Fundo */}
-<div className="flex items-center gap-3 mt-3">
-  <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
-    Logo de Fundo:
-  </label>
+      <div className="flex items-center gap-3 mt-2">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+          Logo de Fundo:
+        </label>
 
-  <input
-    type="file"
-    accept="image/png"
-    onChange={(e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+        <input
+          type="file"
+          accept="image/png"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        localStorage.setItem("param_logoBg", reader.result);
-        alert("✅ Logo salva com sucesso!");
-      };
-      reader.readAsDataURL(file);
-    }}
-    className="text-[13px]"
-  />
+            const reader = new FileReader();
+            reader.onload = () => {
+              localStorage.setItem("param_logoBg", reader.result);
+              alert("✅ Logo salva com sucesso!");
+            };
+            reader.readAsDataURL(file);
+          }}
+          className="text-[13px]"
+        />
 
-  <button
-    onClick={() => {
-      localStorage.removeItem("param_logoBg");
-      alert("Logo removida.");
-    }}
-    className="text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
-  >
-    Remover
-  </button>
-</div>
-
-
+        <button
+          onClick={() => {
+            localStorage.removeItem("param_logoBg");
+            alert("Logo removida.");
+          }}
+          className="text-xs border border-gray-300 rounded px-2 py-[3px] text-red-700 hover:bg-gray-100"
+        >
+          Remover
+        </button>
+      </div>
 
       {/* Taxas */}
-      <div className="flex items-center gap-3 mt-2">
-        <label className="w-[140px] text-right text-sm text-gray-700 font-medium">
+      <div className="flex items-center gap-3 mt-3">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Taxas do CT-e:
         </label>
+
         <button
           onClick={() => setAbrirModalTaxas(true)}
-          className="flex items-center gap-1 text-sm border border-gray-300 rounded px-2 py-[4px] text-red-700 hover:bg-gray-100"
+          className="flex items-center gap-1 border border-gray-300 rounded px-2 py-[4px] text-red-700 hover:bg-gray-100 text-sm"
         >
           <Settings2 size={14} /> Selecionar Taxas
         </button>
       </div>
 
-      {/* ============================== */}
-      {/*   COR DOS ÍCONES TOPO/SIDEBAR  */}
-      {/* ============================== */}
+      {/* ========================== */}
+      {/*     COR DOS ÍCONES        */}
+      {/* ========================== */}
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor dos Ícones:
@@ -268,9 +317,9 @@ export default function Parametro() {
         </button>
       </div>
 
-      {/* ============================== */}
-      {/*     RODAPÉ — NORMAL            */}
-      {/* ============================== */}
+      {/* ========================== */}
+      {/*   RODAPÉ NORMAL            */}
+      {/* ========================== */}
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor Rodapé (Normal):
@@ -298,14 +347,9 @@ export default function Parametro() {
           className="w-[120px]"
         />
 
-        <Palette
-          size={22}
-          className={`ml-2 text-${footerBase}-${footerInt}`}
-        />
+        <Palette size={22} className={`ml-2 text-${footerBase}-${footerInt}`} />
 
-        <span className="text-xs">
-          text-{footerBase}-{footerInt}
-        </span>
+        <span className="text-xs">text-{footerBase}-{footerInt}</span>
 
         <button
           onClick={() => atualizarRodapeNormal("red", "700")}
@@ -315,9 +359,9 @@ export default function Parametro() {
         </button>
       </div>
 
-      {/* ============================== */}
-      {/*     RODAPÉ — HOVER             */}
-      {/* ============================== */}
+      {/* ========================== */}
+      {/*   RODAPÉ HOVER             */}
+      {/* ========================== */}
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor Rodapé (Hover):
@@ -345,14 +389,9 @@ export default function Parametro() {
           className="w-[120px]"
         />
 
-        <Palette
-          size={22}
-          className={`ml-2 text-${footerHoverBase}-${footerHoverInt}`}
-        />
+        <Palette size={22} className={`ml-2 text-${footerHoverBase}-${footerHoverInt}`} />
 
-        <span className="text-xs">
-          text-{footerHoverBase}-{footerHoverInt}
-        </span>
+        <span className="text-xs">text-{footerHoverBase}-{footerHoverInt}</span>
 
         <button
           onClick={() => atualizarRodapeHover("red", "900")}
@@ -364,14 +403,19 @@ export default function Parametro() {
     </>
   );
 
+  // ================================
+  // === RENDER FINAL DA TELA ======
+  // ================================
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-gray-50 w-[700px] rounded shadow-lg border border-gray-300 flex flex-col">
+
         {/* Cabeçalho */}
         <div className="flex items-center justify-between bg-gradient-to-r from-red-700 to-black text-white px-4 py-2 rounded-t">
           <h1 className="text-sm font-semibold flex items-center gap-2">
             <SlidersHorizontal size={16} /> PARÂMETROS DO SISTEMA
           </h1>
+
           <button
             title="Fechar Tela"
             onClick={() => window.history.back()}
@@ -396,46 +440,31 @@ export default function Parametro() {
         </div>
 
         {/* Conteúdo */}
-        <div className="p-4">{modoCards ? (
-          <div className="space-y-3">
-            {step === 1 && <Card title="Configuração">{campos}</Card>}
-            {step === 2 && <Card title="Visualização">{campos}</Card>}
-            {step === 3 && (
-              <Card title="Finalização">
-                <p className="text-sm text-gray-700 mb-2">
-                  Revise suas configurações e clique em <strong>Salvar</strong>.
-                </p>
+        <div className="p-4">
+          {modoCards ? (
+            <div className="space-y-3">
+              <Card title="Configurações">{campos}</Card>
+
+              <div className="flex justify-between mt-3">
+                <button
+                  onClick={() => setModoCards(false)}
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700"
+                >
+                  <ChevronLeft size={16} /> Voltar
+                </button>
+
                 <button
                   onClick={salvarParametros}
-                  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                  className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
                 >
-                  <CheckCircle size={14} className="inline mr-1" />
-                  Salvar
+                  <CheckCircle size={14} /> Salvar
                 </button>
-              </Card>
-            )}
-
-            <div className="flex justify-between mt-3">
-              <button
-                onClick={() => setStep((s) => Math.max(s - 1, 1))}
-                disabled={step === 1}
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
-              >
-                <ChevronLeft size={16} /> Voltar
-              </button>
-
-              <button
-                onClick={() => setStep((s) => Math.min(s + 1, 3))}
-                disabled={step === 3}
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-700 disabled:opacity-40"
-              >
-                Avançar <ChevronRight size={16} />
-              </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="space-y-3">{campos}</div>
-        )}</div>
+          ) : (
+            <div className="space-y-3">{campos}</div>
+          )}
+        </div>
 
         {/* Rodapé */}
         <div className="flex justify-between items-center bg-white border-t border-gray-300 px-4 py-2">

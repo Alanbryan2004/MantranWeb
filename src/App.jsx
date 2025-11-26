@@ -28,6 +28,7 @@ import Faturamento from "./pages/Faturamento";
 import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
 import Filial from "./pages/Filial";
 import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
+import DashboardShopee from "./pages/DashboardShopee"; 
 
 
 
@@ -123,6 +124,8 @@ export default function App() {
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
 
             <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+            <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
+
             
            <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 

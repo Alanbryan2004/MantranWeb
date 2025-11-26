@@ -7,6 +7,7 @@ import App from "./App.jsx";
 import { IconColorProvider } from "./context/IconColorContext";
 import { FooterIconColorProvider } from "./context/FooterIconColorContext";
 import { ModulosProvider } from "./context/ModulosContext";
+import { MenuRapidoProvider } from "./context/MenuRapidoContext";  // ⬅️ usar apenas este!
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -14,7 +15,12 @@ createRoot(document.getElementById("root")).render(
       <IconColorProvider>
         <FooterIconColorProvider>
           <ModulosProvider>
-            <App />
+
+            {/* ⬅️ Provider correto do Menu Rápido */}
+            <MenuRapidoProvider>
+              <App />
+            </MenuRapidoProvider>
+
           </ModulosProvider>
         </FooterIconColorProvider>
       </IconColorProvider>
