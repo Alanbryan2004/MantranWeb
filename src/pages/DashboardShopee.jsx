@@ -5,10 +5,12 @@ import {
   CheckCircle,
   CircleDot,
   XCircle,
+  AlertTriangle,
+  ClipboardList,
 } from "lucide-react";
 import { useIconColor } from "../context/IconColorContext";
 
-// RECHARTS 🔥
+// RECHARTS
 import {
   BarChart,
   Bar,
@@ -29,10 +31,15 @@ function Label({ children, className = "" }) {
 }
 
 function Txt({ className = "", ...rest }) {
+  const isReadOnly = rest.readOnly;
   return (
     <input
       {...rest}
-      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] ${className}`}
+      className={
+        "border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] " +
+        (isReadOnly ? "bg-gray-200 " : "") +
+        className
+      }
     />
   );
 }
@@ -41,7 +48,10 @@ function Sel({ children, className = "", ...rest }) {
   return (
     <select
       {...rest}
-      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] w-full ${className}`}
+      className={
+        "border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] w-full " +
+        className
+      }
     >
       {children}
     </select>
@@ -106,6 +116,9 @@ export default function DashboardShopee({ open }) {
     viagensCalcular: 0,
   });
 
+  // Checkbox da linha do resumo
+  const [resumoSelecionado, setResumoSelecionado] = useState(false);
+
   /* VOLUMETRIA */
   const [volumetria, setVolumetria] = useState({
     cteShopee: 80000,
@@ -134,6 +147,10 @@ export default function DashboardShopee({ open }) {
 
   const pagamentoTotalDocs = resumo.autorizadoSefaz;
   const pagamentoFreteViagem = resumo.autorizadoSefaz * 0.8;
+
+  /* RETRÁTEIS */
+  const [mostrarReceitaPag, setMostrarReceitaPag] = useState(false);
+  const [mostrarVolumetria, setMostrarVolumetria] = useState(false);
 
   /* ============================ RECHARTS DATA ============================ */
   const dadosGrafico = [
@@ -181,6 +198,27 @@ export default function DashboardShopee({ open }) {
     }, 1600);
   };
 
+  const handleExportar = () => {
+    if (!resumoSelecionado) {
+      alert("Selecione o período na grid (checkbox) para exportar.");
+      return;
+    }
+    alert("Exportação gerada (mock). Aqui entra a lógica de exportar.");
+  };
+
+  const handleRejeitados = () => {
+    alert("Abrir listagem de CT-es rejeitados (mock).");
+  };
+
+  const handleNotasServico = () => {
+    alert("Abrir listagem de Notas de Serviço (mock).");
+  };
+
+  const tudoFinalizado =
+    statusProc.preFatura === "finalizado" &&
+    statusProc.processando === "finalizado" &&
+    statusProc.finalizado === "finalizado";
+
   /* ============================ RENDER ============================ */
   return (
     <div
@@ -193,120 +231,139 @@ export default function DashboardShopee({ open }) {
       </h1>
 
       <div className="flex-1 p-3 overflow-y-auto bg-white border-x border-b border-gray-300">
-
-        {/* ================== PARÂMETROS ================== */}
+        {/* ================== PARÂMETROS + STATUS ================== */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-3 mb-3">
-          <fieldset className="border border-gray-300 rounded p-3">
-            <legend className="px-2 text-red-700 font-semibold">
-              Parâmetros de Pesquisa
-            </legend>
+         {/* PARÂMETROS */}
+<fieldset className="border border-gray-300 rounded p-3">
+  <legend className="px-2 text-red-700 font-semibold">
+    Parâmetros de Pesquisa
+  </legend>
 
-            {/* Linha 1 */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-2">
+  {/* Linha 1 - usando GRID COLS 12 */}
+  <div className="grid grid-cols-12 gap-3 mb-3 mt-1">
 
-              <div>
-                <Label>Processo</Label>
-                <Sel
-                  name="processo"
-                  value={filtros.processo}
-                  onChange={handleFiltroChange}
-                >
-                  <option>LAST MILE XPT</option>
-                  <option>LAST MILE HUB</option>
-                  <option>LINE HAUL</option>
-                </Sel>
-              </div>
+    {/* Processo */}
+    <Label className="col-span-1 flex items-center">Processo</Label>
+    <Sel
+      name="processo"
+      value={filtros.processo}
+      onChange={handleFiltroChange}
+      className="col-span-2"
+    >
+      <option>LAST MILE XPT</option>
+      <option>LAST MILE HUB</option>
+      <option>LINE HAUL</option>
+    </Sel>
 
-              <div>
-                <Label>Ano</Label>
-                <Txt
-                  name="ano"
-                  type="number"
-                  value={filtros.ano}
-                  onChange={handleFiltroChange}
-                  className="w-full"
-                />
-              </div>
+    {/* Ano */}
+    <Label className="col-span-1 flex items-center">Ano</Label>
+    <Txt
+      name="ano"
+      type="number"
+      value={filtros.ano}
+      onChange={handleFiltroChange}
+      className="col-span-1"
+    />
 
-              <div>
-                <Label>Mês</Label>
-                <Sel
-                  name="mes"
-                  value={filtros.mes}
-                  onChange={handleFiltroChange}
-                >
-                  {meses.map((m) => (
-                    <option key={m}>{m}</option>
-                  ))}
-                </Sel>
-              </div>
+    {/* Mês */}
+    <Label className="col-span-1 flex items-center">Mês</Label>
+    <Sel
+      name="mes"
+      value={filtros.mes}
+      onChange={handleFiltroChange}
+      className="col-span-2"
+    >
+      {meses.map((m) => (
+        <option key={m}>{m}</option>
+      ))}
+    </Sel>
 
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
-                  <Label>Quinzena</Label>
-                  <Sel
-                    name="quinzena"
-                    value={filtros.quinzena}
-                    onChange={handleFiltroChange}
-                  >
-                    <option>1ª Quinzena</option>
-                    <option>2ª Quinzena</option>
-                  </Sel>
-                </div>
+    {/* Quinzena */}
+    
+    <Sel
+      name="quinzena"
+      value={filtros.quinzena}
+      onChange={handleFiltroChange}
+      className="col-span-2"
+    >
+      <option>1ª Quinzena</option>
+      <option>2ª Quinzena</option>
+    </Sel>
 
-                <button
-                  onClick={handlePesquisar}
-                  className="h-[26px] px-3 bg-red-700 text-white rounded hover:bg-red-800 mt-5 flex items-center"
-                >
-                  <Search size={14} className="mr-1" /> Pesquisar
-                </button>
-              </div>
-            </div>
+       
+      <button
+        onClick={handlePesquisar}
+        className="col-span-2 h-[26px] px-3 bg-red-700 text-white rounded hover:bg-red-800 flex items-center text-[12px]"
+      >
+        <Search size={14} className="mr-1" />
+        Pesquisar
+      </button>
+  
 
-            {/* Linha 2 */}
-            <div className="flex gap-6 mt-1">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="manifesto"
-                  checked={filtros.manifesto}
-                  onChange={handleFiltroChange}
-                />
-                Manifesto
-              </label>
+  </div>
 
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="cteComplementar"
-                  checked={filtros.cteComplementar}
-                  onChange={handleFiltroChange}
-                />
-                CT-e Complementar
-              </label>
-            </div>
-          </fieldset>
+  {/* ================= Linha 2 – Checkboxes ================= */}
+  <div className="grid grid-cols-12 gap-3 mt-1">
 
-          {/* ================== STATUS ================== */}
+    <label className="col-span-2 flex items-center gap-2">
+      <input
+        type="checkbox"
+        name="manifesto"
+        checked={filtros.manifesto}
+        onChange={handleFiltroChange}
+      />
+      Manifesto
+    </label>
+
+    <label className="col-span-3 flex items-center gap-2">
+      <input
+        type="checkbox"
+        name="cteComplementar"
+        checked={filtros.cteComplementar}
+        onChange={handleFiltroChange}
+      />
+      CT-e Complementar
+    </label>
+    {/* ================= Botão Exportar (condicional) ================= */}
+  {tudoFinalizado && (
+<button
+          onClick={handleExportar}
+          className="h-[26px] px-3 col-start-11 col-span-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 flex items-center text-[12px]"
+        >
+          <Search size={14} className="mr-1" />
+          Exportar
+        </button>
+          )}
+  </div>
+
+  
+
+    
+
+</fieldset>
+
+
+          {/* STATUS */}
           <fieldset className="border border-gray-300 rounded p-3">
             <legend className="px-2 text-red-700 font-semibold">
               Status
             </legend>
 
             <div className="space-y-3 mt-1">
-
               {/* Pré-fatura */}
               <div className="flex items-center justify-between">
                 <span>Pré-Fatura</span>
                 <div className="flex items-center gap-2">
-                  <CircleDot size={18} className={
-                    statusProc.preFatura === "processando"
-                      ? "text-red-700"
-                      : statusProc.preFatura === "finalizado"
-                      ? "text-green-600"
-                      : "text-slate-400"
-                  }/>
-
+                  <CircleDot
+                    size={18}
+                    className={
+                      statusProc.preFatura === "processando"
+                        ? "text-red-700"
+                        : statusProc.preFatura === "finalizado"
+                        ? "text-green-600"
+                        : "text-slate-400"
+                    }
+                  />
                   <span className="text-[12px]">
                     {statusProc.preFatura}
                   </span>
@@ -317,14 +374,16 @@ export default function DashboardShopee({ open }) {
               <div className="flex items-center justify-between">
                 <span>Processando</span>
                 <div className="flex items-center gap-2">
-                  <CircleDot size={18} className={
-                    statusProc.processando === "processando"
-                      ? "text-red-700"
-                      : statusProc.processando === "finalizado"
-                      ? "text-green-600"
-                      : "text-slate-400"
-                  }/>
-
+                  <CircleDot
+                    size={18}
+                    className={
+                      statusProc.processando === "processando"
+                        ? "text-red-700"
+                        : statusProc.processando === "finalizado"
+                        ? "text-green-600"
+                        : "text-slate-400"
+                    }
+                  />
                   <span className="text-[12px]">
                     {statusProc.processando}
                   </span>
@@ -335,11 +394,14 @@ export default function DashboardShopee({ open }) {
               <div className="flex items-center justify-between border-t pt-3 mt-2">
                 <span>Finalizado</span>
                 <div className="flex items-center gap-2">
-                  <CheckCircle size={18} className={
-                    statusProc.finalizado === "finalizado"
-                      ? "text-green-600"
-                      : "text-slate-400"
-                  }/>
+                  <CheckCircle
+                    size={18}
+                    className={
+                      statusProc.finalizado === "finalizado"
+                        ? "text-green-600"
+                        : "text-slate-400"
+                    }
+                  />
                   <span className="text-[12px]">
                     {statusProc.finalizado}
                   </span>
@@ -359,6 +421,10 @@ export default function DashboardShopee({ open }) {
             <table className="w-full text-[12px]">
               <thead className="bg-gray-100 border">
                 <tr>
+                  <th className="border px-1 py-[4px] text-center">
+                    {/* Checkbox header opcional, aqui só linha única */}
+                    Sel
+                  </th>
                   {[
                     "Ano",
                     "Mês",
@@ -372,23 +438,50 @@ export default function DashboardShopee({ open }) {
                     "Erro SEFAZ",
                     "A Calcular",
                   ].map((col) => (
-                    <th key={col} className="border px-1 py-[4px]">{col}</th>
+                    <th key={col} className="border px-1 py-[4px]">
+                      {col}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 <tr className="hover:bg-red-50">
+                  <td className="border px-1 text-center">
+                    <input
+                      type="checkbox"
+                      checked={resumoSelecionado}
+                      onChange={(e) =>
+                        setResumoSelecionado(e.target.checked)
+                      }
+                    />
+                  </td>
                   <td className="border px-1">{resumo.ano}</td>
                   <td className="border px-1">{resumo.mes}</td>
                   <td className="border px-1">{resumo.quinzena}</td>
-                  <td className="border px-1">{resumo.importadosPlano.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.docsShopee.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.faltaGerar.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.enviandoSefaz.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.autorizadoSefaz.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.erroApiShopee.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.erroSefaz.toLocaleString("pt-BR")}</td>
-                  <td className="border px-1">{resumo.viagensCalcular.toLocaleString("pt-BR")}</td>
+                  <td className="border px-1">
+                    {resumo.importadosPlano.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.docsShopee.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.faltaGerar.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.enviandoSefaz.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.autorizadoSefaz.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.erroApiShopee.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.erroSefaz.toLocaleString("pt-BR")}
+                  </td>
+                  <td className="border px-1">
+                    {resumo.viagensCalcular.toLocaleString("pt-BR")}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -401,15 +494,30 @@ export default function DashboardShopee({ open }) {
             Gráfico Status Processamento
           </legend>
 
-          <div className="w-full h-[260px]">
+          <div className="w-full h-[200px]">
             {mostrarGrafico ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dadosGrafico}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-25} textAnchor="end" height={60}/>
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 11 }}
+                    interval={0}
+                    angle={-25}
+                    textAnchor="end"
+                    height={60}
+                  />
                   <YAxis />
-                  <Tooltip formatter={(v) => v.toLocaleString("pt-BR")} />
-                  <Bar dataKey="valor" fill="#1E90FF" />
+                  <Tooltip
+                    formatter={(v) =>
+                      v.toLocaleString("pt-BR")
+                    }
+                  />
+                  <Bar
+                    dataKey="valor"
+                    fill="#1E90FF"
+                    minPointSize={4} // garante barra mínima
+                  />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -420,99 +528,176 @@ export default function DashboardShopee({ open }) {
           </div>
         </fieldset>
 
-        {/* ================== RECEITA / PAGAMENTO ================== */}
-        <fieldset className="border border-gray-300 rounded p-3 mb-3">
-          <legend className="px-2 text-red-700 font-semibold">
-            Receita / Pagamento
-          </legend>
+{/* ================== RECEITA / PAGAMENTO (RETRÁTIL) ================== */}
+<fieldset className="border border-gray-300 rounded p-3 mb-3">
+  <legend
+    className="px-2 text-red-700 font-semibold flex items-center justify-between cursor-pointer"
+    onClick={() => setMostrarReceitaPag((v) => !v)}
+  >
+    <span>Receita / Pagamento</span>
+    <span className="text-[11px] text-gray-500">
+      {mostrarReceitaPag ? "▼" : "►"}
+    </span>
+  </legend>
 
-          {/* RECEITA */}
-          <div className="flex items-end gap-3 flex-wrap">
-            <span className="font-semibold min-w-[70px]">RECEITA</span>
+  {mostrarReceitaPag && (
+    <>
 
-            <Label>CT-e</Label>
-            <Txt readOnly value={receitaCTe.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} className="w-24" />
+      {/* ================== RECEITA ================== */}
+      <div className="grid grid-cols-12 gap-3 mt-2">
 
-            <Label>CT-e Serviço</Label>
-            <Txt readOnly value={receitaCTeServico.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} className="w-24" />
+        {/* Título RECEITA */}
+        <span className="font-semibold col-span-1 flex items-center">
+          RECEITA
+        </span>
 
-            <Label>Total</Label>
-            <Txt readOnly value={receitaTotal.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} className="w-24" />
+        {/* CT-e */}
+        <Label className="col-span-1  col-start-3 flex items-center">CT-e</Label>
+        <Txt
+          readOnly
+          value={receitaCTe.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+          className="col-span-1 bg-gray-200"
+        />
 
-            <Label>Total ICMS</Label>
-            <Txt readOnly value={totalICMS.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} className="w-24" />
+        {/* CT-e Serviço */}
+        <Label className="col-span-1 flex items-center">CT-e Serviço</Label>
+        <Txt
+          readOnly
+          value={receitaCTeServico.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+          className="col-span-1 bg-gray-200"
+        />
 
-            <button
-              onClick={() => alert("Pesquisar Receita")}
-              className="h-[26px] ml-auto px-3 bg-red-700 text-white rounded hover:bg-red-800"
-            >
-              <Search size={14} className="mr-1 inline-block" /> Pesquisar
-            </button>
-          </div>
+        {/* Total ICMS */}
+        <Label className="col-span-1 flex items-center">Total ICMS</Label>
+        <Txt
+          readOnly
+          value={totalICMS.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+          className="col-span-1 bg-gray-200"
+        />
 
-          {/* PAGAMENTO */}
-          <div className="flex items-end gap-3 flex-wrap mt-4">
-            <span className="font-semibold min-w-[70px]">PAGAMENTO</span>
+        {/* Total */}
+        <Label className="col-span-1 flex items-center">Total</Label>
+        <Txt
+          readOnly
+          value={receitaTotal.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+          className="col-span-2 bg-gray-200"
+        />
 
-            <Label>Total Documentos</Label>
-            <Txt readOnly value={pagamentoTotalDocs.toLocaleString("pt-BR")} className="w-24" />
+        
+        {/* Botão Pesquisar */}
+        
+          <button
+            onClick={() => alert("Pesquisar Receita (mock).")}
+            className="h-[26px] px-3 bg-red-700 text-white rounded hover:bg-red-800 text-[12px] flex items-center"
+          >
+            <Search size={14} className="mr-1" />
+            Pesquisar
+          </button>
+        
+      </div>
 
-            <Label>Total Frete Viagem</Label>
-            <Txt readOnly value={pagamentoFreteViagem.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} className="w-28" />
+      {/* ================== PAGAMENTO ================== */}
+      <div className="grid grid-cols-12 gap-3 mt-4">
 
-            <button
-              onClick={() => alert("Pesquisar Pagamento")}
-              className="h-[26px] ml-auto px-3 bg-red-700 text-white rounded hover:bg-red-800"
-            >
-              <Search size={14} className="mr-1 inline-block" /> Pesquisar
-            </button>
-          </div>
-        </fieldset>
+        {/* Título PAGAMENTO */}
+        <span className="font-semibold col-span-2 flex items-center">
+          PAGAMENTO
+        </span>
 
-        {/* ================== VOLUMETRIA ================== */}
-        <fieldset className="border border-gray-300 rounded p-3 mb-3">
-          <legend className="px-2 text-red-700 font-semibold">
-            Volumetria
-          </legend>
+        {/* Total Documentos */}
+        <Label className="col-span-2  col-start-4 flex items-center">Total Documentos</Label>
+        <Txt
+          readOnly
+          value={pagamentoTotalDocs.toLocaleString("pt-BR")}
+          className="col-span-1 bg-gray-200"
+        />
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
-            <div>
-              <Label>CT-e Shopee</Label>
-              <Txt readOnly value={volumetria.cteShopee.toLocaleString("pt-BR")} className="w-full" />
-            </div>
+        {/* Total Frete Viagem */}
+        <Label className="col-span-1 col-start-9 flex items-center">Total Frete </Label>
+        <Txt
+          readOnly
+          value={pagamentoFreteViagem.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+          className="col-span-2 bg-gray-200"
+        />
 
-            <div>
-              <Label>CT-e Normal</Label>
-              <Txt readOnly value={volumetria.cteNormal.toLocaleString("pt-BR")} className="w-full" />
-            </div>
+        {/* Botão Pesquisar */}
+                <button
+            onClick={() => alert("Pesquisar Pagamento (mock).")}
+            className="h-[26px] px-3 bg-red-700 text-white rounded hover:bg-red-800 text-[12px] flex items-center"
+          >
+            <Search size={14} className="mr-1" />
+            Pesquisar
+          </button>
+        
+      </div>
 
-            <div>
-              <Label>CT-e Serviço</Label>
-              <Txt readOnly value={volumetria.cteServico.toLocaleString("pt-BR")} className="w-full" />
-            </div>
+    </>
+  )}
+</fieldset>
 
-            <div>
-              <Label>Total CT-e</Label>
-              <Txt readOnly value={totalCte.toLocaleString("pt-BR")} className="w-full font-semibold" />
-            </div>
-          </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => alert("Rejeitados")}
-              className="h-[26px] px-3 bg-red-700 text-white hover:bg-red-800 border border-gray-300 rounded text-[12px]"
-            >
-              Rejeitados
-            </button>
+        {/* ================== VOLUMETRIA (RETRÁTIL) ================== */}
+<fieldset className="border border-gray-300 rounded p-3 mb-3">
+  <legend
+    className="px-2 text-red-700 font-semibold flex items-center justify-between cursor-pointer"
+    onClick={() => setMostrarVolumetria((v) => !v)}
+  >
+    <span>Volumetria</span>
+    <span className="text-[11px] text-gray-500">
+      {mostrarVolumetria ? "▼" : "►"}
+    </span>
+  </legend>
 
-            <button
-              onClick={() => alert("Notas Serviço")}
-              className="h-[26px] px-3 bg-red-700 text-white hover:bg-red-800 border border-gray-300 rounded text-[12px]"
-            >
-              Notas Serviço
-            </button>
-          </div>
-        </fieldset>
+  {mostrarVolumetria && (
+    <>
+      {/* 1 única linha com grid 12 colunas */}
+      <div className="grid grid-cols-12 gap-3 mb-3 mt-2">
+
+        {/* CT-e Shopee */}
+        <Label className="col-span-1 flex items-center">
+          CT-e Shopee
+        </Label>
+        <Txt
+          readOnly
+          value={volumetria.cteShopee.toLocaleString("pt-BR")}
+          className="col-span-2 bg-gray-200"
+        />
+
+        {/* CT-e Normal */}
+        <Label className="col-span-1 flex items-center">
+          CT-e Normal
+        </Label>
+        <Txt
+          readOnly
+          value={volumetria.cteNormal.toLocaleString("pt-BR")}
+          className="col-span-2 bg-gray-200"
+        />
+
+        {/* CT-e Serviço */}
+        <Label className="col-span-1 flex items-center">
+          CT-e Serviço
+        </Label>
+        <Txt
+          readOnly
+          value={volumetria.cteServico.toLocaleString("pt-BR")}
+          className="col-span-2 bg-gray-200"
+        />
+
+        {/* Total */}
+        <Label className="col-span-1 flex items-center">
+          Total CT-e
+        </Label>
+        <Txt
+          readOnly
+          value={totalCte.toLocaleString("pt-BR")}
+          className="col-span-2 bg-gray-200 font-semibold"
+        />
+
+      </div>
+    </>
+  )}
+</fieldset>
+
       </div>
 
       {/* ================= FOOTER ================== */}
@@ -525,6 +710,22 @@ export default function DashboardShopee({ open }) {
             <XCircle size={18} />
             <span>Fechar</span>
           </button>
+  <button
+                 onClick={() => window.history.back()}
+            className={`flex flex-col items-center text-[11px] transition ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                >
+                  <AlertTriangle size={18} />
+                  <span>Rejeitados</span>
+                </button>
+
+                <button
+                  onClick={() => window.history.back()}
+            className={`flex flex-col items-center text-[11px] transition ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                >
+                  <ClipboardList size={18} />
+                  <span>Notas Serviço</span>
+                </button>
+
         </div>
 
         <div />

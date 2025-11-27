@@ -248,12 +248,11 @@ setUsuarios((prev) => {
                  <li
   key={item}
   className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-onMouseEnter={() => {
-  if (item === "Cliente") setActiveSubMenu("Cliente");
-  if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
-}}
-
-
+  onMouseEnter={() => {
+    if (item === "Cliente") setActiveSubMenu("Cliente");
+    if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
+    if (item === "Localidade") setActiveSubMenu("Localidade");  // <<< ADICIONE ESTA LINHA
+  }}
   onMouseLeave={() => setActiveSubMenu(null)}
 >
   {/* Item padrão */}
@@ -313,6 +312,56 @@ onMouseEnter={() => {
       <Link to="/operacao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">Operação</Link>
     </div>
   )}
+
+
+{/* === Submenu Localidade === */}
+{item === "Localidade" && activeSubMenu === "Localidade" && (
+  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-64 p-1 z-50">
+    
+    <Link
+      to="/localidade-adicional"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Localidade Adicional
+    </Link>
+
+    <Link
+      to="/cidade"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Cidade
+    </Link>
+
+    <Link
+      to="/regiao"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Região
+    </Link>
+
+    <Link
+      to="/estado"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Estado
+    </Link>
+
+    <Link
+      to="/feriado"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Feriado
+    </Link>
+
+    <Link
+      to="/aduaneira"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Aduaneira
+    </Link>
+
+  </div>
+)}
 
   {/* Submenu Parâmetro Fiscal */}
 {item === "Parâmetro Fiscal" && activeSubMenu === "Parâmetro Fiscal" && (
@@ -640,7 +689,8 @@ onMouseEnter={() => {
 <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
   <Link
     to="/dashboard-shopee"
-    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    className="block py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+    
   >
     Dashboard
   </Link>

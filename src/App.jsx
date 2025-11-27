@@ -29,6 +29,13 @@ import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
 import Filial from "./pages/Filial";
 import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
 import DashboardShopee from "./pages/DashboardShopee"; 
+import LocalidadeAdicional from "./pages/LocalidadeAdicional";
+import Cidade from "./pages/Cidade";
+import Regiao from "./pages/Regiao";
+import Estado from "./pages/Estado";
+import Feriado from "./pages/Feriado";
+import LocalidadeAduaneira from "./pages/LocalidadeAduaneira";
+
 
 
 
@@ -148,6 +155,20 @@ export default function App() {
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
 
             <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
+
+            {/* ======= LOCALIDADE ======= */}
+<Route path="/localidade-adicional"  element={<LocalidadeAdicional open={sidebarOpen} />} />
+
+<Route   path="/cidade"   element={<Cidade open={sidebarOpen} />} />
+
+<Route   path="/regiao"   element={<Regiao open={sidebarOpen} />} />
+
+<Route  path="/estado"   element={<Estado open={sidebarOpen} />} />
+
+<Route path="/feriado" element={<Feriado open={sidebarOpen} />}/>
+
+<Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />}/>
+
 
 
 

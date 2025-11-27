@@ -37,7 +37,7 @@ const opcoesMenuRapido = [
   { label: "Agregado", rota: "/empresa-agregado", icone: "fa-people-carry-box" },
   { label: "Cliente", rota: "/cliente", icone: "fa-user-tie" },
   { label: "Fatura", rota: "/faturamento", icone: "fa-file-invoice-dollar" },
-  { label: "Dashboard", rota: "/dashboard", icone: "fa-chart-line" },
+  { label: "Dashboard", rota: "/dashboard-shopee", icone: "fa-chart-line" },
 ];
 
   // === CONTEXTO UNIFICADO ===
