@@ -35,6 +35,18 @@ import Regiao from "./pages/Regiao";
 import Estado from "./pages/Estado";
 import Feriado from "./pages/Feriado";
 import LocalidadeAduaneira from "./pages/LocalidadeAduaneira";
+import Produto from "./pages/Produto";
+import Embalagem from "./pages/Embalagem";
+import ProdutoPredominante from "./pages/ProdutoPredominante";
+import EventoDespesa from "./pages/EventoDespesa";
+import PrazoEntrega from "./pages/PrazoEntrega";
+import HistoricoOcorrencia from "./pages/HistoricoOcorrencia";
+import TipoOcorrencia from "./pages/TipoOcorrencia";
+import Seguradora from "./pages/Seguradora";
+
+
+
+
 
 
 
@@ -131,6 +143,8 @@ export default function App() {
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
 
             <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+            <Route path="/historico-ocorrencia" element={<HistoricoOcorrencia open={sidebarOpen} />} />
+            <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
             <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
 
             
@@ -168,6 +182,20 @@ export default function App() {
 <Route path="/feriado" element={<Feriado open={sidebarOpen} />}/>
 
 <Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />}/>
+
+
+<Route path="/produto" element={<Produto open={sidebarOpen} />} />
+
+<Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
+
+<Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
+
+<Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
+
+<Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
+<Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
+
+
 
 
 

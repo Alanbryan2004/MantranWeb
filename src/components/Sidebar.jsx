@@ -249,10 +249,14 @@ setUsuarios((prev) => {
   key={item}
   className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
   onMouseEnter={() => {
-    if (item === "Cliente") setActiveSubMenu("Cliente");
-    if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
-    if (item === "Localidade") setActiveSubMenu("Localidade");  // <<< ADICIONE ESTA LINHA
-  }}
+  if (item === "Cliente") setActiveSubMenu("Cliente");
+  if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
+  if (item === "Localidade") setActiveSubMenu("Localidade");  
+  if (item === "Produto") setActiveSubMenu("Produto");
+  if (item === "Ocorrência") setActiveSubMenu("Ocorrência"); 
+ if (item === "Seguro") setActiveSubMenu("Seguro");
+}}
+
   onMouseLeave={() => setActiveSubMenu(null)}
 >
   {/* Item padrão */}
@@ -270,29 +274,20 @@ setUsuarios((prev) => {
       ? "/veiculo"
       : item === "Motorista"
       ? "/motorista"
+      : item === "Eventos Despesas"
+      ? "/evento-despesa"
+      : item === "Prazo de Entrega"
+      ? "/prazo-entrega"
+      : item === "Seguro"
+      ? "/seguradora"
       : "#"
   }
   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-  onClick={(e) => {
-  // Só trava itens que realmente não têm rota
-  if (
-    ![
-      "Empresa",
-      "Filial",
-      "Filial Parâmetro",
-      "Empresa Agregado",
-      "Veículo",
-      "Motorista",
-      "Parâmetro Fiscal"
-    ].includes(item)
-  ) {
-    return; 
-  }
-}}
-
 >
   {item}
 </Link>
+
+
 
 
 
@@ -313,6 +308,69 @@ setUsuarios((prev) => {
     </div>
   )}
 
+
+{/* === Submenu Seguro === */}
+{item === "Seguro" && activeSubMenu === "Seguro" && (
+  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
+
+    <Link
+      to="/seguradora"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Seguradora
+    </Link>
+
+  </div>
+)}
+
+{/* === Submenu Ocorrência === */}
+{item === "Ocorrência" && activeSubMenu === "Ocorrência" && (
+  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
+
+    <Link
+      to="/tipo-ocorrencia"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Tipos de Ocorrência
+    </Link>
+
+    <Link
+      to="/historico-ocorrencia"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Histórico de Ocorrências
+    </Link>
+
+  </div>
+)}
+
+{/* === Submenu Produto === */}
+{item === "Produto" && activeSubMenu === "Produto" && (
+  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+
+    <Link
+      to="/produto"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Produto
+    </Link>
+
+    <Link
+      to="/embalagem"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Embalagem
+    </Link>
+
+    <Link
+      to="/produto-predominante"
+      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+    >
+      Predominante
+    </Link>
+
+  </div>
+)}
 
 {/* === Submenu Localidade === */}
 {item === "Localidade" && activeSubMenu === "Localidade" && (
