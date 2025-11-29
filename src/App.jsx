@@ -28,7 +28,7 @@ import Faturamento from "./pages/Faturamento";
 import FaturamentoAutomatico from "./pages/FaturamentoAutomatico";
 import Filial from "./pages/Filial";
 import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
-import DashboardShopee from "./pages/DashboardShopee"; 
+import DashboardShopee from "./pages/DashboardShopee";
 import LocalidadeAdicional from "./pages/LocalidadeAdicional";
 import Cidade from "./pages/Cidade";
 import Regiao from "./pages/Regiao";
@@ -133,10 +133,10 @@ export default function App() {
           <Routes>
             <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
 
-            <Route path="/cliente-divisao" element={<ClienteDivisao />} />
+            <Route path="/cliente-divisao" element={<ClienteDivisao open={sidebarOpen} />} />
 
             <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
-            
+
             <Route path="/aliquota-icms" element={<AliquotaICMS open={sidebarOpen} />} />
 
             <Route path="/cfop" element={<CFOP open={sidebarOpen} />} />
@@ -153,24 +153,24 @@ export default function App() {
             <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
             <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
 
-            
-           <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
+
+            <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 
 
             {/* ======= CLIENTE – TELAS INTERNAS ======= */}
-<Route path="/atividade-economica"  element={<AtividadeEconomica open={sidebarOpen} />}/>
+            <Route path="/atividade-economica" element={<AtividadeEconomica open={sidebarOpen} />} />
 
-<Route  path="/cliente-condicao-pagamento"  element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
+            <Route path="/cliente-condicao-pagamento" element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
 
-<Route path="/cliente-divisao-regiao"  element={<ClienteDivisaoRegiao open={sidebarOpen} />}/>
+            <Route path="/cliente-divisao-regiao" element={<ClienteDivisaoRegiao open={sidebarOpen} />} />
 
-<Route   path="/cliente-embalagem"  element={<ClienteEmbalagem open={sidebarOpen} />}/>
+            <Route path="/cliente-embalagem" element={<ClienteEmbalagem open={sidebarOpen} />} />
 
-<Route  path="/cliente-grupo-economico"  element={<ClienteGrupoEconomico open={sidebarOpen} />}/>
+            <Route path="/cliente-grupo-economico" element={<ClienteGrupoEconomico open={sidebarOpen} />} />
 
-<Route  path="/cliente-produto"  element={<ClienteProduto open={sidebarOpen} />}/>
+            <Route path="/cliente-produto" element={<ClienteProduto open={sidebarOpen} />} />
 
-<Route  path="/cliente-operacao"  element={<ClienteOperacao open={sidebarOpen} />}/>
+            <Route path="/cliente-operacao" element={<ClienteOperacao open={sidebarOpen} />} />
 
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
 
@@ -185,43 +185,43 @@ export default function App() {
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
 
             <Route path="/filial" element={<Filial open={sidebarOpen} />} />
-            
+
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
 
             <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
 
             {/* ======= LOCALIDADE ======= */}
-<Route path="/localidade-adicional"  element={<LocalidadeAdicional open={sidebarOpen} />} />
+            <Route path="/localidade-adicional" element={<LocalidadeAdicional open={sidebarOpen} />} />
 
-<Route   path="/cidade"   element={<Cidade open={sidebarOpen} />} />
+            <Route path="/cidade" element={<Cidade open={sidebarOpen} />} />
 
-<Route   path="/regiao"   element={<Regiao open={sidebarOpen} />} />
+            <Route path="/regiao" element={<Regiao open={sidebarOpen} />} />
 
-<Route  path="/estado"   element={<Estado open={sidebarOpen} />} />
+            <Route path="/estado" element={<Estado open={sidebarOpen} />} />
 
-<Route path="/feriado" element={<Feriado open={sidebarOpen} />}/>
+            <Route path="/feriado" element={<Feriado open={sidebarOpen} />} />
 
-<Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />}/>
-
-
-<Route path="/produto" element={<Produto open={sidebarOpen} />} />
-
-<Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
-
-<Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
-
-<Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
-
-<Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
-<Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
- <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
-<Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
+            <Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />} />
 
 
+            <Route path="/produto" element={<Produto open={sidebarOpen} />} />
+
+            <Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
+
+            <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
+
+            <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
+
+            <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
+            <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
+            <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
+            <Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
 
 
 
-           
+
+
+
             {/* <ViagemPagamento
                 isOpen={modalPagamentoOpen}
                 onClose={() => setModalPagamentoOpen(false)}
@@ -245,23 +245,23 @@ export default function App() {
                     }}
                   />
                 ) : (
-                 <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
 
-  {/* Logo do cliente (se existir) */}
-  {bgLogo && (
-    <img
-      src={bgLogo}
-      alt="Marca d’água"
-      className="opacity-40 mb-4"
-      style={{ width: "220px" }} // tamanho ajustável
-    />
-  )}
+                    {/* Logo do cliente (se existir) */}
+                    {bgLogo && (
+                      <img
+                        src={bgLogo}
+                        alt="Marca d’água"
+                        className="opacity-40 mb-4"
+                        style={{ width: "220px" }} // tamanho ajustável
+                      />
+                    )}
 
-  {/* Texto abaixo */}
-  <span className="italic text-lg">
-    Selecione a Opção Desejada
-  </span>
-</div>
+                    {/* Texto abaixo */}
+                    <span className="italic text-lg">
+                      Selecione a Opção Desejada
+                    </span>
+                  </div>
 
                 )
               }

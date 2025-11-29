@@ -310,7 +310,7 @@ setUsuarios((prev) => {
       Condição de Pagamento
     </Link>
 
-    <Link to="/cliente-divisao-regiao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+    <Link to="/cliente-divisao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
       Divisão Empresarial
     </Link>
 
