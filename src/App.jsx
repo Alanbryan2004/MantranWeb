@@ -43,7 +43,13 @@ import PrazoEntrega from "./pages/PrazoEntrega";
 import HistoricoOcorrencia from "./pages/HistoricoOcorrencia";
 import TipoOcorrencia from "./pages/TipoOcorrencia";
 import Seguradora from "./pages/Seguradora";
-
+import AtividadeEconomica from "./pages/AtividadeEconomica";
+import ClienteCondicaoPagamento from "./pages/ClienteCondicaoPagamento";
+import ClienteDivisaoRegiao from "./pages/ClienteDivisaoRegiao";
+import ClienteEmbalagem from "./pages/ClienteEmbalagem";
+import ClienteGrupoEconomico from "./pages/ClienteGrupoEconomico";
+import ClienteProduto from "./pages/ClienteProduto";
+import ClienteOperacao from "./pages/ClienteOperacao";
 
 
 
@@ -151,6 +157,20 @@ export default function App() {
            <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 
 
+            {/* ======= CLIENTE – TELAS INTERNAS ======= */}
+<Route path="/atividade-economica"  element={<AtividadeEconomica open={sidebarOpen} />}/>
+
+<Route  path="/cliente-condicao-pagamento"  element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
+
+<Route path="/cliente-divisao-regiao"  element={<ClienteDivisaoRegiao open={sidebarOpen} />}/>
+
+<Route   path="/cliente-embalagem"  element={<ClienteEmbalagem open={sidebarOpen} />}/>
+
+<Route  path="/cliente-grupo-economico"  element={<ClienteGrupoEconomico open={sidebarOpen} />}/>
+
+<Route  path="/cliente-produto"  element={<ClienteProduto open={sidebarOpen} />}/>
+
+<Route  path="/cliente-operacao"  element={<ClienteOperacao open={sidebarOpen} />}/>
 
             <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
 
@@ -194,14 +214,14 @@ export default function App() {
 
 <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
 <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
+ <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
+<Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
 
 
 
 
 
-
-            <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
-            <Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
+           
             {/* <ViagemPagamento
                 isOpen={modalPagamentoOpen}
                 onClose={() => setModalPagamentoOpen(false)}
