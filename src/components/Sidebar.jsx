@@ -38,114 +38,114 @@ export default function Sidebar({ open }) {
   const [mensagens, setMensagens] = useState([]);
   const [showAlterarSenha, setShowAlterarSenha] = useState(false);
   const [usuarios, setUsuarios] = useState([
-  { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
-  { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
-  { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
-  { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍", naoLidas: 0 },
-  { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
-  { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
-  { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
-]);
-const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
+    { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
+    { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
+    { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
+    { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍", naoLidas: 0 },
+    { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
+    { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
+    { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
+  ]);
+  const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
 
   // === Socket.IO Conexão ===
-const [socket, setSocket] = useState(null);
-const usuarioLogado = localStorage.getItem("usuarioNome") || "Anônimo";
+  const [socket, setSocket] = useState(null);
+  const usuarioLogado = localStorage.getItem("usuarioNome") || "Anônimo";
 
-useEffect(() => {
-const socketURL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3001"
-    : "https://mantranweb-backend.onrender.com";
+  useEffect(() => {
+    const socketURL =
+      window.location.hostname === "localhost"
+        ? "http://localhost:3001"
+        : "https://mantranweb-backend.onrender.com";
 
-const s = io(socketURL, {
-  transports: ["websocket"],
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 500,
-});
-  setSocket(s);
+    const s = io(socketURL, {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 500,
+    });
+    setSocket(s);
 
-  s.on("connect", () => {
-    console.log("✅ Conectado ao servidor Socket.io");
-    s.emit("userOnline", usuarioLogado);
-  });
-
-  s.on("usersOnline", (lista) => {
-    console.log("📡 Usuários online:", lista);
-    setUsuarios((prev) =>
-      prev.map((u) => ({ ...u, online: lista.includes(u.nome) }))
-    );
-  });
-
-  s.on("novaMensagem", (msg) => {
-  console.log("💬 Mensagem recebida:", msg);
-
-  // ✅ Mostra apenas mensagens onde o usuário logado está envolvido
-  if (msg.de === usuarioLogado || msg.para === usuarioLogado) {
-    setMensagens((prev) => {
-      const jaExiste = prev.some(
-        (m) =>
-          m.de === msg.de &&
-          m.para === msg.para &&
-          m.texto === msg.texto &&
-          m.hora === msg.hora
-      );
-      if (jaExiste) return prev;
-      return [...prev, msg];
+    s.on("connect", () => {
+      console.log("✅ Conectado ao servidor Socket.io");
+      s.emit("userOnline", usuarioLogado);
     });
 
-    // ✅ Atualiza a prévia apenas para o contato certo
-setUsuarios((prev) =>
-  prev.map((u) => {
-    if (u.nome === (msg.de === usuarioLogado ? msg.para : msg.de)) {
-      return { ...u, ultimaMsg: msg.texto };
-    }
-    return u;
-  })
-);
+    s.on("usersOnline", (lista) => {
+      console.log("📡 Usuários online:", lista);
+      setUsuarios((prev) =>
+        prev.map((u) => ({ ...u, online: lista.includes(u.nome) }))
+      );
+    });
 
-// 🔴 Incrementa contador de mensagens não lidas
-if (msg.para === usuarioLogado) {
-  setUsuarios((prev) =>
-    prev.map((u) =>
-      u.nome === msg.de
-        ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
-        : u
-    )
-  );
-}
-// ✅ Atualiza contador de contatos com mensagens não lidas corretamente
-setUsuarios((prev) => {
-  const atualizados = prev.map((u) =>
-    u.nome === msg.de
-      ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
-      : u
-  );
-  const total = atualizados.filter((u) => u.naoLidas > 0).length;
-  setContatosComMensagensNaoLidas(total);
-  return atualizados;
-});
+    s.on("novaMensagem", (msg) => {
+      console.log("💬 Mensagem recebida:", msg);
+
+      // ✅ Mostra apenas mensagens onde o usuário logado está envolvido
+      if (msg.de === usuarioLogado || msg.para === usuarioLogado) {
+        setMensagens((prev) => {
+          const jaExiste = prev.some(
+            (m) =>
+              m.de === msg.de &&
+              m.para === msg.para &&
+              m.texto === msg.texto &&
+              m.hora === msg.hora
+          );
+          if (jaExiste) return prev;
+          return [...prev, msg];
+        });
+
+        // ✅ Atualiza a prévia apenas para o contato certo
+        setUsuarios((prev) =>
+          prev.map((u) => {
+            if (u.nome === (msg.de === usuarioLogado ? msg.para : msg.de)) {
+              return { ...u, ultimaMsg: msg.texto };
+            }
+            return u;
+          })
+        );
+
+        // 🔴 Incrementa contador de mensagens não lidas
+        if (msg.para === usuarioLogado) {
+          setUsuarios((prev) =>
+            prev.map((u) =>
+              u.nome === msg.de
+                ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
+                : u
+            )
+          );
+        }
+        // ✅ Atualiza contador de contatos com mensagens não lidas corretamente
+        setUsuarios((prev) => {
+          const atualizados = prev.map((u) =>
+            u.nome === msg.de
+              ? { ...u, naoLidas: (u.naoLidas || 0) + 1, ultimaMsg: msg.texto }
+              : u
+          );
+          const total = atualizados.filter((u) => u.naoLidas > 0).length;
+          setContatosComMensagensNaoLidas(total);
+          return atualizados;
+        });
 
 
 
 
-  }
-});
+      }
+    });
 
 
-  s.on("disconnect", () => {
-    console.warn("⚠️ Desconectado do servidor Socket.io");
-  });
+    s.on("disconnect", () => {
+      console.warn("⚠️ Desconectado do servidor Socket.io");
+    });
 
-  return () => {
-    s.off("usersOnline");
-    s.off("novaMensagem");
-    s.off("connect");
-    s.off("disconnect");
-    s.disconnect();
-  };
-}, []);
+    return () => {
+      s.off("usersOnline");
+      s.off("novaMensagem");
+      s.off("connect");
+      s.off("disconnect");
+      s.disconnect();
+    };
+  }, []);
 
 
 
@@ -154,34 +154,34 @@ setUsuarios((prev) => {
     setActiveSubMenu(null);
   };
 
- const enviarMensagem = () => {
-  if (!novaMensagem.trim() || !chatAtivo) return;
+  const enviarMensagem = () => {
+    if (!novaMensagem.trim() || !chatAtivo) return;
 
-  const msg = {
-    de: usuarioLogado,
-    para: chatAtivo.nome,
-    texto: novaMensagem.trim(),
-    hora: new Date().toLocaleTimeString("pt-BR", { hour12: false }),
+    const msg = {
+      de: usuarioLogado,
+      para: chatAtivo.nome,
+      texto: novaMensagem.trim(),
+      hora: new Date().toLocaleTimeString("pt-BR", { hour12: false }),
+    };
+
+    console.log("📤 Enviando mensagem:", msg);
+
+    if (socket && socket.connected) {
+      socket.emit("novaMensagem", msg);
+    } else {
+      console.warn("⚠️ Socket não está conectado");
+    }
+
+    setMensagens((prev) => [...prev, msg]);
+    setNovaMensagem("");
+
+    // Atualiza a prévia da última mensagem na lista
+    setUsuarios((prev) =>
+      prev.map((u) =>
+        u.nome === chatAtivo.nome ? { ...u, ultimaMsg: msg.texto } : u
+      )
+    );
   };
-
-  console.log("📤 Enviando mensagem:", msg);
-
-  if (socket && socket.connected) {
-    socket.emit("novaMensagem", msg);
-  } else {
-    console.warn("⚠️ Socket não está conectado");
-  }
-
-  setMensagens((prev) => [...prev, msg]);
-  setNovaMensagem("");
-
-  // Atualiza a prévia da última mensagem na lista
-  setUsuarios((prev) =>
-    prev.map((u) =>
-      u.nome === chatAtivo.nome ? { ...u, ultimaMsg: msg.texto } : u
-    )
-  );
-};
 
 
 
@@ -190,743 +190,741 @@ setUsuarios((prev) => {
     <>
       {/* === SIDEBAR PRINCIPAL === */}
       <aside
-         className={`bg-white border-r border-gray-200 shadow-lg fixed left-0 top-[48px] h-[calc(100vh-48px)] z-50 transition-all duration-300 ${
-          open ? "w-52 translate-x-0" : "w-14 -translate-x-full sm:translate-x-0"
-        }`}
+        className={`bg-white border-r border-gray-200 shadow-lg fixed left-0 top-[48px] h-[calc(100vh-48px)] z-50 transition-all duration-300 ${open ? "w-52 translate-x-0" : "w-14 -translate-x-full sm:translate-x-0"
+          }`}
       >
         <nav className="p-2 text-sm text-gray-700 relative">
-          
- {/* === CADASTROS === */}
-        <div
-          className="group relative"
-          onMouseEnter={() => setActiveMenu("cadastros")}
-          onMouseLeave={() => setActiveMenu(null)}
-        >
-          <button
-            onClick={() => handleToggle("cadastros")}
-            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+
+          {/* === CADASTROS === */}
+          <div
+            className="group relative"
+            onMouseEnter={() => setActiveMenu("cadastros")}
+            onMouseLeave={() => setActiveMenu(null)}
           >
-            <FileText className={`w-5 h-5 ${iconColor}`} />
-
-            {open && (
-              <>
-                <span className="ml-3 flex-1 text-left">Cadastros</span>
-                <ChevronRight
-                  size={14}
-                  className={`text-gray-500 transition-transform ${
-                    activeMenu === "cadastros" ? "rotate-90" : ""
-                  }`}
-                />
-              </>
-            )}
-          </button>
-
-          {/* Submenus de Cadastros */}
-          {activeMenu === "cadastros" && (
-            <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
-              <ul className="text-[13px] text-gray-700">
-                {[
-                  "Empresa",
-                  "Filial",
-                  "Filial Parâmetro",
-                  "Empresa Agregado",
-                  "Parâmetro Fiscal",
-                  "Motorista",
-                  "Veículo",
-                  "Cliente",
-                  "Localidade",
-                  "Eventos Despesas",
-                  "Prazo de Entrega",
-                  "Parâmetro GNRE",
-                  "Parâmetro Módulo",
-                  "Produto",
-                  "Seguro",
-                  "Ocorrência",
-                  "Colaboradores",
-                ].map((item) => (
-                 
-                 <li
-  key={item}
-  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-  onMouseEnter={() => {
-  if (item === "Cliente") setActiveSubMenu("Cliente");
-  if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
-  if (item === "Localidade") setActiveSubMenu("Localidade");  
-  if (item === "Produto") setActiveSubMenu("Produto");
-  if (item === "Ocorrência") setActiveSubMenu("Ocorrência"); 
- if (item === "Seguro") setActiveSubMenu("Seguro");
-}}
-
-  onMouseLeave={() => setActiveSubMenu(null)}
->
-  {/* Item padrão */}
- <Link
-  to={
-    item === "Empresa"
-      ? "/empresa"
-      : item === "Filial"
-      ? "/filial"
-      : item === "Filial Parâmetro"
-      ? "/empresa-filial-parametro"
-      : item === "Empresa Agregado"
-      ? "/empresa-agregado"
-      : item === "Veículo"
-      ? "/veiculo"
-      : item === "Motorista"
-      ? "/motorista"
-      : item === "Eventos Despesas"
-      ? "/evento-despesa"
-      : item === "Prazo de Entrega"
-      ? "/prazo-entrega"
-      : item === "Seguro"
-      ? "/seguradora"
-      : "#"
-  }
-  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
->
-  {item}
-</Link>
-
-
-
-
-
-
-
-
-  {/* Submenu Cliente */}
- {item === "Cliente" && activeSubMenu === "Cliente" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-
-    <Link to="/cliente" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Cliente
-    </Link>
-
-    <Link to="/atividade-economica" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Atividade Econômica
-    </Link>
-
-    <Link to="/cliente-condicao-pagamento" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Condição de Pagamento
-    </Link>
-
-    <Link to="/cliente-divisao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Divisão Empresarial
-    </Link>
-
-    <Link to="/cliente-embalagem" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Embalagem
-    </Link>
-
-    <Link to="/cliente-grupo-economico" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Grupo Econômico
-    </Link>
-
-    <Link to="/cliente-produto" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Produto
-    </Link>
-
-    <Link to="/cliente-operacao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
-      Operação
-    </Link>
-
-  </div>
-)}
-
-
-
-{/* === Submenu Seguro === */}
-{item === "Seguro" && activeSubMenu === "Seguro" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
-
-    <Link
-      to="/seguradora"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Seguradora
-    </Link>
-
-  </div>
-)}
-
-{/* === Submenu Ocorrência === */}
-{item === "Ocorrência" && activeSubMenu === "Ocorrência" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
-
-    <Link
-      to="/tipo-ocorrencia"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Tipos de Ocorrência
-    </Link>
-
-    <Link
-      to="/historico-ocorrencia"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Histórico de Ocorrências
-    </Link>
-
-  </div>
-)}
-
-{/* === Submenu Produto === */}
-{item === "Produto" && activeSubMenu === "Produto" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-
-    <Link
-      to="/produto"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Produto
-    </Link>
-
-    <Link
-      to="/embalagem"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Embalagem
-    </Link>
-
-    <Link
-      to="/produto-predominante"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Predominante
-    </Link>
-
-  </div>
-)}
-
-{/* === Submenu Localidade === */}
-{item === "Localidade" && activeSubMenu === "Localidade" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-64 p-1 z-50">
-    
-    <Link
-      to="/localidade-adicional"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Localidade Adicional
-    </Link>
-
-    <Link
-      to="/cidade"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Cidade
-    </Link>
-
-    <Link
-      to="/regiao"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Região
-    </Link>
-
-    <Link
-      to="/estado"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Estado
-    </Link>
-
-    <Link
-      to="/feriado"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Feriado
-    </Link>
-
-    <Link
-      to="/aduaneira"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Aduaneira
-    </Link>
-
-  </div>
-)}
-
-  {/* Submenu Parâmetro Fiscal */}
-{item === "Parâmetro Fiscal" && activeSubMenu === "Parâmetro Fiscal" && (
-  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-
-    <Link
-      to="/aliquota-icms"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Alíquota ICMS
-    </Link>
-
-    <Link
-      to="/cfop"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      CFOP
-    </Link>
-
-    <Link
-      to="/irrf"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-    >
-      Tabela IRRF
-    </Link>
-
-  </div>
-)}
-
-</li>
-
-
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* === OPERAÇÃO === */}
-        <div
-          className="group relative mt-1"
-          onMouseEnter={() => setActiveMenu("operacao")}
-          onMouseLeave={() => {
-            setActiveMenu(null);
-            setActiveSubMenu(null);
-          }}
-        >
-          <button
-            onClick={() => handleToggle("operacao")}
-            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
-          >
-            <ClipboardList className={`w-5 h-5 ${iconColor}`} />
-
-            {open && (
-              <>
-                <span className="ml-3 flex-1 text-left">Operação</span>
-                <ChevronRight
-                  size={14}
-                  className={`text-gray-500 transition-transform ${
-                    activeMenu === "operacao" ? "rotate-90" : ""
-                  }`}
-                />
-              </>
-            )}
-          </button>
-
-          {activeMenu === "operacao" && (
-<div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
-    <ul className="text-[13px] text-gray-700">
-    {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto", "Minuta"].map(
-  (item) => (
-   <li
-  key={item}
-  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-  onMouseEnter={() => setActiveSubMenu(item)}
-  onMouseLeave={() => setActiveSubMenu(null)}
->
-
-      {item}
-      {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto"].includes(
-        item
-      ) && (
-        <ChevronRight
-          size={13}
-          className="absolute right-3 top-2 text-gray-500"
-        />
-      )}
-
-      {/* === Submenu de Coleta === */}
-      {item === "Coleta" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <Link
-            to="/coleta"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Coleta
-          </Link>
-          <Link
-            to="/motivocoleta"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Motivo Coleta
-          </Link>
-        </div>
-      )}
-
-      {/* === Submenu de Conhecimento === */}
-      {item === "Conhecimento" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <Link
-            to="/cte"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Conhecimento
-          </Link>
-          {[
-            "Cancelar Lote",
-            "Consulta Sefaz",
-            "Parâmetro",
-            "Envio Sefaz",
-            "Baixa CTRC",
-            "Geração Automática",
-            "Integração MultiCTe",
-          ].map((sub) => (
-            <div
-              key={sub}
-              className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+            <button
+              onClick={() => handleToggle("cadastros")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
             >
-              {sub}
-            </div>
-          ))}
-        </div>
-      )}
+              <FileText className={`w-5 h-5 ${iconColor}`} />
 
-      {/* === Submenu de Viagem === */}
-      {item === "Viagem" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <Link
-            to="/viagem"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Viagem
-          </Link>
-          <Link
-            to="/acertocontas"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Acerto de Contas
-          </Link>
-        </div>
-      )}
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">Cadastros</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${activeMenu === "cadastros" ? "rotate-90" : ""
+                      }`}
+                  />
+                </>
+              )}
+            </button>
 
-      {/* === Submenu de Nota Fiscal === */}
-      {item === "Nota Fiscal" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <Link
-            to="/notafiscaledi"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Nota Fiscal EDI
-          </Link>
-          <Link
-            to="/nfse"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Nota Fiscal Serviço
-          </Link>
-        </div>
-      )}
+            {/* Submenus de Cadastros */}
+            {activeMenu === "cadastros" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+                <ul className="text-[13px] text-gray-700">
+                  {[
+                    "Empresa",
+                    "Filial",
+                    "Filial Parâmetro",
+                    "Empresa Agregado",
+                    "Parâmetro Fiscal",
+                    "Motorista",
+                    "Veículo",
+                    "Cliente",
+                    "Localidade",
+                    "Eventos Despesas",
+                    "Prazo de Entrega",
+                    "Parâmetro GNRE",
+                    "Parâmetro Módulo",
+                    "Produto",
+                    "Seguro",
+                    "Ocorrência",
+                    "Colaboradores",
+                  ].map((item) => (
 
-      {/* === Submenu de Manifesto === */}
-      {item === "Manifesto" && activeSubMenu === item && (
-        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-          <Link
-            to="/manifesto"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Manifesto
-          </Link>
-          <Link
-            to="/consultasefazmdfe"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Consulta Sefaz
-          </Link>
-          <Link
-            to="/parametromanifesto"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Parâmetro
-          </Link>
-          <Link
-            to="/baixamanifesto"
-            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-          >
-            Baixar Manifesto
-          </Link>
-        </div>
-      )}
+                    <li
+                      key={item}
+                      className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                      onMouseEnter={() => {
+                        if (item === "Cliente") setActiveSubMenu("Cliente");
+                        if (item === "Parâmetro Fiscal") setActiveSubMenu("Parâmetro Fiscal");
+                        if (item === "Localidade") setActiveSubMenu("Localidade");
+                        if (item === "Produto") setActiveSubMenu("Produto");
+                        if (item === "Ocorrência") setActiveSubMenu("Ocorrência");
+                        if (item === "Seguro") setActiveSubMenu("Seguro");
+                      }}
 
-     {item === "Minuta" && (
-  <Link
-    to="/minuta"
-    className="absolute inset-0 px-3 py-[2px] flex items-center hover:bg-gray-100 rounded text-gray-700"
-  >
-    Minuta
-  </Link>
-)}
-
-    </li>
-  )
-)}
+                      onMouseLeave={() => setActiveSubMenu(null)}
+                    >
+                      {/* Item padrão */}
+                      <Link
+                        to={
+                          item === "Empresa"
+                            ? "/empresa"
+                            : item === "Filial"
+                              ? "/filial"
+                              : item === "Filial Parâmetro"
+                                ? "/empresa-filial-parametro"
+                                : item === "Empresa Agregado"
+                                  ? "/empresa-agregado"
+                                  : item === "Veículo"
+                                    ? "/veiculo"
+                                    : item === "Motorista"
+                                      ? "/motorista"
+                                      : item === "Eventos Despesas"
+                                        ? "/evento-despesa"
+                                        : item === "Prazo de Entrega"
+                                          ? "/prazo-entrega"
+                                          : item === "Seguro"
+                                            ? "/seguradora"
+                                            : "#"
+                        }
+                        className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                      >
+                        {item}
+                      </Link>
 
 
-    </ul>
-  </div>
-)}
-        </div>
 
-        {/* === TABELA FRETE === */}
-      <Link
-  to="/tabelafrete"
-  className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700"
->
-  <FileSpreadsheet className={`w-5 h-5 ${iconColor}`} />
 
-  {open && <span className="ml-3">Tabela Frete</span>}
-</Link>
 
-        {/* === E-COMMERCE (DINÂMICO) === */}
-        {modulos?.ecommerce && (
+
+
+
+                      {/* Submenu Cliente */}
+                      {item === "Cliente" && activeSubMenu === "Cliente" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+
+                          <Link to="/cliente" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Cliente
+                          </Link>
+
+                          <Link to="/atividade-economica" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Atividade Econômica
+                          </Link>
+
+                          <Link to="/cliente-condicao-pagamento" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Condição de Pagamento
+                          </Link>
+
+                          <Link to="/cliente-divisao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Divisão Empresarial
+                          </Link>
+
+                          <Link to="/cliente-divisao-regiao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Divisão Região
+                          </Link>
+
+                          <Link to="/cliente-embalagem" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Embalagem
+                          </Link>
+
+                          <Link to="/cliente-grupo-economico" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Grupo Econômico
+                          </Link>
+
+                          <Link to="/cliente-produto" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Produto
+                          </Link>
+
+                          <Link to="/cliente-operacao" className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700">
+                            Operação
+                          </Link>
+
+                        </div>
+                      )}
+
+
+
+                      {/* === Submenu Seguro === */}
+                      {item === "Seguro" && activeSubMenu === "Seguro" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
+
+                          <Link
+                            to="/seguradora"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Seguradora
+                          </Link>
+
+                        </div>
+                      )}
+
+                      {/* === Submenu Ocorrência === */}
+                      {item === "Ocorrência" && activeSubMenu === "Ocorrência" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
+
+                          <Link
+                            to="/tipo-ocorrencia"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Tipos de Ocorrência
+                          </Link>
+
+                          <Link
+                            to="/historico-ocorrencia"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Histórico de Ocorrências
+                          </Link>
+
+                        </div>
+                      )}
+
+                      {/* === Submenu Produto === */}
+                      {item === "Produto" && activeSubMenu === "Produto" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+
+                          <Link
+                            to="/produto"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Produto
+                          </Link>
+
+                          <Link
+                            to="/embalagem"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Embalagem
+                          </Link>
+
+                          <Link
+                            to="/produto-predominante"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Predominante
+                          </Link>
+
+                        </div>
+                      )}
+
+                      {/* === Submenu Localidade === */}
+                      {item === "Localidade" && activeSubMenu === "Localidade" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-64 p-1 z-50">
+
+                          <Link
+                            to="/localidade-adicional"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Localidade Adicional
+                          </Link>
+
+                          <Link
+                            to="/cidade"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Cidade
+                          </Link>
+
+                          <Link
+                            to="/regiao"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Região
+                          </Link>
+
+                          <Link
+                            to="/estado"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Estado
+                          </Link>
+
+                          <Link
+                            to="/feriado"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Feriado
+                          </Link>
+
+                          <Link
+                            to="/aduaneira"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Aduaneira
+                          </Link>
+
+                        </div>
+                      )}
+
+                      {/* Submenu Parâmetro Fiscal */}
+                      {item === "Parâmetro Fiscal" && activeSubMenu === "Parâmetro Fiscal" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+
+                          <Link
+                            to="/aliquota-icms"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Alíquota ICMS
+                          </Link>
+
+                          <Link
+                            to="/cfop"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            CFOP
+                          </Link>
+
+                          <Link
+                            to="/irrf"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Tabela IRRF
+                          </Link>
+
+                        </div>
+                      )}
+
+                    </li>
+
+
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* === OPERAÇÃO === */}
           <div
             className="group relative mt-1"
-            onMouseEnter={() => setActiveMenu("ecommerce")}
+            onMouseEnter={() => setActiveMenu("operacao")}
             onMouseLeave={() => {
               setActiveMenu(null);
               setActiveSubMenu(null);
             }}
           >
             <button
-              onClick={() => handleToggle("ecommerce")}
+              onClick={() => handleToggle("operacao")}
               className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
             >
               <ClipboardList className={`w-5 h-5 ${iconColor}`} />
 
               {open && (
                 <>
-                  <span className="ml-3 flex-1 text-left">E-Commerce</span>
+                  <span className="ml-3 flex-1 text-left">Operação</span>
                   <ChevronRight
                     size={14}
-                    className={`text-gray-500 transition-transform ${
-                      activeMenu === "ecommerce" ? "rotate-90" : ""
-                    }`}
+                    className={`text-gray-500 transition-transform ${activeMenu === "operacao" ? "rotate-90" : ""
+                      }`}
                   />
                 </>
               )}
             </button>
 
-            {activeMenu === "ecommerce" && (
-              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-60 p-1 z-[999]">
+            {activeMenu === "operacao" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
                 <ul className="text-[13px] text-gray-700">
-                  {/* Operação Shopee */}
-                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                    Operação Shopee
-                  </li>
+                  {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto", "Minuta"].map(
+                    (item) => (
+                      <li
+                        key={item}
+                        className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                        onMouseEnter={() => setActiveSubMenu(item)}
+                        onMouseLeave={() => setActiveSubMenu(null)}
+                      >
 
-                  {/* IMPORTAÇÃO */}
-                  <li
-                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-                    onMouseEnter={() => setActiveSubMenu("ec-importacao")}
-                  >
-                    Importação
-                    <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
-                  </li>
+                        {item}
+                        {["Coleta", "Conhecimento", "Viagem", "Nota Fiscal", "Manifesto"].includes(
+                          item
+                        ) && (
+                            <ChevronRight
+                              size={13}
+                              className="absolute right-3 top-2 text-gray-500"
+                            />
+                          )}
 
-                  {activeSubMenu === "ec-importacao" && (
-                    <div className="absolute top-8 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
-                      {[
-                        "Planilha Shopee",
-                        "Planilha Agregado",
-                        "Planilha Nota Fiscal Serviço",
-                        "Planilha Fatura",
-                        "Excluir Importação Shopee",
-                      ].map((txt) => (
-                        <div
-                          key={txt}
-                          className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-                        >
-                          {txt}
-                        </div>
-                      ))}
-                    </div>
+                        {/* === Submenu de Coleta === */}
+                        {item === "Coleta" && activeSubMenu === item && (
+                          <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                            <Link
+                              to="/coleta"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Coleta
+                            </Link>
+                            <Link
+                              to="/motivocoleta"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Motivo Coleta
+                            </Link>
+                          </div>
+                        )}
+
+                        {/* === Submenu de Conhecimento === */}
+                        {item === "Conhecimento" && activeSubMenu === item && (
+                          <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                            <Link
+                              to="/cte"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Conhecimento
+                            </Link>
+                            {[
+                              "Cancelar Lote",
+                              "Consulta Sefaz",
+                              "Parâmetro",
+                              "Envio Sefaz",
+                              "Baixa CTRC",
+                              "Geração Automática",
+                              "Integração MultiCTe",
+                            ].map((sub) => (
+                              <div
+                                key={sub}
+                                className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                              >
+                                {sub}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* === Submenu de Viagem === */}
+                        {item === "Viagem" && activeSubMenu === item && (
+                          <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                            <Link
+                              to="/viagem"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Viagem
+                            </Link>
+                            <Link
+                              to="/acertocontas"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Acerto de Contas
+                            </Link>
+                          </div>
+                        )}
+
+                        {/* === Submenu de Nota Fiscal === */}
+                        {item === "Nota Fiscal" && activeSubMenu === item && (
+                          <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                            <Link
+                              to="/notafiscaledi"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Nota Fiscal EDI
+                            </Link>
+                            <Link
+                              to="/nfse"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Nota Fiscal Serviço
+                            </Link>
+                          </div>
+                        )}
+
+                        {/* === Submenu de Manifesto === */}
+                        {item === "Manifesto" && activeSubMenu === item && (
+                          <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                            <Link
+                              to="/manifesto"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Manifesto
+                            </Link>
+                            <Link
+                              to="/consultasefazmdfe"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Consulta Sefaz
+                            </Link>
+                            <Link
+                              to="/parametromanifesto"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Parâmetro
+                            </Link>
+                            <Link
+                              to="/baixamanifesto"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Baixar Manifesto
+                            </Link>
+                          </div>
+                        )}
+
+                        {item === "Minuta" && (
+                          <Link
+                            to="/minuta"
+                            className="absolute inset-0 px-3 py-[2px] flex items-center hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Minuta
+                          </Link>
+                        )}
+
+                      </li>
+                    )
                   )}
 
-                  {/* EXPORTAÇÃO */}
-                  <li
-                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
-                    onMouseEnter={() => setActiveSubMenu("ec-exportacao")}
-                  >
-                    Exportação
-                    <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
-                  </li>
-
-                  {activeSubMenu === "ec-exportacao" && (
-                    <div className="absolute top-16 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
-                      <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                        Planilha Shopee
-                      </div>
-                      <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                        Planilha NFSE/Fatura
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Liberação NFSE */}
-                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                    Liberação NFSE
-                  </li>
-
-                  {/* Auditoria */}
-                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                    Auditoria
-                  </li>
-{/* Dashboard Shopee */}
-<li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-  <Link
-    to="/dashboard-shopee"
-    className="block py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
-    
-  >
-    Dashboard
-  </Link>
-</li>
 
                 </ul>
               </div>
             )}
           </div>
-        )}
 
-        
-
-        {/* === FATURAMENTO === */}
-        <div
-          className="group relative mt-1"
-          onMouseEnter={() => setActiveMenu("faturamento")}
-          onMouseLeave={() => setActiveMenu(null)}
-        >
-          <button
-            onClick={() => handleToggle("faturamento")}
-            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+          {/* === TABELA FRETE === */}
+          <Link
+            to="/tabelafrete"
+            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700"
           >
-            <DollarSign className={`w-5 h-5 ${iconColor}`} />
+            <FileSpreadsheet className={`w-5 h-5 ${iconColor}`} />
 
-            {open && (
-              <>
-                <span className="ml-3 flex-1 text-left">Faturamento</span>
-                <ChevronRight
-                  size={14}
-                  className={`text-gray-500 transition-transform ${
-                    activeMenu === "faturamento" ? "rotate-90" : ""
-                  }`}
-                />
-              </>
-            )}
-          </button>
+            {open && <span className="ml-3">Tabela Frete</span>}
+          </Link>
 
-          {activeMenu === "faturamento" && (
-            <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
-              {["Manual", "Automático"].map((sub) =>
-  sub === "Manual" ? (
-    <Link
-      key={sub}
-      to="/faturamento"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
-    >
-      Manual
-    </Link>
-  ) : (
-    <Link
-      key={sub}
-      to="/faturamento-automatico"
-      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
-    >
-      Automático
-    </Link>
-  )
-)}
+          {/* === E-COMMERCE (DINÂMICO) === */}
+          {modulos?.ecommerce && (
+            <div
+              className="group relative mt-1"
+              onMouseEnter={() => setActiveMenu("ecommerce")}
+              onMouseLeave={() => {
+                setActiveMenu(null);
+                setActiveSubMenu(null);
+              }}
+            >
+              <button
+                onClick={() => handleToggle("ecommerce")}
+                className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+              >
+                <ClipboardList className={`w-5 h-5 ${iconColor}`} />
 
+                {open && (
+                  <>
+                    <span className="ml-3 flex-1 text-left">E-Commerce</span>
+                    <ChevronRight
+                      size={14}
+                      className={`text-gray-500 transition-transform ${activeMenu === "ecommerce" ? "rotate-90" : ""
+                        }`}
+                    />
+                  </>
+                )}
+              </button>
+
+              {activeMenu === "ecommerce" && (
+                <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-60 p-1 z-[999]">
+                  <ul className="text-[13px] text-gray-700">
+                    {/* Operação Shopee */}
+                    <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                      Operação Shopee
+                    </li>
+
+                    {/* IMPORTAÇÃO */}
+                    <li
+                      className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                      onMouseEnter={() => setActiveSubMenu("ec-importacao")}
+                    >
+                      Importação
+                      <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
+                    </li>
+
+                    {activeSubMenu === "ec-importacao" && (
+                      <div className="absolute top-8 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
+                        {[
+                          "Planilha Shopee",
+                          "Planilha Agregado",
+                          "Planilha Nota Fiscal Serviço",
+                          "Planilha Fatura",
+                          "Excluir Importação Shopee",
+                        ].map((txt) => (
+                          <div
+                            key={txt}
+                            className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                          >
+                            {txt}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* EXPORTAÇÃO */}
+                    <li
+                      className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                      onMouseEnter={() => setActiveSubMenu("ec-exportacao")}
+                    >
+                      Exportação
+                      <ChevronRight size={13} className="absolute right-3 top-2 text-gray-500" />
+                    </li>
+
+                    {activeSubMenu === "ec-exportacao" && (
+                      <div className="absolute top-16 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
+                        <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                          Planilha Shopee
+                        </div>
+                        <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                          Planilha NFSE/Fatura
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Liberação NFSE */}
+                    <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                      Liberação NFSE
+                    </li>
+
+                    {/* Auditoria */}
+                    <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                      Auditoria
+                    </li>
+                    {/* Dashboard Shopee */}
+                    <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                      <Link
+                        to="/dashboard-shopee"
+                        className="block py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+
+                  </ul>
+                </div>
+              )}
             </div>
           )}
+
+
+
+          {/* === FATURAMENTO === */}
+          <div
+            className="group relative mt-1"
+            onMouseEnter={() => setActiveMenu("faturamento")}
+            onMouseLeave={() => setActiveMenu(null)}
+          >
+            <button
+              onClick={() => handleToggle("faturamento")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+            >
+              <DollarSign className={`w-5 h-5 ${iconColor}`} />
+
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">Faturamento</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${activeMenu === "faturamento" ? "rotate-90" : ""
+                      }`}
+                  />
+                </>
+              )}
+            </button>
+
+            {activeMenu === "faturamento" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+                {["Manual", "Automático"].map((sub) =>
+                  sub === "Manual" ? (
+                    <Link
+                      key={sub}
+                      to="/faturamento"
+                      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                    >
+                      Manual
+                    </Link>
+                  ) : (
+                    <Link
+                      key={sub}
+                      to="/faturamento-automatico"
+                      className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                    >
+                      Automático
+                    </Link>
+                  )
+                )}
+
+              </div>
+            )}
+          </div>
+
+          {/* === RELATÓRIO === */}
+          <button className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1">
+            <BarChart3 className={`w-5 h-5 ${iconColor}`} />
+
+            {open && <span className="ml-3">Relatório</span>}
+          </button>
+
+          {/* === USUÁRIO === */}
+          <div
+            className="group relative mt-1"
+            onMouseEnter={() => setActiveMenu("usuario")}
+            onMouseLeave={() => setActiveMenu(null)}
+          >
+            <button
+              onClick={() => handleToggle("usuario")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+            >
+              <UserCircle2 className={`w-5 h-5 ${iconColor}`} />
+
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">Usuário</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${activeMenu === "usuario" ? "rotate-90" : ""
+                      }`}
+                  />
+                </>
+              )}
+            </button>
+
+            {activeMenu === "usuario" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
+                {["Trocar Filial", "Alterar Senha"].map((sub) => (
+                  <div
+                    key={sub}
+                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                    onClick={() => {
+                      if (sub === "Alterar Senha") setShowAlterarSenha(true);
+                    }}
+                  >
+                    {sub}
+                  </div>
+                ))}
+
+              </div>
+            )}
+          </div>
+
+          {/* === CHAT === */}
+          <button
+            onClick={() => setChatOpen(!chatOpen)}
+            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 relative"
+          >
+            <MessageSquare className={`w-5 h-5 ${iconColor}`} />
+
+            {open && <span className="ml-3 flex-1 text-left">Chat</span>}
+
+            {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}
+            {contatosComMensagensNaoLidas > 0 && (
+              <span
+                className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
+                title={`${contatosComMensagensNaoLidas} contato(s) com novas mensagens`}
+              >
+                {contatosComMensagensNaoLidas}
+              </span>
+            )}
+          </button>
+        </nav>
+
+        {/* === BOTÃO DE LOGOUT === */}
+        <div className="absolute bottom-4 left-0 w-full flex justify-center">
+          <button
+            onClick={() => {
+              if (typeof window.onLogout === "function") window.onLogout();
+            }}
+            className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-full shadow transition"
+            title="Sair do sistema"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
+      </aside>
 
-        {/* === RELATÓRIO === */}
-        <button className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1">
-          <BarChart3 className={`w-5 h-5 ${iconColor}`} />
-
-          {open && <span className="ml-3">Relatório</span>}
-        </button>
-
-       {/* === USUÁRIO === */}
-<div
-  className="group relative mt-1"
-  onMouseEnter={() => setActiveMenu("usuario")}
-  onMouseLeave={() => setActiveMenu(null)}
->
-  <button
-    onClick={() => handleToggle("usuario")}
-    className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
-  >
-    <UserCircle2 className={`w-5 h-5 ${iconColor}`} />
-
-    {open && (
-      <>
-        <span className="ml-3 flex-1 text-left">Usuário</span>
-        <ChevronRight
-          size={14}
-          className={`text-gray-500 transition-transform ${
-            activeMenu === "usuario" ? "rotate-90" : ""
-          }`}
-        />
-      </>
-    )}
-  </button>
-
-  {activeMenu === "usuario" && (
-    <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-56 p-1 z-50">
-      {["Trocar Filial", "Alterar Senha"].map((sub) => (
-  <div
-    key={sub}
-    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-    onClick={() => {
-      if (sub === "Alterar Senha") setShowAlterarSenha(true);
-    }}
-  >
-    {sub}
-  </div>
-))}
-
-    </div>
-  )}
-</div>
-
-{/* === CHAT === */}
-<button
-  onClick={() => setChatOpen(!chatOpen)}
-  className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 relative"
->
-  <MessageSquare className={`w-5 h-5 ${iconColor}`} />
-
-  {open && <span className="ml-3 flex-1 text-left">Chat</span>}
-
-  {/* 🔴 Indicador dinâmico de contatos com mensagens não lidas */}
-  {contatosComMensagensNaoLidas > 0 && (
-    <span
-      className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
-      title={`${contatosComMensagensNaoLidas} contato(s) com novas mensagens`}
-    >
-      {contatosComMensagensNaoLidas}
-    </span>
-  )}
-</button>
-      </nav>
-
-      {/* === BOTÃO DE LOGOUT === */}
-      <div className="absolute bottom-4 left-0 w-full flex justify-center">
-        <button
-          onClick={() => {
-            if (typeof window.onLogout === "function") window.onLogout();
-          }}
-          className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-full shadow transition"
-          title="Sair do sistema"
-        >
-          <LogOut className="w-5 h-5" />
-        </button>
-      </div>
-    </aside>
-
-    {showAlterarSenha && (
-  <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
-)}
+      {showAlterarSenha && (
+        <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+      )}
 
       {/* === PAINEL LATERAL DO CHAT === */}
       {chatOpen && (
@@ -951,20 +949,20 @@ setUsuarios((prev) => {
               {usuarios.map((u) => (
                 <div
                   key={u.nome}
-                 onClick={() => {
-  setChatAtivo(u);
+                  onClick={() => {
+                    setChatAtivo(u);
 
-  // ✅ Zera contador de mensagens não lidas do contato
-  setUsuarios((prev) => {
-    const atualizados = prev.map((x) =>
-      x.nome === u.nome ? { ...x, naoLidas: 0 } : x
-    );
-    // ✅ Atualiza contador geral (quantos contatos ainda têm mensagens não lidas)
-    const total = atualizados.filter((x) => x.naoLidas > 0).length;
-    setContatosComMensagensNaoLidas(total);
-    return atualizados;
-  });
-}}
+                    // ✅ Zera contador de mensagens não lidas do contato
+                    setUsuarios((prev) => {
+                      const atualizados = prev.map((x) =>
+                        x.nome === u.nome ? { ...x, naoLidas: 0 } : x
+                      );
+                      // ✅ Atualiza contador geral (quantos contatos ainda têm mensagens não lidas)
+                      const total = atualizados.filter((x) => x.naoLidas > 0).length;
+                      setContatosComMensagensNaoLidas(total);
+                      return atualizados;
+                    });
+                  }}
 
 
 
@@ -983,14 +981,14 @@ setUsuarios((prev) => {
                     </div>
                     <div className="text-gray-500 text-xs truncate w-52">
                       {/* 🔴 Balão de mensagens não lidas */}
-{u.naoLidas > 0 && (
-  <span
-    className="absolute right-3 top-2 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
-    title={`${u.naoLidas} mensagens não lidas`}
-  >
-    {u.naoLidas}
-  </span>
-)}
+                      {u.naoLidas > 0 && (
+                        <span
+                          className="absolute right-3 top-2 bg-red-600 text-white text-[10px] font-semibold w-4 h-4 flex items-center justify-center rounded-full shadow-md"
+                          title={`${u.naoLidas} mensagens não lidas`}
+                        >
+                          {u.naoLidas}
+                        </span>
+                      )}
 
 
 
@@ -1006,84 +1004,82 @@ setUsuarios((prev) => {
           {chatAtivo && (
             <div className="flex flex-col flex-1">
               <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
-              {mensagens
-  .filter(
-    (m) =>
-      (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
-      (m.para === usuarioLogado && m.de === chatAtivo.nome)
-  )
-  .map((m, i) => {
-    const isMinhaMsg = m.de === usuarioLogado;
-    return (
-      <div
-        key={i}
-        className={`mb-2 flex ${isMinhaMsg ? "justify-end" : "justify-start"}`}
-      >
-        <div
-          className={`inline-block max-w-[80%] rounded-lg px-3 py-1 shadow-sm ${
-            isMinhaMsg
-              ? "bg-red-600 text-white text-right"
-              : "bg-gray-100 text-gray-800 text-left"
-          }`}
-        >
-          {!isMinhaMsg && <b>{m.de}: </b>}
-          {m.texto}
-          <div
-            className={`text-[10px] mt-1 ${
-              isMinhaMsg ? "text-gray-200" : "text-gray-400"
-            }`}
-          >
-            {m.hora}
-          </div>
-        </div>
-      </div>
-    );
-  })}
+                {mensagens
+                  .filter(
+                    (m) =>
+                      (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
+                      (m.para === usuarioLogado && m.de === chatAtivo.nome)
+                  )
+                  .map((m, i) => {
+                    const isMinhaMsg = m.de === usuarioLogado;
+                    return (
+                      <div
+                        key={i}
+                        className={`mb-2 flex ${isMinhaMsg ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`inline-block max-w-[80%] rounded-lg px-3 py-1 shadow-sm ${isMinhaMsg
+                              ? "bg-red-600 text-white text-right"
+                              : "bg-gray-100 text-gray-800 text-left"
+                            }`}
+                        >
+                          {!isMinhaMsg && <b>{m.de}: </b>}
+                          {m.texto}
+                          <div
+                            className={`text-[10px] mt-1 ${isMinhaMsg ? "text-gray-200" : "text-gray-400"
+                              }`}
+                          >
+                            {m.hora}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
 
 
               </div>
               <div className="flex border-t p-2 gap-2 relative">
-  {/* Campo de texto */}
-  <input
-    type="text"
-    value={novaMensagem}
-    onChange={(e) => setNovaMensagem(e.target.value)}
-    onKeyDown={(e) => e.key === "Enter" && enviarMensagem()}
-    placeholder={`Mensagem para ${chatAtivo.nome}...`}
-    className="flex-1 border rounded px-2 py-1 text-sm"
-  />
+                {/* Campo de texto */}
+                <input
+                  type="text"
+                  value={novaMensagem}
+                  onChange={(e) => setNovaMensagem(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && enviarMensagem()}
+                  placeholder={`Mensagem para ${chatAtivo.nome}...`}
+                  className="flex-1 border rounded px-2 py-1 text-sm"
+                />
 
-  {/* Botão de emoji */}
-  <button
-    onClick={() => setMostrarEmoji(!mostrarEmoji)}
-    className="text-gray-500 hover:text-red-700"
-    title="Inserir emoji"
-  >
-    😊
-  </button>
+                {/* Botão de emoji */}
+                <button
+                  onClick={() => setMostrarEmoji(!mostrarEmoji)}
+                  className="text-gray-500 hover:text-red-700"
+                  title="Inserir emoji"
+                >
+                  😊
+                </button>
 
-  {/* Picker de emoji */}
-  {mostrarEmoji && (
-    <div className="absolute bottom-10 right-14 z-50 shadow-lg">
-      <EmojiPicker
-        onEmojiClick={(emojiData) => {
-          setNovaMensagem((prev) => prev + emojiData.emoji);
-          setMostrarEmoji(false);
-        }}
-        width={300}
-        height={350}
-      />
-    </div>
-  )}
+                {/* Picker de emoji */}
+                {mostrarEmoji && (
+                  <div className="absolute bottom-10 right-14 z-50 shadow-lg">
+                    <EmojiPicker
+                      onEmojiClick={(emojiData) => {
+                        setNovaMensagem((prev) => prev + emojiData.emoji);
+                        setMostrarEmoji(false);
+                      }}
+                      width={300}
+                      height={350}
+                    />
+                  </div>
+                )}
 
-  {/* Botão de envio */}
-  <button
-    onClick={enviarMensagem}
-    className="bg-red-700 text-white px-3 rounded flex items-center justify-center"
-  >
-    <Send size={14} />
-  </button>
-</div>
+                {/* Botão de envio */}
+                <button
+                  onClick={enviarMensagem}
+                  className="bg-red-700 text-white px-3 rounded flex items-center justify-center"
+                >
+                  <Send size={14} />
+                </button>
+              </div>
 
             </div>
           )}
