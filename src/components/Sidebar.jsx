@@ -258,18 +258,97 @@ export default function Sidebar({ open }) {
                       onMouseLeave={() => setActiveSubMenu(null)}
                     >
                       {/* Item padrão */}
-                      <Link
-                        to={
-                          item === "Empresa"
-                            ? "/empresa"
-                            : item === "Filial"
-                              ? "/filial"
-                              : item === "Filial Parâmetro"
-                                ? "/empresa-filial-parametro"
-                                : item === "Empresa Agregado"
-                                  ? "/empresa-agregado"
-                                  : item === "Veículo"
-                                    ? "/veiculo"
+                      {/* === Item Veículo (Com Submenu) === */}
+                      {item === "Veículo" ? (
+                        <div
+                          className="relative"
+                          onMouseEnter={() => setActiveSubMenu("Veículo")}
+                          onMouseLeave={() => setActiveSubMenu(null)}
+                        >
+                          <div className="flex items-center justify-between px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">
+                            <span>Veículo</span>
+                            <ChevronRight size={13} className="text-gray-500" />
+                          </div>
+
+                          {/* Submenu Nível 1 (Veículo) */}
+                          {activeSubMenu?.startsWith("Veículo") && (
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-60 p-1 z-50">
+
+                              {/* Cadastro de Veículo */}
+                              <Link
+                                to="/veiculo"
+                                className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                              >
+                                Cadastro de Veículo
+                              </Link>
+
+                              {/* Despesas */}
+                              <div
+                                className="relative"
+                                onMouseEnter={() => setActiveSubMenu("Veículo-Despesas")}
+                              >
+                                <div className="flex items-center justify-between px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">
+                                  <span>Despesas</span>
+                                  <ChevronRight size={13} className="text-gray-500" />
+                                </div>
+
+                                {/* Submenu Nível 2 (Despesas) */}
+                                {activeSubMenu === "Veículo-Despesas" && (
+                                  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                                    {["IPVA", "Licenciamento", "Multas / Infrações", "Seguro"].map((subItem) => (
+                                      <Link
+                                        key={subItem}
+                                        to="#"
+                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                                      >
+                                        {subItem}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Adicional */}
+                              <div
+                                className="relative"
+                                onMouseEnter={() => setActiveSubMenu("Veículo-Adicional")}
+                              >
+                                <div className="flex items-center justify-between px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">
+                                  <span>Adicional</span>
+                                  <ChevronRight size={13} className="text-gray-500" />
+
+                                </div>
+
+                                {/* Submenu Nível 2 (Adicional) */}
+                                {activeSubMenu === "Veículo-Adicional" && (
+                                  <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                                    {["Modelo de Veiculo", "Carroceria", "Classe de Veiculo", "Tabela de Licenciamento"].map((subItem) => (
+                                      <Link
+                                        key={subItem}
+                                        to="#"
+                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                                      >
+                                        {subItem}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Link
+                          to={
+                            item === "Empresa"
+                              ? "/empresa"
+                              : item === "Filial"
+                                ? "/filial"
+                                : item === "Filial Parâmetro"
+                                  ? "/empresa-filial-parametro"
+                                  : item === "Empresa Agregado"
+                                    ? "/empresa-agregado"
                                     : item === "Motorista"
                                       ? "/motorista"
                                       : item === "Eventos Despesas"
@@ -279,11 +358,12 @@ export default function Sidebar({ open }) {
                                           : item === "Seguro"
                                             ? "/seguradora"
                                             : "#"
-                        }
-                        className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-                      >
-                        {item}
-                      </Link>
+                          }
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          {item}
+                        </Link>
+                      )}
 
 
 
@@ -1019,8 +1099,8 @@ export default function Sidebar({ open }) {
                       >
                         <div
                           className={`inline-block max-w-[80%] rounded-lg px-3 py-1 shadow-sm ${isMinhaMsg
-                              ? "bg-red-600 text-white text-right"
-                              : "bg-gray-100 text-gray-800 text-left"
+                            ? "bg-red-600 text-white text-right"
+                            : "bg-gray-100 text-gray-800 text-left"
                             }`}
                         >
                           {!isMinhaMsg && <b>{m.de}: </b>}
