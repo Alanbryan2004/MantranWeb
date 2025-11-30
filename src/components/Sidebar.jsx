@@ -298,7 +298,7 @@ export default function Sidebar({ open }) {
                                     {["IPVA", "Licenciamento", "Multas / Infrações", "Seguro"].map((subItem) => (
                                       <Link
                                         key={subItem}
-                                        to="#"
+                                        to={subItem === "IPVA" ? "/veiculo-ipva" : "#"}
                                         className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
                                       >
                                         {subItem}
