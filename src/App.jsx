@@ -22,6 +22,11 @@ import Cliente from "./pages/Cliente";
 import Empresa from "./pages/Empresa";
 import EmpresaAgregado from "./pages/EmpresaAgregado";
 import Veiculo from "./pages/Veiculo";
+import VeiculoModelo from "./pages/VeiculoModelo";
+import VeiculoCombustivel from "./pages/VeiculoCombustivel";
+import VeiculoCarroceria from "./pages/VeiculoCarroceria";
+import VeiculoTabelaLicenciamento from "./pages/VeiculoTabelaLicenciamento";
+import VeiculoClasse from "./pages/VeiculoClasse";
 import Motorista from "./pages/Motorista";
 import ViagemPagamento from "./pages/ViagemPagamento";
 import Faturamento from "./pages/Faturamento";
@@ -181,6 +186,11 @@ export default function App() {
             <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
 
             <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
+            <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
+            <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />
+            <Route path="/veiculo-carroceria" element={<VeiculoCarroceria open={sidebarOpen} />} />
+            <Route path="/veiculo-tabela-licenciamento" element={<VeiculoTabelaLicenciamento open={sidebarOpen} />} />
+            <Route path="/veiculo-classe" element={<VeiculoClasse open={sidebarOpen} />} />
 
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
 

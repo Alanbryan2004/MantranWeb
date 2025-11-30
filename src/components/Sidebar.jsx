@@ -322,10 +322,22 @@ export default function Sidebar({ open }) {
                                 {/* Submenu Nível 2 (Adicional) */}
                                 {activeSubMenu === "Veículo-Adicional" && (
                                   <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-                                    {["Modelo de Veiculo", "Carroceria", "Classe de Veiculo", "Tabela de Licenciamento"].map((subItem) => (
+                                    {["Modelo de Veiculo", "Carroceria", "Classe de Veiculo", "Tabela de Licenciamento", "Tipos de Combustivel"].map((subItem) => (
                                       <Link
                                         key={subItem}
-                                        to="#"
+                                        to={
+                                          subItem === "Modelo de Veiculo"
+                                            ? "/veiculo-modelo"
+                                            : subItem === "Tipos de Combustivel"
+                                              ? "/veiculo-combustivel"
+                                              : subItem === "Carroceria"
+                                                ? "/veiculo-carroceria"
+                                                : subItem === "Tabela de Licenciamento"
+                                                  ? "/veiculo-tabela-licenciamento"
+                                                  : subItem === "Classe de Veiculo"
+                                                    ? "/veiculo-classe"
+                                                    : "#"
+                                        }
                                         className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
                                       >
                                         {subItem}
