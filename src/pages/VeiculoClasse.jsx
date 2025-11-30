@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VeiculoTabelaLicenciamento from "./VeiculoTabelaLicenciamento";
 import {
     XCircle,
     RotateCcw,
@@ -62,6 +63,7 @@ export default function VeiculoClasse({ open }) {
 
     const [lista, setLista] = useState(mock);
     const [editIndex, setEditIndex] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     const [dados, setDados] = useState({
         codigo: "",
@@ -205,6 +207,7 @@ export default function VeiculoClasse({ open }) {
                             </Sel>
 
                             <button
+                                onClick={() => setShowModal(true)}
                                 className="col-span-1 border border-gray-300 rounded flex items-center justify-center hover:bg-red-100"
                                 title="Abrir Tabela de Licenciamento"
                             >
@@ -309,6 +312,34 @@ export default function VeiculoClasse({ open }) {
                 </button>
 
             </div>
+
+            {/* Modal */}
+            {showModal && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        className="bg-white rounded-lg shadow-xl w-[95vw] h-[95vh] overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="h-full flex flex-col">
+                            <div className="flex justify-between items-center p-3 border-b border-gray-300 bg-gray-50">
+                                <h2 className="text-red-700 font-semibold text-sm">Tabela de Licenciamento</h2>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="text-gray-600 hover:text-red-700 font-bold text-xl"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <VeiculoTabelaLicenciamento open={false} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
