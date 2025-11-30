@@ -295,15 +295,21 @@ export default function Sidebar({ open }) {
                                 {/* Submenu Nível 2 (Despesas) */}
                                 {activeSubMenu === "Veículo-Despesas" && (
                                   <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
-                                    {["IPVA", "Licenciamento", "Multas / Infrações", "Seguro"].map((subItem) => (
-                                      <Link
-                                        key={subItem}
-                                        to={subItem === "IPVA" ? "/veiculo-ipva" : "#"}
-                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-                                      >
-                                        {subItem}
-                                      </Link>
-                                    ))}
+                                    {["IPVA", "Licenciamento", "Multas / Infrações", "Seguro"].map((subItem) => {
+                                      const links = {
+                                        "IPVA": "/veiculo-ipva",
+                                        "Licenciamento": "/veiculo-licenciamento",
+                                      };
+                                      return (
+                                        <Link
+                                          key={subItem}
+                                          to={links[subItem] || "#"}
+                                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                                        >
+                                          {subItem}
+                                        </Link>
+                                      );
+                                    })}
                                   </div>
                                 )}
                               </div>
