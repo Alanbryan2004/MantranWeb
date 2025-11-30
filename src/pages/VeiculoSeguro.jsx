@@ -51,11 +51,7 @@ function Sel({ children, className = "", ...rest }) {
 /* =============== Utils =============== */
 function parseMoeda(valor) {
     if (!valor) return 0;
-    return (
-        Number(
-            valor.toString().replace(/\./g, "").replace(",", ".")
-        ) || 0
-    );
+    return Number(valor.toString().replace(/\./g, "").replace(",", ".")) || 0;
 }
 
 function formatMoeda(num) {
@@ -69,17 +65,40 @@ function formatMoeda(num) {
 const mockSeguros = [
     {
         id: "1",
+        veiculoCodigo: "0000001",
+        veiculoDescricao: "RENSJ17 - VW 24280 CRM 6X2 - BITRUCK - BRASILIA",
+        cidade: "BRASILIA",
+        uf: "DF",
+        seguradoraCod: "006",
+        seguradoraNome: "BUONNY PROJ SERV RIS SEC LTDA",
+        nrApolice: "12121212",
+        dtVigDe: "2025-07-03",
+        hrVigDe: "01:01:00",
+        dtVigAte: "2026-07-03",
+        hrVigAte: "13:46:28",
+        segurado: "JOAO RICARDO",
+        corretor: "RICARDO",
+        bonus: "111,00",
+        valorFranquia: "111,00",
+        valorSeguro: "111,00",
+        limMaxInden: "222,00",
+        cobertura: "DDDEEFFF",
+        danosMateriais: "99,00",
+        danosPessoais: "99,00",
+    },
+    {
+        id: "2",
         veiculoCodigo: "0000005",
-        veiculoDescricao: "ABH3806 - SCANIA - CAVALO TRUCADO - LINS",
-        placa: "ABH3806",
+        veiculoDescricao: "ABH3806 / SCANIA - CAVALO TRUCADO",
+        cidade: "LINS",
         uf: "SP",
         seguradoraCod: "001",
         seguradoraNome: "SOMPO SEGUROS",
         nrApolice: "453123134",
         dtVigDe: "2025-07-10",
-        hrVigDe: "13:03:00",
+        hrVigDe: "13:03:46",
         dtVigAte: "2026-07-10",
-        hrVigAte: "13:03:00",
+        hrVigAte: "13:03:46",
         segurado: "SOMPO",
         corretor: "JOAO",
         bonus: "0,00",
@@ -94,16 +113,16 @@ const mockSeguros = [
 
 const mockSeguradoras = [
     { cod: "001", nome: "SOMPO SEGUROS" },
-    { cod: "002", nome: "PORTO SEGURO" },
+    { cod: "006", nome: "BUONNY PROJ SERV RIS SEC LTDA" },
 ];
 
-/* =============== Componente Principal =============== */
+/* =============== Tela Principal =============== */
 
 export default function VeiculoSeguro({ open }) {
     const navigate = useNavigate();
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
-    const [abaAtiva, setAbaAtiva] = useState("seguro"); // "seguro" | "consulta"
+    const [abaAtiva, setAbaAtiva] = useState("cadastro"); // "cadastro" | "consulta"
 
     const [lista, setLista] = useState(mockSeguros);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -111,7 +130,7 @@ export default function VeiculoSeguro({ open }) {
     const [dados, setDados] = useState({
         veiculoCodigo: "",
         veiculoDescricao: "",
-        placa: "",
+        cidade: "",
         uf: "",
         seguradoraCod: "",
         seguradoraNome: "",
@@ -139,7 +158,7 @@ export default function VeiculoSeguro({ open }) {
         setDados({
             veiculoCodigo: "",
             veiculoDescricao: "",
-            placa: "",
+            cidade: "",
             uf: "",
             seguradoraCod: "",
             seguradoraNome: "",
@@ -166,12 +185,10 @@ export default function VeiculoSeguro({ open }) {
             alert("Informe o código do veículo.");
             return;
         }
-
         const novo = {
             id: Date.now().toString(),
             ...dados,
         };
-
         setLista((prev) => [...prev, novo]);
         setSelectedIndex(lista.length);
     };
@@ -181,7 +198,6 @@ export default function VeiculoSeguro({ open }) {
             alert("Selecione um registro para alterar.");
             return;
         }
-
         setLista((prev) =>
             prev.map((item, idx) =>
                 idx === selectedIndex ? { ...item, ...dados } : item
@@ -195,7 +211,6 @@ export default function VeiculoSeguro({ open }) {
             return;
         }
         if (!window.confirm("Deseja excluir este registro?")) return;
-
         setLista((prev) => prev.filter((_, idx) => idx !== selectedIndex));
         setSelectedIndex(null);
         limpar();
@@ -206,7 +221,7 @@ export default function VeiculoSeguro({ open }) {
         setDados({
             veiculoCodigo: item.veiculoCodigo || "",
             veiculoDescricao: item.veiculoDescricao || "",
-            placa: item.placa || "",
+            cidade: item.cidade || "",
             uf: item.uf || "",
             seguradoraCod: item.seguradoraCod || "",
             seguradoraNome: item.seguradoraNome || "",
@@ -225,21 +240,24 @@ export default function VeiculoSeguro({ open }) {
             danosMateriais: item.danosMateriais || "",
             danosPessoais: item.danosPessoais || "",
         });
-        setAbaAtiva("seguro");
+        setAbaAtiva("cadastro");
     };
 
-    // Totais exemplo (soma Valor Seguro)
     const totalValorSeguro = formatMoeda(
         lista.reduce((acc, item) => acc + parseMoeda(item.valorSeguro), 0)
     );
 
     /* ======= Consulta ======= */
+
     const [filtros, setFiltros] = useState({
         veiculoCod: "",
-        seguradoraCod: "",
-        dtDe: "",
-        dtAte: "",
+        veiculoDesc: "",
+        inicioDe: "",
+        inicioAte: "",
+        finalDe: "",
+        finalAte: "",
     });
+
     const [resultadoConsulta, setResultadoConsulta] = useState(lista);
 
     const handleCampoConsulta = (field) => (e) => {
@@ -255,21 +273,25 @@ export default function VeiculoSeguro({ open }) {
             );
         }
 
-        if (filtros.seguradoraCod) {
-            filtrado = filtrado.filter((r) =>
-                r.seguradoraCod.includes(filtros.seguradoraCod)
+        if (filtros.inicioDe) {
+            filtrado = filtrado.filter(
+                (r) => !r.dtVigDe || r.dtVigDe >= filtros.inicioDe
+            );
+        }
+        if (filtros.inicioAte) {
+            filtrado = filtrado.filter(
+                (r) => !r.dtVigDe || r.dtVigDe <= filtros.inicioAte
             );
         }
 
-        if (filtros.dtDe) {
+        if (filtros.finalDe) {
             filtrado = filtrado.filter(
-                (r) => !r.dtVigDe || r.dtVigDe >= filtros.dtDe
+                (r) => !r.dtVigAte || r.dtVigAte >= filtros.finalDe
             );
         }
-
-        if (filtros.dtAte) {
+        if (filtros.finalAte) {
             filtrado = filtrado.filter(
-                (r) => !r.dtVigAte || r.dtVigAte <= filtros.dtAte
+                (r) => !r.dtVigAte || r.dtVigAte <= filtros.finalAte
             );
         }
 
@@ -294,36 +316,36 @@ export default function VeiculoSeguro({ open }) {
                 {/* Abas */}
                 <div className="border-b border-gray-200 mb-2 flex gap-2 text-[12px]">
                     <button
-                        onClick={() => setAbaAtiva("seguro")}
-                        className={`px-3 py-1 rounded-t-md border-x border-t ${abaAtiva === "seguro"
-                                ? "border-gray-300 bg-white text-red-700 font-semibold"
-                                : "border-transparent bg-gray-100 hover:bg-gray-200"
+                        onClick={() => setAbaAtiva("cadastro")}
+                        className={`px-3 py-1 rounded-t-md border-x border-t ${abaAtiva === "cadastro"
+                            ? "border-gray-300 bg-white text-red-700 font-semibold"
+                            : "border-transparent bg-gray-100 hover:bg-gray-200"
                             }`}
                     >
-                        Seguro
+                        Cadastro
                     </button>
                     <button
                         onClick={() => setAbaAtiva("consulta")}
                         className={`px-3 py-1 rounded-t-md border-x border-t ${abaAtiva === "consulta"
-                                ? "border-gray-300 bg-white text-red-700 font-semibold"
-                                : "border-transparent bg-gray-100 hover:bg-gray-200"
+                            ? "border-gray-300 bg-white text-red-700 font-semibold"
+                            : "border-transparent bg-gray-100 hover:bg-gray-200"
                             }`}
                     >
                         Consulta
                     </button>
                 </div>
 
-                {/* ====== ABA SEGURO (CADASTRO) ====== */}
-                {abaAtiva === "seguro" && (
+                {/* ====== ABA CADASTRO ====== */}
+                {abaAtiva === "cadastro" && (
                     <>
-                        {/* PARÂMETROS */}
+                        {/* CARD 1 - PARÂMETROS */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 Parâmetros
                             </legend>
 
                             <div className="space-y-2">
-                                {/* Linha 1 - Veículo */}
+                                {/* Linha 1 - Veículo (4 textboxes) */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">Veículo</Label>
                                     <Txt
@@ -332,23 +354,23 @@ export default function VeiculoSeguro({ open }) {
                                         onChange={handleCampo("veiculoCodigo")}
                                     />
                                     <Txt
-                                        className="col-span-5 bg-gray-200"
+                                        className="col-span-4 bg-gray-200"
                                         readOnly
                                         value={dados.veiculoDescricao}
                                     />
                                     <Txt
                                         className="col-span-2 bg-gray-200"
                                         readOnly
-                                        value={dados.placa}
+                                        value={dados.cidade}
                                     />
                                     <Txt
-                                        className="col-span-1 bg-gray-200 text-center"
+                                        className="col-span-2 bg-gray-200 text-center"
                                         readOnly
                                         value={dados.uf}
                                     />
                                 </div>
 
-                                {/* Linha 2 - Seguradora */}
+                                {/* Linha 2 - Seguradora (código + nome) */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">Seguradora</Label>
                                     <Txt
@@ -369,17 +391,37 @@ export default function VeiculoSeguro({ open }) {
                                     />
                                 </div>
 
-                                {/* Linha 3 - Apólice */}
+                                {/* Linha 3 - Nr. Apólice */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">Nr. Apólice</Label>
                                     <Txt
-                                        className="col-span-4"
+                                        className="col-span-2"
                                         value={dados.nrApolice}
                                         onChange={handleCampo("nrApolice")}
                                     />
+
+
+                                    <Label className="col-span-1">Corretor</Label>
+                                    <Txt
+                                        className="col-span-2"
+                                        value={dados.corretor}
+                                        onChange={handleCampo("corretor")}
+                                    />
+                                    <Label className="col-span-1">Segurado</Label>
+                                    <Txt
+                                        className="col-span-2"
+                                        value={dados.segurado}
+                                        onChange={handleCampo("segurado")}
+                                    />
+                                    <Label className="col-span-1 justify-end">% Bônus</Label>
+                                    <Txt
+                                        className="col-span-1 text-right"
+                                        value={dados.bonus}
+                                        onChange={handleCampo("bonus")}
+                                    />
                                 </div>
 
-                                {/* Linha 4 - Vigência */}
+                                {/* Linha 4 - Vigência (período com Data + Hora) */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">Vigência de</Label>
                                     <Txt
@@ -409,35 +451,13 @@ export default function VeiculoSeguro({ open }) {
                                     />
                                 </div>
 
-                                {/* Linha 5 - Segurado / Bônus */}
-                                <div className="grid grid-cols-12 gap-2 items-center">
-                                    <Label className="col-span-2">Segurado</Label>
-                                    <Txt
-                                        className="col-span-7"
-                                        value={dados.segurado}
-                                        onChange={handleCampo("segurado")}
-                                    />
-                                    <Label className="col-span-1 justify-end">% Bônus</Label>
-                                    <Txt
-                                        className="col-span-2 text-right"
-                                        value={dados.bonus}
-                                        onChange={handleCampo("bonus")}
-                                    />
-                                </div>
 
-                                {/* Linha 6 - Corretor */}
-                                <div className="grid grid-cols-12 gap-2 items-center">
-                                    <Label className="col-span-2">Corretor</Label>
-                                    <Txt
-                                        className="col-span-6"
-                                        value={dados.corretor}
-                                        onChange={handleCampo("corretor")}
-                                    />
-                                </div>
+
+
                             </div>
                         </fieldset>
 
-                        {/* COBERTURAS */}
+                        {/* CARD 2 - COBERTURAS */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 Coberturas
@@ -460,30 +480,34 @@ export default function VeiculoSeguro({ open }) {
                             </div>
                         </fieldset>
 
-                        {/* CASCO */}
+                        {/* CARD 3 - CASCO */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 Casco
                             </legend>
 
-                            <div className="grid grid-cols-12 gap-2 items-center">
-                                <Label className="col-span-2">Lim. Máx. Inden.</Label>
-                                <Txt
-                                    className="col-span-2 text-right"
-                                    value={dados.limMaxInden}
-                                    onChange={handleCampo("limMaxInden")}
-                                />
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-12 gap-2 items-center">
+                                    <Label className="col-span-2">Lim. Máx. Inden.</Label>
+                                    <Txt
+                                        className="col-span-2 text-right"
+                                        value={dados.limMaxInden}
+                                        onChange={handleCampo("limMaxInden")}
+                                    />
+                                </div>
 
-                                <Label className="col-span-2">Cobertura</Label>
-                                <Txt
-                                    className="col-span-6"
-                                    value={dados.cobertura}
-                                    onChange={handleCampo("cobertura")}
-                                />
+                                <div className="grid grid-cols-12 gap-2 items-center">
+                                    <Label className="col-span-2">Cobertura</Label>
+                                    <Txt
+                                        className="col-span-6"
+                                        value={dados.cobertura}
+                                        onChange={handleCampo("cobertura")}
+                                    />
+                                </div>
                             </div>
                         </fieldset>
 
-                        {/* RCFV */}
+                        {/* CARD 4 - RCFV */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 R C F V - Limite Máximo de Indenização para
@@ -506,7 +530,7 @@ export default function VeiculoSeguro({ open }) {
                             </div>
                         </fieldset>
 
-                        {/* Totais (ex: total Valor Seguro) */}
+                        {/* Total (exemplo com valor do seguro) */}
                         <div className="grid grid-cols-12 gap-2 mt-2 text-[12px]">
                             <Label className="col-span-3">Total Valor Seguro</Label>
                             <Txt
@@ -521,14 +545,14 @@ export default function VeiculoSeguro({ open }) {
                 {/* ====== ABA CONSULTA ====== */}
                 {abaAtiva === "consulta" && (
                     <>
-                        {/* CARD 1 - Filtros */}
+                        {/* CARD 1 - FILTROS */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 Parâmetros de Consulta
                             </legend>
 
                             <div className="space-y-2">
-                                {/* Linha 1 */}
+                                {/* Linha 1 - Veículo */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">Veículo</Label>
                                     <Txt
@@ -536,33 +560,47 @@ export default function VeiculoSeguro({ open }) {
                                         value={filtros.veiculoCod}
                                         onChange={handleCampoConsulta("veiculoCod")}
                                     />
-                                    <Label className="col-span-2">Seguradora</Label>
                                     <Txt
-                                        className="col-span-2"
-                                        value={filtros.seguradoraCod}
-                                        onChange={handleCampoConsulta("seguradoraCod")}
+                                        className="col-span-6 bg-gray-200"
+                                        readOnly
+                                        value={filtros.veiculoDesc}
                                     />
                                 </div>
 
-                                {/* Linha 2 - Vigência entre */}
+                                {/* Linha 2 - Início / Final vigência (períodos) */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
-                                    <Label className="col-span-2">Vigência entre</Label>
+                                    <Label className="col-span-2">Início Vigência</Label>
                                     <Txt
                                         type="date"
                                         className="col-span-2"
-                                        value={filtros.dtDe}
-                                        onChange={handleCampoConsulta("dtDe")}
+                                        value={filtros.inicioDe}
+                                        onChange={handleCampoConsulta("inicioDe")}
                                     />
                                     <Label className="col-span-1 justify-center">e</Label>
                                     <Txt
                                         type="date"
                                         className="col-span-2"
-                                        value={filtros.dtAte}
-                                        onChange={handleCampoConsulta("dtAte")}
+                                        value={filtros.inicioAte}
+                                        onChange={handleCampoConsulta("inicioAte")}
+                                    />
+
+                                    <Label className="col-span-2">Final Vigência</Label>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-2"
+                                        value={filtros.finalDe}
+                                        onChange={handleCampoConsulta("finalDe")}
+                                    />
+                                    <Label className="col-span-1 justify-center">e</Label>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-1"
+                                        value={filtros.finalAte}
+                                        onChange={handleCampoConsulta("finalAte")}
                                     />
                                 </div>
 
-                                {/* Linha 3 - Pesquisar alinhado à direita */}
+                                {/* Linha 3 - Botão Pesquisar alinhado à direita */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <div className="col-span-9" />
                                     <div className="col-span-3 flex justify-end">
@@ -579,7 +617,7 @@ export default function VeiculoSeguro({ open }) {
                             </div>
                         </fieldset>
 
-                        {/* CARD 2 - Grid */}
+                        {/* CARD 2 - GRID RESULTADOS */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
                             <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                 Resultados
@@ -594,17 +632,15 @@ export default function VeiculoSeguro({ open }) {
                                                 Seguradora
                                             </th>
                                             <th className="border px-2 py-1 text-center">
-                                                Nr. Apólice
+                                                Número Apólice
                                             </th>
                                             <th className="border px-2 py-1 text-center">
-                                                Vigência de
+                                                Início Vigência
                                             </th>
                                             <th className="border px-2 py-1 text-center">
-                                                Vigência até
+                                                Final Vigência
                                             </th>
-                                            <th className="border px-2 py-1 text-right">
-                                                Valor Seguro
-                                            </th>
+                                            <th className="border px-2 py-1 text-left">Corretor</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -624,14 +660,12 @@ export default function VeiculoSeguro({ open }) {
                                                     {r.nrApolice}
                                                 </td>
                                                 <td className="border px-2 py-1 text-center">
-                                                    {r.dtVigDe}
+                                                    {r.dtVigDe} {r.hrVigDe}
                                                 </td>
                                                 <td className="border px-2 py-1 text-center">
-                                                    {r.dtVigAte}
+                                                    {r.dtVigAte} {r.hrVigAte}
                                                 </td>
-                                                <td className="border px-2 py-1 text-right">
-                                                    {r.valorSeguro}
-                                                </td>
+                                                <td className="border px-2 py-1">{r.corretor}</td>
                                             </tr>
                                         ))}
                                         {resultadoConsulta.length === 0 && (
@@ -654,6 +688,7 @@ export default function VeiculoSeguro({ open }) {
 
             {/* RODAPÉ */}
             <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
+                {/* Fechar */}
                 <button
                     onClick={() => navigate(-1)}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -662,6 +697,7 @@ export default function VeiculoSeguro({ open }) {
                     <span>Fechar</span>
                 </button>
 
+                {/* Limpar */}
                 <button
                     onClick={limpar}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -670,6 +706,7 @@ export default function VeiculoSeguro({ open }) {
                     <span>Limpar</span>
                 </button>
 
+                {/* Incluir */}
                 <button
                     onClick={incluir}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -678,6 +715,7 @@ export default function VeiculoSeguro({ open }) {
                     <span>Incluir</span>
                 </button>
 
+                {/* Alterar */}
                 <button
                     onClick={alterar}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -686,6 +724,7 @@ export default function VeiculoSeguro({ open }) {
                     <span>Alterar</span>
                 </button>
 
+                {/* Excluir */}
                 <button
                     onClick={excluir}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}

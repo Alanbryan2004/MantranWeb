@@ -29,6 +29,7 @@ import VeiculoTabelaLicenciamento from "./pages/VeiculoTabelaLicenciamento";
 import VeiculoClasse from "./pages/VeiculoClasse";
 import VeiculoIPVA from "./pages/VeiculoIPVA";
 import VeiculoLicenciamento from "./pages/VeiculoLicenciamento";
+import VeiculoSeguro from "./pages/VeiculoSeguro";
 import Motorista from "./pages/Motorista";
 import ViagemPagamento from "./pages/ViagemPagamento";
 import Faturamento from "./pages/Faturamento";
@@ -195,6 +196,7 @@ export default function App() {
             <Route path="/veiculo-classe" element={<VeiculoClasse open={sidebarOpen} />} />
             <Route path="/veiculo-ipva" element={<VeiculoIPVA open={sidebarOpen} />} />
             <Route path="/veiculo-licenciamento" element={<VeiculoLicenciamento open={sidebarOpen} />} />
+            <Route path="/veiculo-seguro" element={<VeiculoSeguro open={sidebarOpen} />} />
 
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
 
