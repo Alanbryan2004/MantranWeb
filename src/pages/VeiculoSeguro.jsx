@@ -477,6 +477,12 @@ export default function VeiculoSeguro({ open }) {
                                     value={dados.valorSeguro}
                                     onChange={handleCampo("valorSeguro")}
                                 />
+                                <Label className="col-span-2">Total Valor Seguro</Label>
+                                <Txt
+                                    className="col-span-2 bg-gray-200 text-right"
+                                    readOnly
+                                    value={totalValorSeguro}
+                                />
                             </div>
                         </fieldset>
 
@@ -530,15 +536,7 @@ export default function VeiculoSeguro({ open }) {
                             </div>
                         </fieldset>
 
-                        {/* Total (exemplo com valor do seguro) */}
-                        <div className="grid grid-cols-12 gap-2 mt-2 text-[12px]">
-                            <Label className="col-span-3">Total Valor Seguro</Label>
-                            <Txt
-                                className="col-span-3 bg-gray-200 text-right"
-                                readOnly
-                                value={totalValorSeguro}
-                            />
-                        </div>
+
                     </>
                 )}
 
@@ -554,14 +552,14 @@ export default function VeiculoSeguro({ open }) {
                             <div className="space-y-2">
                                 {/* Linha 1 - Veículo */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
-                                    <Label className="col-span-2">Veículo</Label>
+                                    <Label className="col-span-1">Veículo</Label>
                                     <Txt
                                         className="col-span-2"
                                         value={filtros.veiculoCod}
                                         onChange={handleCampoConsulta("veiculoCod")}
                                     />
                                     <Txt
-                                        className="col-span-6 bg-gray-200"
+                                        className="col-span-9 bg-gray-200"
                                         readOnly
                                         value={filtros.veiculoDesc}
                                     />
@@ -569,7 +567,7 @@ export default function VeiculoSeguro({ open }) {
 
                                 {/* Linha 2 - Início / Final vigência (períodos) */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
-                                    <Label className="col-span-2">Início Vigência</Label>
+                                    <Label className="col-span-1">Início Vigência</Label>
                                     <Txt
                                         type="date"
                                         className="col-span-2"
@@ -584,7 +582,7 @@ export default function VeiculoSeguro({ open }) {
                                         onChange={handleCampoConsulta("inicioAte")}
                                     />
 
-                                    <Label className="col-span-2">Final Vigência</Label>
+                                    <Label className="col-span-1">Final Vigência</Label>
                                     <Txt
                                         type="date"
                                         className="col-span-2"
@@ -594,7 +592,7 @@ export default function VeiculoSeguro({ open }) {
                                     <Label className="col-span-1 justify-center">e</Label>
                                     <Txt
                                         type="date"
-                                        className="col-span-1"
+                                        className="col-span-2"
                                         value={filtros.finalAte}
                                         onChange={handleCampoConsulta("finalAte")}
                                     />
