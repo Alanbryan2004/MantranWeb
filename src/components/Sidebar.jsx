@@ -299,6 +299,7 @@ export default function Sidebar({ open }) {
                                       const links = {
                                         "IPVA": "/veiculo-ipva",
                                         "Licenciamento": "/veiculo-licenciamento",
+                                        "Multas / Infrações": "/veiculo-multa",
                                         "Seguro": "/veiculo-seguro",
                                       };
                                       return (
