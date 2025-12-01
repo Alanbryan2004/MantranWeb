@@ -314,31 +314,55 @@ export default function VeiculoMulta({ open }) {
                         {/* CARD 1 - ATUAÇÃO */}
                         <div className="border border-gray-300 rounded p-3 bg-white">
                             <Label className="col-span-12 font-semibold">Atuação</Label>
+                            {/* CARD 1 - ATUAÇÃO */}
+                            <div className="border border-gray-300 rounded p-3 bg-white">
+                                <Label className="col-span-12 font-semibold">Atuação</Label>
 
-                            <div className="flex gap-4 mt-2 ml-4">
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="radio"
-                                        name="atuacao"
-                                        value="notificacao"
-                                        checked={dados.atuacaoTipo === "notificacao"}
-                                        onChange={handle("atuacaoTipo")}
-                                    />
-                                    Notificação
-                                </label>
+                                {/* Linha 1 - Radio + Data Inclusão */}
+                                <div className="grid grid-cols-12 gap-2 mt-2 ml-4 items-center">
 
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="radio"
-                                        name="atuacao"
-                                        value="multa"
-                                        checked={dados.atuacaoTipo === "multa"}
-                                        onChange={handle("atuacaoTipo")}
+                                    {/* RADIO BUTTONS - ficam no começo (col-span-4) */}
+                                    <div className="col-span-4 flex gap-4">
+                                        <label className="flex items-center gap-1">
+                                            <input
+                                                type="radio"
+                                                name="atuacao"
+                                                value="notificacao"
+                                                checked={dados.atuacaoTipo === "notificacao"}
+                                                onChange={handle("atuacaoTipo")}
+                                            />
+                                            Notificação
+                                        </label>
+
+                                        <label className="flex items-center gap-1">
+                                            <input
+                                                type="radio"
+                                                name="atuacao"
+                                                value="multa"
+                                                checked={dados.atuacaoTipo === "multa"}
+                                                onChange={handle("atuacaoTipo")}
+                                            />
+                                            Multa
+                                        </label>
+                                    </div>
+
+                                    {/* LABEL - alinhado à direita */}
+                                    <Label className="col-span-3 col-start-8 flex justify-end">
+                                        Data Inclusão
+                                    </Label>
+
+                                    {/* INPUT - não editável, bg-gray, alinhado à direita */}
+                                    <Txt
+                                        readOnly
+                                        type="date"
+                                        className="col-span-2 bg-gray-200 text-right"
+                                        value={dados.dataInclusao}
                                     />
-                                    Multa
-                                </label>
+                                </div>
                             </div>
+
                         </div>
+
 
                         {/* CARD 2 - IDENTIFICAÇÃO DA AUTUAÇÃO */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
@@ -348,15 +372,7 @@ export default function VeiculoMulta({ open }) {
 
                             <div className="space-y-2">
                                 {/* Linha 1 */}
-                                <div className="grid grid-cols-12 gap-2">
-                                    <Label className="col-span-2">Data Inclusão</Label>
-                                    <Txt
-                                        type="date"
-                                        className="col-span-2"
-                                        value={dados.dataInclusao}
-                                        onChange={handle("dataInclusao")}
-                                    />
-                                </div>
+
 
                                 {/* Linha 2 */}
                                 <div className="grid grid-cols-12 gap-2">
@@ -385,7 +401,7 @@ export default function VeiculoMulta({ open }) {
 
                                     <Label className="col-span-1">Nº Atuação</Label>
                                     <Txt
-                                        className="col-span-2"
+                                        className="col-span-1"
                                         value={dados.nrAtuacao}
                                         onChange={handle("nrAtuacao")}
                                     />
@@ -462,7 +478,7 @@ export default function VeiculoMulta({ open }) {
                                             onChange={handle("cepOrigem")}
                                         />
                                         <Txt
-                                            className="col-span-5 bg-gray-200"
+                                            className="col-span-7 bg-gray-200"
                                             readOnly
                                             value={dados.cepOrigemCidade}
                                         />
@@ -482,7 +498,7 @@ export default function VeiculoMulta({ open }) {
                                             onChange={handle("cepDestino")}
                                         />
                                         <Txt
-                                            className="col-span-5 bg-gray-200"
+                                            className="col-span-7 bg-gray-200"
                                             readOnly
                                             value={dados.cepDestinoCidade}
                                         />
@@ -497,7 +513,7 @@ export default function VeiculoMulta({ open }) {
                                     <div className="grid grid-cols-12 gap-2">
                                         <Label className="col-span-2">Infração</Label>
                                         <Txt
-                                            className="col-span-6"
+                                            className="col-span-10"
                                             value={dados.infracao}
                                             onChange={handle("infracao")}
                                         />
@@ -522,7 +538,7 @@ export default function VeiculoMulta({ open }) {
                                             onChange={handle("velPermitida")}
                                         />
 
-                                        <Label className="col-span-2">Vel. Constatada</Label>
+                                        <Label className="col-span-1">Vel. Constatada</Label>
                                         <Txt
                                             className="col-span-2"
                                             value={dados.velConstatada}
@@ -536,7 +552,7 @@ export default function VeiculoMulta({ open }) {
                                             onChange={handle("pontuacao")}
                                         />
 
-                                        <Label className="col-span-2">Título CP</Label>
+                                        <Label className="col-span-1">Título CP</Label>
                                         <Txt
                                             className="col-span-2 bg-gray-200"
                                             readOnly
@@ -615,13 +631,13 @@ export default function VeiculoMulta({ open }) {
                                     <div className="grid grid-cols-12 gap-2">
                                         <Label className="col-span-2">Motorista</Label>
                                         <Txt
-                                            className="col-span-3"
+                                            className="col-span-2"
                                             value={dados.motoristaCNH}
                                             onChange={handle("motoristaCNH")}
                                         />
 
                                         <Txt
-                                            className="col-span-5 bg-gray-200"
+                                            className="col-span-8 bg-gray-200"
                                             readOnly
                                             value={dados.motoristaNome}
                                         />

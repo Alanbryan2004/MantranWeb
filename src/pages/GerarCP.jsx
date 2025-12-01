@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 
-// Mocks — exatamente como no arquivo original
+// Mocks (iguais ao original)
 const mockCategorias = ["1 - IMPOSTOS SOBRE VENDAS", "2 - DESPESAS OPERACIONAIS"];
 const mockSubCategorias = ["1 - ICMS", "2 - ICMS ANTECIPADO", "3 - OUTROS"];
 const mockContas = [
@@ -42,7 +42,7 @@ function Sel({ children, className = "", ...rest }) {
 }
 
 export default function GerarCP({ onClose }) {
-    const [showSucesso, setShowSucesso] = useState(false);
+    const [modalMsg, setModalMsg] = useState(false);
 
     const [form, setForm] = useState({
         creditoCnpj: "00000000000000",
@@ -66,12 +66,7 @@ export default function GerarCP({ onClose }) {
     };
 
     const handleGerar = () => {
-        setShowSucesso(true);
-    };
-
-    const fecharSucesso = () => {
-        setShowSucesso(false);
-        onClose();
+        setModalMsg(true);
     };
 
     return (
@@ -91,6 +86,7 @@ export default function GerarCP({ onClose }) {
                             </legend>
 
                             <div className="space-y-2">
+
                                 {/* Linha 1 */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
                                     <Label className="col-span-2">A Crédito de</Label>
@@ -238,24 +234,26 @@ export default function GerarCP({ onClose }) {
                 </div>
             </div>
 
-            {/* MODAL SUCESSO */}
-            {showSucesso && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60">
-                    <div className="bg-white rounded-md shadow-lg px-6 py-4 border border-gray-300">
-                        <p className="text-sm text-gray-800 mb-3">
+            {/* SUCESSO — modelo exatamente igual ao solicitado */}
+            {modalMsg && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 shadow-lg rounded border text-center w-[300px]">
+                        <p className="text-green-700 font-bold mb-4">
                             Título gerado com sucesso!
                         </p>
-                        <div className="text-right">
-                            <button
-                                onClick={fecharSucesso}
-                                className="px-4 py-1 text-[13px] rounded bg-red-700 text-white hover:bg-red-800"
-                            >
-                                OK
-                            </button>
-                        </div>
+                        <button
+                            className="px-3 py-1 bg-red-700 text-white rounded"
+                            onClick={() => {
+                                setModalMsg(false);
+                                onClose();   // <-- FECHA A MODAL PRINCIPAL TAMBÉM
+                            }}
+                        >
+                            OK
+                        </button>
                     </div>
                 </div>
             )}
+
         </>
     );
 }
