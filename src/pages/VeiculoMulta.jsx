@@ -13,6 +13,7 @@ import {
     FileText,
 } from "lucide-react";
 import { useIconColor } from "../context/IconColorContext";
+import GerarCP from "./GerarCP";
 
 /* COMPONENT HELPERS */
 function Label({ children, className = "" }) {
@@ -175,6 +176,22 @@ export default function VeiculoMulta({ open }) {
         setDados((prev) => ({ ...prev, [field]: value }));
     };
 
+    /* Filtros Consulta */
+    const [filtros, setFiltros] = useState({
+        veiculo: "",
+        motorista: "",
+        infracao: "",
+        vencDe: "",
+        vencAte: "",
+        pagosDe: "",
+        pagosAte: "",
+        tipo: "todos",
+    });
+
+    const handleFiltro = (field) => (e) => {
+        setFiltros((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
     /* Funções */
     const limpar = () => {
         setEditIndex(null);
@@ -252,7 +269,6 @@ export default function VeiculoMulta({ open }) {
 
     /* MODAL */
     const [modalCP, setModalCP] = useState(false);
-    const [modalMsg, setModalMsg] = useState(false);
 
     return (
         <div
@@ -272,8 +288,8 @@ export default function VeiculoMulta({ open }) {
                     <button
                         onClick={() => setAba("cadastro")}
                         className={`px-3 py-1 rounded-t-md border-x border-t ${aba === "cadastro"
-                                ? "border-gray-300 bg-white text-red-700 font-semibold"
-                                : "border-transparent bg-gray-100 hover:bg-gray-200"
+                            ? "border-gray-300 bg-white text-red-700 font-semibold"
+                            : "border-transparent bg-gray-100 hover:bg-gray-200"
                             }`}
                     >
                         Cadastro
@@ -282,8 +298,8 @@ export default function VeiculoMulta({ open }) {
                     <button
                         onClick={() => setAba("consulta")}
                         className={`px-3 py-1 rounded-t-md border-x border-t ${aba === "consulta"
-                                ? "border-gray-300 bg-white text-red-700 font-semibold"
-                                : "border-transparent bg-gray-100 hover:bg-gray-200"
+                            ? "border-gray-300 bg-white text-red-700 font-semibold"
+                            : "border-transparent bg-gray-100 hover:bg-gray-200"
                             }`}
                     >
                         Consulta
@@ -714,145 +730,177 @@ export default function VeiculoMulta({ open }) {
         =========================================================== */}
                 {aba === "consulta" && (
                     <>
-                        {/* CARD 1 – FILTROS */}
+                        {/* FILTROS */}
                         <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                            <legend className="px-2 text-red-700 font-semibold">
-                                Parâmetros de Consulta
+                            <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                                Filtros de Consulta
                             </legend>
 
                             <div className="space-y-2">
-                                {/* Veículo */}
-                                <div className="grid grid-cols-12 gap-2">
-                                    <Label className="col-span-2">Veículo</Label>
-                                    <Txt className="col-span-2" />
-                                    <Txt className="col-span-4 bg-gray-200" readOnly />
-                                </div>
-
-                                {/* Motorista */}
-                                <div className="grid grid-cols-12 gap-2">
-                                    <Label className="col-span-2">Motorista</Label>
-                                    <Txt className="col-span-3" />
-                                    <Txt className="col-span-4 bg-gray-200" readOnly />
-                                </div>
-
-                                {/* Infração + Vencimento */}
-                                <div className="grid grid-cols-12 gap-2">
-                                    <Label className="col-span-2">Infração entre</Label>
-                                    <Txt type="date" className="col-span-2" />
-                                    <Label className="col-span-1 text-center">e</Label>
-                                    <Txt type="date" className="col-span-2" />
-
-                                    <Label className="col-span-2">Vencimento entre</Label>
-                                    <Txt type="date" className="col-span-2" />
-                                </div>
-
-                                {/* Recursos + Pagos */}
-                                <div className="grid grid-cols-12 gap-2">
-                                    <Label className="col-span-2">Recursos entre</Label>
-                                    <Txt type="date" className="col-span-2" />
-                                    <Label className="col-span-1 text-center">e</Label>
-                                    <Txt type="date" className="col-span-2" />
-
-                                    <Label className="col-span-2">Pagos entre</Label>
-                                    <Txt type="date" className="col-span-2" />
-                                </div>
-
-                                {/* Radio + Buscar */}
+                                {/* Linha 1 */}
                                 <div className="grid grid-cols-12 gap-2 items-center">
-                                    <div className="col-span-6 flex gap-4 ml-4">
-                                        <label className="flex items-center gap-1">
-                                            <input type="radio" name="mTipo" defaultChecked />
-                                            Ambos
-                                        </label>
+                                    <Label className="col-span-1">Veículo</Label>
+                                    <Txt
+                                        className="col-span-2"
+                                        value={filtros.veiculo}
+                                        onChange={handleFiltro("veiculo")}
+                                    />
+                                    <Txt className="col-span-4 bg-gray-200" readOnly />
 
-                                        <label className="flex items-center gap-1">
-                                            <input type="radio" name="mTipo" />
-                                            Notificação
-                                        </label>
+                                    <Label className="col-span-1 justify-end">Motorista</Label>
+                                    <Txt
+                                        className="col-span-2"
+                                        value={filtros.motorista}
+                                        onChange={handleFiltro("motorista")}
+                                    />
+                                    <Txt className="col-span-2 bg-gray-200" readOnly />
+                                </div>
 
-                                        <label className="flex items-center gap-1">
-                                            <input type="radio" name="mTipo" />
-                                            Multa
-                                        </label>
-                                    </div>
+                                {/* Linha 2 */}
+                                <div className="grid grid-cols-12 gap-2 items-center">
+                                    <Label className="col-span-1">Infração</Label>
+                                    <Txt
+                                        className="col-span-2"
+                                        value={filtros.infracao}
+                                        onChange={handleFiltro("infracao")}
+                                    />
+                                    <Txt className="col-span-9 bg-gray-200" readOnly />
+                                </div>
 
-                                    <div className="col-span-6 flex justify-end">
-                                        <button className="flex items-center gap-1 px-3 py-[3px] border border-gray-300 rounded text-[12px] bg-white hover:bg-gray-100">
-                                            <Search size={14} />
-                                            Pesquisar
-                                        </button>
-                                    </div>
+                                {/* Linha 3 */}
+                                <div className="grid grid-cols-12 gap-2 items-center">
+                                    <Label className="col-span-1">Vencimento</Label>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-2"
+                                        value={filtros.vencDe}
+                                        onChange={handleFiltro("vencDe")}
+                                    />
+                                    <span className="text-center col-span-1">a</span>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-2"
+                                        value={filtros.vencAte}
+                                        onChange={handleFiltro("vencAte")}
+                                    />
+
+                                    <Label className="col-span-1 justify-end">Pagos</Label>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-2"
+                                        value={filtros.pagosDe}
+                                        onChange={handleFiltro("pagosDe")}
+                                    />
+                                    <span className="text-center col-span-1">a</span>
+                                    <Txt
+                                        type="date"
+                                        className="col-span-2"
+                                        value={filtros.pagosAte}
+                                        onChange={handleFiltro("pagosAte")}
+                                    />
+                                </div>
+
+                                {/* Linha 4 - Radio Buttons */}
+                                <div className="flex gap-4 mt-2 items-center">
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="filtroTipo"
+                                            value="todos"
+                                            checked={filtros.tipo === "todos"}
+                                            onChange={handleFiltro("tipo")}
+                                        />
+                                        Todos
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="filtroTipo"
+                                            value="notificacao"
+                                            checked={filtros.tipo === "notificacao"}
+                                            onChange={handleFiltro("tipo")}
+                                        />
+                                        Notificação
+                                    </label>
+                                    <label className="flex items-center gap-1">
+                                        <input
+                                            type="radio"
+                                            name="filtroTipo"
+                                            value="multa"
+                                            checked={filtros.tipo === "multa"}
+                                            onChange={handleFiltro("tipo")}
+                                        />
+                                        Multa
+                                    </label>
+
+                                    <button className="ml-auto px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2">
+                                        <Search size={14} /> Pesquisar
+                                    </button>
                                 </div>
                             </div>
                         </fieldset>
 
-                        {/* CARD 2 – GRID */}
-                        <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                            <legend className="px-2 text-red-700 font-semibold">
-                                Resultados
-                            </legend>
+                        {/* GRID RESULTADOS */}
+                        <div className="border border-gray-300 rounded bg-white mt-2 flex-1 overflow-auto">
+                            <table className="w-full text-[12px]">
+                                <thead className="bg-gray-100">
+                                    <tr>
+                                        <th className="border px-2 py-1">Placa / Veículo</th>
+                                        <th className="border px-2 py-1">Venc. c/ Desconto</th>
+                                        <th className="border px-2 py-1">Valor c/ Desc</th>
+                                        <th className="border px-2 py-1">Venc. s/ Desc</th>
+                                        <th className="border px-2 py-1">Valor s/ Desc</th>
+                                        <th className="border px-2 py-1">Data Pagto</th>
+                                        <th className="border px-2 py-1">Motorista</th>
+                                        <th className="border px-2 py-1">Data Multa</th>
+                                        <th className="border px-2 py-1">Hora</th>
+                                    </tr>
+                                </thead>
 
-                            <div className="border border-gray-200 rounded max-h-[320px] overflow-y-auto">
-                                <table className="w-full text-[12px]">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="border px-2 py-1">Placa / Veículo</th>
-                                            <th className="border px-2 py-1">Venc. c/ Desconto</th>
-                                            <th className="border px-2 py-1">Valor c/ Desc</th>
-                                            <th className="border px-2 py-1">Venc. s/ Desc</th>
-                                            <th className="border px-2 py-1">Valor s/ Desc</th>
-                                            <th className="border px-2 py-1">Data Pagto</th>
-                                            <th className="border px-2 py-1">Motorista</th>
-                                            <th className="border px-2 py-1">Data Multa</th>
-                                            <th className="border px-2 py-1">Hora</th>
+                                <tbody>
+                                    {lista.map((item, index) => (
+                                        <tr
+                                            key={index}
+                                            className="cursor-pointer hover:bg-red-100"
+                                            onClick={() => selecionar(item, index)}
+                                        >
+                                            <td className="border px-2 py-1">
+                                                {item.veiculoDescricao}
+                                            </td>
+                                            <td className="border px-2 py-1">
+                                                {item.vencComDescData}
+                                            </td>
+                                            <td className="border px-2 py-1 text-right">
+                                                {item.vencComDescValor}
+                                            </td>
+                                            <td className="border px-2 py-1">
+                                                {item.vencSemDescData}
+                                            </td>
+                                            <td className="border px-2 py-1 text-right">
+                                                {item.vencSemDescValor}
+                                            </td>
+                                            <td className="border px-2 py-1">{item.pagtoData}</td>
+                                            <td className="border px-2 py-1">{item.motoristaNome}</td>
+                                            <td className="border px-2 py-1">{item.dataInfracao}</td>
+                                            <td className="border px-2 py-1">
+                                                {item.horaInfracao}
+                                            </td>
                                         </tr>
-                                    </thead>
+                                    ))}
 
-                                    <tbody>
-                                        {lista.map((item, index) => (
-                                            <tr
-                                                key={index}
-                                                className="cursor-pointer hover:bg-red-100"
-                                                onClick={() => selecionar(item, index)}
+                                    {lista.length === 0 && (
+                                        <tr>
+                                            <td
+                                                colSpan={9}
+                                                className="text-center text-gray-500 py-3"
                                             >
-                                                <td className="border px-2 py-1">
-                                                    {item.veiculoDescricao}
-                                                </td>
-                                                <td className="border px-2 py-1">
-                                                    {item.vencComDescData}
-                                                </td>
-                                                <td className="border px-2 py-1 text-right">
-                                                    {item.vencComDescValor}
-                                                </td>
-                                                <td className="border px-2 py-1">
-                                                    {item.vencSemDescData}
-                                                </td>
-                                                <td className="border px-2 py-1 text-right">
-                                                    {item.vencSemDescValor}
-                                                </td>
-                                                <td className="border px-2 py-1">{item.pagtoData}</td>
-                                                <td className="border px-2 py-1">{item.motoristaNome}</td>
-                                                <td className="border px-2 py-1">{item.dataInfracao}</td>
-                                                <td className="border px-2 py-1">
-                                                    {item.horaInfracao}
-                                                </td>
-                                            </tr>
-                                        ))}
-
-                                        {lista.length === 0 && (
-                                            <tr>
-                                                <td
-                                                    colSpan={9}
-                                                    className="text-center text-gray-500 py-3"
-                                                >
-                                                    Nenhum registro encontrado
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </fieldset>
+                                                Nenhum registro encontrado
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </>
                 )}
             </div>
@@ -924,142 +972,8 @@ export default function VeiculoMulta({ open }) {
                 </button>
             </div>
 
-            {/* ===========================================================
-         MODAL – GERAR CP  (modelo idêntico ao VeiculoIPVA.jsx)
-      =========================================================== */}
-            {modalCP && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white p-4 rounded shadow-lg w-[650px] border">
-                        <h3 className="text-center text-red-700 font-bold mb-3">
-                            MULTA – GERAR CONTAS A PAGAR
-                        </h3>
-
-                        <fieldset className="border border-gray-300 rounded p-3 mb-3">
-                            <legend className="px-2 text-red-700 font-semibold">
-                                Dados para Contas a Pagar
-                            </legend>
-
-                            {/* Linha 1 – Crédito */}
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <Label className="col-span-2">A Crédito de</Label>
-                                <Txt
-                                    className="col-span-3 bg-gray-200"
-                                    readOnly
-                                    value="50221019000136"
-                                />
-                                <Txt
-                                    className="col-span-7 bg-gray-200"
-                                    readOnly
-                                    value="EMPRESA PADRÃO"
-                                />
-                            </div>
-
-                            {/* Linha 2 – Número título / parcela */}
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <Label className="col-span-2">Nº Título</Label>
-                                <Txt className="col-span-3" />
-
-                                <Label className="col-span-2">Nº Parcela</Label>
-                                <Txt className="col-span-1 bg-gray-200" readOnly value="1" />
-
-                                <Label className="col-span-2">Qt Parcela</Label>
-                                <Txt className="col-span-1 bg-gray-200" readOnly value="1" />
-
-                                <Label className="col-span-2">Valor a pagar</Label>
-                                <Txt
-                                    className="col-span-1 bg-gray-200 text-right"
-                                    readOnly
-                                    value={dados.vencSemDescValor || "0,00"}
-                                />
-                            </div>
-
-                            {/* Linha 3 – Cateogria + Subcategoria */}
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <Label className="col-span-2">DT Vencto</Label>
-                                <Txt type="date" className="col-span-3" />
-
-                                <Label className="col-span-2">Categoria</Label>
-                                <Sel className="col-span-2">
-                                    <option>1 - IMPOSTOS/TAXAS</option>
-                                </Sel>
-
-                                <Label className="col-span-2">Subcategoria</Label>
-                                <Sel className="col-span-3">
-                                    <option>MULTAS</option>
-                                </Sel>
-                            </div>
-
-                            {/* Linha 4 – Observação */}
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <Label className="col-span-2">Observação</Label>
-                                <Txt className="col-span-10" />
-                            </div>
-
-                            {/* Linha 5 – pagamento */}
-                            <div className="grid grid-cols-12 gap-2 mb-2">
-                                <Label className="col-span-2">DT Pagto</Label>
-                                <Txt
-                                    type="date"
-                                    className="col-span-3 bg-gray-200"
-                                    readOnly
-                                    value={dados.pagtoData}
-                                />
-
-                                <Label className="col-span-2">Conta</Label>
-                                <Sel className="col-span-3">
-                                    <option>111111111 - CONTA PADRÃO</option>
-                                </Sel>
-
-                                <Label className="col-span-1">Banco</Label>
-                                <Txt
-                                    className="col-span-1 bg-gray-200"
-                                    readOnly
-                                    value="001"
-                                />
-                            </div>
-                        </fieldset>
-
-                        {/* Rodapé modal */}
-                        <div className="flex justify-center gap-6 mt-3">
-                            <button
-                                className="text-red-700 flex items-center gap-1"
-                                onClick={() => setModalCP(false)}
-                            >
-                                <XCircle size={20} />
-                                Fechar
-                            </button>
-
-                            <button
-                                className="text-green-700 flex items-center gap-1"
-                                onClick={() => {
-                                    setModalCP(false);
-                                    setModalMsg(true);
-                                }}
-                            >
-                                <FileText size={20} />
-                                Gerar CP
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* SUCESSO */}
-            {modalMsg && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 shadow-lg rounded border text-center w-[300px]">
-                        <p className="text-green-700 font-bold mb-4">
-                            Título gerado com sucesso!
-                        </p>
-                        <button
-                            className="px-3 py-1 bg-red-700 text-white rounded"
-                            onClick={() => setModalMsg(false)}
-                        >
-                            OK
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* MODAL GERAR CP */}
+            {modalCP && <GerarCP onClose={() => setModalCP(false)} />}
         </div>
     );
 }
