@@ -179,44 +179,18 @@ export default function ImportacaoShopee({ open }) {
         });
     };
 
-    /* ================= Função Participante ================= */
-
-    const preencherParticipante = (cnpj, setFn) => {
-        const limpo = cnpj.replace(/\D/g, "");
-        const dados = mockParticipantes[limpo];
-
-        if (dados) {
-            setFn({
-                cnpj: limpo,
-                razao: dados.razao,
-                cidade: dados.cidade,
-                uf: dados.uf,
-            });
-        } else {
-            setFn({ cnpj: limpo, razao: "", cidade: "", uf: "" });
-        }
-    };
-
-    /* ================= Auto preenchimento do Processo ================= */
-
-    const handleProcessoChange = (e) => {
-        const value = e.target.value;
-        setProcesso(value);
-
-        if (value === "Line Haul XPT") {
-            preencherParticipante("42446277009653", setTomador);
-            preencherParticipante("40418328000147", setRecebedor);
-        }
-
-        if (value === "Last Mile XPT") {
-            setTomador({ cnpj: "", razao: "", cidade: "", uf: "" });
-            setRecebedor({ cnpj: "", razao: "", cidade: "", uf: "" });
-        }
-    };
-
     /* ================= Seleção de arquivo ================= */
 
     const dispararSelecaoArquivo = () => fileInputRef.current?.click();
+
+    const simularTotalLinhas = (file) => {
+        const mb = file.size / 1024 / 1024;
+
+        if (mb < 1) return 3000;
+        if (mb < 4) return 15000;
+        if (mb < 10) return 40000;
+        return 120000;
+    };
 
     const handleArquivoChange = (e) => {
         const file = e.target.files?.[0];
@@ -225,30 +199,22 @@ export default function ImportacaoShopee({ open }) {
         setArquivoSelecionado(file);
         setDiretorio(file.name);
 
-        const linhasEstimadas = Math.max(
-            10,
-            Math.min(2000, Math.floor(file.size / 500))
-        );
-
-        setTotalLinhas(linhasEstimadas);
+        const linhasSimuladas = simularTotalLinhas(file);
+        setTotalLinhas(linhasSimuladas);
         setProgress(0);
 
         abrirMensagem({
             title: "Confirmação de Importação",
-            message: `Foi encontrado um total estimado de ${linhasEstimadas} linhas.\n\nDeseja iniciar a importação?`,
+            message: `Foi encontrado um total aproximado de ${linhasSimuladas} linhas.\n\nDeseja iniciar a importação?`,
             showCancel: true,
-
             onConfirm: () => {
                 setStatusImportacao("Preparando importação...");
-                setProgress(0);
-                setImportando(true);
+                setTimeout(() => setImportando(true), 300);
             },
-
             onCancel: () => {
                 setArquivoSelecionado(null);
                 setDiretorio("");
                 setTotalLinhas(0);
-                setStatusImportacao("Importação cancelada.");
                 fileInputRef.current.value = "";
             },
         });
@@ -288,12 +254,14 @@ export default function ImportacaoShopee({ open }) {
                             "Planilha importada com sucesso!\n\nAguarde o final do processamento.",
                         showCancel: false,
                     });
-                }, 400);
+                }, 600);
             }
-        }, 30);
+        }, 25);
 
         return () => clearInterval(interval);
     }, [importando, totalLinhas]);
+
+    /* ===================== RENDER ===================== */
 
     const handleFechar = () => navigate(-1);
 
@@ -304,8 +272,6 @@ export default function ImportacaoShopee({ open }) {
             showCancel: false,
         });
     };
-
-    /* ===================== RENDER ===================== */
 
     return (
         <div
@@ -320,7 +286,7 @@ export default function ImportacaoShopee({ open }) {
 
             {/* ÁREA PRINCIPAL */}
             <div className="flex-1 p-3 overflow-y-auto bg-white border-x border-b border-gray-300 rounded-b-md flex flex-col gap-3">
-                {/* CARD 1 */}
+                {/** CARD PRINCIPAL **/}
                 <fieldset className="border border-gray-300 rounded p-3 bg-white">
                     <legend className="px-2 text-red-700 font-semibold text-[13px]">
                         Selecione o arquivo
@@ -331,7 +297,11 @@ export default function ImportacaoShopee({ open }) {
                         <div className="grid grid-cols-12 gap-2 items-center">
                             <Label className="col-span-1">Processo</Label>
 
-                            <Sel className="col-span-3" value={processo} onChange={handleProcessoChange}>
+                            <Sel
+                                className="col-span-3"
+                                value={processo}
+                                onChange={(e) => setProcesso(e.target.value)}
+                            >
                                 <option>Line Haul XPT</option>
                                 <option>Last Mile XPT</option>
                             </Sel>
@@ -348,46 +318,50 @@ export default function ImportacaoShopee({ open }) {
                         </div>
 
                         {/* FLAGS */}
-                        <div className="grid grid-cols-12 gap-2 items-center">
-                            <div className="col-span-12 flex gap-4">
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={gerarViagem}
-                                        onChange={(e) => setGerarViagem(e.target.checked)}
-                                    />
-                                    Gerar Viagem
-                                </label>
+                        <div className="col-span-12 flex gap-4">
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="checkbox"
+                                    checked={gerarViagem}
+                                    onChange={(e) =>
+                                        setGerarViagem(e.target.checked)
+                                    }
+                                />
+                                Gerar Viagem
+                            </label>
 
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={devolucao}
-                                        onChange={(e) => setDevolucao(e.target.checked)}
-                                    />
-                                    Devolução
-                                </label>
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="checkbox"
+                                    checked={devolucao}
+                                    onChange={(e) =>
+                                        setDevolucao(e.target.checked)
+                                    }
+                                />
+                                Devolução
+                            </label>
 
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={manifesto}
-                                        onChange={(e) => setManifesto(e.target.checked)}
-                                    />
-                                    Manifesto
-                                </label>
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="checkbox"
+                                    checked={manifesto}
+                                    onChange={(e) =>
+                                        setManifesto(e.target.checked)
+                                    }
+                                />
+                                Manifesto
+                            </label>
 
-                                <label className="flex items-center gap-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={cteComplementar}
-                                        onChange={(e) =>
-                                            setCteComplementar(e.target.checked)
-                                        }
-                                    />
-                                    CTe Complementar
-                                </label>
-                            </div>
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="checkbox"
+                                    checked={cteComplementar}
+                                    onChange={(e) =>
+                                        setCteComplementar(e.target.checked)
+                                    }
+                                />
+                                CTe Complementar
+                            </label>
                         </div>
 
                         {/* DIRETÓRIO */}
@@ -405,9 +379,7 @@ export default function ImportacaoShopee({ open }) {
                                     type="button"
                                     onClick={dispararSelecaoArquivo}
                                     className="w-full h-[26px] flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
-                                    title="Selecionar arquivo"
                                 >
-                                    {/* 🔥 ÍCONE AMARELO */}
                                     <FolderOpen size={18} color="#eab308" />
                                 </button>
 
@@ -506,15 +478,13 @@ export default function ImportacaoShopee({ open }) {
                     </legend>
 
                     <div className="space-y-2">
-                        {/* STATUS */}
                         <div className="grid grid-cols-12 gap-2 items-center">
                             <Label className="col-span-2">Status</Label>
-                            <div className="col-span-10 text-[12px] text-gray-700">
+                            <div className="col-span-10 text-[12px]">
                                 {statusImportacao}
                             </div>
                         </div>
 
-                        {/* BARRA */}
                         <div className="grid grid-cols-12 gap-2 items-center">
                             <Label className="col-span-2">Progresso</Label>
 
@@ -526,9 +496,8 @@ export default function ImportacaoShopee({ open }) {
                                     />
                                 </div>
 
-                                <div className="text-[11px] mt-1 text-right text-gray-700">
-                                    {progress}%{" "}
-                                    {totalLinhas > 0 && `- ${totalLinhas} linhas`}
+                                <div className="text-[11px] mt-1 text-right">
+                                    {progress}% — {totalLinhas} linhas
                                 </div>
                             </div>
                         </div>
@@ -538,7 +507,6 @@ export default function ImportacaoShopee({ open }) {
 
             {/* RODAPÉ */}
             <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
-                {/* FECHAR */}
                 <button
                     onClick={handleFechar}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -547,7 +515,6 @@ export default function ImportacaoShopee({ open }) {
                     <span>Fechar</span>
                 </button>
 
-                {/* EXCEL */}
                 <button
                     onClick={handleExcel}
                     className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
@@ -557,7 +524,6 @@ export default function ImportacaoShopee({ open }) {
                 </button>
             </div>
 
-            {/* MODAL */}
             <MessageBox
                 open={msgConfig.open}
                 title={msgConfig.title}
