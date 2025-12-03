@@ -40,6 +40,7 @@ import Filial from "./pages/Filial";
 import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
 import DashboardShopee from "./pages/DashboardShopee";
 import OperacaoShopee from "./pages/OperacaoShopee";
+import ImportacaoShopee from "./pages/ImportacaoShopee";
 import LocalidadeAdicional from "./pages/LocalidadeAdicional";
 import Cidade from "./pages/Cidade";
 import Regiao from "./pages/Regiao";
@@ -253,6 +254,7 @@ export default function App() {
 
             <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
             <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
+            <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
 
             <Route
               path="*"

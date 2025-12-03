@@ -826,18 +826,19 @@ export default function Sidebar({ open }) {
                     {activeSubMenu === "ec-importacao" && (
                       <div className="absolute top-8 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
                         {[
-                          "Planilha Shopee",
-                          "Planilha Agregado",
-                          "Planilha Nota Fiscal Serviço",
-                          "Planilha Fatura",
-                          "Excluir Importação Shopee",
-                        ].map((txt) => (
-                          <div
-                            key={txt}
-                            className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                          { label: "Planilha Shopee", path: "/importacao-shopee" },
+                          { label: "Planilha Agregado", path: "#" },
+                          { label: "Planilha Nota Fiscal Serviço", path: "#" },
+                          { label: "Planilha Fatura", path: "#" },
+                          { label: "Excluir Importação Shopee", path: "#" },
+                        ].map((item) => (
+                          <Link
+                            key={item.label}
+                            to={item.path}
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
                           >
-                            {txt}
-                          </div>
+                            {item.label}
+                          </Link>
                         ))}
                       </div>
                     )}
