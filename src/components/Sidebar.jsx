@@ -809,7 +809,9 @@ export default function Sidebar({ open }) {
                   <ul className="text-[13px] text-gray-700">
                     {/* Operação Shopee */}
                     <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                      Operação Shopee
+                      <Link to="/operacao-shopee" className="block w-full h-full">
+                        Operação Shopee
+                      </Link>
                     </li>
 
                     {/* IMPORTAÇÃO */}
