@@ -6,16 +6,16 @@ import {
   Building2,
   Lock,
   Settings,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Calendar
 } from "lucide-react";
 
 import Logo from "../assets/logo_mantran.png";
+import { useNotificacao } from "../context/NotificacaoContext";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 import { useIconColor } from "../context/IconColorContext";
-
-// ⬅️ IMPORTA O CONTEXTO CORRETO
 import { useMenuRapido } from "../context/MenuRapidoContext";
 
 function AppDotsIcon({ size = 20, color = "#b91c1c" }) {
@@ -55,29 +55,18 @@ export default function Header({ toggleSidebar }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAlterarSenha, setShowAlterarSenha] = useState(false);
 
+  // Notificações REAIS da Agenda
+  const { notificacoes, marcarComoLido } = useNotificacao();
+
   const navigate = useNavigate();
   const { iconColor } = useIconColor();
-
-  // ⬅️ AQUI — agora usamos o contexto correto
   const { atalhos } = useMenuRapido();
-
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: "Novo CT-e emitido com sucesso.", read: false },
-    { id: 2, message: "Backup concluído às 14:00h.", read: false },
-    { id: 3, message: "Manifesto encerrado.", read: true },
-  ]);
-
-  const markAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-  };
 
   return (
     <>
       <header className="flex justify-between items-center bg-white shadow-sm px-6 py-1.5 border-b h-[48px] fixed top-0 left-0 right-0 z-50">
 
-        {/* --- LADO ESQUERDO (logo, menu, atalhos) --- */}
+        {/* LADO ESQUERDO */}
         <div className="flex items-center gap-5">
 
           <button
@@ -89,7 +78,7 @@ export default function Header({ toggleSidebar }) {
 
           <img src={Logo} alt="Mantran" className="h-7" />
 
-          {/* ATALHOS DO MENU RÁPIDO — AGORA FUNCIONANDO */}
+          {/* MENU RÁPIDO */}
           <div className={`flex gap-8 text-sm ml-6 ${iconColor}`}>
             {atalhos.slice(0, 7).map((item) => (
               <Link
@@ -102,13 +91,12 @@ export default function Header({ toggleSidebar }) {
               </Link>
             ))}
           </div>
-
         </div>
 
-        {/* --- LADO DIREITO (notificações, apps, usuário) --- */}
+        {/* LADO DIREITO */}
         <div className="flex items-center gap-6">
 
-          {/* 🔔 Notificações */}
+          {/* 🔔 NOTIFICAÇÕES */}
           <div className="relative">
             <button
               className={`${iconColor} hover:text-black relative`}
@@ -119,47 +107,87 @@ export default function Header({ toggleSidebar }) {
               }}
             >
               <Bell size={18} />
-              {notifications.some((n) => !n.read) && (
-                <span className="absolute top-0 right-0 bg-red-600 w-2 h-2 rounded-full"></span>
+
+              {/* BADGE — só notificações NÃO lidas */}
+              {notificacoes.some(n => !n.lido) && (
+                <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-1 rounded-full">
+                  {notificacoes.filter(n => !n.lido).length}
+                </span>
               )}
             </button>
 
+            {/* DROPDOWN */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border z-50">
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg border z-50 max-h-96 overflow-auto">
+
                 <div className="p-3 font-semibold border-b text-gray-700">
-                  Notificações
+                  Lembretes da Agenda
                 </div>
 
-                {notifications.length === 0 ? (
+                {notificacoes.length === 0 ? (
                   <p className="text-sm text-center text-gray-500 p-4">
-                    Nenhuma notificação
+                    Nenhum lembrete
                   </p>
                 ) : (
-                  notifications.map((n) => (
+                  notificacoes.map((n) => (
                     <div
                       key={n.id}
-                      className={`flex justify-between items-center px-4 py-2 text-sm ${
-                        n.read ? "text-gray-400" : "text-gray-800 bg-gray-50"
-                      }`}
+                      className={`flex items-center justify-between px-4 py-2 border-b text-sm ${n.lido ? "text-gray-400 bg-white" : "text-gray-800 bg-gray-50"
+                        }`}
                     >
-                      <span>{n.message}</span>
+                      <div>
+                        <p className="font-semibold text-red-700">{n.titulo || n.texto}</p>
 
-                      {!n.read && (
+                        {n.start && (
+                          <p className="text-gray-700 text-xs">
+                            {new Date(n.start).toLocaleString()}
+                          </p>
+                        )}
+
+                        {n.start && (
+                          <button
+                            className="text-blue-600 text-xs hover:underline"
+                            onClick={() => {
+                              navigate(`/agenda?data=${n.start}`);
+                              setShowNotifications(false);
+                            }}
+                          >
+                            Ver no calendário
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Botão lateral */}
+                      {/* Botão lateral compacto vermelho com tooltip */}
+                      {!n.lido && (
                         <button
-                          onClick={() => markAsRead(n.id)}
-                          className="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                          onClick={() => marcarComoLido(n.id)}
+                          title="Marcar como Lido"
+                          className="
+      ml-2 
+      bg-red-500 hover:bg-red-600 
+      text-white 
+      rounded 
+      px-1.5 py-[2px]
+      text-xs
+      shadow-sm
+      transition
+    "
                         >
-                          Marcar como lido
+                          ✓
                         </button>
                       )}
+
+
                     </div>
+
                   ))
                 )}
               </div>
             )}
           </div>
 
-          {/* 🟦 MENU DE APPS */}
+          {/* MENU DE APPS */}
           <div className="relative">
             <button
               onClick={() => {
@@ -198,13 +226,13 @@ export default function Header({ toggleSidebar }) {
             )}
           </div>
 
-          {/* 👤 Menu do Usuário */}
+          {/* MENU DO USUÁRIO */}
           <div className="relative">
             <button
               onClick={() => {
                 setShowUserMenu(!showUserMenu);
-                setShowAppsMenu(false);
                 setShowNotifications(false);
+                setShowAppsMenu(false);
               }}
               className="flex items-center gap-2 text-gray-700 hover:text-black"
             >
@@ -215,6 +243,7 @@ export default function Header({ toggleSidebar }) {
 
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 py-1">
+
                 <button className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
                   <Building2 className={iconColor} size={16} />
                   Trocar Filial
@@ -239,6 +268,15 @@ export default function Header({ toggleSidebar }) {
                 >
                   <Settings className={iconColor} size={16} />
                   Configuração
+                </button>
+
+                {/* CALENDÁRIO */}
+                <button
+                  onClick={() => navigate("/agenda")}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                >
+                  <Calendar className={iconColor} size={16} />
+                  Calendário
                 </button>
               </div>
             )}

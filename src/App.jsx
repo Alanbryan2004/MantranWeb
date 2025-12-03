@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import Agenda from "./pages/Agenda";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import CTePage from "./pages/CTePage";
@@ -152,6 +153,7 @@ export default function App() {
 
             <Route path="/irrf" element={<IRRF open={sidebarOpen} />} />
 
+            <Route path="/agenda" element={<Agenda open={sidebarOpen} />} />
 
             <Route path="/minuta" element={<Minuta open={sidebarOpen} />} />
 
