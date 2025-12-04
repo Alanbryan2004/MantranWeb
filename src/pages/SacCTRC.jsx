@@ -876,37 +876,36 @@ export default function SacCTRC({ open }) {
 
                                         {/* Peso Cálculo / Cep Origem / Cep Destino */}
                                         <div className="grid grid-cols-12 gap-2">
-                                            <Label className="col-span-2">Peso Cálculo</Label>
+                                            <Label className="col-span-1">Peso Cálculo</Label>
                                             <Txt className="col-span-2" value={dados.pesoCalculo} />
 
-                                            <Label className="col-span-2">Cep Origem Cálc.</Label>
+                                            <Label className="col-span-1">Cep Origem</Label>
                                             <Txt className="col-span-2" value={dados.cepOrigemCalc} />
 
-                                            <Label className="col-span-2">Cep Destino</Label>
+                                            <Label className="col-span-1">Cep Destino</Label>
                                             <Txt className="col-span-2" value={dados.cepDestino} />
+                                            <Label className="col-span-1">Código Fiscal</Label>
+                                            <Txt className="col-span-2" value={dados.codigoFiscal} />
                                         </div>
 
                                         {/* Cond. Contrato / Contrato / Tabela */}
                                         <div className="grid grid-cols-12 gap-2">
-                                            <Label className="col-span-2">Cond. Contrato</Label>
+                                            <Label className="col-span-1">Cond. Contrato</Label>
                                             <Txt className="col-span-2" value={dados.condContratoValores} />
 
-                                            <Label className="col-span-2">Contrato</Label>
+                                            <Label className="col-span-1">Contrato</Label>
                                             <Txt className="col-span-2" value={dados.contratoValores} />
 
-                                            <Label className="col-span-2">Tabela</Label>
+                                            <Label className="col-span-1">Tabela</Label>
                                             <Txt className="col-span-2" value={dados.tabela} />
-                                        </div>
-
-                                        {/* Vigência / Código Fiscal */}
-                                        <div className="grid grid-cols-12 gap-2">
-                                            <Label className="col-span-2">Vigência</Label>
+                                            <Label className="col-span-1">Vigência</Label>
                                             <Txt className="col-span-2" value={dados.vigencia} />
-
-                                            <Label className="col-span-2">Código Fiscal</Label>
-                                            <Txt className="col-span-2" value={dados.codigoFiscal} />
                                         </div>
+
+
                                     </div>
+                                    {/* Linha divisória suave */}
+                                    <div className="w-full border-t border-gray-300 my-2" />
 
                                     {/* ------------------------
            4 COLUNAS DE TAXAS (col-span-3)
@@ -954,13 +953,14 @@ export default function SacCTRC({ open }) {
                                         {/* Coluna 3 */}
                                         <div className="col-span-3 space-y-2">
                                             {[
-                                                ["CFOP/CST", dados.cfopCst],
+                                                ["Ad. Noturno", dados.noturno],
                                                 ["Despacho", dados.despacho],
                                                 ["Valor Outros", dados.valorOutros],
                                                 ["Estadia", dados.estadia],
                                                 ["IMO Carga Perigosa", dados.imoCargaPerigosa],
                                                 ["Taxa Emissão CTe", dados.emissaoCTe],
                                                 ["Taxa Cancelamento", dados.cancelamento],
+                                                ["Taxa Plataforma", dados.plataforma],
                                             ].map(([label, value], idx) => (
                                                 <div key={idx} className="grid grid-cols-12 gap-2">
                                                     <Label className="col-span-6">{label}</Label>
@@ -972,14 +972,13 @@ export default function SacCTRC({ open }) {
                                         {/* Coluna 4 */}
                                         <div className="col-span-3 space-y-2">
                                             {[
-                                                ["Taxa Plataforma", dados.plataforma],
                                                 ["Sec-Cat", dados.secCat],
                                                 ["Taxa Entrega", dados.taxaEntrega],
                                                 ["Escolta", dados.escolta],
                                                 ["Monitoramento", dados.monitoramento],
                                                 ["Taxa de Ova", dados.taxOva],
                                                 ["Taxa Anvisa", dados.taxAnvisa],
-                                                ["Ad. Noturno", dados.noturno],
+
                                             ].map(([label, value], idx) => (
                                                 <div key={idx} className="grid grid-cols-12 gap-2">
                                                     <Label className="col-span-6">{label}</Label>
@@ -988,14 +987,14 @@ export default function SacCTRC({ open }) {
                                             ))}
                                         </div>
                                     </div>
-
+                                    <div className="w-full border-t border-gray-300 my-2" />
                                     {/* ------------------------
            IMPOSTOS
         ------------------------ */}
                                     <div className="grid grid-cols-12 gap-4">
 
                                         {/* ISS */}
-                                        <div className="col-span-4 space-y-2">
+                                        <div className="col-span-3 space-y-2">
                                             <div className="grid grid-cols-12 gap-2">
                                                 <Label className="col-span-6">Base de ISS</Label>
                                                 <Txt className="col-span-6" value={dados.baseIss} />
@@ -1011,7 +1010,7 @@ export default function SacCTRC({ open }) {
                                         </div>
 
                                         {/* ICMS */}
-                                        <div className="col-span-4 space-y-2">
+                                        <div className="col-span-3 space-y-2">
                                             <div className="grid grid-cols-12 gap-2">
                                                 <Label className="col-span-6">Base ICMS</Label>
                                                 <Txt className="col-span-6" value={dados.baseIcms} />
@@ -1027,7 +1026,7 @@ export default function SacCTRC({ open }) {
                                         </div>
 
                                         {/* Outros */}
-                                        <div className="col-span-4 space-y-2">
+                                        <div className="col-span-3 space-y-2">
                                             <div className="grid grid-cols-12 gap-2">
                                                 <Label className="col-span-6">Valor ICMS ST</Label>
                                                 <Txt className="col-span-6" value={dados.icmsSt} />

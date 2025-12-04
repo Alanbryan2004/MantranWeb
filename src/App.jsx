@@ -268,8 +268,11 @@ export default function App() {
             <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
             <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
 
-            <Route path="/sacctrc/:ctrc" element={<SacCTRC />} />
-            <Route path="/sacctrc" element={<SacCTRC />} />
+            <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
+
+
+            <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
+
 
 
             <Route
