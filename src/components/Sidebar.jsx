@@ -827,7 +827,7 @@ export default function Sidebar({ open }) {
                       <div className="absolute top-8 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
                         {[
                           { label: "Planilha Shopee", path: "/importacao-shopee" },
-                          { label: "Planilha Agregado", path: "#" },
+                          { label: "Planilha Agregado", path: "/importacao-planilha-agregado" },
                           { label: "Planilha Nota Fiscal Serviço", path: "#" },
                           { label: "Planilha Fatura", path: "#" },
                           { label: "Excluir Importação Shopee", path: "#" },
