@@ -20,6 +20,7 @@ import {
   Circle,
   Send,
   X,
+  Headphones,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -951,6 +952,42 @@ export default function Sidebar({ open }) {
 
             {open && <span className="ml-3">Relatório</span>}
           </button>
+
+          {/* === SAC === */}
+          <div
+            className="group relative mt-1"
+            onMouseEnter={() => setActiveMenu("sac")}
+            onMouseLeave={() => setActiveMenu(null)}
+          >
+            <button
+              onClick={() => handleToggle("sac")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+            >
+              <Headphones className={`w-5 h-5 ${iconColor}`} />
+
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">SAC</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${activeMenu === "sac" ? "rotate-90" : ""
+                      }`}
+                  />
+                </>
+              )}
+            </button>
+
+            {activeMenu === "sac" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+                <Link
+                  to="/sac-notafiscal"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Nota Fiscal
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* === USUÁRIO === */}
           <div

@@ -66,6 +66,7 @@ import ClienteEmbalagem from "./pages/ClienteEmbalagem";
 import ClienteGrupoEconomico from "./pages/ClienteGrupoEconomico";
 import ClienteProduto from "./pages/ClienteProduto";
 import ClienteOperacao from "./pages/ClienteOperacao";
+import SacNotaFiscal from "./pages/SacNotaFiscal";
 
 
 
@@ -263,6 +264,7 @@ export default function App() {
             <Route path="/exportacao-planilha-shopee" element={<ExportacaoPlanilhaShopee open={sidebarOpen} />} />
             <Route path="/liberacao-nfse" element={<LiberacaoNFSE open={sidebarOpen} />} />
             <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
+            <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
 
             <Route
               path="*"
