@@ -865,7 +865,9 @@ export default function Sidebar({ open }) {
 
                     {/* Liberação NFSE */}
                     <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                      Liberação NFSE
+                      <Link to="/liberacao-nfse" className="block w-full h-full text-gray-700">
+                        Liberação NFSE
+                      </Link>
                     </li>
 
                     {/* Auditoria */}

@@ -42,6 +42,7 @@ import DashboardShopee from "./pages/DashboardShopee";
 import OperacaoShopee from "./pages/OperacaoShopee";
 import ImportacaoShopee from "./pages/ImportacaoShopee";
 import ExportacaoPlanilhaShopee from "./pages/ExportacaoPlanilhaShopee";
+import LiberacaoNFSE from "./pages/LiberacaoNFSE";
 import ImportacaoPlanilhaAgregado from "./pages/ImportacaoPlanilhaAgregado";
 import LocalidadeAdicional from "./pages/LocalidadeAdicional";
 import Cidade from "./pages/Cidade";
@@ -259,6 +260,7 @@ export default function App() {
             <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
             <Route path="/importacao-planilha-agregado" element={<ImportacaoPlanilhaAgregado open={sidebarOpen} />} />
             <Route path="/exportacao-planilha-shopee" element={<ExportacaoPlanilhaShopee open={sidebarOpen} />} />
+            <Route path="/liberacao-nfse" element={<LiberacaoNFSE open={sidebarOpen} />} />
 
             <Route
               path="*"
