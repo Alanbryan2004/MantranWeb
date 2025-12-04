@@ -854,9 +854,9 @@ export default function Sidebar({ open }) {
 
                     {activeSubMenu === "ec-exportacao" && (
                       <div className="absolute top-16 left-full bg-white border border-gray-200 shadow-md rounded-md w-72 p-1 z-50">
-                        <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                        <Link to="/exportacao-planilha-shopee" className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">
                           Planilha Shopee
-                        </div>
+                        </Link>
                         <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                           Planilha NFSE/Fatura
                         </div>

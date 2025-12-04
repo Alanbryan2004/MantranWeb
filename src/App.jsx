@@ -41,6 +41,7 @@ import EmpresaFilialParametro from "./pages/EmpresaFilialParametro";
 import DashboardShopee from "./pages/DashboardShopee";
 import OperacaoShopee from "./pages/OperacaoShopee";
 import ImportacaoShopee from "./pages/ImportacaoShopee";
+import ExportacaoPlanilhaShopee from "./pages/ExportacaoPlanilhaShopee";
 import ImportacaoPlanilhaAgregado from "./pages/ImportacaoPlanilhaAgregado";
 import LocalidadeAdicional from "./pages/LocalidadeAdicional";
 import Cidade from "./pages/Cidade";
@@ -257,6 +258,7 @@ export default function App() {
             <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
             <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
             <Route path="/importacao-planilha-agregado" element={<ImportacaoPlanilhaAgregado open={sidebarOpen} />} />
+            <Route path="/exportacao-planilha-shopee" element={<ExportacaoPlanilhaShopee open={sidebarOpen} />} />
 
             <Route
               path="*"
