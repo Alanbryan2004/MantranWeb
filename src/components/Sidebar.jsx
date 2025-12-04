@@ -872,7 +872,9 @@ export default function Sidebar({ open }) {
 
                     {/* Auditoria */}
                     <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
-                      Auditoria
+                      <Link to="/auditoria-shopee" className="block w-full h-full text-gray-700">
+                        Auditoria
+                      </Link>
                     </li>
                     {/* Dashboard Shopee */}
                     <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
