@@ -985,6 +985,12 @@ export default function Sidebar({ open }) {
                 >
                   Nota Fiscal
                 </Link>
+                <Link
+                  to="/sac-conhecimento"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Conhecimento
+                </Link>
               </div>
             )}
           </div>
