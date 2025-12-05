@@ -991,6 +991,12 @@ export default function Sidebar({ open }) {
                 >
                   Conhecimento
                 </Link>
+                <Link
+                  to="/sac-coleta"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Coleta
+                </Link>
               </div>
             )}
           </div>

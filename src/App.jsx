@@ -68,6 +68,7 @@ import ClienteProduto from "./pages/ClienteProduto";
 import ClienteOperacao from "./pages/ClienteOperacao";
 import SacNotaFiscal from "./pages/SacNotaFiscal";
 import SacCTRC from "./pages/SacCTRC";
+import SacColeta from "./pages/SacColeta";
 
 
 
@@ -267,6 +268,7 @@ export default function App() {
             <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
             <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
             <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
+            <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
 
             <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
 
