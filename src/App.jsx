@@ -14,6 +14,7 @@ import Coleta from "./pages/Coleta";
 import Manifesto from "./pages/Manifesto";
 import Viagem from "./pages/Viagem";
 import Minuta from "./pages/Minuta";
+import MotivoColeta from "./pages/MotivoColeta";
 import Dashboard from "./pages/Dashboard";
 import Parametro from "./pages/Parametro";
 import "./index.css";
@@ -73,6 +74,9 @@ import ConsultaSefazCte from "./pages/ConsultaSefazCte";
 import ConsultaSefazMDFe from "./pages/ConsultaSefazMDFe";
 import BaixaManifesto from "./pages/BaixaManifesto";
 import MdfeParametro from "./pages/MdfeParametro";
+import CteParametro from "./pages/CteParametro";
+import BaixaCtrc from "./pages/BaixaCtrc";
+import EnvioSefaz from "./pages/EnvioSefaz";
 
 
 
@@ -173,6 +177,7 @@ export default function App() {
             <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
 
             <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+            <Route path="/motivocoleta" element={<MotivoColeta open={sidebarOpen} />} />
             <Route path="/historico-ocorrencia" element={<HistoricoOcorrencia open={sidebarOpen} />} />
             <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
             <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
@@ -280,6 +285,9 @@ export default function App() {
             <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
             <Route path="/baixamanifesto" element={<BaixaManifesto open={sidebarOpen} />} />
             <Route path="/parametromanifesto" element={<MdfeParametro open={sidebarOpen} />} />
+            <Route path="/cteparametro" element={<CteParametro open={sidebarOpen} />} />
+            <Route path="/baixactrc" element={<BaixaCtrc open={sidebarOpen} />} />
+            <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
 
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />

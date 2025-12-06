@@ -676,14 +676,34 @@ export default function Sidebar({ open }) {
                               "Baixa CTRC",
                               "Geração Automática",
                               "Integração MultiCTe",
-                            ].map((sub) => (
-                              <div
-                                key={sub}
-                                className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
-                              >
-                                {sub}
-                              </div>
-                            ))}
+                            ].map((sub) => {
+                              const links = {
+                                "Parâmetro": "/cteparametro",
+                                "Baixa CTRC": "/baixactrc",
+                                "Envio Sefaz": "/enviosefaz",
+                              };
+
+                              if (links[sub]) {
+                                return (
+                                  <Link
+                                    key={sub}
+                                    to={links[sub]}
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                                  >
+                                    {sub}
+                                  </Link>
+                                );
+                              }
+
+                              return (
+                                <div
+                                  key={sub}
+                                  className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                                >
+                                  {sub}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
 

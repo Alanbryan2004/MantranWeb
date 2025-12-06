@@ -38,7 +38,7 @@ function Sel({ children, className = "", ...rest }) {
     );
 }
 
-export default function MdfeParametro({ onClose }) {
+export default function CteParametro({ onClose }) {
     const isGlobalModal = !!onClose;
     const navigate = useNavigate();
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
@@ -58,13 +58,13 @@ export default function MdfeParametro({ onClose }) {
         senhaAut: "*******",
         requerAut: true,
         autoEnvio: true,
-        assunto: "Emissão MDF-e Nº <MDFe>",
+        assunto: "Emissão CT-e Nº <CTe>",
         mensagem: "<html><head><title></title></head><body>TEXTO MODELO...</body></html>",
         certificado: "",
         senhaCert: "12345678",
         fuso: "-03:00 - Horário Normal",
         ambiente: "Homologação",
-        versao: "3.00",
+        versao: "4.00",
     };
 
     const [dados, setDados] = useState(mock);
@@ -83,14 +83,14 @@ export default function MdfeParametro({ onClose }) {
         >
             <div className="bg-white w-[1100px] rounded shadow p-4 border border-gray-300 max-h-[95vh] overflow-auto">
 
-                {/* Título com margem superior para não grudar no header */}
+                {/* TÍTULO */}
                 <h2 className="text-center text-red-700 font-bold mb-4 text-[18px] mt-2">
-                    PARÂMETROS DE MDF-e
+                    PARÂMETROS DE CT-e
                 </h2>
 
                 {/* CARD PRINCIPAL */}
                 <fieldset className="border border-gray-300 rounded p-3 mb-4">
-                    <legend className="px-2 text-red-700 font-semibold">Configurações MDF-e</legend>
+                    <legend className="px-2 text-red-700 font-semibold">Configurações CT-e</legend>
 
                     {/* Linha 1 */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
@@ -167,6 +167,7 @@ export default function MdfeParametro({ onClose }) {
                             value={dados.senhaEmail}
                             onChange={(e) => setDados({ ...dados, senhaEmail: e.target.value })}
                         />
+
                         <Label className="col-span-2">Envio Automático</Label>
                         <div className="col-span-1 flex items-center">
                             <input
@@ -203,9 +204,6 @@ export default function MdfeParametro({ onClose }) {
                                 className="h-[16px] w-[16px] cursor-pointer"
                             />
                         </div>
-
-
-
                     </div>
 
                     {/* Linha 6 */}
@@ -254,7 +252,6 @@ export default function MdfeParametro({ onClose }) {
                             <Txt
                                 className="w-full"
                                 value={dados.certificado}
-                                onChange={() => { }}
                                 readOnly
                             />
 
@@ -322,7 +319,7 @@ export default function MdfeParametro({ onClose }) {
                     </div>
                 </fieldset>
 
-                {/* RODAPÉ PADRÃO VEÍCULO */}
+                {/* RODAPÉ PADRÃO */}
                 <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-4">
 
                     <button
@@ -332,10 +329,6 @@ export default function MdfeParametro({ onClose }) {
                         <XCircle size={20} />
                         <span>Fechar</span>
                     </button>
-
-
-
-
 
                     <button
                         onClick={alterar}
