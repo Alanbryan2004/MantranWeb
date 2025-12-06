@@ -77,6 +77,7 @@ import MdfeParametro from "./pages/MdfeParametro";
 import CteParametro from "./pages/CteParametro";
 import BaixaCtrc from "./pages/BaixaCtrc";
 import EnvioSefaz from "./pages/EnvioSefaz";
+import GeracaoCtrcAutomatico from "./pages/GeracaoCtrcAutomatico";
 
 
 
@@ -288,6 +289,7 @@ export default function App() {
             <Route path="/cteparametro" element={<CteParametro open={sidebarOpen} />} />
             <Route path="/baixactrc" element={<BaixaCtrc open={sidebarOpen} />} />
             <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
+            <Route path="/geracaoctrcautomatico" element={<GeracaoCtrcAutomatico open={sidebarOpen} />} />
 
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />

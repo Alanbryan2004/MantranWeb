@@ -681,6 +681,7 @@ export default function Sidebar({ open }) {
                                 "Parâmetro": "/cteparametro",
                                 "Baixa CTRC": "/baixactrc",
                                 "Envio Sefaz": "/enviosefaz",
+                                "Geração Automática": "/geracaoctrcautomatico",
                               };
 
                               if (links[sub]) {
