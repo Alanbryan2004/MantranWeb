@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   XCircle,
   RotateCcw,
@@ -8,6 +10,8 @@ import {
 } from "lucide-react";
 
 export default function BaixaManifesto({ onClose }) {
+  const isGlobalModal = !!onClose;
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("conhecimentos");
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -45,7 +49,7 @@ export default function BaixaManifesto({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+    <div className={isGlobalModal ? "fixed inset-0 z-50 bg-black/40 flex items-center justify-center" : "w-full h-full flex items-center justify-center"}>
       <div className="relative bg-white w-[1100px] max-w-[95vw] max-h-[92vh] overflow-y-auto rounded border border-gray-300 shadow-lg p-3">
         {/* Título */}
         <h1 className="text-center text-red-700 font-semibold border-b border-gray-300 pb-1 text-sm">
@@ -147,11 +151,10 @@ export default function BaixaManifesto({ onClose }) {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`px-3 py-1 text-[12px] border rounded-t ${
-                    activeTab === tab.key
+                  className={`px-3 py-1 text-[12px] border rounded-t ${activeTab === tab.key
                       ? "bg-white text-red-700 border-gray-300"
                       : "bg-gray-100 text-gray-600 border-transparent"
-                  }`}
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -245,9 +248,12 @@ export default function BaixaManifesto({ onClose }) {
         </div>
 
         {/* === CARD 3: Rodapé === */}
-       <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-5 text-red-700 justify-start">
+        <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-5 text-red-700 justify-start">
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (onClose) onClose();
+              else navigate("/");
+            }}
             title="Fechar"
             className="flex flex-col items-center text-[11px] hover:text-red-800"
           >

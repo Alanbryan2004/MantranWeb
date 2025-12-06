@@ -69,6 +69,10 @@ import ClienteOperacao from "./pages/ClienteOperacao";
 import SacNotaFiscal from "./pages/SacNotaFiscal";
 import SacCTRC from "./pages/SacCTRC";
 import SacColeta from "./pages/SacColeta";
+import ConsultaSefazCte from "./pages/ConsultaSefazCte";
+import ConsultaSefazMDFe from "./pages/ConsultaSefazMDFe";
+import BaixaManifesto from "./pages/BaixaManifesto";
+import MdfeParametro from "./pages/MdfeParametro";
 
 
 
@@ -271,6 +275,11 @@ export default function App() {
             <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
 
             <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
+            <Route path="/consulta-sefaz-cte" element={<ConsultaSefazCte open={sidebarOpen} />} />
+            <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
+            <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
+            <Route path="/baixamanifesto" element={<BaixaManifesto open={sidebarOpen} />} />
+            <Route path="/parametromanifesto" element={<MdfeParametro open={sidebarOpen} />} />
 
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />

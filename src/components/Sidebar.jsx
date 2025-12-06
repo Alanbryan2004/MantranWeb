@@ -663,9 +663,14 @@ export default function Sidebar({ open }) {
                             >
                               Conhecimento
                             </Link>
+                            <Link
+                              to="/consulta-sefaz-cte"
+                              className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                            >
+                              Consulta Sefaz
+                            </Link>
                             {[
                               "Cancelar Lote",
-                              "Consulta Sefaz",
                               "Parâmetro",
                               "Envio Sefaz",
                               "Baixa CTRC",
