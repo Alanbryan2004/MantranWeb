@@ -683,6 +683,7 @@ export default function Sidebar({ open }) {
                                 "Envio Sefaz": "/enviosefaz",
                                 "Geração Automática": "/geracaoctrcautomatico",
                                 "Cancelar Lote": "/cancelamento-lote",
+                                "Integração MultiCTe": "/integracao-multicte",
                               };
 
                               if (links[sub]) {

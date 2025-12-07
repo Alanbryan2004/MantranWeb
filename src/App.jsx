@@ -79,6 +79,7 @@ import BaixaCtrc from "./pages/BaixaCtrc";
 import EnvioSefaz from "./pages/EnvioSefaz";
 import GeracaoCtrcAutomatico from "./pages/GeracaoCtrcAutomatico";
 import CancelamentoLote from "./pages/CancelamentoLote";
+import IntegracaoMulticte from "./pages/IntegracaoMulticte";
 
 
 
@@ -292,6 +293,7 @@ export default function App() {
             <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
             <Route path="/geracaoctrcautomatico" element={<GeracaoCtrcAutomatico open={sidebarOpen} />} />
             <Route path="/cancelamento-lote" element={<CancelamentoLote open={sidebarOpen} />} />
+            <Route path="/integracao-multicte" element={<IntegracaoMulticte open={sidebarOpen} />} />
 
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
