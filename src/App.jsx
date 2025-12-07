@@ -256,7 +256,7 @@ export default function App() {
             <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
             <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
-            <Route path="/acertocontas" element={<ViagemPagamento isOpen={true} open={sidebarOpen} />} />
+            <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
 
 
 
