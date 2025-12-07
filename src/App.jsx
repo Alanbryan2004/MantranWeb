@@ -78,6 +78,7 @@ import CteParametro from "./pages/CteParametro";
 import BaixaCtrc from "./pages/BaixaCtrc";
 import EnvioSefaz from "./pages/EnvioSefaz";
 import GeracaoCtrcAutomatico from "./pages/GeracaoCtrcAutomatico";
+import CancelamentoLote from "./pages/CancelamentoLote";
 
 
 
@@ -290,6 +291,7 @@ export default function App() {
             <Route path="/baixactrc" element={<BaixaCtrc open={sidebarOpen} />} />
             <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
             <Route path="/geracaoctrcautomatico" element={<GeracaoCtrcAutomatico open={sidebarOpen} />} />
+            <Route path="/cancelamento-lote" element={<CancelamentoLote open={sidebarOpen} />} />
 
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />

@@ -682,6 +682,7 @@ export default function Sidebar({ open }) {
                                 "Baixa CTRC": "/baixactrc",
                                 "Envio Sefaz": "/enviosefaz",
                                 "Geração Automática": "/geracaoctrcautomatico",
+                                "Cancelar Lote": "/cancelamento-lote",
                               };
 
                               if (links[sub]) {

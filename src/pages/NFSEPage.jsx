@@ -152,7 +152,7 @@ export default function NFSEPage({ open }) {
   ]);
 
   const [linhaSelecionadaId, setLinhaSelecionadaId] = useState(null);
-    const [showDoc, setShowDoc] = useState(false);
+  const [showDoc, setShowDoc] = useState(false);
 
   // chamado pelo modal NFSEDoc ao confirmar
   const handleConfirmItensModal = (itensDoModal) => {
@@ -223,9 +223,8 @@ export default function NFSEPage({ open }) {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       {/* Título */}
       <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
@@ -236,21 +235,19 @@ export default function NFSEPage({ open }) {
       <div className="flex border-b border-gray-300 bg-white">
         <button
           onClick={() => setActiveTab("cadastro")}
-          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${
-            activeTab === "cadastro"
+          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === "cadastro"
               ? "bg-white text-red-700 border-gray-300"
               : "bg-gray-100 text-gray-600 border-transparent"
-          }`}
+            }`}
         >
           Cadastro
         </button>
         <button
           onClick={() => setActiveTab("consulta")}
-          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ml-1 ${
-            activeTab === "consulta"
+          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ml-1 ${activeTab === "consulta"
               ? "bg-white text-red-700 border-gray-300"
               : "bg-gray-100 text-gray-600 border-transparent"
-          }`}
+            }`}
         >
           Consulta
         </button>
@@ -265,7 +262,7 @@ export default function NFSEPage({ open }) {
               key={cadastroKey}
               className="border border-gray-300 rounded p-2 bg-white space-y-3"
             >
-             
+
 
               {/* Linha 01 */}
               <div className="grid grid-cols-12 gap-2 items-center">
@@ -429,11 +426,10 @@ export default function NFSEPage({ open }) {
                     {itens.map((linha) => (
                       <tr
                         key={linha.id}
-                        className={`cursor-pointer ${
-                          linhaSelecionadaId === linha.id
+                        className={`cursor-pointer ${linhaSelecionadaId === linha.id
                             ? "bg-blue-50"
                             : "hover:bg-gray-50"
-                        }`}
+                          }`}
                         onClick={() => setLinhaSelecionadaId(linha.id)}
                       >
                         <td className="border-t border-gray-200 px-2 py-[3px]">
@@ -818,14 +814,14 @@ export default function NFSEPage({ open }) {
         />
       )}
 
-          
-  {showDoc && (
-  <NFSEDoc
-    isOpen={showDoc}
-    onClose={() => setShowDoc(false)}
-    onConfirm={(item) => setItens((prev) => [...prev, item])}
-  />
-)}
+
+      {showDoc && (
+        <NFSEDoc
+          isOpen={showDoc}
+          onClose={() => setShowDoc(false)}
+          onConfirm={(item) => setItens((prev) => [...prev, item])}
+        />
+      )}
 
 
     </div>
