@@ -61,7 +61,7 @@ export default function HomeModulos() {
             {/* ================= HEADER SUPERIOR ================= */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-700">
-                    Mantran Web — Módulos Disponíveis
+                    Mantran Web
                 </h1>
 
                 {/* Botão Logout */}
