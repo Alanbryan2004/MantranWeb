@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Layout Operação
 import Header from "./components/Header";
@@ -106,7 +106,6 @@ function TailwindColorHelper() {
   );
 }
 
-
 // ------------------------------------------------------------
 // 🔥 APP PRINCIPAL
 // ------------------------------------------------------------
@@ -114,7 +113,7 @@ export default function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // 🔒 Login persiste mesmo após refresh
+  // Login persiste
   const [isLogged, setIsLogged] = useState(() => {
     return !!localStorage.getItem("usuarioNome");
   });
@@ -133,7 +132,7 @@ export default function App() {
     window.history.pushState({}, "", "/login");
   };
 
-  // Login
+  // Tela de Login
   if (!isLogged) {
     return (
       <Login
@@ -148,17 +147,13 @@ export default function App() {
     );
   }
 
-  // Se logado e ainda estiver em /login → volta para home
+  // Corrige redirecionamento após login
   if (isLogged && window.location.pathname === "/login") {
     window.history.pushState({}, "", "/");
   }
 
   const path = window.location.pathname;
-
-  // Detecta se está na tela de módulos
   const isHomeModulos = path === "/";
-
-  // Detecta se está no módulo Financeiro
   const isFinanceiro = path.startsWith("/modulo-financeiro");
 
   return (
@@ -166,7 +161,7 @@ export default function App() {
 
       <TailwindColorHelper />
 
-      {/* Header só aparece fora da home de módulos */}
+      {/* Header */}
       {!isHomeModulos && (
         isFinanceiro ? (
           <HeaderFinanceiro toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -177,7 +172,7 @@ export default function App() {
 
       <div className="flex flex-1">
 
-        {/* Sidebar só aparece fora da home de módulos */}
+        {/* Sidebar */}
         {!isHomeModulos && (
           isFinanceiro ? (
             <SidebarFinanceiro open={sidebarOpen} />
@@ -188,31 +183,30 @@ export default function App() {
 
         <main className="flex-1 p-4 overflow-auto">
 
-          {/* ====================== DASHBOARD MODAL GLOBAL ====================== */}
+          {/* DASHBOARD */}
           {showDashboard && !isFinanceiro && (
             <Dashboard
               onClose={() => {
                 const check = document.querySelector("input[type='checkbox']");
-
                 if (check?.checked) {
                   localStorage.setItem("hideDashboard", "true");
                 }
-
                 setShowDashboard(false);
               }}
             />
           )}
-          {/* ==================================================================== */}
 
+          {/* ROTAS */}
           <Routes>
-            {/* HOME MÓDULOS */}
-            <Route path="/" element={<HomeModulos />} />
 
-            {/* MÓDULOS PRINCIPAIS */}
+            {/* ROTA PADRÃO REAL */}
+            <Route index element={<HomeModulos />} />
+
+            {/* Módulos principais */}
             <Route path="/modulo-operacao" element={<HomeOperacao />} />
             <Route path="/modulo-financeiro" element={<HomeFinanceiro />} />
 
-            {/* ROTAS EXISTENTES - OPERACIONAL */}
+            {/* RESTANTE DAS ROTAS (mantive tudo igual) */}
             <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
             <Route path="/cliente-divisao" element={<ClienteDivisao open={sidebarOpen} />} />
             <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
@@ -227,7 +221,6 @@ export default function App() {
             <Route path="/historico-ocorrencia" element={<HistoricoOcorrencia open={sidebarOpen} />} />
             <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
             <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
-
             <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 
             {/* CLIENTE */}
@@ -311,25 +304,9 @@ export default function App() {
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
 
-            {/* ROTA CORINGA: apenas mensagem padrão, sem Dashboard */}
-            <Route
-              path="*"
-              element={
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  {bgLogo && (
-                    <img
-                      src={bgLogo}
-                      alt="Marca d’água"
-                      className="opacity-40 mb-4"
-                      style={{ width: "220px" }}
-                    />
-                  )}
-                  <span className="italic text-lg">
-                    Selecione a Opção Desejada
-                  </span>
-                </div>
-              }
-            />
+            {/* ROTA CORINGA */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+
           </Routes>
         </main>
       </div>

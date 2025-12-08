@@ -21,11 +21,33 @@ import {
 } from "lucide-react";
 
 export default function HomeModulos() {
-    // Evita logout ao atualizar aba
+
+    // Se não estiver logado → volta para login
     useEffect(() => {
         const user = localStorage.getItem("usuarioNome");
         if (!user) window.location.href = "/login";
     }, []);
+
+    // 🔥 Escuta logout vindo dos módulos abertos em outras abas
+    useEffect(() => {
+        const receberMensagem = (event) => {
+
+            // 🔥 Logout global (somente a aba de MÓDULOS pode disparar)
+            if (event.data?.action === "logout") {
+                localStorage.removeItem("usuarioNome");
+                window.location.href = "/login";
+            }
+
+            // 🔥 Módulo fechado — não faz nada!
+            if (event.data?.action === "modulo-fechado") {
+                console.log("🔎 Módulo fechado — login principal mantido.");
+            }
+        };
+
+        window.addEventListener("message", receberMensagem);
+        return () => window.removeEventListener("message", receberMensagem);
+    }, []);
+
 
     const modulos = [
         { nome: "Operação", rota: "/modulo-operacao", icon: <Truck size={36} />, ativo: true },
@@ -52,24 +74,25 @@ export default function HomeModulos() {
             alert("🚧 Este módulo ainda não está disponível.");
             return;
         }
+
+        // Abre em nova aba com proteção
         window.open(modulo.rota, modulo.nome, "noopener,noreferrer");
     };
 
     return (
         <div className="p-6 pt-4">
 
-            {/* ================= HEADER SUPERIOR ================= */}
+            {/* ========== HEADER SUPERIOR ========== */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-700">
                     Mantran Web
                 </h1>
 
-                {/* Botão Logout */}
+                {/* 🔥 BOTÃO LOGOUT CORRIGIDO */}
                 <button
                     onClick={() => {
                         localStorage.removeItem("usuarioNome");
-                        window.close(); // fecha aba do módulo
-                        window.location.href = "/login"; // fallback
+                        window.location.href = "/login"; // volta para tela login
                     }}
                     className="flex items-center gap-2 bg-red-600 hover:bg-red-700 
                                text-white px-4 py-2 rounded-lg shadow"
@@ -78,7 +101,7 @@ export default function HomeModulos() {
                 </button>
             </div>
 
-            {/* ================= GRID DE MÓDULOS ================= */}
+            {/* ========== GRID DE MÓDULOS ========== */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 {modulos.map((m, idx) => (
                     <div

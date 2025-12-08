@@ -1096,7 +1096,18 @@ export default function Sidebar({ open }) {
         <div className="absolute bottom-4 left-0 w-full flex justify-center">
           <button
             onClick={() => {
-              if (typeof window.onLogout === "function") window.onLogout();
+              // remove login
+              //  NÃO remove o login global
+              // localStorage.removeItem("usuarioNome");
+
+              // avisa a guia principal que o usuário saiu do módulo
+              if (window.opener) {
+                window.opener.postMessage({ action: "modulo-fechado" }, "*");
+              }
+
+              // fecha a guia do módulo
+              window.close();
+
             }}
             className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-full shadow transition"
             title="Sair do sistema"
@@ -1104,6 +1115,7 @@ export default function Sidebar({ open }) {
             <LogOut className="w-5 h-5" />
           </button>
         </div>
+
       </aside>
 
       {showAlterarSenha && (
