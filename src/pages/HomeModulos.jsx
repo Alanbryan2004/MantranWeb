@@ -51,7 +51,7 @@ export default function HomeModulos() {
 
     const modulos = [
         { nome: "Operação", rota: "/modulo-operacao", icon: <Truck size={36} />, ativo: true },
-        { nome: "Financeiro", rota: "/modulo-financeiro", icon: <DollarSign size={36} />, ativo: false },
+        { nome: "Financeiro", rota: "/modulo-financeiro", icon: <DollarSign size={36} />, ativo: true },
         { nome: "EDI", rota: "/modulo-edi", icon: <FileCode size={36} />, ativo: false },
         { nome: "EDI XML", rota: "/modulo-edi-xml", icon: <FileCode size={36} />, ativo: false },
         { nome: "Oficina", rota: "/modulo-oficina", icon: <Wrench size={36} />, ativo: false },
