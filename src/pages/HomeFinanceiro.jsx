@@ -10,14 +10,8 @@ export default function HomeFinanceiro() {
     }, [setIconColor]);
 
     return (
-        <main className="flex-1 p-4 overflow-auto">
-            <h1 className="text-2xl font-bold text-green-700 mb-2">
-                Módulo Financeiro
-            </h1>
+        <main className="flex-1 p-4 overflow-auto mt-4 ml-4">
 
-            <p className="text-gray-600">
-                Selecione uma opção na barra lateral.
-            </p>
         </main>
     );
 }
