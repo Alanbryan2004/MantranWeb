@@ -372,9 +372,8 @@ export default function Motorista({ open }) {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       {/* Título */}
       <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
@@ -385,21 +384,19 @@ export default function Motorista({ open }) {
       <div className="flex border-b border-gray-300 bg-white">
         <button
           onClick={() => setActiveTab("cadastro")}
-          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${
-            activeTab === "cadastro"
+          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === "cadastro"
               ? "bg-white text-red-700 border-gray-300"
               : "bg-gray-100 text-gray-600 border-transparent"
-          }`}
+            }`}
         >
           Cadastro
         </button>
         <button
           onClick={() => setActiveTab("consulta")}
-          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ml-1 ${
-            activeTab === "consulta"
+          className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ml-1 ${activeTab === "consulta"
               ? "bg-white text-red-700 border-gray-300"
               : "bg-gray-100 text-gray-600 border-transparent"
-          }`}
+            }`}
         >
           Consulta
         </button>
@@ -410,248 +407,248 @@ export default function Motorista({ open }) {
         {activeTab === "cadastro" ? (
           <>
             {/* CARD 1 - Cadastro (Linhas 1 a 13) */}
-<div className="border border-gray-300 rounded p-2 bg-white space-y-2">
+            <div className="border border-gray-300 rounded p-2 bg-white space-y-2">
 
-  {/* Linha 1 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Tipo Motorista</Label>
-    <Sel className="col-span-2" value={form.tipoMotorista} onChange={handleChange("tipoMotorista")}>
-      <option value="Frota">Frota</option>
-      <option value="Agregado">Agregado</option>
-    </Sel>
+              {/* Linha 1 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Tipo Motorista</Label>
+                <Sel className="col-span-2" value={form.tipoMotorista} onChange={handleChange("tipoMotorista")}>
+                  <option value="Frota">Frota</option>
+                  <option value="Agregado">Agregado</option>
+                </Sel>
 
-    <Label className="text-right col-span-1">CPF</Label>
-    <Txt className="col-span-2" value={form.cpfCnpj} onChange={handleChange("cpfCnpj")} />
-    
-    <Label className="text-right col-span-1">Data Nasc.</Label>
-    <Txt type="date" className="col-span-2" value={form.dataNasc} onChange={handleChange("dataNasc")} />
+                <Label className="text-right col-span-1">CPF</Label>
+                <Txt className="col-span-2" value={form.cpfCnpj} onChange={handleChange("cpfCnpj")} />
 
-    <Label className="text-right col-span-1">Função</Label>
-    <div className="col-span-2 flex gap-4">
-      <label className="flex items-center gap-1 text-[12px]">
-        <input type="radio" value="M" checked={form.funcao==="M"} onChange={handleChange("funcao")} />
-        Motorista
-      </label>
-      <label className="flex items-center gap-1 text-[12px]">
-        <input type="radio" value="A" checked={form.funcao==="A"} onChange={handleChange("funcao")} />
-        Ajudante
-      </label>
-    </div>
-  </div>
+                <Label className="text-right col-span-1">Data Nasc.</Label>
+                <Txt type="date" className="col-span-2" value={form.dataNasc} onChange={handleChange("dataNasc")} />
 
-  {/* Linha 2 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">CNH</Label>
-    <Txt className="col-span-2" value={form.cnh} onChange={handleChange("cnh")} />
+                <Label className="text-right col-span-1">Função</Label>
+                <div className="col-span-2 flex gap-4">
+                  <label className="flex items-center gap-1 text-[12px]">
+                    <input type="radio" value="M" checked={form.funcao === "M"} onChange={handleChange("funcao")} />
+                    Motorista
+                  </label>
+                  <label className="flex items-center gap-1 text-[12px]">
+                    <input type="radio" value="A" checked={form.funcao === "A"} onChange={handleChange("funcao")} />
+                    Ajudante
+                  </label>
+                </div>
+              </div>
 
-    <Label className="text-right col-span-1">Categoria</Label>
-    <Sel className="col-span-2" value={form.categoria} onChange={handleChange("categoria")}>
-      <option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
-    </Sel>
+              {/* Linha 2 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">CNH</Label>
+                <Txt className="col-span-2" value={form.cnh} onChange={handleChange("cnh")} />
 
-    <Label className="text-right col-span-1">Sexo</Label>
-    <Sel className="col-span-2" value={form.sexo} onChange={handleChange("sexo")}>
-      <option></option><option value="M">Masculino</option><option value="F">Feminino</option>
-    </Sel>
+                <Label className="text-right col-span-1">Categoria</Label>
+                <Sel className="col-span-2" value={form.categoria} onChange={handleChange("categoria")}>
+                  <option></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+                </Sel>
 
-    <Label className="text-right col-span-1">Validade</Label>
-    <Txt type="date" className="col-span-2" value={form.validadeCnh} onChange={handleChange("validadeCnh")} />
-  </div>
+                <Label className="text-right col-span-1">Sexo</Label>
+                <Sel className="col-span-2" value={form.sexo} onChange={handleChange("sexo")}>
+                  <option></option><option value="M">Masculino</option><option value="F">Feminino</option>
+                </Sel>
 
- 
-
-  {/* Linha 3 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Apelido</Label>
-    <Txt className="col-span-2" value={form.apelido} onChange={handleChange("apelido")} />
-
-    <Label className="text-right col-span-1">Nome Motorista</Label>
-    <Txt className="col-span-6" value={form.nome} onChange={handleChange("nome")} />
-  </div>
-
-  {/* Linha 4 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    
-
-    
-
-    
-  </div>
-
-  {/* Linha 6 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">CEP</Label>
-    <Txt className="col-span-2" value={form.cep} onChange={handleChange("cep")} onBlur={handleCepBlur} />
-
-    <Label className="text-right col-span-1">Endereço</Label>
-    <Txt className="col-span-6" value={form.endereco} onChange={handleChange("endereco")} />
-
-    <Label className="text-right col-span-1">Nº</Label>
-    <Txt className="col-span-1" value={form.numero} onChange={handleChange("numero")} />
-  </div>
-
-  {/* Linha 7 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Bairro</Label>
-    <Txt className="col-span-2" value={form.bairro} onChange={handleChange("bairro")} />
-
-    <Label className="text-right col-span-1">Cidade</Label>
-    <Txt className="col-span-6" value={form.cidade} onChange={handleChange("cidade")} />
-
-    <Label className="text-right col-span-1">UF</Label>
-    <Sel className="col-span-1" value={form.uf} onChange={handleChange("uf")}>
-      {ufs.map(uf => <option key={uf}>{uf}</option>)}
-    </Sel>
-  </div>
-
-  {/* Linha 8 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Celular</Label>
-    <Txt className="col-span-2" value={form.celular} onChange={handleChange("celular")} />
-
-    <Label className="text-right col-span-1">Telefone</Label>
-    <Txt className="col-span-3" value={form.telefone} onChange={handleChange("telefone")} />
-
-    <Label className="text-right col-span-2">Radio</Label>
-    <Txt className="col-span-1" value={form.radio} onChange={handleChange("radio")} />
-
-    <Label className="text-right col-span-1">ID Radio</Label>
-    <Txt className="col-span-1" value={form.idRadio} onChange={handleChange("idRadio")} />
-
- 
-  </div>
-
-  {/* Linha 9 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">CNPJ Empresa</Label>
-    <Txt className="col-span-2" placeholder="CNPJ" value={form.cnpjEmpresa} onChange={handleChange("cnpjEmpresa")} />
-
-    <Txt className="col-span-4" value={form.razaoEmpresa} placeholder="Razão Social" onChange={handleChange("razaoEmpresa")} />
-
-    <Label className="text-right col-span-2">Filial</Label>
-    <Sel className="col-span-3" value={form.filial} onChange={handleChange("filial")}>
-      <option></option><option value="001">001 - MANTRAN TECNOLOGIAS LTDA ME</option>
-      <option value="002">002 - MANTRAN TECNOLOGIAS VALINHOS</option>
-    </Sel>
-  </div>
-
-  {/* Linha 10 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Veículo</Label>
-    <Txt className="col-span-2" placeholder="Código" value={form.veiculoCodigo} onChange={handleChange("veiculoCodigo")} />
-    <Txt className="col-span-4" placeholder="Placa / Descrição" value={form.veiculoDescricao} onChange={handleChange("veiculoDescricao")} />
-
-    <Label className="text-right col-span-2">Centro Custo</Label>
-    <Sel className="col-span-3" value={form.centroCusto} onChange={handleChange("centroCusto")}>
-      <option></option><option>Operacional</option><option>Administrativo</option><option>Financeiro</option>
-    </Sel>
-  </div>
-
-  {/* Linha 11 */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="text-right col-span-1">Reboque</Label>
-    <Txt className="col-span-2" placeholder="Código" value={form.reboqueCodigo} onChange={handleChange("reboqueCodigo")} />
-    <Txt className="col-span-4" placeholder="Placa / Descrição" value={form.reboqueDescricao} onChange={handleChange("reboqueDescricao")} />
-    <Label className="text-right col-span-2">Desligamento</Label>
-    <Txt type="date" className="col-span-3" value={form.desligamento} onChange={handleChange("desligamento")} />
-
-    
-  </div>
-
- {/* Linha 12 */}
-<div className="grid grid-cols-12 gap-2 items-center">
-  <Label className="text-right col-span-1">Observação</Label>
-
-  <textarea
-    rows={1}
-    className="col-span-11 border border-gray-300 rounded px-1 py-[2px] text-[13px] h-[26px] resize-none"
-    value={form.observacao}
-    onChange={(e) =>
-      setForm({ ...form, observacao: e.target.value })
-    }
-  />
-</div>
-</div>
+                <Label className="text-right col-span-1">Validade</Label>
+                <Txt type="date" className="col-span-2" value={form.validadeCnh} onChange={handleChange("validadeCnh")} />
+              </div>
 
 
-<div className="flex flex-wrap gap-3 items-center">
 
-  <button
-    title="Documentação e CNH (Comissão, 1ª Habilitação, RENACH, Espelho CNH, MOPP)"
-    onClick={() => setShowCNH(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    CNH
-  </button>
+              {/* Linha 3 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Apelido</Label>
+                <Txt className="col-span-2" value={form.apelido} onChange={handleChange("apelido")} />
 
-  <button
-    title="Dados Pessoais (Pais, Dependentes, PIS, Grau de instrução)"
-    onClick={() => setShowPessoal(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    Pessoal
-  </button>
+                <Label className="text-right col-span-1">Nome Motorista</Label>
+                <Txt className="col-span-6" value={form.nome} onChange={handleChange("nome")} />
+              </div>
 
-  <button
-    title="Financeiro / Impostos (INSS, ISS, Sest/Senat, eSocial, Score, Conta Contábil)"
-    onClick={() => setShowFiscal(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    Fiscal
-  </button>
+              {/* Linha 4 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
 
-  <button
-    title="Informações Trabalhistas (CTPS, Série, Matrícula, Cargo, eSocial)"
-    onClick={() => setShowTrabalhista(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    Trabalhista
-  </button>
 
-  <button
-    title="Dados Bancários (Banco, Agência, Conta Corrente)"
-    onClick={() => setShowBancario(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    Bancário
-  </button>
 
-  <button
-    title="Ocorrências do Motorista"
-    onClick={() => setShowOcorrencia(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    Ocorrência
-  </button>
 
-  <button
-    title="Informações de GRIS"
-    onClick={() => setShowGris(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    GRIS
-  </button>
 
-  <button
-    title="Dados APISUL / Seguro"
-    onClick={() => setShowApisul(true)}
-    className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
-  >
-    APISUL
-  </button>
+              </div>
 
-  {/* ➤ CAMPO INCLUSÃO ALINHADO À DIREITA */}
-  <div className="ml-auto flex items-center gap-2">
-    <Label className="text-right">Inclusão</Label>
-    <Txt
-      type="date"
-      readOnly
-      className="w-[150px] bg-gray-200 text-gray-700 cursor-not-allowed"
-      value={form.inclusao}
-    />
-  </div>
+              {/* Linha 6 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">CEP</Label>
+                <Txt className="col-span-2" value={form.cep} onChange={handleChange("cep")} onBlur={handleCepBlur} />
 
-</div>
+                <Label className="text-right col-span-1">Endereço</Label>
+                <Txt className="col-span-6" value={form.endereco} onChange={handleChange("endereco")} />
+
+                <Label className="text-right col-span-1">Nº</Label>
+                <Txt className="col-span-1" value={form.numero} onChange={handleChange("numero")} />
+              </div>
+
+              {/* Linha 7 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Bairro</Label>
+                <Txt className="col-span-2" value={form.bairro} onChange={handleChange("bairro")} />
+
+                <Label className="text-right col-span-1">Cidade</Label>
+                <Txt className="col-span-6" value={form.cidade} onChange={handleChange("cidade")} />
+
+                <Label className="text-right col-span-1">UF</Label>
+                <Sel className="col-span-1" value={form.uf} onChange={handleChange("uf")}>
+                  {ufs.map(uf => <option key={uf}>{uf}</option>)}
+                </Sel>
+              </div>
+
+              {/* Linha 8 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Celular</Label>
+                <Txt className="col-span-2" value={form.celular} onChange={handleChange("celular")} />
+
+                <Label className="text-right col-span-1">Telefone</Label>
+                <Txt className="col-span-3" value={form.telefone} onChange={handleChange("telefone")} />
+
+                <Label className="text-right col-span-2">Radio</Label>
+                <Txt className="col-span-1" value={form.radio} onChange={handleChange("radio")} />
+
+                <Label className="text-right col-span-1">ID Radio</Label>
+                <Txt className="col-span-1" value={form.idRadio} onChange={handleChange("idRadio")} />
+
+
+              </div>
+
+              {/* Linha 9 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">CNPJ Empresa</Label>
+                <Txt className="col-span-2" placeholder="CNPJ" value={form.cnpjEmpresa} onChange={handleChange("cnpjEmpresa")} />
+
+                <Txt className="col-span-4" value={form.razaoEmpresa} placeholder="Razão Social" onChange={handleChange("razaoEmpresa")} />
+
+                <Label className="text-right col-span-2">Filial</Label>
+                <Sel className="col-span-3" value={form.filial} onChange={handleChange("filial")}>
+                  <option></option><option value="001">001 - MANTRAN TECNOLOGIAS LTDA ME</option>
+                  <option value="002">002 - MANTRAN TECNOLOGIAS VALINHOS</option>
+                </Sel>
+              </div>
+
+              {/* Linha 10 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Veículo</Label>
+                <Txt className="col-span-2" placeholder="Código" value={form.veiculoCodigo} onChange={handleChange("veiculoCodigo")} />
+                <Txt className="col-span-4" placeholder="Placa / Descrição" value={form.veiculoDescricao} onChange={handleChange("veiculoDescricao")} />
+
+                <Label className="text-right col-span-2">Centro Custo</Label>
+                <Sel className="col-span-3" value={form.centroCusto} onChange={handleChange("centroCusto")}>
+                  <option></option><option>Operacional</option><option>Administrativo</option><option>Financeiro</option>
+                </Sel>
+              </div>
+
+              {/* Linha 11 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Reboque</Label>
+                <Txt className="col-span-2" placeholder="Código" value={form.reboqueCodigo} onChange={handleChange("reboqueCodigo")} />
+                <Txt className="col-span-4" placeholder="Placa / Descrição" value={form.reboqueDescricao} onChange={handleChange("reboqueDescricao")} />
+                <Label className="text-right col-span-2">Desligamento</Label>
+                <Txt type="date" className="col-span-3" value={form.desligamento} onChange={handleChange("desligamento")} />
+
+
+              </div>
+
+              {/* Linha 12 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="text-right col-span-1">Observação</Label>
+
+                <textarea
+                  rows={1}
+                  className="col-span-11 border border-gray-300 rounded px-1 py-[2px] text-[13px] h-[26px] resize-none"
+                  value={form.observacao}
+                  onChange={(e) =>
+                    setForm({ ...form, observacao: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+
+            <div className="flex flex-wrap gap-3 items-center">
+
+              <button
+                title="Documentação e CNH (Comissão, 1ª Habilitação, RENACH, Espelho CNH, MOPP)"
+                onClick={() => setShowCNH(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                CNH
+              </button>
+
+              <button
+                title="Dados Pessoais (Pais, Dependentes, PIS, Grau de instrução)"
+                onClick={() => setShowPessoal(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                Pessoal
+              </button>
+
+              <button
+                title="Financeiro / Impostos (INSS, ISS, Sest/Senat, eSocial, Score, Conta Contábil)"
+                onClick={() => setShowFiscal(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                Fiscal
+              </button>
+
+              <button
+                title="Informações Trabalhistas (CTPS, Série, Matrícula, Cargo, eSocial)"
+                onClick={() => setShowTrabalhista(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                Trabalhista
+              </button>
+
+              <button
+                title="Dados Bancários (Banco, Agência, Conta Corrente)"
+                onClick={() => setShowBancario(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                Bancário
+              </button>
+
+              <button
+                title="Ocorrências do Motorista"
+                onClick={() => setShowOcorrencia(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                Ocorrência
+              </button>
+
+              <button
+                title="Informações de GRIS"
+                onClick={() => setShowGris(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                GRIS
+              </button>
+
+              <button
+                title="Dados APISUL / Seguro"
+                onClick={() => setShowApisul(true)}
+                className="border border-gray-300 rounded px-3 h-[28px] text-[12px] bg-white hover:bg-red-50 text-red-700 shadow-sm"
+              >
+                APISUL
+              </button>
+
+              {/* ➤ CAMPO INCLUSÃO ALINHADO À DIREITA */}
+              <div className="ml-auto flex items-center gap-2">
+                <Label className="text-right">Inclusão</Label>
+                <Txt
+                  type="date"
+                  readOnly
+                  className="w-[150px] bg-gray-200 text-gray-700 cursor-not-allowed"
+                  value={form.inclusao}
+                />
+              </div>
+
+            </div>
 
           </>
         ) : (
@@ -673,7 +670,7 @@ export default function Motorista({ open }) {
                   placeholder="___.___.___-__"
                 />
 
-               
+
                 <Label className="col-span-1 text-right">Apelido</Label>
                 <Txt
                   className="col-span-2"
@@ -690,39 +687,39 @@ export default function Motorista({ open }) {
               </div>
 
               {/* Linha 2 - CNPJ Empresa, Razao, Veículo */}
-<div className="grid grid-cols-12 gap-2 items-center">
-  <Label className="col-span-1 text-right">CNPJ Empresa</Label>
-  <Txt
-    className="col-span-2"
-    value={filtros.cnpjEmpresa}
-    onChange={handleFiltroChange("cnpjEmpresa")}
-  />
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 text-right">CNPJ Empresa</Label>
+                <Txt
+                  className="col-span-2"
+                  value={filtros.cnpjEmpresa}
+                  onChange={handleFiltroChange("cnpjEmpresa")}
+                />
 
-  <Txt
-    className="col-span-3"
-    value={filtros.razaoEmpresa}
-    onChange={handleFiltroChange("razaoEmpresa")}
-    placeholder="Razão Social"
-  />
+                <Txt
+                  className="col-span-3"
+                  value={filtros.razaoEmpresa}
+                  onChange={handleFiltroChange("razaoEmpresa")}
+                  placeholder="Razão Social"
+                />
 
-  <Label className="col-span-1 text-right">Veículo</Label>
+                <Label className="col-span-1 text-right">Veículo</Label>
 
-  {/* Código */}
-  <Txt
-    className="col-span-2"
-    value={filtros.veiculoCodigo}
-    onChange={handleFiltroChange("veiculoCodigo")}
-    placeholder="Código"
-  />
+                {/* Código */}
+                <Txt
+                  className="col-span-2"
+                  value={filtros.veiculoCodigo}
+                  onChange={handleFiltroChange("veiculoCodigo")}
+                  placeholder="Código"
+                />
 
-  {/* Placa / Descrição */}
-  <Txt
-    className="col-span-3"
-    value={filtros.veiculoDescricao}
-    onChange={handleFiltroChange("veiculoDescricao")}
-    placeholder="Placa / Descrição"
-  />
-</div>
+                {/* Placa / Descrição */}
+                <Txt
+                  className="col-span-3"
+                  value={filtros.veiculoDescricao}
+                  onChange={handleFiltroChange("veiculoDescricao")}
+                  placeholder="Placa / Descrição"
+                />
+              </div>
 
 
               {/* Linha 3 - Status, Motorista, Função, Data Incl., Botões */}
@@ -774,7 +771,7 @@ export default function Motorista({ open }) {
                   <option value="A">Ajudante</option>
                 </Sel>
 
-                
+
               </div>
 
               {/* Botões Exportar, Limpar, Pesquisar */}
@@ -827,9 +824,8 @@ export default function Motorista({ open }) {
                     {resultadoConsulta.map((m) => (
                       <tr
                         key={m.id}
-                        className={`cursor-pointer hover:bg-gray-50 ${
-                          selectedId === m.id ? "bg-red-50" : ""
-                        }`}
+                        className={`cursor-pointer hover:bg-gray-50 ${selectedId === m.id ? "bg-red-50" : ""
+                          }`}
                         onClick={() => handleSelecionarMotorista(m)}
                       >
                         <td className="border-t border-gray-200 px-2 py-[3px]">
@@ -898,7 +894,7 @@ export default function Motorista({ open }) {
         <div className="flex items-center gap-4">
           {/* FECHAR */}
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
           >
             <XCircle size={18} />

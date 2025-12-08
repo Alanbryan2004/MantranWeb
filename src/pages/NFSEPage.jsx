@@ -236,8 +236,8 @@ export default function NFSEPage({ open }) {
         <button
           onClick={() => setActiveTab("cadastro")}
           className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === "cadastro"
-              ? "bg-white text-red-700 border-gray-300"
-              : "bg-gray-100 text-gray-600 border-transparent"
+            ? "bg-white text-red-700 border-gray-300"
+            : "bg-gray-100 text-gray-600 border-transparent"
             }`}
         >
           Cadastro
@@ -245,8 +245,8 @@ export default function NFSEPage({ open }) {
         <button
           onClick={() => setActiveTab("consulta")}
           className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ml-1 ${activeTab === "consulta"
-              ? "bg-white text-red-700 border-gray-300"
-              : "bg-gray-100 text-gray-600 border-transparent"
+            ? "bg-white text-red-700 border-gray-300"
+            : "bg-gray-100 text-gray-600 border-transparent"
             }`}
         >
           Consulta
@@ -427,8 +427,8 @@ export default function NFSEPage({ open }) {
                       <tr
                         key={linha.id}
                         className={`cursor-pointer ${linhaSelecionadaId === linha.id
-                            ? "bg-blue-50"
-                            : "hover:bg-gray-50"
+                          ? "bg-blue-50"
+                          : "hover:bg-gray-50"
                           }`}
                         onClick={() => setLinhaSelecionadaId(linha.id)}
                       >
@@ -724,7 +724,7 @@ export default function NFSEPage({ open }) {
       <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
         {/* FECHAR */}
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           title="Fechar Tela"
           className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
         >
