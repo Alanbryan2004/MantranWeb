@@ -516,9 +516,9 @@ export default function SidebarFinanceiro({ open }) {
                         {activeMenu === "sac" && (
                             <div className="absolute top-0 left-full bg-white border border-gray-200 
                             shadow-xl rounded-md w-52 p-1 z-[999]">
-                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Nota Fiscal</div>
-                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Conhecimento</div>
-                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Coleta</div>
+                                <Link to="/sac-notafiscal" className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">Nota Fiscal</Link>
+                                <Link to="/sac-conhecimento" className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">Conhecimento</Link>
+                                <Link to="/sac-coleta" className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700">Coleta</Link>
                             </div>
                         )}
                     </div>
