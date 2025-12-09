@@ -42,7 +42,6 @@ export default function SidebarFinanceiro({ open }) {
 
     const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
 
-    // SOCKET.IO
     const [socket, setSocket] = useState(null);
     const usuarioLogado = localStorage.getItem("usuarioNome") || "Financeiro";
 
@@ -70,28 +69,22 @@ export default function SidebarFinanceiro({ open }) {
         });
 
         s.on("novaMensagem", (msg) => {
-            // lógica igual ao módulo operação
             if (msg.de === usuarioLogado || msg.para === usuarioLogado) {
                 setMensagens((prev) => [...prev, msg]);
 
                 if (msg.para === usuarioLogado) {
                     setUsuarios((prev) =>
                         prev.map((u) =>
-                            u.nome === msg.de
-                                ? { ...u, naoLidas: (u.naoLidas || 0) + 1 }
-                                : u
+                            u.nome === msg.de ? { ...u, naoLidas: (u.naoLidas || 0) + 1 } : u
                         )
                     );
                 }
             }
         });
 
-        return () => {
-            s.disconnect();
-        };
+        return () => s.disconnect();
     }, []);
 
-    // enviar mensagem
     const enviarMensagem = () => {
         if (!novaMensagem.trim() || !chatAtivo) return;
 
@@ -114,14 +107,16 @@ export default function SidebarFinanceiro({ open }) {
 
     return (
         <>
-            {/* === SIDEBAR === */}
+            {/* SIDEBAR */}
             <aside
-                className={`bg-white border-r border-gray-200 shadow-lg fixed left-0 top-[48px] h-[calc(100vh-48px)] z-50 transition-all duration-300
-          ${open ? "w-52 translate-x-0" : "w-14 -translate-x-full sm:translate-x-0"}`}
+                className={`bg-white border-r border-gray-200 shadow-lg fixed left-0 top-[48px] 
+                h-[calc(100vh-48px)] z-50 transition-all duration-300 
+                ${open ? "w-52 translate-x-0" : "w-14 -translate-x-full sm:translate-x-0"}`}
             >
-                <nav className="p-2 text-sm text-gray-700">
+                {/* NAV COM ALIGN IGUAL AO SIDEBAR PRINCIPAL */}
+                <nav className="p-2 text-sm text-gray-700 relative">
 
-                    {/* ------------------- CADASTROS ------------------- */}
+                    {/* CADASTROS */}
                     <div
                         className="group relative"
                         onMouseEnter={() => setActiveMenu("cadastros")}
@@ -129,49 +124,54 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("cadastros")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <FileText className={`w-5 h-5 ${iconColor}`} />
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Cadastros</span>
+                                    <span className="ml-3 flex-1 text-left">Cadastros</span>
                                     <ChevronRight
                                         size={14}
-                                        className={`${activeMenu === "cadastros" ? "rotate-90" : ""}`}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "cadastros" ? "rotate-90" : ""}`}
                                     />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "cadastros" && (
-                            <div className="absolute top-0 left-full w-56 bg-white border shadow-xl rounded-md p-1">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-52 p-1 z-[999]">
+
                                 {[
-                                    "Banco",
-                                    "Agência",
-                                    "Conta Corrente",
-                                    "Cliente",
-                                    "Categoria",
-                                    "CFOP",
-                                    "Condição Pagamento",
-                                    "Centro de Custo",
-                                    "Produto",
-                                    "Moeda",
-                                    "Fornecedor",
-                                    "Fornecedor Produto",
-                                    "Tipos de Pagamento",
+                                    { label: "Banco", rota: "#" },
+                                    { label: "Agência", rota: "#" },
+                                    { label: "Conta Corrente", rota: "#" },
+                                    { label: "Cliente", rota: "/cliente" },
+                                    { label: "Categoria", rota: "#" },
+                                    { label: "CFOP", rota: "/cfop" },
+                                    { label: "Condição Pagamento", rota: "#" },
+                                    { label: "Centro de Custo", rota: "#" },
+                                    { label: "Produto", rota: "/produto" },
+                                    { label: "Moeda", rota: "#" },
+                                    { label: "Fornecedor", rota: "#" },
+                                    { label: "Fornecedor Produto", rota: "#" },
+                                    { label: "Tipos de Pagamento", rota: "#" },
                                 ].map((item) => (
-                                    <div
-                                        key={item}
-                                        className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer"
+                                    <Link
+                                        key={item.label}
+                                        to={item.rota}
+                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
                                     >
-                                        {item}
-                                    </div>
+                                        {item.label}
+                                    </Link>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* ------------------- FATURAMENTO ------------------- */}
+                    {/* FATURAMENTO */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("faturamento")}
@@ -179,32 +179,44 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("faturamento")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <DollarSign className={`w-5 h-5 ${iconColor}`} />
+
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Faturamento</span>
+                                    <span className="ml-3 flex-1 text-left">Faturamento</span>
                                     <ChevronRight
                                         size={14}
-                                        className={`${activeMenu === "faturamento" ? "rotate-90" : ""}`}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "faturamento" ? "rotate-90" : ""}`}
                                     />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "faturamento" && (
-                            <div className="absolute top-0 left-full w-56 bg-white border shadow-xl rounded-md p-1">
-                                {["Manual", "Automático", "Por Conhecimento"].map((item) => (
-                                    <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
-                                        {item}
-                                    </div>
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-52 p-1 z-[999]">
+                                {[
+                                    { label: "Manual", rota: "/faturamento" },
+                                    { label: "Automático", rota: "/faturamento-automatico" },
+                                    { label: "Por Conhecimento", rota: "#" },
+                                ].map((item) => (
+                                    <Link
+                                        key={item.label}
+                                        to={item.rota}
+                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
+                                    >
+                                        {item.label}
+                                    </Link>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* ------------------- BOLETO ------------------- */}
+                    {/* BOLETO */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("boleto")}
@@ -212,30 +224,37 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("boleto")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <Receipt className={`w-5 h-5 ${iconColor}`} />
+
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Boleto</span>
-                                    <ChevronRight size={14} className={`${activeMenu === "boleto" ? "rotate-90" : ""}`} />
+                                    <span className="ml-3 flex-1 text-left">Boleto</span>
+                                    <ChevronRight
+                                        size={14}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "boleto" ? "rotate-90" : ""}`}
+                                    />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "boleto" && (
-                            <div className="absolute top-0 left-full w-56 bg-white border shadow-xl rounded-md p-1">
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-52 p-1 z-[999]">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Geração de Boleto/Remessa
                                 </div>
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Arquivo Retorno / Leitura
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* ------------------- CONTAS A PAGAR ------------------- */}
+                    {/* CONTAS A PAGAR */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("pagar")}
@@ -243,20 +262,27 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("pagar")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <DollarSign className={`w-5 h-5 ${iconColor}`} />
 
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Contas a Pagar</span>
-                                    <ChevronRight size={14} className={`${activeMenu === "pagar" ? "rotate-90" : ""}`} />
+                                    <span className="ml-3 flex-1 text-left">Contas a Pagar</span>
+                                    <ChevronRight
+                                        size={14}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "pagar" ? "rotate-90" : ""}`}
+                                    />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "pagar" && (
-                            <div className="absolute top-0 left-full w-60 bg-white border shadow-xl rounded-md p-1">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-60 p-1 z-[999]">
+
                                 {[
                                     "Títulos",
                                     "Baixa de Títulos (Lote)",
@@ -264,7 +290,8 @@ export default function SidebarFinanceiro({ open }) {
                                     "Arquivo de Retorno",
                                     "Nota Fiscal - Compra",
                                 ].map((item) => (
-                                    <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                    <div key={item}
+                                        className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                         {item}
                                     </div>
                                 ))}
@@ -272,7 +299,7 @@ export default function SidebarFinanceiro({ open }) {
                         )}
                     </div>
 
-                    {/* ------------------- CONTAS A RECEBER ------------------- */}
+                    {/* CONTAS A RECEBER */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("receber")}
@@ -280,26 +307,35 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("receber")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <DollarSign className={`w-5 h-5 ${iconColor}`} />
+
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Contas a Receber</span>
-                                    <ChevronRight size={14} className={`${activeMenu === "receber" ? "rotate-90" : ""}`} />
+                                    <span className="ml-3 flex-1 text-left">Contas a Receber</span>
+                                    <ChevronRight
+                                        size={14}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "receber" ? "rotate-90" : ""}`}
+                                    />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "receber" && (
-                            <div className="absolute top-0 left-full w-60 bg-white border shadow-xl rounded-md p-1">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-60 p-1 z-[999]">
+
                                 {[
                                     "Títulos",
                                     "Baixa de Título (Lote)",
                                     "Protesto de Duplicatas",
                                     "Cancelar Duplicatas",
                                 ].map((item) => (
-                                    <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                    <div key={item}
+                                        className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                         {item}
                                     </div>
                                 ))}
@@ -307,37 +343,38 @@ export default function SidebarFinanceiro({ open }) {
                         )}
                     </div>
 
-                    {/* ------------------- RELATÓRIOS ------------------- */}
+                    {/* RELATÓRIOS */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("relatorios")}
-                        onMouseLeave={() => {
-                            setActiveMenu(null);
-                            setActiveSubMenu(null);
-                        }}
+                        onMouseLeave={() => setActiveMenu(null)}
                     >
                         <button
                             onClick={() => toggleMenu("relatorios")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <BarChart3 className={`w-5 h-5 ${iconColor}`} />
+
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Relatórios</span>
+                                    <span className="ml-3 flex-1 text-left">Relatórios</span>
                                     <ChevronRight
                                         size={14}
-                                        className={`${activeMenu === "relatorios" ? "rotate-90" : ""}`}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "relatorios" ? "rotate-90" : ""}`}
                                     />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "relatorios" && (
-                            <div className="absolute top-0 left-full w-60 bg-white border shadow-xl rounded-md p-1">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-60 p-1 z-[999]">
 
-                                {/* Subgrupo Contas a Pagar */}
+                                {/* PAGAR */}
                                 <div
-                                    className="relative px-3 py-1 hover:bg-gray-100 rounded cursor-pointer"
+                                    className="relative px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
                                     onMouseEnter={() => setActiveSubMenu("rel-pagar")}
                                 >
                                     Contas a Pagar
@@ -345,7 +382,9 @@ export default function SidebarFinanceiro({ open }) {
                                 </div>
 
                                 {activeSubMenu === "rel-pagar" && (
-                                    <div className="absolute left-full top-0 w-60 bg-white border shadow-xl rounded-md p-1">
+                                    <div className="absolute left-full top-0 bg-white border border-gray-200 
+                                    shadow-xl rounded-md w-60 p-1 z-[999]">
+
                                         {[
                                             "Títulos em Aberto",
                                             "Títulos Pagos",
@@ -353,16 +392,17 @@ export default function SidebarFinanceiro({ open }) {
                                             "Fluxo de Vencimentos",
                                             "Títulos Gerais",
                                         ].map((item) => (
-                                            <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                            <div key={item}
+                                                className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                                 {item}
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
-                                {/* Subgrupo Contas a Receber */}
+                                {/* RECEBER */}
                                 <div
-                                    className="relative px-3 py-1 hover:bg-gray-100 rounded cursor-pointer"
+                                    className="relative px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
                                     onMouseEnter={() => setActiveSubMenu("rel-receber")}
                                 >
                                     Contas a Receber
@@ -370,7 +410,9 @@ export default function SidebarFinanceiro({ open }) {
                                 </div>
 
                                 {activeSubMenu === "rel-receber" && (
-                                    <div className="absolute left-full top-0 w-60 bg-white border shadow-xl rounded-md p-1">
+                                    <div className="absolute left-full top-0 bg-white border border-gray-200 
+                                    shadow-xl rounded-md w-60 p-1 z-[999]">
+
                                         {[
                                             "Títulos Recebidos",
                                             "Títulos em Aberto",
@@ -379,16 +421,17 @@ export default function SidebarFinanceiro({ open }) {
                                             "Doctos Recebidos",
                                             "Títulos Gerais",
                                         ].map((item) => (
-                                            <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                            <div key={item}
+                                                className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                                 {item}
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
-                                {/* Subgrupo Faturamento */}
+                                {/* FATURAMENTO */}
                                 <div
-                                    className="relative px-3 py-1 hover:bg-gray-100 rounded cursor-pointer"
+                                    className="relative px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
                                     onMouseEnter={() => setActiveSubMenu("rel-fat")}
                                 >
                                     Faturamento
@@ -396,7 +439,9 @@ export default function SidebarFinanceiro({ open }) {
                                 </div>
 
                                 {activeSubMenu === "rel-fat" && (
-                                    <div className="absolute left-full top-0 w-60 bg-white border shadow-xl rounded-md p-1">
+                                    <div className="absolute left-full top-0 bg-white border border-gray-200 
+                                    shadow-xl rounded-md w-60 p-1 z-[999]">
+
                                         {[
                                             "Faturamento Geral",
                                             "Faturas Emitidas",
@@ -407,44 +452,43 @@ export default function SidebarFinanceiro({ open }) {
                                             "Demonstrativo de Resultado",
                                             "Balancete",
                                         ].map((item) => (
-                                            <div key={item} className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                            <div key={item}
+                                                className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                                 {item}
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
-                                {/* Subgrupo Fluxo de Caixa */}
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Fluxo de Caixa
                                 </div>
 
-                                {/* Subgrupo Categorias */}
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Categorias
                                 </div>
 
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Histórico Financeiro
                                 </div>
 
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
                                     Fornecedor
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* ------------------- ORÇAMENTO ------------------- */}
+                    {/* ORÇAMENTO */}
                     <Link
-                        className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700"
+                        className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1 text-gray-700 transition"
                         to="#"
                     >
                         <BarChart3 className={`w-5 h-5 ${iconColor}`} />
-                        {open && <span className="ml-3">Orçamento</span>}
+                        {open && <span className="ml-3 text-left">Orçamento</span>}
                     </Link>
 
-                    {/* ------------------- SAC ------------------- */}
+                    {/* SAC */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("sac")}
@@ -452,37 +496,34 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("sac")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <Headphones className={`w-5 h-5 ${iconColor}`} />
 
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">SAC</span>
+                                    <span className="ml-3 flex-1 text-left">SAC</span>
                                     <ChevronRight
                                         size={14}
-                                        className={`${activeMenu === "sac" ? "rotate-90" : ""}`}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "sac" ? "rotate-90" : ""}`}
                                     />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "sac" && (
-                            <div className="absolute top-0 left-full w-56 bg-white border shadow-xl rounded-md p-1">
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
-                                    Nota Fiscal
-                                </div>
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
-                                    Conhecimento
-                                </div>
-                                <div className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer">
-                                    Coleta
-                                </div>
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-52 p-1 z-[999]">
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Nota Fiscal</div>
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Conhecimento</div>
+                                <div className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">Coleta</div>
                             </div>
                         )}
                     </div>
 
-                    {/* ------------------- USUÁRIO ------------------- */}
+                    {/* USUÁRIO */}
                     <div
                         className="group relative mt-1"
                         onMouseEnter={() => setActiveMenu("usuario")}
@@ -490,25 +531,28 @@ export default function SidebarFinanceiro({ open }) {
                     >
                         <button
                             onClick={() => toggleMenu("usuario")}
-                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md"
+                            className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                            rounded-md transition"
                         >
                             <UserCircle2 className={`w-5 h-5 ${iconColor}`} />
 
                             {open && (
                                 <>
-                                    <span className="ml-3 flex-1">Usuário</span>
+                                    <span className="ml-3 flex-1 text-left">Usuário</span>
                                     <ChevronRight
                                         size={14}
-                                        className={`${activeMenu === "usuario" ? "rotate-90" : ""}`}
+                                        className={`text-gray-500 transition-transform 
+                                        ${activeMenu === "usuario" ? "rotate-90" : ""}`}
                                     />
                                 </>
                             )}
                         </button>
 
                         {activeMenu === "usuario" && (
-                            <div className="absolute top-0 left-full bg-white border shadow-xl rounded-md w-56 p-1">
+                            <div className="absolute top-0 left-full bg-white border border-gray-200 
+                            shadow-xl rounded-md w-56 p-1 z-[999]">
                                 <div
-                                    className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer"
+                                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
                                     onClick={() => setShowAlterarSenha(true)}
                                 >
                                     Alterar Senha
@@ -517,16 +561,19 @@ export default function SidebarFinanceiro({ open }) {
                         )}
                     </div>
 
-                    {/* ------------------- CHAT ------------------- */}
+                    {/* CHAT */}
                     <button
                         onClick={() => setChatOpen(!chatOpen)}
-                        className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1"
+                        className="flex items-center w-full px-2 py-2 hover:bg-gray-100 
+                        rounded-md mt-1 transition"
                     >
                         <MessageSquare className={`w-5 h-5 ${iconColor}`} />
-                        {open && <span className="ml-3">Chat</span>}
+                        {open && <span className="ml-3 flex-1 text-left">Chat</span>}
 
                         {contatosComMensagensNaoLidas > 0 && (
-                            <span className="ml-auto bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full">
+                            <span
+                                className="ml-auto bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full"
+                            >
                                 {contatosComMensagensNaoLidas}
                             </span>
                         )}
@@ -542,32 +589,37 @@ export default function SidebarFinanceiro({ open }) {
                             }
                             window.close();
                         }}
-                        className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-full shadow"
+                        className="bg-red-700 hover:bg-red-800 text-white p-3 rounded-full shadow transition"
                     >
                         <LogOut className="w-5 h-5" />
                     </button>
                 </div>
             </aside>
 
+            {/* MODAL ALTERAR SENHA */}
             {showAlterarSenha && (
                 <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
             )}
 
             {/* CHAT */}
             {chatOpen && (
-                <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] bg-white border-l shadow-xl z-50 flex flex-col">
+                <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] 
+                bg-white border-l border-gray-200 shadow-2xl z-50 flex flex-col">
                     <div className="flex justify-between items-center p-3 border-b">
-                        <h2 className="text-sm font-semibold">
+                        <h2 className="font-semibold text-gray-700 text-sm">
                             {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
                         </h2>
                         <button
-                            onClick={() => (chatAtivo ? setChatAtivo(null) : setChatOpen(false))}
-                            className="text-red-600"
+                            onClick={() =>
+                                chatAtivo ? setChatAtivo(null) : setChatOpen(false)
+                            }
+                            className="text-red-700 hover:text-black"
                         >
                             <X size={16} />
                         </button>
                     </div>
 
+                    {/* LISTA */}
                     {!chatAtivo && (
                         <div className="flex-1 overflow-y-auto">
                             {usuarios.map((u) => (
@@ -581,7 +633,8 @@ export default function SidebarFinanceiro({ open }) {
                                             )
                                         );
                                     }}
-                                    className="px-3 py-2 border-b hover:bg-gray-50 cursor-pointer relative"
+                                    className="relative flex items-center justify-between px-3 py-2 
+                                    hover:bg-gray-50 cursor-pointer border-b"
                                 >
                                     <div className="flex items-center gap-2">
                                         {u.online ? (
@@ -589,23 +642,24 @@ export default function SidebarFinanceiro({ open }) {
                                         ) : (
                                             <Circle className="text-gray-400 w-3 h-3" />
                                         )}
-                                        <span className="text-sm font-medium">{u.nome}</span>
-
-                                        {u.naoLidas > 0 && (
-                                            <span className="absolute right-3 bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full">
-                                                {u.naoLidas}
-                                            </span>
-                                        )}
+                                        <span className="font-medium text-sm">{u.nome}</span>
                                     </div>
 
-                                    <div className="text-xs text-gray-500 truncate">{u.ultimaMsg}</div>
+                                    {u.naoLidas > 0 && (
+                                        <span
+                                            className="bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full"
+                                        >
+                                            {u.naoLidas}
+                                        </span>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
 
+                    {/* CHAT INDIVIDUAL */}
                     {chatAtivo && (
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col flex-1">
                             <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
                                 {mensagens
                                     .filter(
@@ -616,15 +670,16 @@ export default function SidebarFinanceiro({ open }) {
                                     .map((m, i) => (
                                         <div
                                             key={i}
-                                            className={`mb-2 flex ${m.de === usuarioLogado ? "justify-end" : "justify-start"
+                                            className={`mb-2 flex ${m.de === usuarioLogado
+                                                ? "justify-end"
+                                                : "justify-start"
                                                 }`}
                                         >
                                             <div
-                                                className={`px-3 py-1 rounded-lg shadow-sm max-w-[80%] 
-                          ${m.de === usuarioLogado
+                                                className={`inline-block max-w-[80%] rounded-lg px-3 py-1 shadow-sm 
+                                                ${m.de === usuarioLogado
                                                         ? "bg-green-700 text-white"
-                                                        : "bg-gray-200 text-gray-800"
-                                                    }`}
+                                                        : "bg-gray-200 text-gray-800"}`}
                                             >
                                                 {m.texto}
                                                 <div className="text-[10px] mt-1 opacity-70 text-right">
@@ -635,13 +690,13 @@ export default function SidebarFinanceiro({ open }) {
                                     ))}
                             </div>
 
-                            <div className="flex p-2 gap-2 border-t relative">
+                            <div className="flex border-t p-2 gap-2 relative">
                                 <input
                                     type="text"
                                     value={novaMensagem}
                                     onChange={(e) => setNovaMensagem(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && enviarMensagem()}
-                                    placeholder="Digite uma mensagem..."
+                                    placeholder={`Mensagem para ${chatAtivo.nome}...`}
                                     className="flex-1 border rounded px-2 py-1 text-sm"
                                 />
 
@@ -653,7 +708,7 @@ export default function SidebarFinanceiro({ open }) {
                                 </button>
 
                                 {mostrarEmoji && (
-                                    <div className="absolute bottom-10 right-14 shadow-lg z-50">
+                                    <div className="absolute bottom-10 right-14 z-50 shadow-lg">
                                         <EmojiPicker
                                             onEmojiClick={(emojiData) => {
                                                 setNovaMensagem((prev) => prev + emojiData.emoji);

@@ -22,23 +22,23 @@ export default function Parametro() {
   const [exibirDashboard, setExibirDashboard] = useState(true);
   const [corFundo, setCorFundo] = useState("#f3f4f6");
   const [abrirModalTaxas, setAbrirModalTaxas] = useState(false);
-const { atalhos, adicionarAtalho, removerAtalho, restaurarPadrao } = useMenuRapido();
-const [showMenuRapido, setShowMenuRapido] = useState(false);
+  const { atalhos, adicionarAtalho, removerAtalho, restaurarPadrao } = useMenuRapido();
+  const [showMenuRapido, setShowMenuRapido] = useState(false);
 
-const opcoesMenuRapido = [
-  { label: "Viagem", rota: "/viagem", icone: "fa-truck-fast" },
-  { label: "NFSe", rota: "/nfse", icone: "fa-file-invoice" },
-  { label: "CTe", rota: "/cte", icone: "fa-file-lines" },
-  { label: "Coleta", rota: "/coleta", icone: "fa-boxes-packing" },
-  { label: "Manifesto", rota: "/manifesto", icone: "fa-file-contract" },
-  { label: "Minuta", rota: "/minuta", icone: "fa-file-pen" },
-  { label: "Veículo", rota: "/veiculo", icone: "fa-truck" },
-  { label: "Motorista", rota: "/motorista", icone: "fa-id-card" },
-  { label: "Agregado", rota: "/empresa-agregado", icone: "fa-people-carry-box" },
-  { label: "Cliente", rota: "/cliente", icone: "fa-user-tie" },
-  { label: "Fatura", rota: "/faturamento", icone: "fa-file-invoice-dollar" },
-  { label: "Dashboard", rota: "/dashboard-shopee", icone: "fa-chart-line" },
-];
+  const opcoesMenuRapido = [
+    { label: "Viagem", rota: "/viagem", icone: "fa-truck-fast" },
+    { label: "NFSe", rota: "/nfse", icone: "fa-file-invoice" },
+    { label: "CTe", rota: "/cte", icone: "fa-file-lines" },
+    { label: "Coleta", rota: "/coleta", icone: "fa-boxes-packing" },
+    { label: "Manifesto", rota: "/manifesto", icone: "fa-file-contract" },
+    { label: "Minuta", rota: "/minuta", icone: "fa-file-pen" },
+    { label: "Veículo", rota: "/veiculo", icone: "fa-truck" },
+    { label: "Motorista", rota: "/motorista", icone: "fa-id-card" },
+    { label: "Agregado", rota: "/empresa-agregado", icone: "fa-people-carry-box" },
+    { label: "Cliente", rota: "/cliente", icone: "fa-user-tie" },
+    { label: "Fatura", rota: "/faturamento", icone: "fa-file-invoice-dollar" },
+    { label: "Dashboard", rota: "/dashboard-shopee", icone: "fa-chart-line" },
+  ];
 
   // === CONTEXTO UNIFICADO ===
   const {
@@ -151,62 +151,62 @@ const opcoesMenuRapido = [
       </div>
 
       {/* MENU RÁPIDO (COMBOBOX CLEAN) */}
-<div className="mt-4">
-  <label className="w-[140px] text-right text-sm font-medium text-gray-700">
-    Menu Rápido:
-  </label>
+      <div className="mt-4">
+        <label className="w-[140px] text-right text-sm font-medium text-gray-700">
+          Menu Rápido:
+        </label>
 
-  <div className="relative mt-1">
-    <button
-      onClick={() => setShowMenuRapido((prev) => !prev)}
-      className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
-    >
-      Selecionar Atalhos
-      <span className="text-gray-500">▼</span>
-    </button>
+        <div className="relative mt-1">
+          <button
+            onClick={() => setShowMenuRapido((prev) => !prev)}
+            className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
+          >
+            Selecionar Atalhos
+            <span className="text-gray-500">▼</span>
+          </button>
 
-    {showMenuRapido && (
-      <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
-        {opcoesMenuRapido.map((op, idx) => {
-          const ativo = atalhos.some((a) => a.rota === op.rota);
+          {showMenuRapido && (
+            <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
+              {opcoesMenuRapido.map((op, idx) => {
+                const ativo = atalhos.some((a) => a.rota === op.rota);
 
-          return (
-            <label
-              key={idx}
-              className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
-            >
-              <input
-                type="checkbox"
-                checked={ativo}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    adicionarAtalho({
-                      id: Date.now(),
-                      label: op.label,
-                      rota: op.rota,
-                      icone: op.icone,
-                    });
-                  } else {
-                    removerAtalho(op.rota); // removendo por rota
-                  }
-                }}
-              />
-              <i className={`fa-solid ${op.icone} text-gray-700`} />
-              {op.label}
-            </label>
-          );
-        })}
+                return (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={ativo}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          adicionarAtalho({
+                            id: Date.now(),
+                            label: op.label,
+                            rota: op.rota,
+                            icone: op.icone,
+                          });
+                        } else {
+                          removerAtalho(op.rota); // removendo por rota
+                        }
+                      }}
+                    />
+                    <i className={`fa-solid ${op.icone} text-gray-700`} />
+                    {op.label}
+                  </label>
+                );
+              })}
 
-        <button
-          onClick={restaurarPadrao}
-          className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
-        >
-          Restaurar Padrão
-        </button>
+              <button
+                onClick={restaurarPadrao}
+                className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
+              >
+                Restaurar Padrão
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
 
 
       {/* Cor de Fundo */}

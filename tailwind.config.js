@@ -1,12 +1,39 @@
 /** @type {import('tailwindcss').Config} */
+
+// 🔥 Cores adicionais que você quer liberar dinamicamente
+const extraColors = [
+  "rose",
+  "pink",
+  "fuchsia",
+  "purple",
+  "violet",
+];
+
+// Tons que você usa no slider do Parametro.jsx
+const extraShades = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+// Gera automaticamente TODAS as combinações:
+// text-pink-700, hover:text-rose-900, bg-fuchsia-600, hover:bg-violet-800…
+const dynamicSafelist = extraColors.flatMap(color =>
+  extraShades.flatMap(shade => [
+    `text-${color}-${shade}`,
+    `hover:text-${color}-${shade}`,
+    `bg-${color}-${shade}`,
+    `hover:bg-${color}-${shade}`,
+  ])
+);
+
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
 
-  // 🔥 SAFELIST - Garante que as cores dinâmicas sejam geradas
   safelist: [
+    // ============================================================
+    // 🔥 SAFELIST ORIGINAL — Mantido para 100% de compatibilidade
+    // ============================================================
+
     // Texto dos ícones
     "text-red-700",
     "text-blue-600",
@@ -14,67 +41,43 @@ export default {
     "text-amber-600",
     "text-slate-700",
 
-    // Tons extras (pois você usa slider 100–900)
-    "text-red-100",
-    "text-red-200",
-    "text-red-300",
-    "text-red-400",
-    "text-red-500",
-    "text-red-600",
-    "text-red-700",
-    "text-red-800",
-    "text-red-900",
+    // Tons extras (100–900) — Vermelho
+    ...["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+      .map(n => `text-red-${n}`),
 
-    "text-blue-100",
-    "text-blue-200",
-    "text-blue-300",
-    "text-blue-400",
-    "text-blue-500",
-    "text-blue-600",
-    "text-blue-700",
-    "text-blue-800",
-    "text-blue-900",
+    // Azul
+    ...["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+      .map(n => `text-blue-${n}`),
 
-    "text-emerald-100",
-    "text-emerald-200",
-    "text-emerald-300",
-    "text-emerald-400",
-    "text-emerald-500",
-    "text-emerald-600",
-    "text-emerald-700",
-    "text-emerald-800",
-    "text-emerald-900",
+    // Verde (emerald)
+    ...["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+      .map(n => `text-emerald-${n}`),
 
-    "text-amber-100",
-    "text-amber-200",
-    "text-amber-300",
-    "text-amber-400",
-    "text-amber-500",
-    "text-amber-600",
-    "text-amber-700",
-    "text-amber-800",
-    "text-amber-900",
+    // Laranja (amber)
+    ...["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+      .map(n => `text-amber-${n}`),
 
-    "text-slate-100",
-    "text-slate-200",
-    "text-slate-300",
-    "text-slate-400",
-    "text-slate-500",
-    "text-slate-600",
-    "text-slate-700",
-    "text-slate-800",
-    "text-slate-900",
+    // Cinza (slate)
+    ...["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+      .map(n => `text-slate-${n}`),
 
-    // Preview (bg)
+    // Preview
     "bg-red-700",
     "bg-blue-600",
     "bg-emerald-600",
     "bg-amber-600",
     "bg-slate-700",
+
+    // ============================================================
+    // 🔥 CORES NOVAS — ROSA, PINK, ROSE, PURPLE, VIOLET, FUCHSIA
+    // 🔥 COM HOVER + BG + HOVER:BG
+    // ============================================================
+    ...dynamicSafelist,
   ],
 
   theme: {
     extend: {},
   },
+
   plugins: [],
 };

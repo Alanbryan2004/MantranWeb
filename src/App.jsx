@@ -90,6 +90,9 @@ import IntegracaoMulticte from "./pages/IntegracaoMulticte";
 import HomeModulos from "./pages/HomeModulos";
 import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
+import ParametroFinanceiro from "./pages/ParametroFinanceiro";
+import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
+
 
 import "./index.css";
 
@@ -274,6 +277,15 @@ export default function App() {
 
             {/* PARAMETROS */}
             <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
+            <Route
+              path="/financeiro-parametros"
+              element={
+                <MenuRapidoFinanceiroProvider>
+                  <ParametroFinanceiro open={sidebarOpen} />
+                </MenuRapidoFinanceiroProvider>
+              }
+            />
+
 
             <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
             <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
@@ -306,6 +318,7 @@ export default function App() {
 
             {/* ROTA CORINGA */}
             <Route path="*" element={<Navigate to="/" replace />} />
+
 
           </Routes>
         </main>

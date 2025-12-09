@@ -13,14 +13,14 @@ import {
 
 import Logo from "../assets/logo_mantran.png";
 import { useNotificacao } from "../context/NotificacaoContext";
-import { useMenuRapido } from "../context/MenuRapidoContext";
-import { useIconColor } from "../context/IconColorContext";
+// 🔥 AGORA USA O CONTEXTO DO FINANCEIRO
+import { useMenuRapidoFinanceiro } from "../context/MenuRapidoFinanceiroContext";
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 
-// 🔳 Ícone "Quadradinhos" estilo Google Apps, agora verde para o Financeiro
+// 🔳 Ícone "quadradinhos" estilo Google Apps (verde p/ Financeiro)
 function AppDotsIcon({ size = 20, color = "#15803d" }) {
     const dotSize = size / 5;
     const gap = dotSize * 0.8;
@@ -61,20 +61,23 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
     const navigate = useNavigate();
 
     const { notificacoes, marcarComoLido } = useNotificacao();
-    const { atalhos } = useMenuRapido();
-    const { iconColor } = useIconColor(); // mantém compatibilidade
+
+    // 🔥 Usa o contexto do MENU RÁPIDO FINANCEIRO
+    // Se por algum motivo não tiver Provider, ele não quebra
+    const menuFinanceiro = useMenuRapidoFinanceiro();
+    const atalhos = menuFinanceiro?.atalhos ?? [];
 
     return (
         <>
-            <header className="flex justify-between items-center 
-            bg-white shadow px-6 py-1.5 border-b h-[48px] 
-            fixed top-0 left-0 right-0 z-50">
-
+            <header
+                className="flex justify-between items-center 
+        bg-white shadow px-6 py-1.5 border-b h-[48px] 
+        fixed top-0 left-0 right-0 z-50"
+            >
                 {/* ======================================
-             LADO ESQUERDO
+            LADO ESQUERDO
         ======================================= */}
                 <div className="flex items-center gap-5">
-
                     {/* ABRIR / FECHAR SIDEBAR */}
                     <button
                         onClick={toggleSidebar}
@@ -86,7 +89,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                     {/* LOGO */}
                     <img src={Logo} className="h-7" />
 
-                    {/* MENU RÁPIDO */}
+                    {/* MENU RÁPIDO FINANCEIRO */}
                     <div className="flex gap-8 text-sm ml-6 text-green-700">
                         {atalhos.slice(0, 7).map((item) => (
                             <Link
@@ -102,10 +105,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                 </div>
 
                 {/* ======================================
-             LADO DIREITO
+            LADO DIREITO
         ======================================= */}
                 <div className="flex items-center gap-6">
-
                     {/* 🔔 NOTIFICAÇÕES */}
                     <div className="relative">
                         <button
@@ -118,9 +120,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                         >
                             <Bell size={18} />
 
-                            {notificacoes.some(n => !n.lido) && (
+                            {notificacoes.some((n) => !n.lido) && (
                                 <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-1 rounded-full">
-                                    {notificacoes.filter(n => !n.lido).length}
+                                    {notificacoes.filter((n) => !n.lido).length}
                                 </span>
                             )}
                         </button>
@@ -140,7 +142,10 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                         <div
                                             key={n.id}
                                             className={`flex justify-between px-4 py-2 border-b text-sm 
-                        ${n.lido ? "text-gray-400" : "text-gray-800 bg-gray-50"}`}
+                        ${n.lido
+                                                    ? "text-gray-400"
+                                                    : "text-gray-800 bg-gray-50"
+                                                }`}
                                         >
                                             <div>
                                                 <p className="font-semibold text-green-700">
@@ -268,7 +273,6 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                             </div>
                         )}
                     </div>
-
                 </div>
             </header>
 
