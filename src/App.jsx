@@ -244,9 +244,13 @@ export default function App() {
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
             <Route path="/filial" element={<Filial open={sidebarOpen} />} />
             <Route path="/banco" element={<Banco open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/banco" element={<Banco open={sidebarOpen} />} />
             <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/agencia" element={<Agencia open={sidebarOpen} />} />
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/faturamento" element={<Faturamento open={sidebarOpen} />} />
             <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
 
             <Route path="/localidade-adicional" element={<LocalidadeAdicional open={sidebarOpen} />} />
             <Route path="/cidade" element={<Cidade open={sidebarOpen} />} />
@@ -266,13 +270,9 @@ export default function App() {
             <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
 
             <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
-            <Route
-              path="/financeiro-parametros"
-              element={
-                <MenuRapidoFinanceiroProvider>
-                  <ParametroFinanceiro open={sidebarOpen} />
-                </MenuRapidoFinanceiroProvider>
-              }
+            <Route path="/modulo-financeiro/financeiro-parametros" element={<MenuRapidoFinanceiroProvider>  <ParametroFinanceiro open={sidebarOpen} />
+            </MenuRapidoFinanceiroProvider>
+            }
             />
 
             <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
@@ -284,8 +284,11 @@ export default function App() {
             <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
 
             <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
             <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
             <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
             <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
 
             <Route path="/consulta-sefaz-cte" element={<ConsultaSefazCte open={sidebarOpen} />} />
