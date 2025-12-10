@@ -1,7 +1,7 @@
 // src/pages/ParametroFinanceiro.jsx
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     ChevronLeft,
     CheckCircle,
@@ -18,13 +18,16 @@ import { useMenuRapidoFinanceiro } from "../context/MenuRapidoFinanceiroContext"
 export default function ParametroFinanceiro({ onClose }) {
     const navigate = useNavigate();
 
-    // Função interna para fechar: usa a prop se existir, senão navega para trás
+    // =============================
+    // DEFINIR MÓDULO FINANCEIRO ATIVO
+    // =============================
+    useEffect(() => {
+        localStorage.setItem("mantran_modulo", "financeiro");
+    }, []);
+
     const handleClose = () => {
-        if (onClose) {
-            onClose();
-        } else {
-            navigate(-1);
-        }
+        if (onClose) onClose();
+        else navigate(-1);
     };
 
     // =============================
@@ -44,8 +47,7 @@ export default function ParametroFinanceiro({ onClose }) {
 
         DEFAULT_ICON_COLOR,
         DEFAULT_FOOTER_NORMAL,
-        DEFAULT_FOOTER_HOVER,
-        resetColors,
+        DEFAULT_FOOTER_HOVER
     } = useIconColor();
 
     const {
@@ -62,6 +64,15 @@ export default function ParametroFinanceiro({ onClose }) {
     const [exibirDashboard, setExibirDashboard] = useState(true);
     const [corFundo, setCorFundo] = useState("#f3f4f6");
 
+    const [showMenuRapido, setShowMenuRapido] = useState(false);
+
+    const opcoesMenuRapidoFinanceiro = [
+        { label: "Contas a Pagar", rota: "/fin-contas-pagar", icone: "fa-file-invoice-dollar" },
+        { label: "Contas a Receber", rota: "/fin-contas-receber", icone: "fa-file-lines" },
+        { label: "Faturamento", rota: "/faturamento", icone: "fa-receipt" },
+        { label: "Dashboard Financeiro", rota: "/financeiro-dashboard", icone: "fa-chart-line" },
+    ];
+
     const coresBase = [
         { value: "red", label: "Vermelho" },
         { value: "blue", label: "Azul" },
@@ -71,61 +82,75 @@ export default function ParametroFinanceiro({ onClose }) {
         { value: "pink", label: "Rosa" },
     ];
 
-    // ÍCONES
+    // ================= ICONES =================
     const [corBase, setCorBase] = useState(iconColor.split("-")[1]);
     const [intensidade, setIntensidade] = useState(iconColor.split("-")[2]);
 
-    const atualizarCorIcones = (c, n) => {
-        setCorBase(c);
-        setIntensidade(n);
-        setIconColor(`text-${c}-${n}`);
+    const atualizarCorIcones = (cor, nivel) => {
+        const classe = `text-${cor}-${nivel}`;
+
+        setCorBase(cor);
+        setIntensidade(nivel);
+
+        setIconColor(classe);
+
+        localStorage.setItem("fin_iconColor", classe);
     };
 
-    // RODAPÉ NORMAL
+    // ============== RODAPÉ NORMAL =============
     const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
     const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
 
-    const atualizarRodapeNormal = (c, n) => {
-        setFooterBase(c);
-        setFooterInt(n);
-        setFooterIconColorNormal(`text-${c}-${n}`);
+    const atualizarRodapeNormal = (cor, nivel) => {
+        const classe = `text-${cor}-${nivel}`;
+
+        setFooterBase(cor);
+        setFooterInt(nivel);
+
+        setFooterIconColorNormal(classe);
+        localStorage.setItem("fin_footerNormal", classe);
     };
 
-    // RODAPÉ HOVER
+    // ============== RODAPÉ HOVER =============
     const [footerHoverBase, setFooterHoverBase] = useState(footerIconColorHover.split("-")[1]);
     const [footerHoverInt, setFooterHoverInt] = useState(footerIconColorHover.split("-")[2]);
 
-    const atualizarRodapeHover = (c, n) => {
-        setFooterHoverBase(c);
-        setFooterHoverInt(n);
-        setFooterIconColorHover(`text-${c}-${n}`);
+    const atualizarRodapeHover = (cor, nivel) => {
+        const classe = `text-${cor}-${nivel}`;
+
+        setFooterHoverBase(cor);
+        setFooterHoverInt(nivel);
+
+        setFooterIconColorHover(classe);
+        localStorage.setItem("fin_footerHover", classe);
     };
 
     // =====================================
     // SALVAR / RESETAR
     // =====================================
     const salvar = () => {
-        localStorage.setItem("financeiro_exibirDashboard", exibirDashboard);
-        localStorage.setItem("financeiro_corFundo", corFundo);
-        alert("Parâmetros salvos com sucesso!");
+        localStorage.setItem("fin_exibirDashboard", exibirDashboard);
+        localStorage.setItem("fin_corFundo", corFundo);
+
+        alert("Parâmetros do Financeiro salvos!");
     };
 
     const limpar = () => {
         setExibirDashboard(true);
         setCorFundo("#f3f4f6");
 
-        setIconColor(DEFAULT_ICON_COLOR);
-        setFooterIconColorNormal(DEFAULT_FOOTER_NORMAL);
-        setFooterIconColorHover(DEFAULT_FOOTER_HOVER);
+        atualizarCorIcones("red", "700");
+        atualizarRodapeNormal("red", "700");
+        atualizarRodapeHover("red", "900");
 
-        resetColors();
+        setBackgroundImage(null);
         restaurarPadrao();
 
-        alert("Todos parâmetros foram restaurados.");
+        alert("Parâmetros restaurados.");
     };
 
     // =============================
-    // CARD COMPONENTE
+    // COMPONENTE CARD
     // =============================
     const Card = ({ title, children }) => (
         <div className="border border-gray-300 rounded bg-white p-4 shadow-sm space-y-2">
@@ -135,10 +160,11 @@ export default function ParametroFinanceiro({ onClose }) {
     );
 
     // =============================
-    // CAMPOS PRINCIPAIS
+    // CAMPOS
     // =============================
     const campos = (
         <>
+
             {/* DASHBOARD */}
             <div className="flex items-center gap-3">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
@@ -164,8 +190,10 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="w-[60px] h-[28px] border rounded"
                 />
 
-                <div className="px-4 py-2 rounded text-sm"
-                    style={{ backgroundColor: corFundo }}>
+                <div
+                    className="px-4 py-2 rounded text-sm"
+                    style={{ backgroundColor: corFundo }}
+                >
                     Exemplo
                 </div>
             </div>
@@ -203,7 +231,7 @@ export default function ParametroFinanceiro({ onClose }) {
                 </button>
             </div>
 
-            {/* ================= ICONES ================ */}
+            {/* ICONES */}
             <div className="flex items-center gap-3 mt-3">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
                     Cor dos Ícones:
@@ -215,9 +243,7 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>
-                            {c.label}
-                        </option>
+                        <option key={c.value} value={c.value}>{c.label}</option>
                     ))}
                 </select>
 
@@ -233,7 +259,7 @@ export default function ParametroFinanceiro({ onClose }) {
                 <Palette size={20} className={`text-${corBase}-${intensidade}`} />
             </div>
 
-            {/* ================= Rodapé Normal ================ */}
+            {/* RODAPÉ NORMAL */}
             <div className="flex items-center gap-3 mt-3">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
                     Rodapé (Normal):
@@ -245,9 +271,7 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>
-                            {c.label}
-                        </option>
+                        <option key={c.value} value={c.value}>{c.label}</option>
                     ))}
                 </select>
 
@@ -263,7 +287,7 @@ export default function ParametroFinanceiro({ onClose }) {
                 <Palette size={20} className={`text-${footerBase}-${footerInt}`} />
             </div>
 
-            {/* ================= Rodapé Hover ================ */}
+            {/* RODAPÉ HOVER */}
             <div className="flex items-center gap-3 mt-3">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
                     Rodapé (Hover):
@@ -275,9 +299,7 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>
-                            {c.label}
-                        </option>
+                        <option key={c.value} value={c.value}>{c.label}</option>
                     ))}
                 </select>
 
@@ -293,18 +315,76 @@ export default function ParametroFinanceiro({ onClose }) {
                 <Palette size={20} className={`text-${footerHoverBase}-${footerHoverInt}`} />
             </div>
 
-
-
-            {/* ========= MENU RÁPIDO ========= */}
+            {/* ========================= */}
+            {/* MENU RÁPIDO (IGUAL DO OPERACIONAL) */}
+            {/* ========================= */}
             <div className="mt-4">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
                     Menu Rápido:
                 </label>
 
-                <div className="mt-2 border rounded p-2 bg-gray-50">
-                    {atalhos.map((a) => (
-                        <div key={a.id} className="flex items-center justify-between p-1">
+                {/* Select */}
+                <div className="relative mt-1">
+                    <button
+                        onClick={() => setShowMenuRapido(prev => !prev)}
+                        className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
+                    >
+                        Selecionar Atalhos
+                        <span className="text-gray-500">▼</span>
+                    </button>
+
+                    {showMenuRapido && (
+                        <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
+                            {opcoesMenuRapidoFinanceiro.map((op, idx) => {
+                                const ativo = atalhos.some(a => a.rota === op.rota);
+
+                                return (
+                                    <label
+                                        key={idx}
+                                        className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={ativo}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    adicionarAtalho({
+                                                        id: Date.now(),
+                                                        label: op.label,
+                                                        rota: op.rota,
+                                                        icone: op.icone
+                                                    });
+                                                } else {
+                                                    removerAtalho(op.rota);
+                                                }
+                                            }}
+                                        />
+
+                                        <i className={`fa-solid ${op.icone} text-gray-700`} />
+                                        {op.label}
+                                    </label>
+                                );
+                            })}
+
+                            <button
+                                onClick={restaurarPadrao}
+                                className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
+                            >
+                                Restaurar Padrão
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Lista dos selecionados */}
+                <div className="mt-3 border rounded p-2 bg-gray-50">
+                    {atalhos.map(a => (
+                        <div
+                            key={a.id}
+                            className="flex items-center justify-between p-1"
+                        >
                             <span className="text-[13px]">{a.label}</span>
+
                             <button
                                 onClick={() => removerAtalho(a.rota)}
                                 className="text-red-700 hover:text-black"
@@ -313,20 +393,13 @@ export default function ParametroFinanceiro({ onClose }) {
                             </button>
                         </div>
                     ))}
-
-                    <button
-                        onClick={restaurarPadrao}
-                        className="mt-2 text-xs text-red-700 underline"
-                    >
-                        Restaurar Padrão
-                    </button>
                 </div>
             </div>
         </>
     );
 
     // =============================
-    // RENDER FINAL (MODAL)
+    // RENDER FINAL
     // =============================
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">

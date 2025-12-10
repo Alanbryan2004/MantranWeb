@@ -12,15 +12,16 @@ import {
 } from "lucide-react";
 
 import Logo from "../assets/logo_mantran.png";
+
 import { useNotificacao } from "../context/NotificacaoContext";
-// 🔥 AGORA USA O CONTEXTO DO FINANCEIRO
 import { useMenuRapidoFinanceiro } from "../context/MenuRapidoFinanceiroContext";
+import { useIconColor } from "../context/IconColorContext";
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 
-// 🔳 Ícone "quadradinhos" estilo Google Apps (verde p/ Financeiro)
+// Ícone estilo Google Apps
 function AppDotsIcon({ size = 20, color = "#15803d" }) {
     const dotSize = size / 5;
     const gap = dotSize * 0.8;
@@ -62,26 +63,25 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
     const { notificacoes, marcarComoLido } = useNotificacao();
 
-    // 🔥 Usa o contexto do MENU RÁPIDO FINANCEIRO
-    // Se por algum motivo não tiver Provider, ele não quebra
-    const menuFinanceiro = useMenuRapidoFinanceiro();
-    const atalhos = menuFinanceiro?.atalhos ?? [];
+    // MENU RÁPIDO FINANCEIRO
+    const { atalhos } = useMenuRapidoFinanceiro();
+
+    // CORES DINÂMICAS
+    const { iconColor, footerIconColorHover } = useIconColor();
 
     return (
         <>
             <header
                 className="flex justify-between items-center 
-        bg-white shadow px-6 py-1.5 border-b h-[48px] 
-        fixed top-0 left-0 right-0 z-50"
+                bg-white shadow px-6 py-1.5 border-b h-[48px] 
+                fixed top-0 left-0 right-0 z-50"
             >
-                {/* ======================================
-            LADO ESQUERDO
-        ======================================= */}
+                {/* LADO ESQUERDO */}
                 <div className="flex items-center gap-5">
-                    {/* ABRIR / FECHAR SIDEBAR */}
+                    {/* BOTÃO SIDEBAR */}
                     <button
                         onClick={toggleSidebar}
-                        className="text-green-700 hover:text-black"
+                        className={`${iconColor} hover:${footerIconColorHover}`}
                     >
                         <Menu size={22} />
                     </button>
@@ -90,12 +90,12 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                     <img src={Logo} className="h-7" />
 
                     {/* MENU RÁPIDO FINANCEIRO */}
-                    <div className="flex gap-8 text-sm ml-6 text-green-700">
+                    <div className={`flex gap-8 text-sm ml-6 ${iconColor}`}>
                         {atalhos.slice(0, 7).map((item) => (
                             <Link
                                 key={item.id}
                                 to={item.rota}
-                                className="flex flex-col items-center cursor-pointer hover:text-black"
+                                className={`flex flex-col items-center cursor-pointer hover:${footerIconColorHover}`}
                             >
                                 <i className={`fa-solid ${item.icone} text-lg`} />
                                 <span>{item.label}</span>
@@ -104,14 +104,12 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                     </div>
                 </div>
 
-                {/* ======================================
-            LADO DIREITO
-        ======================================= */}
+                {/* LADO DIREITO */}
                 <div className="flex items-center gap-6">
                     {/* 🔔 NOTIFICAÇÕES */}
                     <div className="relative">
                         <button
-                            className="text-green-700 hover:text-black relative"
+                            className={`${iconColor} hover:${footerIconColorHover} relative`}
                             onClick={() => {
                                 setShowNotifications(!showNotifications);
                                 setShowAppsMenu(false);
@@ -129,7 +127,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                         {showNotifications && (
                             <div className="absolute right-0 mt-2 w-80 bg-white rounded shadow border z-50 max-h-96 overflow-auto">
-                                <div className="p-3 font-semibold border-b text-green-700">
+                                <div className={`p-3 font-semibold border-b ${iconColor}`}>
                                     Lembretes da Agenda
                                 </div>
 
@@ -142,13 +140,11 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                         <div
                                             key={n.id}
                                             className={`flex justify-between px-4 py-2 border-b text-sm 
-                        ${n.lido
-                                                    ? "text-gray-400"
-                                                    : "text-gray-800 bg-gray-50"
-                                                }`}
+                                                ${n.lido ? "text-gray-400" : "text-gray-800 bg-gray-50"}
+                                            `}
                                         >
                                             <div>
-                                                <p className="font-semibold text-green-700">
+                                                <p className={`font-semibold ${iconColor}`}>
                                                     {n.titulo || n.texto}
                                                 </p>
 
@@ -160,7 +156,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                                                 {n.start && (
                                                     <button
-                                                        className="text-green-700 text-xs hover:underline"
+                                                        className={`${iconColor} text-xs hover:${footerIconColorHover}`}
                                                         onClick={() => {
                                                             navigate(`/agenda?data=${n.start}`);
                                                             setShowNotifications(false);
@@ -194,7 +190,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 setShowNotifications(false);
                                 setShowUserMenu(false);
                             }}
-                            className="text-green-700 hover:text-black flex items-center"
+                            className={`${iconColor} hover:${footerIconColorHover} flex items-center`}
                         >
                             <AppDotsIcon size={18} />
                         </button>
@@ -210,7 +206,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 ].map((item, idx) => (
                                     <button
                                         key={idx}
-                                        className="flex flex-col items-center text-green-700 hover:text-black text-sm"
+                                        className={`flex flex-col items-center ${iconColor} hover:${footerIconColorHover} text-sm`}
                                     >
                                         <i className={`fa-solid ${item.icon} text-xl`} />
                                         <span>{item.label}</span>
@@ -228,7 +224,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 setShowAppsMenu(false);
                                 setShowNotifications(false);
                             }}
-                            className="flex items-center gap-2 text-green-700 hover:text-black"
+                            className={`flex items-center gap-2 ${iconColor} hover:${footerIconColorHover}`}
                         >
                             <UserRound size={18} />
                             <span className="uppercase">{usuarioLogado}</span>
@@ -238,7 +234,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                         {showUserMenu && (
                             <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 py-1">
                                 <button className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
-                                    <Building2 className="text-green-700" size={16} />
+                                    <Building2 className={iconColor} size={16} />
                                     Trocar Filial
                                 </button>
 
@@ -246,12 +242,12 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                     onClick={() => setShowAlterarSenha(true)}
                                     className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                                 >
-                                    <Lock className="text-green-700" size={16} />
+                                    <Lock className={iconColor} size={16} />
                                     Alterar Senha
                                 </button>
 
                                 <button className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
-                                    <ImageIcon className="text-green-700" size={16} />
+                                    <ImageIcon className={iconColor} size={16} />
                                     Alterar Foto
                                 </button>
 
@@ -259,7 +255,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                     onClick={() => navigate("/financeiro-parametros")}
                                     className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                                 >
-                                    <Settings className="text-green-700" size={16} />
+                                    <Settings className={iconColor} size={16} />
                                     Configuração
                                 </button>
 
@@ -267,7 +263,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                     onClick={() => navigate("/agenda")}
                                     className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                                 >
-                                    <Calendar className="text-green-700" size={16} />
+                                    <Calendar className={iconColor} size={16} />
                                     Calendário
                                 </button>
                             </div>

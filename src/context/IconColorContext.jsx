@@ -7,60 +7,67 @@ const DEFAULT_ICON_COLOR = "text-red-700";
 const DEFAULT_FOOTER_NORMAL = "text-red-700";
 const DEFAULT_FOOTER_HOVER = "text-red-900";
 
-// Aliases para compatibilidade com código antigo (se tiver)
-const DEFAULT_COLOR = DEFAULT_ICON_COLOR;
-const DEFAULT_FOOTER_COLOR = DEFAULT_FOOTER_NORMAL;
+// === Função para obter prefixo do módulo ativo ===
+function getModuloPrefix() {
+  const modulo = localStorage.getItem("mantran_modulo") || "operacao";
+
+  switch (modulo) {
+    case "financeiro":
+      return "fin_";
+    case "comercial":
+      return "com_";
+    case "wms":
+      return "wms_";
+    default:
+      return "op_";
+  }
+}
 
 export function IconColorProvider({ children }) {
-  // === HEADER + SIDEBAR ===
+  const prefix = getModuloPrefix();
+
+  // HEADER / SIDEBAR
   const [iconColor, setIconColor] = useState(
-    localStorage.getItem("param_iconColor") || DEFAULT_ICON_COLOR
+    localStorage.getItem(prefix + "iconColor") || DEFAULT_ICON_COLOR
   );
 
-  // === RODAPÉ NORMAL ===
+  // RODAPÉ normal
   const [footerIconColorNormal, setFooterIconColorNormal] = useState(
-    localStorage.getItem("param_footerIconColorNormal") || DEFAULT_FOOTER_NORMAL
+    localStorage.getItem(prefix + "footerNormal") || DEFAULT_FOOTER_NORMAL
   );
 
-  // === RODAPÉ HOVER ===
+  // RODAPÉ hover
   const [footerIconColorHover, setFooterIconColorHover] = useState(
-    localStorage.getItem("param_footerIconColorHover") || DEFAULT_FOOTER_HOVER
+    localStorage.getItem(prefix + "footerHover") || DEFAULT_FOOTER_HOVER
   );
 
-  // Salvar no localStorage sempre que mudar
+  // === Persistência ===
   useEffect(() => {
-    localStorage.setItem("param_iconColor", iconColor);
-  }, [iconColor]);
+    localStorage.setItem(prefix + "iconColor", iconColor);
+  }, [iconColor, prefix]);
 
   useEffect(() => {
-    localStorage.setItem("param_footerIconColorNormal", footerIconColorNormal);
-  }, [footerIconColorNormal]);
+    localStorage.setItem(prefix + "footerNormal", footerIconColorNormal);
+  }, [footerIconColorNormal, prefix]);
 
   useEffect(() => {
-    localStorage.setItem("param_footerIconColorHover", footerIconColorHover);
-  }, [footerIconColorHover]);
+    localStorage.setItem(prefix + "footerHover", footerIconColorHover);
+  }, [footerIconColorHover, prefix]);
 
   return (
     <IconColorContext.Provider
       value={{
-        // Header & Sidebar
         iconColor,
         setIconColor,
 
-        // Rodapé
         footerIconColorNormal,
         footerIconColorHover,
         setFooterIconColorNormal,
         setFooterIconColorHover,
 
-        // Defaults p/ usar no Parametro.jsx
         DEFAULT_ICON_COLOR,
         DEFAULT_FOOTER_NORMAL,
         DEFAULT_FOOTER_HOVER,
-
-        // Compat com código antigo (se ainda houver)
-        DEFAULT_COLOR,
-        DEFAULT_FOOTER_COLOR,
       }}
     >
       {children}

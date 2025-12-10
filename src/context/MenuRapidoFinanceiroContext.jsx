@@ -13,27 +13,44 @@ const atalhosPadraoFinanceiro = [
 const MenuRapidoFinanceiroContext = createContext();
 
 export function MenuRapidoFinanceiroProvider({ children }) {
+
+    // Carregar atalhos do localStorage com fallback seguro
     const [atalhos, setAtalhos] = useState(() => {
-        const salvo = localStorage.getItem("menuRapido_financeiro");
-        return salvo ? JSON.parse(salvo) : atalhosPadraoFinanceiro;
+        try {
+            const salvo = localStorage.getItem("menuRapido_financeiro");
+
+            if (!salvo) return atalhosPadraoFinanceiro;
+
+            const parsed = JSON.parse(salvo);
+
+            // Segurança: se corrompido, volta ao default
+            if (!Array.isArray(parsed)) return atalhosPadraoFinanceiro;
+
+            return parsed;
+        } catch {
+            return atalhosPadraoFinanceiro;
+        }
     });
 
-    // Atualiza o localStorage quando houver alterações
+    // Atualiza o localStorage sempre que mudar
     useEffect(() => {
         localStorage.setItem("menuRapido_financeiro", JSON.stringify(atalhos));
     }, [atalhos]);
 
-    // Adicionar atalho
+    // ➕ ADICIONAR NOVO ATALHO — impede duplicidade por rota
     const adicionarAtalho = (atalho) => {
-        setAtalhos((prev) => [...prev, atalho]);
+        setAtalhos((prev) => {
+            if (prev.some((a) => a.rota === atalho.rota)) return prev; // evita duplicação
+            return [...prev, atalho];
+        });
     };
 
-    // Remover atalho por rota
+    // ❌ REMOVER atalho por rota
     const removerAtalho = (rota) => {
         setAtalhos((prev) => prev.filter((a) => a.rota !== rota));
     };
 
-    // Restaurar atalhos padrão
+    // 🔄 RESTAURAR padrão
     const restaurarPadrao = () => {
         setAtalhos(atalhosPadraoFinanceiro);
     };

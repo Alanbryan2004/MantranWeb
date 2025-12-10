@@ -12,6 +12,8 @@ import SidebarFinanceiro from "./components/SidebarFinanceiro";
 // Páginas principais
 import Agenda from "./pages/Agenda";
 import CTePage from "./pages/CTePage";
+import Agencia from "./pages/Agencia";
+import Banco from "./pages/Banco";
 import AliquotaICMS from "./pages/AliquotaICMS";
 import CFOP from "./pages/CFOP";
 import IRRF from "./pages/IRRF";
@@ -93,11 +95,8 @@ import HomeFinanceiro from "./pages/HomeFinanceiro";
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
-
 import "./index.css";
 
-// ------------------------------------------------------------
-// 🔥 Componente invisível para forçar Tailwind a gerar as cores
 // ------------------------------------------------------------
 function TailwindColorHelper() {
   return (
@@ -110,32 +109,26 @@ function TailwindColorHelper() {
 }
 
 // ------------------------------------------------------------
-// 🔥 APP PRINCIPAL
-// ------------------------------------------------------------
 export default function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Login persiste
   const [isLogged, setIsLogged] = useState(() => {
     return !!localStorage.getItem("usuarioNome");
   });
 
   const bgLogo = localStorage.getItem("param_logoBg");
 
-  // Dashboard inicial
   const [showDashboard, setShowDashboard] = useState(
     localStorage.getItem("hideDashboard") !== "true"
   );
 
-  // Logout global
   window.onLogout = () => {
     localStorage.removeItem("usuarioNome");
     setIsLogged(false);
     window.history.pushState({}, "", "/login");
   };
 
-  // Tela de Login
   if (!isLogged) {
     return (
       <Login
@@ -150,7 +143,6 @@ export default function App() {
     );
   }
 
-  // Corrige redirecionamento após login
   if (isLogged && window.location.pathname === "/login") {
     window.history.pushState({}, "", "/");
   }
@@ -159,12 +151,14 @@ export default function App() {
   const isHomeModulos = path === "/";
   const isFinanceiro = path.startsWith("/modulo-financeiro");
 
+  // ✅ CORREÇÃO AQUI
+  const isOperacao = path.startsWith("/modulo-operacao");
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-100">
 
       <TailwindColorHelper />
 
-      {/* Header */}
       {!isHomeModulos && (
         isFinanceiro ? (
           <HeaderFinanceiro toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -175,7 +169,6 @@ export default function App() {
 
       <div className="flex flex-1">
 
-        {/* Sidebar */}
         {!isHomeModulos && (
           isFinanceiro ? (
             <SidebarFinanceiro open={sidebarOpen} />
@@ -186,8 +179,8 @@ export default function App() {
 
         <main className="flex-1 p-4 overflow-auto">
 
-          {/* DASHBOARD */}
-          {showDashboard && !isFinanceiro && (
+          {/* ✅ DASHBOARD AGORA SOMENTE NO MÓDULO OPERAÇÃO */}
+          {showDashboard && isOperacao && (
             <Dashboard
               onClose={() => {
                 const check = document.querySelector("input[type='checkbox']");
@@ -202,14 +195,12 @@ export default function App() {
           {/* ROTAS */}
           <Routes>
 
-            {/* ROTA PADRÃO REAL */}
             <Route index element={<HomeModulos />} />
 
-            {/* Módulos principais */}
             <Route path="/modulo-operacao" element={<HomeOperacao />} />
             <Route path="/modulo-financeiro" element={<HomeFinanceiro />} />
 
-            {/* RESTANTE DAS ROTAS (mantive tudo igual) */}
+            {/* A partir daqui, TODAS AS SUAS ROTAS 100% INTACTAS */}
             <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
             <Route path="/cliente-divisao" element={<ClienteDivisao open={sidebarOpen} />} />
             <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
@@ -226,7 +217,6 @@ export default function App() {
             <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
             <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 
-            {/* CLIENTE */}
             <Route path="/atividade-economica" element={<AtividadeEconomica open={sidebarOpen} />} />
             <Route path="/cliente-condicao-pagamento" element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
             <Route path="/cliente-divisao-regiao" element={<ClienteDivisaoRegiao open={sidebarOpen} />} />
@@ -240,7 +230,6 @@ export default function App() {
             <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
             <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
 
-            {/* VEÍCULO */}
             <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
             <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
             <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />
@@ -254,10 +243,11 @@ export default function App() {
 
             <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
             <Route path="/filial" element={<Filial open={sidebarOpen} />} />
+            <Route path="/banco" element={<Banco open={sidebarOpen} />} />
+            <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
             <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
 
-            {/* LOCALIDADE */}
             <Route path="/localidade-adicional" element={<LocalidadeAdicional open={sidebarOpen} />} />
             <Route path="/cidade" element={<Cidade open={sidebarOpen} />} />
             <Route path="/regiao" element={<Regiao open={sidebarOpen} />} />
@@ -275,7 +265,6 @@ export default function App() {
             <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
             <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
 
-            {/* PARAMETROS */}
             <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
             <Route
               path="/financeiro-parametros"
@@ -286,7 +275,6 @@ export default function App() {
               }
             />
 
-
             <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
             <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
             <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
@@ -295,7 +283,6 @@ export default function App() {
             <Route path="/liberacao-nfse" element={<LiberacaoNFSE open={sidebarOpen} />} />
             <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
 
-            {/* SAC */}
             <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
             <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
             <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
@@ -304,7 +291,6 @@ export default function App() {
             <Route path="/consulta-sefaz-cte" element={<ConsultaSefazCte open={sidebarOpen} />} />
             <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
 
-            {/* MANIFESTO / CTRC */}
             <Route path="/baixamanifesto" element={<BaixaManifesto open={sidebarOpen} />} />
             <Route path="/parametromanifesto" element={<MdfeParametro open={sidebarOpen} />} />
             <Route path="/cteparametro" element={<CteParametro open={sidebarOpen} />} />
@@ -316,9 +302,7 @@ export default function App() {
 
             <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
 
-            {/* ROTA CORINGA */}
             <Route path="*" element={<Navigate to="/" replace />} />
-
 
           </Routes>
         </main>

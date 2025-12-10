@@ -6,37 +6,41 @@ import "./index.css";
 import App from "./App.jsx";
 
 import { IconColorProvider } from "./context/IconColorContext";
-import { FooterIconColorProvider } from "./context/FooterIconColorContext";
 import { ModulosProvider } from "./context/ModulosContext";
 import { MenuRapidoProvider } from "./context/MenuRapidoContext";
 
 // Provider da Agenda
 import { AgendaProvider } from "./context/AgendaContext";
 
-// Provider das Notificações (NOVO)
+// Provider das Notificações
 import { NotificacaoProvider } from "./context/NotificacaoContext";
+
+// ✅ Provider do Menu Rápido do Financeiro (NOVO)
+import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <IconColorProvider>
-        <FooterIconColorProvider>
-          <ModulosProvider>
+        <ModulosProvider>
 
-            <MenuRapidoProvider>
+          {/* 🔥 Provider do Menu Rápido Operação */}
+          <MenuRapidoProvider>
 
+            {/* 🔥 Provider do Menu Rápido FINANCEIRO */}
+            <MenuRapidoFinanceiroProvider>
+
+              {/* Restante dos providers */}
               <AgendaProvider>
-
                 <NotificacaoProvider>
                   <App />
                 </NotificacaoProvider>
-
               </AgendaProvider>
 
-            </MenuRapidoProvider>
+            </MenuRapidoFinanceiroProvider>
+          </MenuRapidoProvider>
 
-          </ModulosProvider>
-        </FooterIconColorProvider>
+        </ModulosProvider>
       </IconColorProvider>
     </BrowserRouter>
   </StrictMode>

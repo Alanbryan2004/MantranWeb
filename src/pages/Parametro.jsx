@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronRight,
   RotateCcw,
@@ -13,11 +13,14 @@ import {
 import ParametroTaxa from "./ParametroTaxa";
 import { useMenuRapido } from "../context/MenuRapidoContext";
 
-
-// 🔥 Usa o contexto unificado
 import { useIconColor } from "../context/IconColorContext";
 
 export default function Parametro() {
+  // === IMPORTANTE: DEFINIR QUE ESTE PARAMETRO É DO MÓDULO OPERAÇÃO ===
+  useEffect(() => {
+    localStorage.setItem("mantran_modulo", "operacao");
+  }, []);
+
   const [modoCards, setModoCards] = useState(false);
   const [exibirDashboard, setExibirDashboard] = useState(true);
   const [corFundo, setCorFundo] = useState("#f3f4f6");
@@ -40,22 +43,20 @@ export default function Parametro() {
     { label: "Dashboard", rota: "/dashboard-shopee", icone: "fa-chart-line" },
   ];
 
-  // === CONTEXTO UNIFICADO ===
+  // === CONTEXTO ===
   const {
     iconColor,
     setIconColor,
-
     footerIconColorNormal,
     footerIconColorHover,
     setFooterIconColorNormal,
     setFooterIconColorHover,
-
     DEFAULT_ICON_COLOR,
     DEFAULT_FOOTER_NORMAL,
     DEFAULT_FOOTER_HOVER,
   } = useIconColor();
 
-  // === CORES — BASE TAILWIND ===
+  // === CORES ===
   const coresBase = [
     { value: "red", label: "Vermelho" },
     { value: "blue", label: "Azul" },
@@ -65,29 +66,38 @@ export default function Parametro() {
     { value: "pink", label: "Rosa" },
   ];
 
-  // === COR DOS ÍCONES HEADER/SIDEBAR ===
+  // === HEADER / SIDEBAR ===
   const [corBase, setCorBase] = useState(iconColor.split("-")[1]);
   const [intensidade, setIntensidade] = useState(iconColor.split("-")[2]);
 
   const atualizarCorIcones = (cor, nivel) => {
-    const nova = `text-${cor}-${nivel}`;
+    const classe = `text-${cor}-${nivel}`;
+
     setCorBase(cor);
     setIntensidade(nivel);
-    setIconColor(nova);
+
+    // Atualiza contexto
+    setIconColor(classe);
+
+    // Salva no módulo operação
+    localStorage.setItem("op_iconColor", classe);
   };
 
-  // === RODAPÉ NORMAL ===
+  // === FOOTER NORMAL ===
   const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
   const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
 
   const atualizarRodapeNormal = (cor, nivel) => {
-    const nova = `text-${cor}-${nivel}`;
+    const classe = `text-${cor}-${nivel}`;
+
     setFooterBase(cor);
     setFooterInt(nivel);
-    setFooterIconColorNormal(nova);
+
+    setFooterIconColorNormal(classe);
+    localStorage.setItem("op_footerNormal", classe);
   };
 
-  // === RODAPÉ HOVER ===
+  // === FOOTER HOVER ===
   const [footerHoverBase, setFooterHoverBase] = useState(
     footerIconColorHover.split("-")[1]
   );
@@ -96,16 +106,20 @@ export default function Parametro() {
   );
 
   const atualizarRodapeHover = (cor, nivel) => {
-    const nova = `text-${cor}-${nivel}`;
+    const classe = `text-${cor}-${nivel}`;
+
     setFooterHoverBase(cor);
     setFooterHoverInt(nivel);
-    setFooterIconColorHover(nova);
+
+    setFooterIconColorHover(classe);
+    localStorage.setItem("op_footerHover", classe);
   };
 
-  // === SALVAR ===
+  // === SALVAR CONFIGURAÇÕES ===
   const salvarParametros = () => {
     localStorage.setItem("param_exibirDashboard", exibirDashboard ? "true" : "false");
     localStorage.setItem("param_corFundo", corFundo);
+
     alert("✅ Parâmetros salvos com sucesso!");
   };
 
@@ -114,19 +128,16 @@ export default function Parametro() {
     setExibirDashboard(true);
     setCorFundo("#f3f4f6");
 
-    setIconColor(DEFAULT_ICON_COLOR);
-    setFooterIconColorNormal(DEFAULT_FOOTER_NORMAL);
-    setFooterIconColorHover(DEFAULT_FOOTER_HOVER);
+    // Reseta somente o módulo operação
+    atualizarCorIcones("red", "700");
+    atualizarRodapeNormal("red", "700");
+    atualizarRodapeHover("red", "900");
 
     localStorage.removeItem("param_exibirDashboard");
     localStorage.removeItem("param_corFundo");
-    localStorage.removeItem("param_logoBg");
-    localStorage.removeItem("param_iconColor");
-    localStorage.removeItem("param_footerIconColorNormal");
-    localStorage.removeItem("param_footerIconColorHover");
   };
 
-  // === COMPONENTE CARD ===
+  // === CARD COMPONENT ===
   const Card = ({ title, children }) => (
     <div className="border border-gray-300 rounded-lg bg-white p-4 shadow-sm space-y-2">
       <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">{title}</h2>
@@ -134,10 +145,10 @@ export default function Parametro() {
     </div>
   );
 
-  // === CAMPOS PRINCIPAIS ===
+  // === CAMPOS ===
   const campos = (
     <>
-      {/* Dashboard */}
+      {/* DASHBOARD */}
       <div className="flex items-center gap-3">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Exibir Dashboard ao Logar:
@@ -150,7 +161,7 @@ export default function Parametro() {
         />
       </div>
 
-      {/* MENU RÁPIDO (COMBOBOX CLEAN) */}
+      {/* MENU RÁPIDO */}
       <div className="mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Menu Rápido:
@@ -187,10 +198,11 @@ export default function Parametro() {
                             icone: op.icone,
                           });
                         } else {
-                          removerAtalho(op.rota); // removendo por rota
+                          removerAtalho(op.rota);
                         }
                       }}
                     />
+
                     <i className={`fa-solid ${op.icone} text-gray-700`} />
                     {op.label}
                   </label>
@@ -208,8 +220,7 @@ export default function Parametro() {
         </div>
       </div>
 
-
-      {/* Cor de Fundo */}
+      {/* COR DE FUNDO */}
       <div className="flex items-center gap-3">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor de Fundo:
@@ -227,7 +238,7 @@ export default function Parametro() {
         </div>
       </div>
 
-      {/* Logo de Fundo */}
+      {/* LOGO */}
       <div className="flex items-center gap-3 mt-2">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Logo de Fundo:
@@ -261,7 +272,7 @@ export default function Parametro() {
         </button>
       </div>
 
-      {/* Taxas */}
+      {/* TAXAS */}
       <div className="flex items-center gap-3 mt-3">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Taxas do CT-e:
@@ -276,8 +287,9 @@ export default function Parametro() {
       </div>
 
       {/* ========================== */}
-      {/*     COR DOS ÍCONES        */}
+      {/* COR DOS ÍCONES */}
       {/* ========================== */}
+
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor dos Ícones:
@@ -318,8 +330,9 @@ export default function Parametro() {
       </div>
 
       {/* ========================== */}
-      {/*   RODAPÉ NORMAL            */}
+      {/* RODAPÉ NORMAL */}
       {/* ========================== */}
+
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor Rodapé (Normal):
@@ -360,8 +373,9 @@ export default function Parametro() {
       </div>
 
       {/* ========================== */}
-      {/*   RODAPÉ HOVER             */}
+      {/* RODAPÉ HOVER */}
       {/* ========================== */}
+
       <div className="flex items-center gap-3 mt-4">
         <label className="w-[140px] text-right text-sm font-medium text-gray-700">
           Cor Rodapé (Hover):
@@ -404,7 +418,7 @@ export default function Parametro() {
   );
 
   // ================================
-  // === RENDER FINAL DA TELA ======
+  // RENDER FINAL
   // ================================
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -426,20 +440,15 @@ export default function Parametro() {
           </button>
         </div>
 
-        {/* Modo Cards */}
+        {/* Cards / Campos */}
         <div className="flex justify-end p-2 text-sm text-gray-600">
           <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={modoCards}
-              onChange={(e) => setModoCards(e.target.checked)}
-            />
+            <input type="checkbox" checked={modoCards} onChange={(e) => setModoCards(e.target.checked)} />
             <LayoutGrid size={16} className="text-red-700" />
             Exibir por Cards
           </label>
         </div>
 
-        {/* Conteúdo */}
         <div className="p-4">
           {modoCards ? (
             <div className="space-y-3">
@@ -486,9 +495,7 @@ export default function Parametro() {
         </div>
       </div>
 
-      {abrirModalTaxas && (
-        <ParametroTaxa onClose={() => setAbrirModalTaxas(false)} />
-      )}
+      {abrirModalTaxas && <ParametroTaxa onClose={() => setAbrirModalTaxas(false)} />}
     </div>
   );
 }

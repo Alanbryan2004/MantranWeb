@@ -145,8 +145,8 @@ export default function SidebarFinanceiro({ open }) {
                             shadow-xl rounded-md w-52 p-1 z-[999]">
 
                                 {[
-                                    { label: "Banco", rota: "#" },
-                                    { label: "Agência", rota: "#" },
+                                    { label: "Banco", rota: "/banco" },
+                                    { label: "Agência", rota: "/agencia" },
                                     { label: "Conta Corrente", rota: "#" },
                                     { label: "Cliente", rota: "/cliente" },
                                     { label: "Categoria", rota: "#" },
