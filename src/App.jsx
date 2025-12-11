@@ -30,6 +30,7 @@ import Parametro from "./pages/Parametro";
 import TabelaFrete from "./pages/TabelaFrete";
 import NotaFiscalEDI from "./pages/NotaFiscalEDI";
 import Cliente from "./pages/Cliente";
+import Conta from "./pages/Conta";
 import Empresa from "./pages/Empresa";
 import EmpresaAgregado from "./pages/EmpresaAgregado";
 import Veiculo from "./pages/Veiculo";
@@ -247,6 +248,8 @@ export default function App() {
             <Route path="/modulo-financeiro/banco" element={<Banco open={sidebarOpen} />} />
             <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
             <Route path="/modulo-financeiro/agencia" element={<Agencia open={sidebarOpen} />} />
+            <Route path="/conta" element={<Conta open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/conta-corrente" element={<Conta open={sidebarOpen} />} />
             <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
             <Route path="/modulo-financeiro/faturamento" element={<Faturamento open={sidebarOpen} />} />
             <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
