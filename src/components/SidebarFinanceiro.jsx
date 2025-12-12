@@ -283,20 +283,20 @@ export default function SidebarFinanceiro({ open }) {
                         {activeMenu === "pagar" && (
                             <div className="absolute top-0 left-full bg-white border border-gray-200 
                             shadow-xl rounded-md w-60 p-1 z-[999]">
-
                                 {[
-                                    "Títulos",
-                                    "Baixa de Títulos (Lote)",
-                                    "Integração Banco",
-                                    "Arquivo de Retorno",
-                                    "Nota Fiscal - Compra",
+                                    { label: "Títulos", rota: "/modulo-financeiro/contas-pagar" },
+                                    { label: "Baixa de Títulos (Lote)", rota: "#" },
+                                    { label: "Integração Banco", rota: "#" },
+                                    { label: "Arquivo de Retorno", rota: "#" },
+                                    { label: "Nota Fiscal - Compra", rota: "#" },
                                 ].map((item) => (
-                                    <div
-                                        key={item}
-                                        className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
+                                    <Link
+                                        key={item.label}
+                                        to={item.rota}
+                                        className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
                                     >
-                                        {item}
-                                    </div>
+                                        {item.label}
+                                    </Link>
                                 ))}
                             </div>
                         )}
@@ -620,36 +620,40 @@ export default function SidebarFinanceiro({ open }) {
                         <LogOut className="w-5 h-5" />
                     </button>
                 </div>
-            </aside>
+            </aside >
 
             {/* MODAL ALTERAR SENHA */}
-            {showAlterarSenha && (
-                <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
-            )}
+            {
+                showAlterarSenha && (
+                    <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+                )
+            }
 
             {/* CHAT */}
-            {chatOpen && (
-                <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] 
+            {
+                chatOpen && (
+                    <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] 
                     bg-white border-l border-gray-200 shadow-2xl z-50 flex flex-col">
-                    {/* Cabeçalho */}
-                    <div className="flex justify-between items-center p-3 border-b">
-                        <h2 className="font-semibold text-gray-700 text-sm">
-                            {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
-                        </h2>
-                        <button
-                            onClick={() =>
-                                chatAtivo ? setChatAtivo(null) : setChatOpen(false)
-                            }
-                            className="text-red-700 hover:text-black"
-                        >
-                            <X size={16} />
-                        </button>
-                    </div>
+                        {/* Cabeçalho */}
+                        <div className="flex justify-between items-center p-3 border-b">
+                            <h2 className="font-semibold text-gray-700 text-sm">
+                                {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
+                            </h2>
+                            <button
+                                onClick={() =>
+                                    chatAtivo ? setChatAtivo(null) : setChatOpen(false)
+                                }
+                                className="text-red-700 hover:text-black"
+                            >
+                                <X size={16} />
+                            </button>
+                        </div>
 
-                    {/* Conteúdo do chat */}
-                    {/* (todo seu código original aqui sem alterações) */}
-                </div>
-            )}
+                        {/* Conteúdo do chat */}
+                        {/* (todo seu código original aqui sem alterações) */}
+                    </div>
+                )
+            }
         </>
     );
 }

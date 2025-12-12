@@ -94,6 +94,7 @@ import HomeModulos from "./pages/HomeModulos";
 import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
+import ContasPagar from "./pages/ContasPagar";
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
 import "./index.css";
@@ -246,6 +247,7 @@ export default function App() {
             <Route path="/filial" element={<Filial open={sidebarOpen} />} />
             <Route path="/banco" element={<Banco open={sidebarOpen} />} />
             <Route path="/modulo-financeiro/banco" element={<Banco open={sidebarOpen} />} />
+            <Route path="/modulo-financeiro/contas-pagar" element={<ContasPagar open={sidebarOpen} />} />
             <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
             <Route path="/modulo-financeiro/agencia" element={<Agencia open={sidebarOpen} />} />
             <Route path="/conta" element={<Conta open={sidebarOpen} />} />
