@@ -7,16 +7,15 @@ import App from "./App.jsx";
 
 import { IconColorProvider } from "./context/IconColorContext";
 import { ModulosProvider } from "./context/ModulosContext";
-import { MenuRapidoProvider } from "./context/MenuRapidoContext";
 
-// Provider da Agenda
+/* ===================== MENU RÁPIDO ===================== */
+import { MenuRapidoProvider } from "./context/MenuRapidoContext"; // Operação
+import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext"; // Financeiro
+import { MenuRapidoWMSProvider } from "./context/MenuRapidoWMSContext"; // ✅ WMS
+
+/* ===================== OUTROS PROVIDERS ===================== */
 import { AgendaProvider } from "./context/AgendaContext";
-
-// Provider das Notificações
 import { NotificacaoProvider } from "./context/NotificacaoContext";
-
-// ✅ Provider do Menu Rápido do Financeiro (NOVO)
-import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,19 +23,23 @@ createRoot(document.getElementById("root")).render(
       <IconColorProvider>
         <ModulosProvider>
 
-          {/* 🔥 Provider do Menu Rápido Operação */}
+          {/* 🔥 MENU RÁPIDO OPERAÇÃO */}
           <MenuRapidoProvider>
 
-            {/* 🔥 Provider do Menu Rápido FINANCEIRO */}
+            {/* 🔥 MENU RÁPIDO FINANCEIRO */}
             <MenuRapidoFinanceiroProvider>
 
-              {/* Restante dos providers */}
-              <AgendaProvider>
-                <NotificacaoProvider>
-                  <App />
-                </NotificacaoProvider>
-              </AgendaProvider>
+              {/* 🔥 MENU RÁPIDO WMS */}
+              <MenuRapidoWMSProvider>
 
+                {/* Providers globais */}
+                <AgendaProvider>
+                  <NotificacaoProvider>
+                    <App />
+                  </NotificacaoProvider>
+                </AgendaProvider>
+
+              </MenuRapidoWMSProvider>
             </MenuRapidoFinanceiroProvider>
           </MenuRapidoProvider>
 

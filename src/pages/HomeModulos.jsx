@@ -60,7 +60,7 @@ export default function HomeModulos() {
         { nome: "Comercial", rota: "/modulo-comercial", icon: <Briefcase size={36} />, ativo: false },
         { nome: "CRM", rota: "/modulo-crm", icon: <Users size={36} />, ativo: false },
         { nome: "Segurança", rota: "/modulo-seguranca", icon: <ShieldCheck size={36} />, ativo: false },
-        { nome: "WMS", rota: "/modulo-wms", icon: <Boxes size={36} />, ativo: false },
+        { nome: "WMS", rota: "/modulo-wms", icon: <Boxes size={36} />, ativo: true },
         { nome: "WMS Coletor", rota: "/modulo-wms-coletor", icon: <ScanBarcode size={36} />, ativo: false },
         { nome: "Roteirizador", rota: "/modulo-roteirizador", icon: <Route size={36} />, ativo: false },
         { nome: "Baixa XML", rota: "/modulo-baixa-xml", icon: <FileCheck size={36} />, ativo: false },

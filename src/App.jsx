@@ -9,6 +9,10 @@ import Sidebar from "./components/Sidebar";
 import HeaderFinanceiro from "./components/HeaderFinanceiro";
 import SidebarFinanceiro from "./components/SidebarFinanceiro";
 
+// Layout WMS
+import HeaderWMS from "./components/HeaderWMS";
+import SidebarWMS from "./components/SidebarWMS";
+
 // Páginas principais
 import Agenda from "./pages/Agenda";
 import CTePage from "./pages/CTePage";
@@ -93,6 +97,10 @@ import IntegracaoMulticte from "./pages/IntegracaoMulticte";
 import HomeModulos from "./pages/HomeModulos";
 import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
+
+// Home WMS (fica em pages, como você pediu)
+import HomeWMS from "./pages/HomeWMS";
+
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
 import ContasPagar from "./pages/ContasPagar";
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
@@ -151,10 +159,15 @@ export default function App() {
 
   const path = window.location.pathname;
   const isHomeModulos = path === "/";
+
+  // ✅ Financeiro
   const isFinanceiro = path.startsWith("/modulo-financeiro");
 
-  // ✅ CORREÇÃO AQUI
+  // ✅ Operação
   const isOperacao = path.startsWith("/modulo-operacao");
+
+  // ✅ WMS
+  const isWMS = path.startsWith("/modulo-wms");
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-100">
@@ -162,7 +175,9 @@ export default function App() {
       <TailwindColorHelper />
 
       {!isHomeModulos && (
-        isFinanceiro ? (
+        isWMS ? (
+          <HeaderWMS toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        ) : isFinanceiro ? (
           <HeaderFinanceiro toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         ) : (
           <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -172,7 +187,9 @@ export default function App() {
       <div className="flex flex-1">
 
         {!isHomeModulos && (
-          isFinanceiro ? (
+          isWMS ? (
+            <SidebarWMS open={sidebarOpen} />
+          ) : isFinanceiro ? (
             <SidebarFinanceiro open={sidebarOpen} />
           ) : (
             <Sidebar open={sidebarOpen} />
@@ -201,6 +218,9 @@ export default function App() {
 
             <Route path="/modulo-operacao" element={<HomeOperacao />} />
             <Route path="/modulo-financeiro" element={<HomeFinanceiro />} />
+
+            {/* ✅ NOVO MÓDULO: WMS */}
+            <Route path="/modulo-wms" element={<HomeWMS />} />
 
             {/* A partir daqui, TODAS AS SUAS ROTAS 100% INTACTAS */}
             <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
