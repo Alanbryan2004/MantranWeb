@@ -94,9 +94,14 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                         {atalhos.slice(0, 7).map((item) => (
                             <Link
                                 key={item.id}
-                                to={item.rota}
+                                to={
+                                    item.rota.startsWith("/modulo-financeiro")
+                                        ? item.rota
+                                        : `/modulo-financeiro${item.rota}`
+                                }
                                 className={`flex flex-col items-center cursor-pointer hover:${footerIconColorHover}`}
                             >
+
                                 <i className={`fa-solid ${item.icone} text-lg`} />
                                 <span>{item.label}</span>
                             </Link>

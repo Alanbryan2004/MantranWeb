@@ -3,32 +3,51 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 // --- ATALHOS PADRÃO DO FINANCEIRO ---
 const atalhosPadraoFinanceiro = [
-    { id: 1, label: "Títulos a Pagar", rota: "/financeiro-pagar", icone: "fa-money-bill" },
-    { id: 2, label: "Títulos a Receber", rota: "/financeiro-receber", icone: "fa-file-invoice-dollar" },
+    { id: 1, label: "Contas a Pagar", rota: "/contas-pagar", icone: "fa-money-bill" },
+    { id: 2, label: "Contas a Receber", rota: "/financeiro-receber", icone: "fa-file-invoice-dollar" },
     { id: 3, label: "Fluxo de Caixa", rota: "/financeiro-fluxo", icone: "fa-chart-line" },
     { id: 4, label: "Faturamento", rota: "/faturamento", icone: "fa-receipt" },
     { id: 5, label: "Boletos", rota: "/financeiro-boletos", icone: "fa-barcode" },
 ];
 
+// 🔒 NORMALIZAÇÃO CENTRAL
+function normalizarRotaFinanceira(rota) {
+    if (!rota) return "/modulo-financeiro";
+
+    // Garante barra inicial
+    const rotaNormalizada = rota.startsWith("/") ? rota : `/${rota}`;
+
+    // Se já for financeiro, mantém
+    if (rotaNormalizada.startsWith("/modulo-financeiro")) {
+        return rotaNormalizada;
+    }
+
+    // Prefixa automaticamente
+    return `/modulo-financeiro${rotaNormalizada}`;
+}
+
 const MenuRapidoFinanceiroContext = createContext();
 
 export function MenuRapidoFinanceiroProvider({ children }) {
 
-    // Carregar atalhos do localStorage com fallback seguro
     const [atalhos, setAtalhos] = useState(() => {
         try {
             const salvo = localStorage.getItem("menuRapido_financeiro");
 
-            if (!salvo) return atalhosPadraoFinanceiro;
+            const base = salvo ? JSON.parse(salvo) : atalhosPadraoFinanceiro;
 
-            const parsed = JSON.parse(salvo);
+            if (!Array.isArray(base)) return atalhosPadraoFinanceiro;
 
-            // Segurança: se corrompido, volta ao default
-            if (!Array.isArray(parsed)) return atalhosPadraoFinanceiro;
-
-            return parsed;
+            // 🔒 NORMALIZA TODAS AS ROTAS AO CARREGAR
+            return base.map((a) => ({
+                ...a,
+                rota: normalizarRotaFinanceira(a.rota),
+            }));
         } catch {
-            return atalhosPadraoFinanceiro;
+            return atalhosPadraoFinanceiro.map((a) => ({
+                ...a,
+                rota: normalizarRotaFinanceira(a.rota),
+            }));
         }
     });
 
@@ -37,22 +56,38 @@ export function MenuRapidoFinanceiroProvider({ children }) {
         localStorage.setItem("menuRapido_financeiro", JSON.stringify(atalhos));
     }, [atalhos]);
 
-    // ➕ ADICIONAR NOVO ATALHO — impede duplicidade por rota
+    // ➕ ADICIONAR NOVO ATALHO
     const adicionarAtalho = (atalho) => {
         setAtalhos((prev) => {
-            if (prev.some((a) => a.rota === atalho.rota)) return prev; // evita duplicação
-            return [...prev, atalho];
+            const rotaNormalizada = normalizarRotaFinanceira(atalho.rota);
+
+            if (prev.some((a) => a.rota === rotaNormalizada)) return prev;
+
+            return [
+                ...prev,
+                {
+                    ...atalho,
+                    rota: rotaNormalizada,
+                },
+            ];
         });
     };
 
     // ❌ REMOVER atalho por rota
     const removerAtalho = (rota) => {
-        setAtalhos((prev) => prev.filter((a) => a.rota !== rota));
+        const rotaNormalizada = normalizarRotaFinanceira(rota);
+
+        setAtalhos((prev) => prev.filter((a) => a.rota !== rotaNormalizada));
     };
 
     // 🔄 RESTAURAR padrão
     const restaurarPadrao = () => {
-        setAtalhos(atalhosPadraoFinanceiro);
+        setAtalhos(
+            atalhosPadraoFinanceiro.map((a) => ({
+                ...a,
+                rota: normalizarRotaFinanceira(a.rota),
+            }))
+        );
     };
 
     return (
