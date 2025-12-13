@@ -69,19 +69,30 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
     // CORES DINÂMICAS
     const { iconColor, footerIconColorHover } = useIconColor();
 
+    // helpers hover (igual WMS)
+    const handleEnter = (e) =>
+        e.currentTarget.classList.add(footerIconColorHover);
+
+    const handleLeave = (e) =>
+        e.currentTarget.classList.remove(footerIconColorHover);
+
     return (
         <>
             <header
-                className="flex justify-between items-center 
-                bg-white shadow px-6 py-1.5 border-b h-[48px] 
-                fixed top-0 left-0 right-0 z-50"
+                className="
+                    flex justify-between items-center
+                    bg-white shadow px-6 py-1.5 border-b h-[48px]
+                    fixed top-0 left-0 right-0 z-50
+                "
             >
-                {/* LADO ESQUERDO */}
+                {/* ================= LADO ESQUERDO ================= */}
                 <div className="flex items-center gap-5">
                     {/* BOTÃO SIDEBAR */}
                     <button
                         onClick={toggleSidebar}
-                        className={`${iconColor} hover:${footerIconColorHover}`}
+                        className={`${iconColor} transition-colors`}
+                        onMouseEnter={handleEnter}
+                        onMouseLeave={handleLeave}
                     >
                         <Menu size={22} />
                     </button>
@@ -91,17 +102,14 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                     {/* MENU RÁPIDO FINANCEIRO */}
                     <div className={`flex gap-8 text-sm ml-6 ${iconColor}`}>
-                        {atalhos.slice(0, 7).map((item) => (
+                        {atalhos.map((item) => (
                             <Link
                                 key={item.id}
-                                to={
-                                    item.rota.startsWith("/modulo-financeiro")
-                                        ? item.rota
-                                        : `/modulo-financeiro${item.rota}`
-                                }
-                                className={`flex flex-col items-center cursor-pointer hover:${footerIconColorHover}`}
+                                to={item.rota}
+                                className="flex flex-col items-center cursor-pointer transition-colors"
+                                onMouseEnter={handleEnter}
+                                onMouseLeave={handleLeave}
                             >
-
                                 <i className={`fa-solid ${item.icone} text-lg`} />
                                 <span>{item.label}</span>
                             </Link>
@@ -109,12 +117,14 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                     </div>
                 </div>
 
-                {/* LADO DIREITO */}
+                {/* ================= LADO DIREITO ================= */}
                 <div className="flex items-center gap-6">
                     {/* 🔔 NOTIFICAÇÕES */}
                     <div className="relative">
                         <button
-                            className={`${iconColor} hover:${footerIconColorHover} relative`}
+                            className={`${iconColor} relative transition-colors`}
+                            onMouseEnter={handleEnter}
+                            onMouseLeave={handleLeave}
                             onClick={() => {
                                 setShowNotifications(!showNotifications);
                                 setShowAppsMenu(false);
@@ -144,9 +154,11 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                     notificacoes.map((n) => (
                                         <div
                                             key={n.id}
-                                            className={`flex justify-between px-4 py-2 border-b text-sm 
-                                                ${n.lido ? "text-gray-400" : "text-gray-800 bg-gray-50"}
-                                            `}
+                                            className={`flex justify-between px-4 py-2 border-b text-sm
+                                                ${n.lido
+                                                    ? "text-gray-400"
+                                                    : "text-gray-800 bg-gray-50"
+                                                }`}
                                         >
                                             <div>
                                                 <p className={`font-semibold ${iconColor}`}>
@@ -161,7 +173,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                                                 {n.start && (
                                                     <button
-                                                        className={`${iconColor} text-xs hover:${footerIconColorHover}`}
+                                                        className={`${iconColor} text-xs transition-colors`}
+                                                        onMouseEnter={handleEnter}
+                                                        onMouseLeave={handleLeave}
                                                         onClick={() => {
                                                             navigate(`/agenda?data=${n.start}`);
                                                             setShowNotifications(false);
@@ -195,7 +209,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 setShowNotifications(false);
                                 setShowUserMenu(false);
                             }}
-                            className={`${iconColor} hover:${footerIconColorHover} flex items-center`}
+                            className={`${iconColor} transition-colors`}
+                            onMouseEnter={handleEnter}
+                            onMouseLeave={handleLeave}
                         >
                             <AppDotsIcon size={18} />
                         </button>
@@ -211,10 +227,12 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 ].map((item, idx) => (
                                     <button
                                         key={idx}
-                                        className={`flex flex-col items-center ${iconColor} hover:${footerIconColorHover} text-sm`}
+                                        className={`flex flex-col items-center ${iconColor} transition-colors`}
+                                        onMouseEnter={handleEnter}
+                                        onMouseLeave={handleLeave}
                                     >
                                         <i className={`fa-solid ${item.icon} text-xl`} />
-                                        <span>{item.label}</span>
+                                        <span className="text-sm">{item.label}</span>
                                     </button>
                                 ))}
                             </div>
@@ -229,7 +247,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 setShowAppsMenu(false);
                                 setShowNotifications(false);
                             }}
-                            className={`flex items-center gap-2 ${iconColor} hover:${footerIconColorHover}`}
+                            className={`flex items-center gap-2 ${iconColor} transition-colors`}
+                            onMouseEnter={handleEnter}
+                            onMouseLeave={handleLeave}
                         >
                             <UserRound size={18} />
                             <span className="uppercase">{usuarioLogado}</span>
@@ -257,7 +277,9 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                                 </button>
 
                                 <button
-                                    onClick={() => navigate("/modulo-financeiro/financeiro-parametros")}
+                                    onClick={() =>
+                                        navigate("/modulo-financeiro/financeiro-parametros")
+                                    }
                                     className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
                                 >
                                     <Settings className={iconColor} size={16} />
@@ -277,7 +299,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
                 </div>
             </header>
 
-            {/* Modal Alterar Senha */}
+            {/* MODAL ALTERAR SENHA */}
             {showAlterarSenha && (
                 <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
             )}

@@ -55,6 +55,7 @@ export default function ParametroFinanceiro({ onClose }) {
         adicionarAtalho,
         removerAtalho,
         restaurarPadrao,
+        CATALOGO_FINANCEIRO,
     } = useMenuRapidoFinanceiro();
 
     // =============================
@@ -66,12 +67,7 @@ export default function ParametroFinanceiro({ onClose }) {
 
     const [showMenuRapido, setShowMenuRapido] = useState(false);
 
-    const opcoesMenuRapidoFinanceiro = [
-        { label: "Contas a Pagar", rota: "/fin-contas-pagar", icone: "fa-file-invoice-dollar" },
-        { label: "Contas a Receber", rota: "/fin-contas-receber", icone: "fa-file-lines" },
-        { label: "Faturamento", rota: "/faturamento", icone: "fa-receipt" },
-        { label: "Dashboard Financeiro", rota: "/financeiro-dashboard", icone: "fa-chart-line" },
-    ];
+
 
     const coresBase = [
         { value: "red", label: "Vermelho" },
@@ -85,6 +81,16 @@ export default function ParametroFinanceiro({ onClose }) {
     // ================= ICONES =================
     const [corBase, setCorBase] = useState(iconColor.split("-")[1]);
     const [intensidade, setIntensidade] = useState(iconColor.split("-")[2]);
+    // 🔄 SINCRONIZA COM O CONTEXT (ex: botão Padrão)
+    useEffect(() => {
+        if (!iconColor) return;
+
+        const [, cor, nivel] = iconColor.split("-");
+
+        setCorBase(cor);
+        setIntensidade(nivel);
+    }, [iconColor]);
+
 
     const atualizarCorIcones = (cor, nivel) => {
         const classe = `text-${cor}-${nivel}`;
@@ -101,6 +107,16 @@ export default function ParametroFinanceiro({ onClose }) {
     const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
     const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
 
+
+    useEffect(() => {
+        if (!footerIconColorNormal) return;
+
+        const [, cor, nivel] = footerIconColorNormal.split("-");
+
+        setFooterBase(cor);
+        setFooterInt(nivel);
+    }, [footerIconColorNormal]);
+
     const atualizarRodapeNormal = (cor, nivel) => {
         const classe = `text-${cor}-${nivel}`;
 
@@ -115,6 +131,15 @@ export default function ParametroFinanceiro({ onClose }) {
     const [footerHoverBase, setFooterHoverBase] = useState(footerIconColorHover.split("-")[1]);
     const [footerHoverInt, setFooterHoverInt] = useState(footerIconColorHover.split("-")[2]);
 
+    useEffect(() => {
+        if (!footerIconColorHover) return;
+
+        const [, cor, nivel] = footerIconColorHover.split("-");
+
+        setFooterHoverBase(cor);
+        setFooterHoverInt(nivel);
+    }, [footerIconColorHover]);
+
     const atualizarRodapeHover = (cor, nivel) => {
         const classe = `text-${cor}-${nivel}`;
 
@@ -123,6 +148,28 @@ export default function ParametroFinanceiro({ onClose }) {
 
         setFooterIconColorHover(classe);
         localStorage.setItem("fin_footerHover", classe);
+    };
+    // =============================
+    // PADRÃO (CORES)
+    // =============================
+    const restaurarCoresPadrao = () => {
+        // volta o Context para o Default do módulo Financeiro
+        setIconColor(DEFAULT_ICON_COLOR);
+        setFooterIconColorNormal(DEFAULT_FOOTER_NORMAL);
+        setFooterIconColorHover(DEFAULT_FOOTER_HOVER);
+
+        // sincroniza os selects/sliders com os defaults
+        setCorBase(DEFAULT_ICON_COLOR.split("-")[1]);
+        setIntensidade(DEFAULT_ICON_COLOR.split("-")[2]);
+
+        setFooterBase(DEFAULT_FOOTER_NORMAL.split("-")[1]);
+        setFooterInt(DEFAULT_FOOTER_NORMAL.split("-")[2]);
+
+        setFooterHoverBase(DEFAULT_FOOTER_HOVER.split("-")[1]);
+        setFooterHoverInt(DEFAULT_FOOTER_HOVER.split("-")[2]);
+
+        // garante persistência do prefixo do Financeiro (seu context usa prefix fin_)
+
     };
 
     // =====================================
@@ -138,10 +185,7 @@ export default function ParametroFinanceiro({ onClose }) {
     const limpar = () => {
         setExibirDashboard(true);
         setCorFundo("#f3f4f6");
-
-        atualizarCorIcones("red", "700");
-        atualizarRodapeNormal("red", "700");
-        atualizarRodapeHover("red", "900");
+        restaurarCoresPadrao();
 
         setBackgroundImage(null);
         restaurarPadrao();
@@ -197,7 +241,61 @@ export default function ParametroFinanceiro({ onClose }) {
                     Exemplo
                 </div>
             </div>
+            <div className="mt-4">
+                <label className="w-[160px] text-right text-sm font-medium text-gray-700">
+                    Menu Rápido:
+                </label>
 
+                {/* Select */}
+                <div className="relative mt-1">
+                    <button
+                        onClick={() => setShowMenuRapido(prev => !prev)}
+                        className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
+                    >
+                        Selecionar Atalhos
+                        <span className="text-gray-500">▼</span>
+                    </button>
+
+                    {showMenuRapido && (
+                        <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
+                            {CATALOGO_FINANCEIRO.map((op) => {
+                                const ativo = atalhos.some(a => a.rota === op.rota);
+
+                                return (
+                                    <label
+                                        key={op.id}
+                                        className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={ativo}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    adicionarAtalho(op);
+                                                } else {
+                                                    removerAtalho(op.rota);
+                                                }
+                                            }}
+                                        />
+
+                                        <i className={`fa-solid ${op.icone} text-gray-700`} />
+                                        {op.label}
+                                    </label>
+                                );
+                            })}
+
+                            <button
+                                onClick={restaurarPadrao}
+                                className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
+                            >
+                                Restaurar Padrão
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+
+            </div>
             {/* LOGO FUNDO */}
             <div className="flex items-center gap-3">
                 <label className="w-[160px] text-right text-sm font-medium">
@@ -257,6 +355,14 @@ export default function ParametroFinanceiro({ onClose }) {
                 />
 
                 <Palette size={20} className={`text-${corBase}-${intensidade}`} />
+                <button
+                    type="button"
+                    onClick={restaurarCoresPadrao}
+                    className="text-xs text-red-700 hover:text-red-900 underline ml-2"
+                >
+                    Padrão
+                </button>
+
             </div>
 
             {/* RODAPÉ NORMAL */}
@@ -318,83 +424,7 @@ export default function ParametroFinanceiro({ onClose }) {
             {/* ========================= */}
             {/* MENU RÁPIDO (IGUAL DO OPERACIONAL) */}
             {/* ========================= */}
-            <div className="mt-4">
-                <label className="w-[160px] text-right text-sm font-medium text-gray-700">
-                    Menu Rápido:
-                </label>
 
-                {/* Select */}
-                <div className="relative mt-1">
-                    <button
-                        onClick={() => setShowMenuRapido(prev => !prev)}
-                        className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
-                    >
-                        Selecionar Atalhos
-                        <span className="text-gray-500">▼</span>
-                    </button>
-
-                    {showMenuRapido && (
-                        <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
-                            {opcoesMenuRapidoFinanceiro.map((op, idx) => {
-                                const ativo = atalhos.some(a => a.rota === op.rota);
-
-                                return (
-                                    <label
-                                        key={idx}
-                                        className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={ativo}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    adicionarAtalho({
-                                                        id: Date.now(),
-                                                        label: op.label,
-                                                        rota: op.rota,
-                                                        icone: op.icone
-                                                    });
-                                                } else {
-                                                    removerAtalho(op.rota);
-                                                }
-                                            }}
-                                        />
-
-                                        <i className={`fa-solid ${op.icone} text-gray-700`} />
-                                        {op.label}
-                                    </label>
-                                );
-                            })}
-
-                            <button
-                                onClick={restaurarPadrao}
-                                className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
-                            >
-                                Restaurar Padrão
-                            </button>
-                        </div>
-                    )}
-                </div>
-
-                {/* Lista dos selecionados */}
-                <div className="mt-3 border rounded p-2 bg-gray-50">
-                    {atalhos.map(a => (
-                        <div
-                            key={a.id}
-                            className="flex items-center justify-between p-1"
-                        >
-                            <span className="text-[13px]">{a.label}</span>
-
-                            <button
-                                onClick={() => removerAtalho(a.rota)}
-                                className="text-red-700 hover:text-black"
-                            >
-                                <XCircle size={16} />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
         </>
     );
 

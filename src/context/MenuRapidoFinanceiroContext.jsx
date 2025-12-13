@@ -1,104 +1,196 @@
 // src/context/MenuRapidoFinanceiroContext.jsx
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-// --- ATALHOS PADRÃO DO FINANCEIRO ---
-const atalhosPadraoFinanceiro = [
-    { id: 1, label: "Contas a Pagar", rota: "/contas-pagar", icone: "fa-money-bill" },
-    { id: 2, label: "Contas a Receber", rota: "/financeiro-receber", icone: "fa-file-invoice-dollar" },
-    { id: 3, label: "Fluxo de Caixa", rota: "/financeiro-fluxo", icone: "fa-chart-line" },
-    { id: 4, label: "Faturamento", rota: "/faturamento", icone: "fa-receipt" },
-    { id: 5, label: "Boletos", rota: "/financeiro-boletos", icone: "fa-barcode" },
+/* =====================================================
+   CONTEXT
+===================================================== */
+const MenuRapidoFinanceiroContext = createContext();
+
+/* =====================================================
+   CATÁLOGO FINANCEIRO (fonte única da verdade)
+   -> Igual ao conceito do WMS
+===================================================== */
+const CATALOGO_FINANCEIRO = [
+    {
+        id: "contas-pagar",
+        label: "Contas a Pagar",
+        rota: "/contas-pagar",
+        icone: "fa-money-bill",
+    },
+    {
+        id: "contas-receber",
+        label: "Contas a Receber",
+        rota: "/financeiro-receber",
+        icone: "fa-file-invoice-dollar",
+    },
+    {
+        id: "fluxo-caixa",
+        label: "Fluxo de Caixa",
+        rota: "/financeiro-fluxo",
+        icone: "fa-chart-line",
+    },
+    {
+        id: "faturamento",
+        label: "Faturamento",
+        rota: "/faturamento",
+        icone: "fa-receipt",
+    },
+    {
+        id: "boletos",
+        label: "Boletos",
+        rota: "/financeiro-boletos",
+        icone: "fa-barcode",
+    },
 ];
 
-// 🔒 NORMALIZAÇÃO CENTRAL
+/* =====================================================
+   NORMALIZAÇÃO CENTRAL DE ROTAS
+===================================================== */
 function normalizarRotaFinanceira(rota) {
     if (!rota) return "/modulo-financeiro";
 
-    // Garante barra inicial
     const rotaNormalizada = rota.startsWith("/") ? rota : `/${rota}`;
 
-    // Se já for financeiro, mantém
     if (rotaNormalizada.startsWith("/modulo-financeiro")) {
         return rotaNormalizada;
     }
 
-    // Prefixa automaticamente
     return `/modulo-financeiro${rotaNormalizada}`;
 }
 
-const MenuRapidoFinanceiroContext = createContext();
+const STORAGE_KEY = "menuRapido_financeiro";
 
+/* =====================================================
+   PROVIDER
+===================================================== */
 export function MenuRapidoFinanceiroProvider({ children }) {
-
     const [atalhos, setAtalhos] = useState(() => {
         try {
-            const salvo = localStorage.getItem("menuRapido_financeiro");
+            const salvo = localStorage.getItem(STORAGE_KEY);
 
-            const base = salvo ? JSON.parse(salvo) : atalhosPadraoFinanceiro;
+            if (!salvo) {
+                return CATALOGO_FINANCEIRO.map((a) => ({
+                    ...a,
+                    rota: normalizarRotaFinanceira(a.rota),
+                    ativo: true,
+                }));
+            }
 
-            if (!Array.isArray(base)) return atalhosPadraoFinanceiro;
+            const parsed = JSON.parse(salvo);
+            if (!Array.isArray(parsed) || parsed.length === 0) {
+                return CATALOGO_FINANCEIRO.map((a) => ({
+                    ...a,
+                    rota: normalizarRotaFinanceira(a.rota),
+                    ativo: true,
+                }));
+            }
 
-            // 🔒 NORMALIZA TODAS AS ROTAS AO CARREGAR
-            return base.map((a) => ({
-                ...a,
+            return parsed.map((a) => ({
+                id: a.id ?? crypto.randomUUID(),
+                label: a.label ?? "Atalho",
                 rota: normalizarRotaFinanceira(a.rota),
+                icone: a.icone ?? "fa-gear",
+                ativo: a.ativo !== false,
             }));
         } catch {
-            return atalhosPadraoFinanceiro.map((a) => ({
+            return CATALOGO_FINANCEIRO.map((a) => ({
                 ...a,
                 rota: normalizarRotaFinanceira(a.rota),
+                ativo: true,
             }));
         }
     });
 
-    // Atualiza o localStorage sempre que mudar
+    /* =====================================================
+       PERSISTÊNCIA
+    ===================================================== */
     useEffect(() => {
-        localStorage.setItem("menuRapido_financeiro", JSON.stringify(atalhos));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(atalhos));
     }, [atalhos]);
 
-    // ➕ ADICIONAR NOVO ATALHO
+    /* =====================================================
+       FUNÇÕES
+    ===================================================== */
+
+    // ➕ Adiciona (ou reativa) atalho pela rota
     const adicionarAtalho = (atalho) => {
         setAtalhos((prev) => {
             const rotaNormalizada = normalizarRotaFinanceira(atalho.rota);
 
-            if (prev.some((a) => a.rota === rotaNormalizada)) return prev;
+            const existe = prev.some((a) => a.rota === rotaNormalizada);
+
+            if (existe) {
+                return prev.map((a) =>
+                    a.rota === rotaNormalizada
+                        ? { ...a, ...atalho, rota: rotaNormalizada, ativo: true }
+                        : a
+                );
+            }
 
             return [
                 ...prev,
                 {
                     ...atalho,
                     rota: rotaNormalizada,
+                    ativo: true,
                 },
             ];
         });
     };
 
-    // ❌ REMOVER atalho por rota
-    const removerAtalho = (rota) => {
-        const rotaNormalizada = normalizarRotaFinanceira(rota);
-
-        setAtalhos((prev) => prev.filter((a) => a.rota !== rotaNormalizada));
+    // ❌ Remove por ID ou ROTA
+    const removerAtalho = (idOuRota) => {
+        setAtalhos((prev) =>
+            prev.filter(
+                (a) => a.id !== idOuRota && a.rota !== normalizarRotaFinanceira(idOuRota)
+            )
+        );
     };
 
-    // 🔄 RESTAURAR padrão
+    // 🔄 Alterna ativo
+    const toggleAtalho = (idOuRota) => {
+        setAtalhos((prev) =>
+            prev.map((a) =>
+                a.id === idOuRota || a.rota === normalizarRotaFinanceira(idOuRota)
+                    ? { ...a, ativo: !a.ativo }
+                    : a
+            )
+        );
+    };
+
+    // ♻️ Restaurar padrão
     const restaurarPadrao = () => {
         setAtalhos(
-            atalhosPadraoFinanceiro.map((a) => ({
+            CATALOGO_FINANCEIRO.map((a) => ({
                 ...a,
                 rota: normalizarRotaFinanceira(a.rota),
+                ativo: true,
             }))
         );
     };
 
+    const value = useMemo(
+        () => ({
+            atalhos,
+            adicionarAtalho,
+            removerAtalho,
+            toggleAtalho,
+            restaurarPadrao,
+            CATALOGO_FINANCEIRO,
+        }),
+        [atalhos]
+    );
+
     return (
-        <MenuRapidoFinanceiroContext.Provider
-            value={{ atalhos, adicionarAtalho, removerAtalho, restaurarPadrao }}
-        >
+        <MenuRapidoFinanceiroContext.Provider value={value}>
             {children}
         </MenuRapidoFinanceiroContext.Provider>
     );
 }
 
+/* =====================================================
+   HOOK
+===================================================== */
 export function useMenuRapidoFinanceiro() {
     return useContext(MenuRapidoFinanceiroContext);
 }

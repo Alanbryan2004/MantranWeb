@@ -2,11 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const IconColorContext = createContext();
 
-// Valores padrão
-const DEFAULT_ICON_COLOR = "text-red-700";
-const DEFAULT_FOOTER_NORMAL = "text-red-700";
-const DEFAULT_FOOTER_HOVER = "text-red-900";
-
 // === Função para obter prefixo do módulo ativo ===
 function getModuloPrefix() {
   const modulo = localStorage.getItem("mantran_modulo") || "operacao";
@@ -23,25 +18,59 @@ function getModuloPrefix() {
   }
 }
 
+// === Função para obter DEFAULTS por módulo ===
+function getDefaultsByModulo() {
+  const modulo = localStorage.getItem("mantran_modulo") || "operacao";
+
+  switch (modulo) {
+    case "financeiro":
+      return {
+        DEFAULT_ICON_COLOR: "text-green-700",
+        DEFAULT_FOOTER_NORMAL: "text-green-700",
+        DEFAULT_FOOTER_HOVER: "text-green-900",
+      };
+
+    case "wms":
+      return {
+        DEFAULT_ICON_COLOR: "text-red-900",
+        DEFAULT_FOOTER_NORMAL: "text-green-900",
+        DEFAULT_FOOTER_HOVER: "text-slate-900",
+      };
+
+    default: // operação
+      return {
+        DEFAULT_ICON_COLOR: "text-red-700",
+        DEFAULT_FOOTER_NORMAL: "text-red-700",
+        DEFAULT_FOOTER_HOVER: "text-red-900",
+      };
+  }
+}
+
 export function IconColorProvider({ children }) {
   const prefix = getModuloPrefix();
 
-  // HEADER / SIDEBAR
+  const {
+    DEFAULT_ICON_COLOR,
+    DEFAULT_FOOTER_NORMAL,
+    DEFAULT_FOOTER_HOVER,
+  } = getDefaultsByModulo();
+
+  // ================= HEADER / SIDEBAR =================
   const [iconColor, setIconColor] = useState(
     localStorage.getItem(prefix + "iconColor") || DEFAULT_ICON_COLOR
   );
 
-  // RODAPÉ normal
+  // ================= RODAPÉ NORMAL =================
   const [footerIconColorNormal, setFooterIconColorNormal] = useState(
     localStorage.getItem(prefix + "footerNormal") || DEFAULT_FOOTER_NORMAL
   );
 
-  // RODAPÉ hover
+  // ================= RODAPÉ HOVER =================
   const [footerIconColorHover, setFooterIconColorHover] = useState(
     localStorage.getItem(prefix + "footerHover") || DEFAULT_FOOTER_HOVER
   );
 
-  // === Persistência ===
+  // ================= PERSISTÊNCIA =================
   useEffect(() => {
     localStorage.setItem(prefix + "iconColor", iconColor);
   }, [iconColor, prefix]);
