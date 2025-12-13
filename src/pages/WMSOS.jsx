@@ -1,4 +1,4 @@
-// src/pages/WMSNFSaida.jsx
+// src/pages/WMSOS.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useIconColor } from "../context/IconColorContext";
@@ -57,7 +57,7 @@ function Sel({ children, className = "", ...rest }) {
     );
 }
 
-/* ========================= Data inteligente (focus preenche / backspace limpa) ========================= */
+/* ========================= Data inteligente ========================= */
 const getHojeISO = () => new Date().toISOString().slice(0, 10);
 
 const fillTodayIfEmpty = (e) => {
@@ -83,7 +83,6 @@ const bindDateSmart = (onChange) => ({
 const parseNumero = (v) => {
     if (v === null || v === undefined || v === "") return 0;
     const s = String(v).trim();
-    // aceita "1.234,56" ou "1234.56"
     const norm = s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
     const n = Number(norm);
     return Number.isFinite(n) ? n : 0;
@@ -248,7 +247,7 @@ function ModalMsg({ modal, onClose }) {
     );
 }
 
-/* ========================= Modal Itens (ver todos) - ADAPTADO ========================= */
+/* ========================= Modal Itens (ver todos) ========================= */
 function ModalTodosItens({ open, onClose, itens, onSelect }) {
     if (!open) return null;
 
@@ -256,7 +255,7 @@ function ModalTodosItens({ open, onClose, itens, onSelect }) {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white w-[1200px] max-w-[96vw] rounded-md shadow-lg border border-gray-300">
                 <h2 className="text-center text-red-700 font-semibold py-2 text-sm border-b border-gray-300">
-                    ITENS DA NOTA FISCAL (SAÍDA)
+                    ITENS DA NOTA FISCAL (SAÍDA / OS)
                 </h2>
 
                 <div className="p-3">
@@ -269,7 +268,7 @@ function ModalTodosItens({ open, onClose, itens, onSelect }) {
                                         "Código",
                                         "Descrição",
                                         "Lote",
-                                        "NF Entrada", // 🔁 NOVO
+                                        "NF Entrada",
                                         "Cor",
                                         "Venc.",
                                         "Qtd",
@@ -347,7 +346,7 @@ function ModalTodosItens({ open, onClose, itens, onSelect }) {
 }
 
 /* ========================= Tela Principal ========================= */
-export default function WMSNFSaida({ open }) {
+export default function WMSOS({ open }) {
     const navigate = useNavigate();
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
@@ -360,7 +359,7 @@ export default function WMSNFSaida({ open }) {
     const [modalMsg, setModalMsg] = useState(null);
     const [showTodosItens, setShowTodosItens] = useState(false);
 
-    /* ============ Card 1 - Dados Nota ============ */
+    /* ============ Card 1 - Dados Nota / OS ============ */
     const [nota, setNota] = useState({
         empresa: "001",
         filial: "001",
@@ -371,35 +370,21 @@ export default function WMSNFSaida({ open }) {
         clienteCidade: "ARARAQUARA",
         clienteUF: "SP",
 
-        nrNF: "301001",              // 🔁 Line 3 - Não Editável
-        serie: "1",                  // 🔁 Line 3 - Não Editável
-        emissao: "2025-12-13",       // 🔁 Line 3 - Data
-        situacao: "Em Separação",    // 🔁 Line 3 - ReadOnly
-        nrPedido: "",                // 🔁 Line 3
-        nrOSCarga: "",               // 🔁 Line 3 - NEW
+        // Line 3 request: Nº OS Carga, Situação, Número NF, Serie, Data Emissao, Nº Agenda
+        nrOSCarga: "999",
+        situacao: "Em Separação",
+        nrNF: "301001",
+        serie: "1",
+        emissao: "2025-12-13",
+        nrAgenda: "123456",
 
-        nrNFEntrada: "",             // 🔁 Line 4 - Busca itens
-        saidaData: "",               // 🔁 Line 4
-        saidaHora: "",               // 🔁 Line 4
+        // Line 4 request: Status Agenda, Nº Ped. Cliente
+        statusAgenda: "Agendado",
+        nrPedCliente: "",
     });
 
     const setN = (campo) => (e) =>
         setNota((p) => ({ ...p, [campo]: e.target.value }));
-
-    // Mock para carregar itens da NF de Entrada
-    const carregarNFEntrada = () => {
-        if (!nota.nrNFEntrada) return;
-
-        // Simula loading
-        setModalMsg({ tipo: "sucesso", texto: `Itens carregados da NF Entrada ${nota.nrNFEntrada} (mock)` });
-
-        // Carrega mock e define como itens atuais
-        const novosItens = itensNFEntradaMock.map(it => ({
-            ...it,
-            nfEntrada: nota.nrNFEntrada // garante que a ref está certa
-        }));
-        setItens(novosItens);
-    };
 
     /* ============ Card 2 - Item ============ */
     const [item, setItem] = useState({
@@ -421,7 +406,7 @@ export default function WMSNFSaida({ open }) {
         corCod: "",
         corDesc: "",
 
-        nfEntrada: "", // 🔁 para o grid se for manual
+        nfEntrada: "",
     });
 
     const setI = (campo) => (e) =>
@@ -444,7 +429,6 @@ export default function WMSNFSaida({ open }) {
         return itens.reduce((acc, it) => acc + Number(it.qtd || 0) * Number(it.vrUnit || 0), 0);
     }, [itens]);
 
-    // 🔁 Novos campos de totais
     const [baseICMS, setBaseICMS] = useState("0,00");
     const [tipoDevolucao, setTipoDevolucao] = useState("Parcial");
 
@@ -540,7 +524,6 @@ export default function WMSNFSaida({ open }) {
     };
 
     const incluirItem = () => {
-        // validação mínima mock
         if (!item.produtoCod || !item.produtoDesc) {
             setModalMsg({ tipo: "info", texto: "Informe o Produto (Código e Descrição)." });
             return;
@@ -569,10 +552,7 @@ export default function WMSNFSaida({ open }) {
             ncm: item.ncm,
             etiqueta: "",
             qtdDiv: 0,
-
-            nfEntrada: nota.nrNFEntrada, // assume current NF entrada logic
-
-            // extras p/ transporte (mock)
+            nfEntrada: item.nfEntrada || "", // manual or default
             qtVol: qtd,
             pesoBruto: 0,
             pesoLiq: 0,
@@ -634,7 +614,6 @@ export default function WMSNFSaida({ open }) {
         });
     };
 
-    /* Enter/Tab no último campo do Card 2 */
     const onLastFieldKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -686,7 +665,7 @@ export default function WMSNFSaida({ open }) {
             if (filtro.clienteCnpj && String(x.cnpj) !== String(filtro.clienteCnpj)) return false;
 
             if (filtro.situacao && filtro.situacao !== "" && x.status !== filtro.situacao)
-                ; // status/ situação nem sempre 1:1
+                ;
 
             if (filtro.usarData) {
                 const de = filtro.dtEmissaoDe ? new Date(filtro.dtEmissaoDe) : null;
@@ -716,7 +695,7 @@ export default function WMSNFSaida({ open }) {
             serie: row.serie,
             emissao: row.data,
             situacao: row.status,
-            recebto: getHojeISO(),
+            nrAgenda: row.agenda, // mapeia agenda
         }));
 
         setItens(itensNFEntradaMock); // mock
@@ -733,8 +712,10 @@ export default function WMSNFSaida({ open }) {
             setNota((p) => ({
                 ...p,
                 nrNF: "",
-                nrNFEntrada: "",
-                // resetar outros se quiser
+                nrOSCarga: "",
+                nrAgenda: "",
+                statusAgenda: "",
+                nrPedCliente: "",
             }));
             setItens([]);
             limparItem();
@@ -776,18 +757,18 @@ export default function WMSNFSaida({ open }) {
     };
 
     const handleIncluirNF = () => {
-        setModalMsg({ tipo: "sucesso", texto: "Nota Fiscal incluída com sucesso! (mock)" });
+        setModalMsg({ tipo: "sucesso", texto: "OS Incluída com sucesso! (mock)" });
     };
 
     const handleAlterarNF = () => {
-        setModalMsg({ tipo: "sucesso", texto: "Nota Fiscal alterada com sucesso! (mock)" });
+        setModalMsg({ tipo: "sucesso", texto: "OS Alterada com sucesso! (mock)" });
     };
 
     const handleExcluirNF = () => {
         setModalMsg({
             tipo: "confirm",
-            texto: "Deseja excluir esta Nota Fiscal?",
-            onYes: () => setModalMsg({ tipo: "sucesso", texto: "Nota Fiscal excluída com sucesso! (mock)" }),
+            texto: "Deseja excluir esta OS?",
+            onYes: () => setModalMsg({ tipo: "sucesso", texto: "OS Excluída com sucesso! (mock)" }),
         });
     };
 
@@ -799,7 +780,7 @@ export default function WMSNFSaida({ open }) {
             >
                 {/* Título */}
                 <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
-                    Nota Fiscal Saída
+                    Ordem de Separação (OS)
                 </h1>
 
                 {/* Abas */}
@@ -813,7 +794,7 @@ export default function WMSNFSaida({ open }) {
                                 : "bg-gray-100 text-gray-600 border-transparent"
                                 } ${tab !== "nota" ? "ml-1" : ""}`}
                         >
-                            {tab === "nota" ? "Nota Fiscal" : "Consulta"}
+                            {tab === "nota" ? "OS" : "Consulta"}
                         </button>
                     ))}
                 </div>
@@ -823,14 +804,14 @@ export default function WMSNFSaida({ open }) {
                     {/* ======================= ABA NOTA FISCAL ======================= */}
                     {activeTab === "nota" && (
                         <>
-                            {/* CARD 1 - Dados da Nota */}
+                            {/* CARD 1 - Dados da Nota / OS */}
                             <fieldset className="border border-gray-300 rounded p-3 bg-white">
                                 <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                     Dados da Nota
                                 </legend>
 
                                 <div className="space-y-2">
-                                    {/* Linha 1 - IGUAL ENTRADA */}
+                                    {/* Linha 1 */}
                                     <div className="grid grid-cols-12 gap-2 items-center">
                                         <Label className="col-span-1 justify-end">Empresa</Label>
                                         <Sel className="col-span-4" value={nota.empresa} onChange={setN("empresa")}>
@@ -848,7 +829,7 @@ export default function WMSNFSaida({ open }) {
                                         <Txt className="col-span-1 bg-gray-200 text-center" readOnly value={nota.agenda} />
                                     </div>
 
-                                    {/* Linha 2 - IGUAL ENTRADA */}
+                                    {/* Linha 2 */}
                                     <div className="grid grid-cols-12 gap-2 items-center">
                                         <Label className="col-span-1 justify-end">Cliente</Label>
                                         <Txt className="col-span-2" value={nota.clienteCnpj} onChange={setN("clienteCnpj")} />
@@ -857,15 +838,21 @@ export default function WMSNFSaida({ open }) {
                                         <Txt className="col-span-1 bg-gray-200 text-center" readOnly value={nota.clienteUF} />
                                     </div>
 
-                                    {/* Linha 3 - 🔁 MODIFICADA */}
+                                    {/* Linha 3 (Modificada) */}
+                                    {/* Nº OS Carga, Situação, Número NF, Serie, Data Emissao, Nº Agenda */}
                                     <div className="grid grid-cols-12 gap-2 items-center">
+                                        <Label className="col-span-1 justify-end">Nº OS Carga</Label>
+                                        <Txt className="col-span-1" value={nota.nrOSCarga} onChange={setN("nrOSCarga")} />
+
+
+
                                         <Label className="col-span-1 justify-end">Número NF</Label>
                                         <Txt className="col-span-1 bg-gray-200" readOnly value={nota.nrNF} />
 
                                         <Label className="col-span-1 justify-end">Série</Label>
                                         <Txt className="col-span-1 bg-gray-200 text-center" readOnly value={nota.serie} />
 
-                                        <Label className="col-span-1 justify-end">Emissão</Label>
+                                        <Label className="col-span-1 justify-end">Data Emissao</Label>
                                         <Txt
                                             type="date"
                                             className="col-span-2"
@@ -873,47 +860,23 @@ export default function WMSNFSaida({ open }) {
                                             {...bindDateSmart(setN("emissao"))}
                                         />
 
-                                        <Label className="col-span-1 justify-end">Sit</Label>
-                                        <Txt className="col-span-2 bg-gray-200" readOnly value={nota.situacao} />
-
-                                        <Label className="col-span-1 justify-end">Pedido</Label>
-                                        <Txt className="col-span-1" value={nota.nrPedido} onChange={setN("nrPedido")} />
+                                        <Label className="col-span-1 justify-end">Nº Agenda</Label>
+                                        <Txt className="col-span-1" value={nota.nrAgenda} onChange={setN("nrAgenda")} />
                                     </div>
 
-                                    {/* Linha 4 - 🔁 MODIFICADA */}
+                                    {/* Linha 4 (Modificada) */}
+                                    {/* Status Agenda, Nº Ped. Cliente */}
                                     <div className="grid grid-cols-12 gap-2 items-center">
-                                        <Label className="col-span-1 justify-end">OS Carga</Label>
-                                        <Txt className="col-span-1" value={nota.nrOSCarga} onChange={setN("nrOSCarga")} />
+                                        <Label className="col-span-1 justify-end">Status Agenda</Label>
+                                        <Txt className="col-span-2" value={nota.statusAgenda} onChange={setN("statusAgenda")} />
 
-                                        <Label className="col-span-1 justify-end">NF Entrada</Label>
-                                        <Txt
-                                            className="col-span-2 bg-yellow-50 border-yellow-300"
-                                            value={nota.nrNFEntrada}
-                                            onChange={setN("nrNFEntrada")}
-                                            onBlur={carregarNFEntrada} // Busca ao sair do campo
-                                            onKeyDown={(e) => e.key === "Enter" && carregarNFEntrada()}
-                                            placeholder="Digite e Enter..."
-                                            title="Digite o Nº da NF de Entrada para carregar os itens"
-                                        />
-
-                                        <Label className="col-span-1 justify-end">Saída</Label>
-                                        <Txt
-                                            type="date"
-                                            className="col-span-2"
-                                            value={nota.saidaData}
-                                            {...bindDateSmart(setN("saidaData"))}
-                                        />
-                                        <Txt
-                                            type="time"
-                                            className="col-span-1"
-                                            value={nota.saidaHora}
-                                            onChange={setN("saidaHora")}
-                                        />
+                                        <Label className="col-span-2 justify-end">Nº Ped. Cliente</Label>
+                                        <Txt className="col-span-2" value={nota.nrPedCliente} onChange={setN("nrPedCliente")} />
                                     </div>
                                 </div>
                             </fieldset>
 
-                            {/* CARD 2 - Itens da Nota Fiscal (IGUAL ENTRADA) */}
+                            {/* CARD 2 - Itens da Nota Fiscal */}
                             <fieldset className="border border-gray-300 rounded p-3 bg-white">
                                 <legend className="px-2 text-red-700 font-semibold text-[13px] flex items-center gap-2">
                                     Itens da Nota Fiscal
@@ -1023,7 +986,7 @@ export default function WMSNFSaida({ open }) {
                                 </fieldset>
                             </fieldset>
 
-                            {/* CARD 3 - Grid Itens (min-h-0) - 🔁 MODIFICADO COLUNAS + RODAPÉ */}
+                            {/* CARD 3 - Grid Itens */}
                             <fieldset className="border border-gray-300 rounded p-3 bg-white mb-3">
                                 <legend className="px-2 text-red-700 font-semibold text-[13px]">
                                     Itens da Nota (Grade)
@@ -1038,7 +1001,7 @@ export default function WMSNFSaida({ open }) {
                                                     "Código",
                                                     "Descrição",
                                                     "Lote",
-                                                    "NF Entrada", // 🔁 Coluna nova
+                                                    "NF Entrada",
                                                     "Cor",
                                                     "Vencimento",
                                                     "Qtd",
@@ -1089,7 +1052,7 @@ export default function WMSNFSaida({ open }) {
                                     </table>
                                 </div>
 
-                                {/* 🔁 Totais Rodapé Grid - PADRÃO GRID COL-12 */}
+                                {/* Totais Rodapé Grid */}
                                 <div className="grid grid-cols-12 gap-2 items-center mt-2">
 
                                     {/* Base Calc. ICMS */}
@@ -1126,11 +1089,9 @@ export default function WMSNFSaida({ open }) {
                                     />
 
                                 </div>
-
-
                             </fieldset>
 
-                            {/* CARD 4 - Transporte (Retrátil) - IGUAL ENTRADA */}
+                            {/* CARD 4 - Transporte (Retrátil) */}
                             <div className="border border-gray-300 rounded bg-white">
                                 <div className="flex items-center justify-between px-3 py-2 border-b border-gray-300 bg-gray-50">
                                     <div className="flex items-center gap-2">
@@ -1155,7 +1116,6 @@ export default function WMSNFSaida({ open }) {
                                             </legend>
 
                                             <div className="space-y-2">
-                                                {/* Transport content reused... */}
                                                 <div className="grid grid-cols-12 gap-2 items-center">
                                                     <Label className="col-span-1 justify-end">Transportadora</Label>
                                                     <Txt className="col-span-2" value={transp.transpCnpj} onChange={setT("transpCnpj")} />
@@ -1203,7 +1163,7 @@ export default function WMSNFSaida({ open }) {
                         </>
                     )}
 
-                    {/* ======================= ABA CONSULTA - 🔁 SYNCED COM ENTRADA ======================= */}
+                    {/* ======================= ABA CONSULTA ======================= */}
                     {activeTab === "consulta" && (
                         <>
                             {/* Card 1 - Parâmetros */}
@@ -1367,7 +1327,7 @@ export default function WMSNFSaida({ open }) {
                     )}
                 </div>
 
-                {/* Rodapé - IGUAL ENTRADA */}
+                {/* Rodapé - */}
                 <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
                     <button
                         onClick={handleFechar}
@@ -1392,7 +1352,7 @@ export default function WMSNFSaida({ open }) {
                                 className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
                             >
                                 <PlusCircle size={20} />
-                                <span>Incluir</span>
+                                <span className="text-green-700">Incluir</span>
                             </button>
 
                             <button
@@ -1400,7 +1360,7 @@ export default function WMSNFSaida({ open }) {
                                 className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
                             >
                                 <Edit size={20} />
-                                <span>Alterar</span>
+                                <span className="text-orange-600">Alterar</span>
                             </button>
 
                             <button
@@ -1408,7 +1368,7 @@ export default function WMSNFSaida({ open }) {
                                 className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
                             >
                                 <Trash2 size={20} />
-                                <span>Excluir</span>
+                                <span className="text-red-700">Excluir</span>
                             </button>
                         </>
                     )}

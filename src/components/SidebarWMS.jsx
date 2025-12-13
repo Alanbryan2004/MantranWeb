@@ -191,7 +191,7 @@ export default function SidebarWMS({ open }) {
                     <Menu icon={ClipboardList} label="Ordem de Serviço" menuKey="os" items={[
                         "Packlist Entrada",
                         "Packlist Nota Fiscal",
-                        "Separação Saída",
+                        { label: "Separação Saída", to: "/modulo-wms/os-separacao" },
                         "Pedido Carga",
                     ]} />
 

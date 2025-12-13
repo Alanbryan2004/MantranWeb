@@ -102,6 +102,7 @@ import HomeFinanceiro from "./pages/HomeFinanceiro";
 import HomeWMS from "./pages/HomeWMS";
 import WMSNFEntrada from "./pages/WMSNFEntrada";
 import WMSNFSaida from "./pages/WMSNFSaida";
+import WMSOS from "./pages/WMSOS";
 
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
 import ContasPagar from "./pages/ContasPagar";
@@ -230,6 +231,7 @@ export default function App() {
               <Route path="/modulo-wms" element={<HomeWMS />} />
               <Route path="/modulo-wms/nf-entrada" element={<WMSNFEntrada open={sidebarOpen} />} />
               <Route path="/modulo-wms/nf-saida" element={<WMSNFSaida open={sidebarOpen} />} />
+              <Route path="/modulo-wms/os-separacao" element={<WMSOS open={sidebarOpen} />} />
 
               {/* A partir daqui, TODAS AS SUAS ROTAS 100% INTACTAS */}
               <Route path="/cte" element={<CTePage open={sidebarOpen} />} />

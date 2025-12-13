@@ -18,7 +18,7 @@ export const PADRAO_WMS = [
     {
         id: "os-separacao",
         label: "OS",
-        rota: "/wms/os-separacao",
+        rota: "/modulo-wms/os-separacao",
         icone: "fa-file-lines",
         ativo: true,
     },
@@ -126,13 +126,34 @@ export function MenuRapidoWMSProvider({ children }) {
                 return PADRAO_WMS;
             }
 
-            return parsed.map((a) => ({
-                id: a.id ?? String(Date.now()),
-                label: a.label ?? "Atalho",
-                rota: a.rota ?? "/wms",
-                icone: a.icone ?? "fa-gear",
-                ativo: a.ativo !== false,
-            }));
+            // 1. Sanitiza e ATUALIZA os que já existem no storage com a definição padrão (se houver)
+            // Isso garante que se mudarmos a rota no código, o usuário receba a atualização.
+            const stored = parsed.map((a) => {
+                const def = PADRAO_WMS.find(p => p.id === a.id);
+                if (def) {
+                    // Se é um item padrão, forçamos os dados vitais (rota/label/icone) do código,
+                    // mas mantemos a preferência do usuário (ativo)
+                    return {
+                        ...def,
+                        ativo: a.ativo !== false // preserva preferência ou assume true
+                    };
+                }
+                // Item customizado ou não-padrão
+                return {
+                    id: a.id ?? String(Date.now()),
+                    label: a.label ?? "Atalho",
+                    rota: a.rota ?? "/wms",
+                    icone: a.icone ?? "fa-gear",
+                    ativo: a.ativo !== false,
+                };
+            });
+
+            // 2. Mescla novos itens do PADRAO_WMS que não estejam no storage
+            const missingDefaults = PADRAO_WMS.filter(
+                (def) => !stored.some((s) => s.id === def.id)
+            );
+
+            return [...stored, ...missingDefaults];
         } catch {
             return PADRAO_WMS;
         }
