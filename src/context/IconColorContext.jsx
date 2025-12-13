@@ -33,7 +33,7 @@ function getDefaultsByModulo() {
     case "wms":
       return {
         DEFAULT_ICON_COLOR: "text-red-900",
-        DEFAULT_FOOTER_NORMAL: "text-green-900",
+        DEFAULT_FOOTER_NORMAL: "text-red-900",
         DEFAULT_FOOTER_HOVER: "text-slate-900",
       };
 

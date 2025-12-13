@@ -100,6 +100,8 @@ import HomeFinanceiro from "./pages/HomeFinanceiro";
 
 // Home WMS (fica em pages, como você pediu)
 import HomeWMS from "./pages/HomeWMS";
+import WMSNFEntrada from "./pages/WMSNFEntrada";
+import WMSNFSaida from "./pages/WMSNFSaida";
 
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
 import ContasPagar from "./pages/ContasPagar";
@@ -170,171 +172,180 @@ export default function App() {
   const isWMS = path.startsWith("/modulo-wms");
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-100">
+    <MenuRapidoFinanceiroProvider>
+      <div className="h-screen w-screen flex flex-col bg-gray-100">
 
-      <TailwindColorHelper />
-
-      {!isHomeModulos && (
-        isWMS ? (
-          <HeaderWMS toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        ) : isFinanceiro ? (
-          <HeaderFinanceiro toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        ) : (
-          <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        )
-      )}
-
-      <div className="flex flex-1">
+        <TailwindColorHelper />
 
         {!isHomeModulos && (
           isWMS ? (
-            <SidebarWMS open={sidebarOpen} />
+            <HeaderWMS toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
           ) : isFinanceiro ? (
-            <SidebarFinanceiro open={sidebarOpen} />
+            <HeaderFinanceiro toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+
           ) : (
-            <Sidebar open={sidebarOpen} />
+            <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
           )
         )}
 
-        <main className="flex-1 p-4 overflow-auto">
 
-          {/* ✅ DASHBOARD AGORA SOMENTE NO MÓDULO OPERAÇÃO */}
-          {showDashboard && isOperacao && (
-            <Dashboard
-              onClose={() => {
-                const check = document.querySelector("input[type='checkbox']");
-                if (check?.checked) {
-                  localStorage.setItem("hideDashboard", "true");
-                }
-                setShowDashboard(false);
-              }}
-            />
+        <div className="flex flex-1">
+
+          {!isHomeModulos && (
+            isWMS ? (
+              <SidebarWMS open={sidebarOpen} />
+            ) : isFinanceiro ? (
+              <SidebarFinanceiro open={sidebarOpen} />
+
+            ) : (
+              <Sidebar open={sidebarOpen} />
+            )
           )}
 
-          {/* ROTAS */}
-          <Routes>
 
-            <Route index element={<HomeModulos />} />
+          <main className="flex-1 p-4 overflow-auto">
 
-            <Route path="/modulo-operacao" element={<HomeOperacao />} />
-            <Route path="/modulo-financeiro" element={<HomeFinanceiro />} />
+            {/* ✅ DASHBOARD AGORA SOMENTE NO MÓDULO OPERAÇÃO */}
+            {showDashboard && isOperacao && (
+              <Dashboard
+                onClose={() => {
+                  const check = document.querySelector("input[type='checkbox']");
+                  if (check?.checked) {
+                    localStorage.setItem("hideDashboard", "true");
+                  }
+                  setShowDashboard(false);
+                }}
+              />
+            )}
 
-            {/* ✅ NOVO MÓDULO: WMS */}
-            <Route path="/modulo-wms" element={<HomeWMS />} />
+            {/* ROTAS */}
+            <Routes>
 
-            {/* A partir daqui, TODAS AS SUAS ROTAS 100% INTACTAS */}
-            <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
-            <Route path="/cliente-divisao" element={<ClienteDivisao open={sidebarOpen} />} />
-            <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
-            <Route path="/aliquota-icms" element={<AliquotaICMS open={sidebarOpen} />} />
-            <Route path="/cfop" element={<CFOP open={sidebarOpen} />} />
-            <Route path="/irrf" element={<IRRF open={sidebarOpen} />} />
-            <Route path="/agenda" element={<Agenda open={sidebarOpen} />} />
-            <Route path="/minuta" element={<Minuta open={sidebarOpen} />} />
-            <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
-            <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
-            <Route path="/motivocoleta" element={<MotivoColeta open={sidebarOpen} />} />
-            <Route path="/historico-ocorrencia" element={<HistoricoOcorrencia open={sidebarOpen} />} />
-            <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
-            <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
-            <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
+              <Route index element={<HomeModulos />} />
 
-            <Route path="/atividade-economica" element={<AtividadeEconomica open={sidebarOpen} />} />
-            <Route path="/cliente-condicao-pagamento" element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
-            <Route path="/cliente-divisao-regiao" element={<ClienteDivisaoRegiao open={sidebarOpen} />} />
-            <Route path="/cliente-embalagem" element={<ClienteEmbalagem open={sidebarOpen} />} />
-            <Route path="/cliente-grupo-economico" element={<ClienteGrupoEconomico open={sidebarOpen} />} />
-            <Route path="/cliente-produto" element={<ClienteProduto open={sidebarOpen} />} />
-            <Route path="/cliente-operacao" element={<ClienteOperacao open={sidebarOpen} />} />
+              <Route path="/modulo-operacao" element={<HomeOperacao />} />
+              <Route path="/modulo-financeiro" element={<HomeFinanceiro />} />
 
-            <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
-            <Route path="/cliente" element={<Cliente open={sidebarOpen} />} />
-            <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
-            <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
+              {/* ✅ NOVO MÓDULO: WMS */}
+              <Route path="/modulo-wms" element={<HomeWMS />} />
+              <Route path="/modulo-wms/nf-entrada" element={<WMSNFEntrada open={sidebarOpen} />} />
+              <Route path="/modulo-wms/nf-saida" element={<WMSNFSaida open={sidebarOpen} />} />
 
-            <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
-            <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
-            <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />
-            <Route path="/veiculo-carroceria" element={<VeiculoCarroceria open={sidebarOpen} />} />
-            <Route path="/veiculo-tabela-licenciamento" element={<VeiculoTabelaLicenciamento open={sidebarOpen} />} />
-            <Route path="/veiculo-classe" element={<VeiculoClasse open={sidebarOpen} />} />
-            <Route path="/veiculo-ipva" element={<VeiculoIPVA open={sidebarOpen} />} />
-            <Route path="/veiculo-licenciamento" element={<VeiculoLicenciamento open={sidebarOpen} />} />
-            <Route path="/veiculo-seguro" element={<VeiculoSeguro open={sidebarOpen} />} />
-            <Route path="/veiculo-multa" element={<VeiculoMulta open={sidebarOpen} />} />
+              {/* A partir daqui, TODAS AS SUAS ROTAS 100% INTACTAS */}
+              <Route path="/cte" element={<CTePage open={sidebarOpen} />} />
+              <Route path="/cliente-divisao" element={<ClienteDivisao open={sidebarOpen} />} />
+              <Route path="/tabelafrete" element={<TabelaFrete open={sidebarOpen} />} />
+              <Route path="/aliquota-icms" element={<AliquotaICMS open={sidebarOpen} />} />
+              <Route path="/cfop" element={<CFOP open={sidebarOpen} />} />
+              <Route path="/irrf" element={<IRRF open={sidebarOpen} />} />
+              <Route path="/agenda" element={<Agenda open={sidebarOpen} />} />
+              <Route path="/minuta" element={<Minuta open={sidebarOpen} />} />
+              <Route path="/nfse" element={<NFSEPage open={sidebarOpen} />} />
+              <Route path="/coleta" element={<Coleta open={sidebarOpen} />} />
+              <Route path="/motivocoleta" element={<MotivoColeta open={sidebarOpen} />} />
+              <Route path="/historico-ocorrencia" element={<HistoricoOcorrencia open={sidebarOpen} />} />
+              <Route path="/tipo-ocorrencia" element={<TipoOcorrencia open={sidebarOpen} />} />
+              <Route path="/dashboard-shopee" element={<DashboardShopee open={sidebarOpen} />} />
+              <Route path="/empresa-filial-parametro" element={<EmpresaFilialParametro open={sidebarOpen} />} />
 
-            <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
-            <Route path="/filial" element={<Filial open={sidebarOpen} />} />
-            <Route path="/banco" element={<Banco open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/banco" element={<Banco open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/contas-pagar" element={<ContasPagar open={sidebarOpen} />} />
-            <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/agencia" element={<Agencia open={sidebarOpen} />} />
-            <Route path="/conta" element={<Conta open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/conta-corrente" element={<Conta open={sidebarOpen} />} />
-            <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/faturamento" element={<Faturamento open={sidebarOpen} />} />
-            <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
+              <Route path="/atividade-economica" element={<AtividadeEconomica open={sidebarOpen} />} />
+              <Route path="/cliente-condicao-pagamento" element={<ClienteCondicaoPagamento open={sidebarOpen} />} />
+              <Route path="/cliente-divisao-regiao" element={<ClienteDivisaoRegiao open={sidebarOpen} />} />
+              <Route path="/cliente-embalagem" element={<ClienteEmbalagem open={sidebarOpen} />} />
+              <Route path="/cliente-grupo-economico" element={<ClienteGrupoEconomico open={sidebarOpen} />} />
+              <Route path="/cliente-produto" element={<ClienteProduto open={sidebarOpen} />} />
+              <Route path="/cliente-operacao" element={<ClienteOperacao open={sidebarOpen} />} />
 
-            <Route path="/localidade-adicional" element={<LocalidadeAdicional open={sidebarOpen} />} />
-            <Route path="/cidade" element={<Cidade open={sidebarOpen} />} />
-            <Route path="/regiao" element={<Regiao open={sidebarOpen} />} />
-            <Route path="/estado" element={<Estado open={sidebarOpen} />} />
-            <Route path="/feriado" element={<Feriado open={sidebarOpen} />} />
-            <Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />} />
+              <Route path="/manifesto" element={<Manifesto open={sidebarOpen} />} />
+              <Route path="/cliente" element={<Cliente open={sidebarOpen} />} />
+              <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
+              <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
 
-            <Route path="/produto" element={<Produto open={sidebarOpen} />} />
-            <Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
-            <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
-            <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
+              <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
+              <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
+              <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />
+              <Route path="/veiculo-carroceria" element={<VeiculoCarroceria open={sidebarOpen} />} />
+              <Route path="/veiculo-tabela-licenciamento" element={<VeiculoTabelaLicenciamento open={sidebarOpen} />} />
+              <Route path="/veiculo-classe" element={<VeiculoClasse open={sidebarOpen} />} />
+              <Route path="/veiculo-ipva" element={<VeiculoIPVA open={sidebarOpen} />} />
+              <Route path="/veiculo-licenciamento" element={<VeiculoLicenciamento open={sidebarOpen} />} />
+              <Route path="/veiculo-seguro" element={<VeiculoSeguro open={sidebarOpen} />} />
+              <Route path="/veiculo-multa" element={<VeiculoMulta open={sidebarOpen} />} />
 
-            <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
-            <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
-            <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
-            <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
+              <Route path="/motorista" element={<Motorista open={sidebarOpen} />} />
+              <Route path="/filial" element={<Filial open={sidebarOpen} />} />
+              <Route path="/banco" element={<Banco open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/banco" element={<Banco open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/contas-pagar" element={<ContasPagar open={sidebarOpen} />} />
+              <Route path="/agencia" element={<Agencia open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/agencia" element={<Agencia open={sidebarOpen} />} />
+              <Route path="/conta" element={<Conta open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/conta-corrente" element={<Conta open={sidebarOpen} />} />
+              <Route path="/faturamento" element={<Faturamento open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/faturamento" element={<Faturamento open={sidebarOpen} />} />
+              <Route path="/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/faturamento-automatico" element={<FaturamentoAutomatico open={sidebarOpen} />} />
 
-            <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/financeiro-parametros" element={<MenuRapidoFinanceiroProvider>  <ParametroFinanceiro open={sidebarOpen} />
-            </MenuRapidoFinanceiroProvider>
-            }
-            />
+              <Route path="/localidade-adicional" element={<LocalidadeAdicional open={sidebarOpen} />} />
+              <Route path="/cidade" element={<Cidade open={sidebarOpen} />} />
+              <Route path="/regiao" element={<Regiao open={sidebarOpen} />} />
+              <Route path="/estado" element={<Estado open={sidebarOpen} />} />
+              <Route path="/feriado" element={<Feriado open={sidebarOpen} />} />
+              <Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />} />
 
-            <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
-            <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
-            <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
-            <Route path="/importacao-planilha-agregado" element={<ImportacaoPlanilhaAgregado open={sidebarOpen} />} />
-            <Route path="/exportacao-planilha-shopee" element={<ExportacaoPlanilhaShopee open={sidebarOpen} />} />
-            <Route path="/liberacao-nfse" element={<LiberacaoNFSE open={sidebarOpen} />} />
-            <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
+              <Route path="/produto" element={<Produto open={sidebarOpen} />} />
+              <Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
+              <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
+              <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
 
-            <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
-            <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
-            <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
-            <Route path="/modulo-financeiro/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
-            <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
+              <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
+              <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
+              <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
+              <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
 
-            <Route path="/consulta-sefaz-cte" element={<ConsultaSefazCte open={sidebarOpen} />} />
-            <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
+              <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
+              <Route
+                path="/modulo-financeiro/financeiro-parametros"
+                element={<ParametroFinanceiro open={sidebarOpen} />}
+              />
 
-            <Route path="/baixamanifesto" element={<BaixaManifesto open={sidebarOpen} />} />
-            <Route path="/parametromanifesto" element={<MdfeParametro open={sidebarOpen} />} />
-            <Route path="/cteparametro" element={<CteParametro open={sidebarOpen} />} />
-            <Route path="/baixactrc" element={<BaixaCtrc open={sidebarOpen} />} />
-            <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
-            <Route path="/geracaoctrcautomatico" element={<GeracaoCtrcAutomatico open={sidebarOpen} />} />
-            <Route path="/cancelamento-lote" element={<CancelamentoLote open={sidebarOpen} />} />
-            <Route path="/integracao-multicte" element={<IntegracaoMulticte open={sidebarOpen} />} />
 
-            <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
+              <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
+              <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />
+              <Route path="/importacao-shopee" element={<ImportacaoShopee open={sidebarOpen} />} />
+              <Route path="/importacao-planilha-agregado" element={<ImportacaoPlanilhaAgregado open={sidebarOpen} />} />
+              <Route path="/exportacao-planilha-shopee" element={<ExportacaoPlanilhaShopee open={sidebarOpen} />} />
+              <Route path="/liberacao-nfse" element={<LiberacaoNFSE open={sidebarOpen} />} />
+              <Route path="/auditoria-shopee" element={<AuditoriaShopee open={sidebarOpen} />} />
 
-            <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/sac-notafiscal" element={<SacNotaFiscal open={sidebarOpen} />} />
+              <Route path="/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/sac-conhecimento" element={<SacCTRC open={sidebarOpen} />} />
+              <Route path="/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
+              <Route path="/modulo-financeiro/sac-coleta" element={<SacColeta open={sidebarOpen} />} />
+              <Route path="/sacctrc/:ctrc" element={<SacCTRC open={sidebarOpen} />} />
 
-          </Routes>
-        </main>
+              <Route path="/consulta-sefaz-cte" element={<ConsultaSefazCte open={sidebarOpen} />} />
+              <Route path="/consultasefazmdfe" element={<ConsultaSefazMDFe open={sidebarOpen} />} />
+
+              <Route path="/baixamanifesto" element={<BaixaManifesto open={sidebarOpen} />} />
+              <Route path="/parametromanifesto" element={<MdfeParametro open={sidebarOpen} />} />
+              <Route path="/cteparametro" element={<CteParametro open={sidebarOpen} />} />
+              <Route path="/baixactrc" element={<BaixaCtrc open={sidebarOpen} />} />
+              <Route path="/enviosefaz" element={<EnvioSefaz open={sidebarOpen} />} />
+              <Route path="/geracaoctrcautomatico" element={<GeracaoCtrcAutomatico open={sidebarOpen} />} />
+              <Route path="/cancelamento-lote" element={<CancelamentoLote open={sidebarOpen} />} />
+              <Route path="/integracao-multicte" element={<IntegracaoMulticte open={sidebarOpen} />} />
+
+              <Route path="/sacctrc" element={<SacCTRC open={sidebarOpen} />} />
+
+              <Route path="*" element={<Navigate to="/" replace />} />
+
+            </Routes>
+          </main>
+        </div>
       </div>
-    </div>
+    </MenuRapidoFinanceiroProvider>
   );
 }

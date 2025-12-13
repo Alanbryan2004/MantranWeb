@@ -203,8 +203,8 @@ export default function SidebarWMS({ open }) {
                     ]} />
 
                     <Menu icon={FileText} label="Nota Fiscal" menuKey="nf" items={[
-                        "Entrada",
-                        "Saída",
+                        { label: "Entrada", to: "/modulo-wms/nf-entrada" },
+                        { label: "Saída", to: "/modulo-wms/nf-saida" },
                         "Parâmetros NFe",
                         "NFe CCE",
                     ]} />
@@ -413,6 +413,15 @@ export default function SidebarWMS({ open }) {
                                 <div key={item} className="px-3 py-[2px] hover:bg-gray-100 rounded">
                                     {item}
                                 </div>
+                            ) : item.to ? (
+                                <Link
+                                    key={item.label}
+                                    to={item.to}
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                                    onClick={() => toggleMenu(menuKey)} // fecha submenu se quiser
+                                >
+                                    {item.label}
+                                </Link>
                             ) : item.action ? (
                                 <button
                                     key={item.label}

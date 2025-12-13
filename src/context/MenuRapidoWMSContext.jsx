@@ -25,14 +25,14 @@ export const PADRAO_WMS = [
     {
         id: "nf-entrada",
         label: "NF Entrada",
-        rota: "/wms/nf-entrada",
+        rota: "/modulo-wms/nf-entrada",
         icone: "fa-file-import",
         ativo: true,
     },
     {
         id: "nf-saida",
         label: "NF Saída",
-        rota: "/wms/nf-saida",
+        rota: "/modulo-wms/nf-saida",
         icone: "fa-file-export",
         ativo: true,
     },

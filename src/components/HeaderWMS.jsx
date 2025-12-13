@@ -23,7 +23,7 @@ import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
 import ParametroWMS from "../pages/ParametroWMS";
 
 /* Ícone estilo Google Apps */
-function AppDotsIcon({ size = 20, color = "#15803d" }) {
+function AppDotsIcon({ size = 20, className = "" }) {
     const dotSize = size / 5;
     const gap = dotSize * 0.8;
 
@@ -40,17 +40,18 @@ function AppDotsIcon({ size = 20, color = "#15803d" }) {
             {Array.from({ length: 9 }).map((_, i) => (
                 <div
                     key={i}
+                    className={`${className} bg-current rounded-full`}
                     style={{
                         width: dotSize,
                         height: dotSize,
-                        backgroundColor: color,
-                        borderRadius: "50%",
                     }}
                 />
+
             ))}
         </div>
     );
 }
+
 
 export default function HeaderWMS({ toggleSidebar }) {
     const usuarioLogado = localStorage.getItem("usuarioNome") || "Usuário";
@@ -201,7 +202,9 @@ export default function HeaderWMS({ toggleSidebar }) {
                             }}
                             className={`${iconColor} hover:${footerIconColorHover} flex items-center`}
                         >
-                            <AppDotsIcon size={18} />
+                            <AppDotsIcon size={18} className={`${iconColor} hover:${footerIconColorHover}`} />
+
+
                         </button>
 
                         {showAppsMenu && (

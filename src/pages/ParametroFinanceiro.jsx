@@ -241,14 +241,17 @@ export default function ParametroFinanceiro({ onClose }) {
                     Exemplo
                 </div>
             </div>
-            <div className="mt-4">
+            {/* MENU RÁPIDO */}
+            <div className="flex items-center gap-3 mt-4">
+                {/* Label */}
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
                     Menu Rápido:
                 </label>
 
                 {/* Select */}
-                <div className="relative mt-1">
+                <div className="relative flex-1">
                     <button
+                        type="button"
                         onClick={() => setShowMenuRapido(prev => !prev)}
                         className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
                     >
@@ -259,7 +262,11 @@ export default function ParametroFinanceiro({ onClose }) {
                     {showMenuRapido && (
                         <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
                             {CATALOGO_FINANCEIRO.map((op) => {
-                                const ativo = atalhos.some(a => a.rota === op.rota);
+                                const rotaNormalizada = op.rota.startsWith("/modulo-financeiro")
+                                    ? op.rota
+                                    : `/modulo-financeiro${op.rota}`;
+
+                                const ativo = atalhos.some(a => a.rota === rotaNormalizada);
 
                                 return (
                                     <label
@@ -271,9 +278,9 @@ export default function ParametroFinanceiro({ onClose }) {
                                             checked={ativo}
                                             onChange={(e) => {
                                                 if (e.target.checked) {
-                                                    adicionarAtalho(op);
+                                                    adicionarAtalho({ ...op, rota: rotaNormalizada });
                                                 } else {
-                                                    removerAtalho(op.rota);
+                                                    removerAtalho(rotaNormalizada);
                                                 }
                                             }}
                                         />
@@ -283,19 +290,20 @@ export default function ParametroFinanceiro({ onClose }) {
                                     </label>
                                 );
                             })}
-
-                            <button
-                                onClick={restaurarPadrao}
-                                className="mt-2 w-full text-xs text-red-700 hover:text-red-900 underline"
-                            >
-                                Restaurar Padrão
-                            </button>
                         </div>
                     )}
                 </div>
 
-
+                {/* Botão Restaurar Padrão */}
+                <button
+                    type="button"
+                    onClick={restaurarPadrao}
+                    className="text-xs text-red-700 hover:text-red-900 underline whitespace-nowrap"
+                >
+                    Restaurar Padrão
+                </button>
             </div>
+
             {/* LOGO FUNDO */}
             <div className="flex items-center gap-3">
                 <label className="w-[160px] text-right text-sm font-medium">
