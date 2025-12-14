@@ -109,6 +109,13 @@ export default function CTePage({ open }) {
   // === Estados e funções da ABA CONSULTA ===
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [selecionados, setSelecionados] = useState([]);
+  const [dadosFiltrados, setDadosFiltrados] = useState([]);
+  const [cteSelecionado, setCteSelecionado] = useState(null);
+
+  const abrirCte = (registro) => {
+    setCteSelecionado(registro);   // guarda a linha clicada
+    setActiveTab("cte");           // muda para a aba CTe
+  };
 
   const dados = [
     ["001", "001", "I", "058840", "000001", "001", "Autorizado o uso do CT-e", "15/10/2025", "15/10/2025", "HNK-SALVADOR", "HNK-ITU", "AV. PRIMO SCHINCARIOL", "ITAIM"],
@@ -130,8 +137,19 @@ export default function CTePage({ open }) {
   };
 
   const toggleSelecionarTodos = () => {
-    if (selecionados.length === dados.length) setSelecionados([]);
-    else setSelecionados(dados.map((_, i) => i));
+    if (selecionados.length === dadosFiltrados.length) {
+      setSelecionados([]);
+    } else {
+      setSelecionados(dadosFiltrados.map((_, i) => i));
+    }
+  };
+
+
+
+  const handlePesquisar = () => {
+    // futuramente aqui você usa os filtros
+    // agora vamos usar mock controlado
+    setDadosFiltrados(dados);
   };
 
   const handleExcluir = () => {
@@ -235,7 +253,7 @@ export default function CTePage({ open }) {
                 <div className="col-span-1 flex items-center gap-1">
                   <Txt className="w-full" defaultValue="002444" />
                   <IconeLapis
-                    title="Controle"
+                    title="Enviar"
                     variant="raio"
                     onClick={() => abrirModal("controle")}
                   />
@@ -270,7 +288,12 @@ export default function CTePage({ open }) {
 
                 <div className="col-span-1 flex items-center gap-1 min-w-0">
                   {/* Nº CTe encolhe de verdade */}
-                  <Txt className="flex-1 min-w-0" defaultValue="002420" />
+                  <Txt
+                    className="flex-1 min-w-0"
+                    value={cteSelecionado ? cteSelecionado[3] : ""}
+                    readOnly
+                  />
+
 
                   {/* Série fixa 3 dígitos */}
                   <Txt
@@ -596,9 +619,9 @@ export default function CTePage({ open }) {
                 <Txt className="col-span-2 text-center" defaultValue="1.0000" />
                 <Label className="col-span-1 justify-end">Tp. Serviço</Label>
 
-                <div className="col-span-2 flex items-center gap-2">
+                <div className="col-span-2 flex items-center gap-2 min-w-0">
                   <Sel
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                     value={tpServico}
                     onChange={(e) => setTpServico(e.target.value.split(" ")[0])}
                   >
@@ -612,7 +635,7 @@ export default function CTePage({ open }) {
                   <button
                     onClick={() => setShowDocs(true)}
                     disabled={!["1", "2", "3", "4"].includes(tpServico)}
-                    className={`border border-gray-300 rounded px-3 h-[26px] text-[12px] whitespace-nowrap
+                    className={`border border-gray-300 rounded px-2 h-[26px] text-[12px] whitespace-nowrap shrink-0
       ${["1", "2", "3", "4"].includes(tpServico)
                         ? "bg-white hover:bg-red-50 text-red-700"
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -621,27 +644,24 @@ export default function CTePage({ open }) {
                     Docs
                   </button>
                 </div>
+
               </div>
 
               {/* LINHA 3 — Ocorrência / Tipo Serviço / Docs */}
               <div className="grid grid-cols-12 gap-2 items-center">
                 <Label className="col-span-1 justify-end">Ocorrência</Label>
-                <Txt className="col-span-5" defaultValue="Sem Ocorrência" />
+                <Txt className="col-span-2" defaultValue="Sem Ocorrência" />
 
 
 
-              </div>
-
-              {/* LINHA 4 — Seguro / Chave / Tarifa */}
-              <div className="grid grid-cols-12 gap-2 items-center">
                 <Label className="col-span-1 justify-end">Seguro</Label>
-                <Sel className="col-span-3 w-full">
+                <Sel className="col-span-2 w-full">
                   <option>4 - Por conta do Emissor CTe</option>
                 </Sel>
 
                 <Label className="col-span-1 justify-end">Chave CTe</Label>
                 <Txt
-                  className="col-span-5 bg-gray-200 text-[12px]"
+                  className="col-span-3 bg-gray-200 text-[12px]"
                   readOnly
                   defaultValue="35251004086140014157001000058801393009188"
                 />
@@ -653,13 +673,13 @@ export default function CTePage({ open }) {
               {/* LINHA 5 — Datas / Operador / Cotação / Fatura */}
               <div className="grid grid-cols-12 gap-2 items-center">
                 <Label className="col-span-1 justify-end">Cadastro</Label>
-                <Txt type="date" className="col-span-2" defaultValue="2025-10-15" />
+                <Txt type="date" className="col-span-1 bg-gray-200" readOnly defaultValue="2025-10-15" />
 
                 <Label className="col-span-1 justify-end">Atualizado</Label>
-                <Txt type="date" className="col-span-2" defaultValue="2025-10-15" />
+                <Txt type="date" className="col-span-1 bg-gray-200" readOnly defaultValue="2025-10-15" />
 
                 <Label className="col-span-1 justify-end">Prev. Entrega</Label>
-                <Txt type="date" className="col-span-2" defaultValue="2025-10-15" />
+                <Txt type="date" className="col-span-1" defaultValue="2025-10-15" />
 
                 <Label className="col-span-1 justify-end">Operador</Label>
                 <Txt
@@ -798,126 +818,152 @@ export default function CTePage({ open }) {
 
             {/* ABA CONSULTA */}
 
-            {/* CARD 1 — Filtros */}
-            <div className="border border-gray-300 rounded p-2 bg-white">
-              <h2 className="text-red-700 font-semibold text-[13px] mb-2">Parâmetros de Pesquisa</h2>
+            {/* CARD 1 — Parâmetros de Pesquisa */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Parâmetros de Pesquisa
+              </legend>
 
-              {/* Linha 1 */}
-              <div className="grid grid-cols-12 gap-2 text-[12px] mb-2">
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-16 text-right">Empresa</label>
-                  <select className="flex-1 border border-gray-300 rounded px-2 h-[24px]">
-                    <option>001 - MANTRAN TRANSPORTES LTDA</option>
-                  </select>
-                </div>
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-14 text-right">Filial</label>
-                  <select className="flex-1 border border-gray-300 rounded px-2 h-[24px]">
-                    <option>001 - TESTE MANTRAN</option>
-                  </select>
-                </div>
+              {/* LINHA 1 — Empresa / Filial */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 justify-end">Empresa</Label>
+                <Sel className="col-span-5 w-full">
+                  <option>001 - MANTRAN TRANSPORTES LTDA</option>
+                </Sel>
+
+                <Label className="col-span-1 justify-end">Filial</Label>
+                <Sel className="col-span-5 w-full">
+                  <option>001 - TESTE MANTRAN</option>
+                </Sel>
               </div>
 
-              {/* Linha 2 */}
-              <div className="grid grid-cols-12 gap-2 text-[12px] mb-2">
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-16 text-right">Remetente</label>
-                  <input className="w-[190px] border border-gray-300 rounded px-2 h-[24px]" defaultValue="50221019000136" />
-                  <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" defaultValue="HNK BR INDUSTRIA DE BEBIDAS LTDA" />
-                </div>
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-14 text-right">Motorista</label>
-                  <input className="w-[160px] border border-gray-300 rounded px-2 h-[24px]" defaultValue="01620846760" />
-                  <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" defaultValue="ALAN DA COSTA" />
-                </div>
+              {/* LINHA 2 — Remetente / Motorista */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 justify-end">Remetente</Label>
+                <Txt className="col-span-2" defaultValue="50221019000136" />
+
+                <Txt
+                  className="col-span-3 bg-gray-200"
+                  readOnly
+                  defaultValue="HNK BR INDUSTRIA DE BEBIDAS LTDA"
+                />
+
+                <Label className="col-span-1 justify-end">Motorista</Label>
+                <Txt className="col-span-2" defaultValue="01620846760" />
+
+                <Txt
+                  className="col-span-3 bg-gray-200"
+                  readOnly
+                  defaultValue="ALAN DA COSTA"
+                />
               </div>
 
-              {/* Linha 3 */}
-              <div className="grid grid-cols-12 gap-2 text-[12px] mb-2">
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-16 text-right">Destinatário</label>
-                  <input className="w-[190px] border border-gray-300 rounded px-2 h-[24px]" defaultValue="19900000000626" />
-                  <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" defaultValue="CERVEJARIAS KAISER BRASIL S.A" />
-                </div>
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-14 text-right">Veículo</label>
-                  <input className="w-[160px] border border-gray-300 rounded px-2 h-[24px]" defaultValue="0000005" />
-                  <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" defaultValue="ABH3B06 - SCANIA - CAVALO TRUCADO - LINS" />
-                </div>
+              {/* LINHA 3 — Destinatário / Veículo */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 justify-end">Destinatário</Label>
+                <Txt className="col-span-2" defaultValue="19900000000626" />
+
+                <Txt
+                  className="col-span-3 bg-gray-200"
+                  readOnly
+                  defaultValue="CERVEJARIAS KAISER BRASIL S.A"
+                />
+
+                <Label className="col-span-1 justify-end">Veículo</Label>
+                <Txt className="col-span-2" defaultValue="0000005" />
+
+                <Txt
+                  className="col-span-3 bg-gray-200"
+                  readOnly
+                  defaultValue="ABH3B06 - SCANIA - CAVALO TRUCADO - LINS"
+                />
               </div>
 
-              {/* Linha 4 */}
-              <div className="grid grid-cols-12 gap-2 text-[12px] mb-2">
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-16 text-right">Período</label>
-                  <input type="date" className="border border-gray-300 rounded px-2 h-[24px] w-[130px]" defaultValue="2025-10-14" />
-                  <span className="mx-1">até</span>
-                  <input type="date" className="border border-gray-300 rounded px-2 h-[24px] w-[130px]" defaultValue="2025-10-20" />
-                  <label className="w-14 text-right">Data de</label>
-                  <select className="border border-gray-300 rounded px-2 h-[24px] w-[140px]">
-                    <option>Cadastro</option>
-                    <option>Emissão</option>
-                    <option>Atualização</option>
-                  </select>
-                </div>
+              {/* LINHA 3 — Período / Tipo Data / Controle / Impresso */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 justify-end">Período</Label>
 
-                <div className="col-span-6 grid grid-cols-12 gap-2">
-                  <div className="col-span-4 flex items-center gap-2">
-                    <label className="w-20 text-right">Nº Controle</label>
-                    <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" />
-                  </div>
-                  <div className="col-span-4 flex items-center gap-2">
-                    <label className="w-20 text-right">Nº Impresso</label>
-                    <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" defaultValue="54623" />
-                  </div>
-                  <div className="col-span-4 flex items-center gap-2">
-                    <label className="w-16 text-right">Operador</label>
-                    <select className="flex-1 border border-gray-300 rounded px-2 h-[24px]">
-                      <option>TODOS</option>
-                    </select>
-                  </div>
-                </div>
+                {/* Data Inicial */}
+                <Txt
+                  type="date"
+                  className="col-span-2"
+                  defaultValue="2025-10-14"
+                />
+
+                {/* Data Final (MENOR) */}
+                <Txt
+                  type="date"
+                  className="col-span-1"
+                  defaultValue="2025-10-20"
+                />
+
+                <Label className="col-span-1 justify-end">Data de</Label>
+
+                {/* Tipo Data */}
+                <Sel className="col-span-1 w-full">
+                  <option>Cadastro</option>
+                  <option>Emissão</option>
+                  <option>Atualização</option>
+                </Sel>
+
+                <Label className="col-span-1 justify-end">Nº Controle</Label>
+                <Txt className="col-span-1" />
+
+                <Label className="col-span-1 justify-end">Nº Impresso</Label>
+                <Txt className="col-span-1" defaultValue="54623" />
+                <Label className="col-span-1 justify-end">Nº Viagem</Label>
+                <Txt className="col-span-1" />
               </div>
 
-              {/* Linha 5 */}
-              <div className="grid grid-cols-12 gap-2 text-[12px]">
-                <div className="col-span-6 flex items-center gap-2">
-                  <label className="w-16 text-right">Averbação</label>
-                  <select className="w-[180px] border border-gray-300 rounded px-2 h-[24px]">
-                    <option>TODOS</option>
-                    <option>Sim</option>
-                    <option>Não</option>
-                  </select>
-                  <label className="w-16 text-right">Status</label>
-                  <select className="w-[160px] border border-gray-300 rounded px-2 h-[24px]">
-                    <option>T - Todos</option>
-                    <option>I - Impresso</option>
-                    <option>A - Autorizado</option>
-                    <option>C - Cancelado</option>
-                    <option>E - Rejeitado</option>
-                  </select>
-                  <label className="w-24 text-right">Tracking Number</label>
-                  <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" />
-                </div>
 
-                <div className="col-span-6 grid grid-cols-12 gap-2">
-                  <div className="col-span-6 flex items-center gap-2">
-                    <label className="w-16 text-right">Nº Viagem</label>
-                    <input className="flex-1 border border-gray-300 rounded px-2 h-[24px]" />
-                  </div>
 
-                  {/* Botões */}
-                  <div className="col-span-6 flex items-center justify-end gap-2">
-                    <button className="border border-gray-300 text-[12px] px-3 py-[2px] rounded bg-gray-50 hover:bg-gray-100">
-                      Limpar
-                    </button>
-                    <button className="border border-gray-300 text-[12px] px-3 py-[2px] rounded bg-blue-50 hover:bg-blue-100 text-blue-700">
-                      Pesquisar
-                    </button>
-                  </div>
+              {/* LINHA 6 — Averbação / Status / Tracking / Viagem / Ações */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 justify-end">Tracking</Label>
+                <Txt className="col-span-2" />
+                <Label className="col-span-2 justify-end">Averbação</Label>
+                <Sel className="col-span-1 w-full">
+                  <option>TODOS</option>
+                  <option>Sim</option>
+                  <option>Não</option>
+                </Sel>
+                <Label className="col-span-1 justify-end">Operador</Label>
+                <Sel className="col-span-2 w-full">
+                  <option>TODOS</option>
+                </Sel>
+
+
+                <Label className="col-span-2 justify-end">Status</Label>
+                <Sel className="col-span-1 w-full">
+                  <option>T - Todos</option>
+                  <option>I - Impresso</option>
+                  <option>A - Autorizado</option>
+                  <option>C - Cancelado</option>
+                  <option>E - Rejeitado</option>
+                </Sel>
+
+
+
+
+              </div>
+
+              {/* LINHA 7 — Botões */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <div className="col-span-12 flex justify-end gap-2">
+                  <button className="border border-gray-300 text-[12px] px-4 py-[2px] rounded bg-gray-50 hover:bg-gray-100">
+                    Limpar
+                  </button>
+                  <button
+                    onClick={handlePesquisar}
+                    className="border border-gray-300 text-[12px] px-4 py-[2px] rounded bg-blue-50 hover:bg-blue-100 text-blue-700"
+                  >
+                    Pesquisar
+                  </button>
+
                 </div>
               </div>
-            </div>
+            </fieldset>
+
 
             {/* CARD 2 — Grid de Conhecimentos */}
             <div className="border border-gray-300 rounded p-2 bg-white">
@@ -946,30 +992,45 @@ export default function CTePage({ open }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {dados.map((r, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
-                        {showCheckboxes && (
-                          <td className="border-t border-gray-200 px-2 text-center">
-                            <input
-                              type="checkbox"
-                              checked={selecionados.includes(i)}
-                              onChange={() => toggleSelecionado(i)}
-                            />
-                          </td>
-                        )}
-                        {r.map((c, j) => (
-                          <td key={j} className="border-t border-gray-200 px-2 py-[3px]">{c}</td>
-                        ))}
+                    {dadosFiltrados.length === 0 ? (
+                      <tr>
+                        <td colSpan={14} className="text-center py-4 text-gray-400">
+                          Nenhum registro encontrado
+                        </td>
                       </tr>
-                    ))}
+                    ) : (
+                      dadosFiltrados.map((r, i) => (
+                        <tr
+                          key={i}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onDoubleClick={() => abrirCte(r)}
+                        >
+                          {showCheckboxes && (
+                            <td className="border-t border-gray-200 px-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={selecionados.includes(i)}
+                                onChange={() => toggleSelecionado(i)}
+                              />
+                            </td>
+                          )}
+                          {r.map((c, j) => (
+                            <td key={j} className="border-t border-gray-200 px-2 py-[3px]">
+                              {c}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    )}
                   </tbody>
+
                 </table>
               </div>
             </div>
 
             {/* CARD 3 — Rodapé / Ações */}
             <div className="border border-gray-300 rounded p-2 bg-white flex items-center justify-between text-[12px]">
-              <span className="text-gray-600">Total de registros: {dados.length}</span>
+              <span className="text-gray-600">Total de registros: {dadosFiltrados.length}</span>
 
               {!showCheckboxes ? (
                 // Botão principal (⚙️ Ações)
@@ -986,7 +1047,10 @@ export default function CTePage({ open }) {
                     onClick={toggleSelecionarTodos}
                     className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 px-2 py-[2px] rounded"
                   >
-                    {selecionados.length === dados.length ? "☐ Limpar Seleção" : "☑ Selecionar Todos"}
+                    {selecionados.length === dadosFiltrados.length
+                      ? "☐ Limpar Seleção"
+                      : "☑ Selecionar Todos"}
+
                   </button>
 
                   <button className="border border-gray-300 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-[2px] rounded">
