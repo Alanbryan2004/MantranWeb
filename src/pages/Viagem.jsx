@@ -14,6 +14,7 @@ import { useIconColor } from "../context/IconColorContext";
 
 import {
   XCircle,
+  Fuel,
   CheckCircle,
   RotateCcw,
   PlayCircle,
@@ -246,1054 +247,1099 @@ export default function Viagem({ open }) {
       <div className="flex flex-col flex-1 min-h-0">
 
         {/* CONTEÚDO COM SCROLL */}
-        <div className="flex-1 min-h-0 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto flex flex-col gap-2">
 
 
-          {/* ===================== ABA VIAGEM ===================== */}
-          {activeTab === "viagem" && (
-            <>
-              {/* === CARD 1 - Dados da Viagem === */}
-              <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                  Viagem
-                </legend>
-                {/* Linha 1 */}
-                <div className="grid grid-cols-12 gap-2 items-center">
 
-                  {/* Nº Viagem */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Nº Viagem
-                  </Label>
+        {/* ===================== ABA VIAGEM ===================== */}
+        {activeTab === "viagem" && (
+          <>
+            {/* === CARD 1 - Dados da Viagem === */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Viagem
+              </legend>
+              {/* Linha 1 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
 
-                  {/* BLOCO ÚNICO: Nº Viagem + Seq + Transferência + Botão */}
-                  <div className="col-span-3 grid grid-cols-8 gap-1 items-center">
+                {/* Nº Viagem */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Nº Viagem
+                </Label>
 
-                    {/* Nº Viagem (≈6 caracteres) */}
-                    <Txt
-                      className="col-span-3 bg-gray-200 text-center"
-                      readOnly
-                    />
+                {/* BLOCO ÚNICO: Nº Viagem + Seq + Transferência + Botão */}
+                <div className="col-span-3 grid grid-cols-8 gap-1 items-center">
 
-                    {/* Seq (1 caractere) */}
-                    <Txt
-                      className="col-span-1 bg-gray-200 text-center"
-                      readOnly
-                      maxLength={1}
-                    />
-
-                    {/* Transferência */}
-                    <Txt
-                      className="col-span-3 bg-gray-200 text-center"
-                      defaultValue="Transferência"
-                      readOnly
-                    />
-
-                    {/* Botão + */}
-                    <div className="col-span-1 flex items-center justify-center">
-                      <button
-                        title="Adicionar"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100 flex items-center justify-center"
-                      >
-                        <PlusCircle size={16} className="text-green-600" />
-                      </button>
-                    </div>
-
-                  </div>
-
-                  {/* Manifesto */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Manifesto
-                  </Label>
-                  <Txt className="col-span-1" />
-
-                  {/* Coleta */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Coleta
-                  </Label>
-                  <Txt className="col-span-1" />
-
-                  {/* Status */}
-                  <Label className="col-span-1 flex items-center justify-end">Tipo Carga</Label>
-                  <Sel className="col-span-1 w-full">
-                    <option>Fracionada</option>
-                    <option>Fechada</option>
-                  </Sel>
+                  {/* Nº Viagem (≈6 caracteres) */}
                   <Txt
-                    className="col-span-2 text-center bg-gray-200 font-medium"
-                    defaultValue="Em Andamento"
+                    className="col-span-3 bg-gray-200 text-center"
                     readOnly
                   />
 
-                </div>
-
-
-
-                {/* Linha 2 */}
-                <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-                  {/* Empresa */}
-                  <Label className="col-span-1 flex items-center justify-end">Empresa</Label>
-                  <Sel className="col-span-3 w-full">
-                    <option>001 - MANTRAN TRANSPORTES LTDA</option>
-                  </Sel>
-
-                  {/* Filial */}
-                  <Label className="col-span-1 flex items-center justify-end">Filial</Label>
-                  <Sel className="col-span-3 w-full">
-                    <option>001 - MANTRAN TRANSPORTES LTDA</option>
-                  </Sel>
-
-                  {/* Tipo Carga */}
-
-
-                  {/* Divisão */}
-                  <Label className="col-span-2 flex items-center justify-end">Divisão</Label>
-                  <Sel className="col-span-2 w-full">
-                    <option>Logística</option>
-                    <option>Administrativo</option>
-                  </Sel>
-                </div>
-
-                {/* Linha 3 */}
-                <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-                </div>
-              </fieldset>
-
-
-
-              {/* === CARD 2 - Origem === */}
-              <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                  Origem
-                </legend>
-                {/* Linha 1 */}
-                <div className="grid grid-cols-12 gap-2 items-center">
-
-                  {/* Cliente */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Cliente
-                  </Label>
-
-                  {/* BLOCO ÚNICO: CNPJ + Razão Social */}
-                  <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
-
-                    {/* CNPJ (14 caracteres) */}
-                    <Txt
-                      className="col-span-2 text-center"
-                      placeholder="CNPJ"
-                      maxLength={14}
-                    />
-
-                    {/* Razão Social */}
-                    <Txt
-                      className="col-span-5 bg-gray-200"
-                      readOnly
-                      placeholder="Razão Social"
-                    />
-
-                  </div>
-
-
-                  {/* Expedidor */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Expedidor
-                  </Label>
-
-                  {/* BLOCO ÚNICO: CNPJ + Razão Social */}
-                  <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
-
-                    {/* CNPJ (14 caracteres máx.) */}
-                    <Txt
-                      className="col-span-2 text-center"
-                      placeholder="CNPJ"
-                      maxLength={14}
-                    />
-
-                    {/* Razão Social */}
-                    <Txt
-                      className="col-span-5 bg-gray-200"
-                      readOnly
-                      placeholder="Razão Social"
-                    />
-
-                  </div>
-
-
-                </div>
-
-                {/* Linha 2 */}
-                <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-                  {/* Remetente */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Remetente
-                  </Label>
-
-                  {/* BLOCO ÚNICO: CNPJ + Razão Social */}
-                  <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
-
-                    {/* CNPJ (14 caracteres) */}
-                    <Txt
-                      className="col-span-2 text-center"
-                      placeholder="CNPJ"
-                      maxLength={14}
-                    />
-
-                    {/* Razão Social */}
-                    <Txt
-                      className="col-span-5 bg-gray-200"
-                      readOnly
-                      placeholder="Razão Social"
-                    />
-
-                  </div>
-
-
-                  {/* Origem */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Origem
-                  </Label>
-
-                  <div className="col-span-5 grid grid-cols-6 gap-2 items-center">
-                    <Txt className="col-span-2" placeholder="CEP" />
-                    <Txt className="col-span-3 bg-gray-200" readOnly placeholder="Cidade" />
-                    <Txt className="col-span-1 text-center bg-gray-200" readOnly placeholder="UF" />
-                  </div>
-
-                </div>
-
-
-                {/* Linha 3 */}
-                <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-                  {/* Tabela Frete */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Tab. Frete
-                  </Label>
-
-                  {/* BLOCO ÚNICO: Tabela + Tipo + Rateio */}
-                  <div className="col-span-4 grid grid-cols-7 gap-2 items-center">
-
-                    {/* Tabela Frete */}
-                    <Sel className="col-span-4">
-                      <option>000083 - TABELA TESTE HNK</option>
-                    </Sel>
-
-                    {/* Tipo */}
-                    <Sel className="col-span-2">
-                      <option>CEVA</option>
-                      <option>GB</option>
-                      <option>NF</option>
-                    </Sel>
-
-                    {/* Rateio */}
-                    <div className="col-span-1 flex items-center">
-                      <label className="flex items-center gap-1 text-[12px] whitespace-nowrap">
-                        <input type="checkbox" />
-                        Rateio Frete(Contrato)
-                      </label>
-                    </div>
-
-                  </div>
-
-                  {/* Veículo Solicitado */}
-                  <Label className="col-span-1 col-start-7 flex items-center justify-end">
-                    Veículo
-                  </Label>
-                  <Sel className="col-span-3">
-                    <option>01 - UTILITÁRIO</option>
-                    <option>02 - VAN</option>
-                    <option>03 - 3/4</option>
-                    <option>04 - TOCO</option>
-                    <option>05 - TRUCK</option>
-                    <option>06 - BITRUCK</option>
-                    <option>07 - CAVALO MECÂNICO</option>
-                    <option>08 - CAVALO TRUCADO</option>
-                  </Sel>
-
-                  {/* Botão Custos Adicionais — ALINHADO À DIREITA */}
-                  <div className="col-span-2 flex justify-end">
-                    <button className="border border-gray-300 text-gray-700 hover:bg-gray-100 rounded px-3 py-[4px] flex items-center gap-1">
-                      <DollarSign size={14} className="text-red-700" />
-                      Custos Adicionais
-                    </button>
-                  </div>
-
-                </div>
-
-              </fieldset>
-
-
-              {/* === CARD 3 - Destino === */}
-              <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                  Destino
-                </legend>
-
-                {/* Linha 1 */}
-                <div className="grid grid-cols-12 gap-2 items-center">
-
-                  {/* Destinatário */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Destinatário
-                  </Label>
-
-                  {/* BLOCO Destinatário: CNPJ (14) + Razão Social (RO) + Lápis */}
-                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
-
-                    {/* CNPJ (14 caracteres) */}
-                    <Txt
-                      className="col-span-3 text-center"
-                      maxLength={14}
-                      placeholder="CNPJ"
-                    />
-
-                    {/* Razão Social (não editável) */}
-                    <Txt
-                      className="col-span-8 bg-gray-200"
-                      readOnly
-                      placeholder="Razão Social"
-                    />
-
-                    {/* Lápis – no final do bloco */}
-                    <div className="col-span-1 flex justify-start">
-                      <button
-                        title="Selecionar Destinatário"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-
-                  </div>
-
-
-                  {/* Cidade Destino */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Cidade Dest.
-                  </Label>
-
-                  <div className="col-span-5 grid grid-cols-6 gap-2 items-center">
-                    <Txt className="col-span-2 text-center" placeholder="CEP" />
-                    <Txt className="col-span-3 bg-gray-200" readOnly placeholder="Cidade" />
-                    <Txt className="col-span-1 bg-gray-200 text-center" readOnly placeholder="UF" />
-                  </div>
-
-                </div>
-
-
-                {/* ===== Linha 2 - Motorista + Agregado + KM Inicial + Nº Ficha ===== */}
-                <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-                  {/* Motorista */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Motorista
-                  </Label>
-
-                  {/* BLOCO Motorista: CNH (14) + Nome (RO) + Lápis */}
-                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
-
-                    {/* CNH (14 caracteres) */}
-                    <Txt
-                      className="col-span-3 text-center"
-                      maxLength={14}
-                      placeholder="CNH"
-                    />
-
-                    {/* Nome do Motorista (não editável) */}
-                    <Txt
-                      className="col-span-8 bg-gray-200"
-                      readOnly
-                      placeholder="Nome do Motorista"
-                    />
-
-                    {/* Lápis – agora no FINAL real do bloco */}
-                    <div className="col-span-1 flex justify-start">
-                      <button
-                        title="Selecionar Motorista"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-
-                  </div>
-
-
-                  {/* Agregado (SEM LABEL) */}
-                  <div className="col-span-3 grid grid-cols-6 gap-1 items-center">
-
-                    {/* Agregado (não editável) */}
-                    <Txt
-                      className="col-span-5 bg-gray-200"
-                      readOnly
-                      placeholder="Agregado"
-                    />
-
-                    {/* Lápis */}
-                    <div className="col-span-1 flex justify-start ">
-                      <button
-                        title="Selecionar Agregado"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* KM Inicial + Trocar Empresa */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    KM Inicial
-                  </Label>
-
-                  <div className="col-span-2 grid grid-cols-3 gap-1 items-center">
-
-                    {/* KM Inicial */}
-                    <Txt
-                      className="col-span-2 text-center"
-                      placeholder="0"
-                    />
-
-                    {/* Trocar Empresa (ícone) */}
-                    <div className="col-span-1 flex justify-center">
-                      <button
-                        title="Trocar Empresa Agregado"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <RefreshCcw size={14} className="text-blue-700" />
-                      </button>
-                    </div>
-                  </div>
-
-
-
-                </div>
-
-
-
-                {/* ===== Linha 3 - Tração + Reboque ===== */}
-                <div className="grid grid-cols-12 gap-2 items-center mt-2">
-
-                  {/* Tração */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Tração
-                  </Label>
-
-                  {/* BLOCO Tração: Código + Descrição + Tipo + Lápis */}
-                  <div className="col-span-5 grid grid-cols-12  gap-2 items-center">
-
-                    {/* Código */}
-                    <Txt
-                      className="col-span-3 text-center"
-                      placeholder="Código"
-                      defaultValue="0035719"
-                    />
-
-                    {/* Placa / Descrição (não editável) */}
-                    <Txt
-                      className="col-span-5 bg-gray-200"
-                      readOnly
-                      placeholder="Placa / Descrição"
-                      defaultValue="RXW4I56 - CAVALO MEC - ITAJAÍ"
-                    />
-
-                    {/* Tipo (não editável) */}
-                    <Txt
-                      className="col-span-3 bg-gray-200 text-center"
-                      readOnly
-                      placeholder="Tipo"
-                      defaultValue="Frota"
-                    />
-
-                    {/* Lápis */}
-                    <div className="col-span-1 flex justify-start">
-                      <button
-                        title="Selecionar Tração"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-
-                  </div>
-
-                  {/* Reboque */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Reboque
-                  </Label>
-
-                  {/* BLOCO Reboque: Código + Descrição + Lápis */}
-                  <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
-
-                    {/* Código */}
-                    <Txt
-                      className="col-span-2 text-center"
-                      placeholder="Código"
-                      defaultValue="0034811"
-                    />
-
-                    {/* Placa / Descrição (não editável) */}
-                    <Txt
-                      className="col-span-4 bg-gray-200"
-                      readOnly
-                      placeholder="Placa / Descrição"
-                      defaultValue="RKW3E53 - CARRETA SIDER - ITAJAÍ"
-                    />
-
-                    {/* Lápis */}
-                    <div className="col-span-1 flex justify-start">
-                      <button
-                        title="Selecionar Reboque"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-
-                  </div>
-
-                </div>
-
-                {/* ===== Linha 4 - Recebedor ===== */}
-                <div className="grid grid-cols-12 gap-2 items-center mt-2">
-
-                  {/* Recebedor */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Recebedor
-                  </Label>
-
-                  {/* BLOCO Recebedor: CNPJ + Razão Social (RO) + Lápis */}
-                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
-
-                    {/* CNPJ (14 caracteres) */}
-                    <Txt
-                      className="col-span-3 text-center"
-                      maxLength={14}
-                      placeholder="CNPJ"
-                      defaultValue="05254957006551"
-                    />
-
-                    {/* Razão Social (não editável) */}
-                    <Txt
-                      className="col-span-8 bg-gray-200"
-                      readOnly
-                      placeholder="Razão Social"
-                      defaultValue="HNK-SALVADOR-AGUA MI"
-                    />
-
-                    {/* Lápis */}
-                    <div className="col-span-1 flex justify-start">
-                      <button
-                        title="Selecionar Recebedor"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="text-red-700" />
-                      </button>
-                    </div>
-
-                  </div>
-
-                  {/* KM Atual */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Km Atual
-                  </Label>
-
+                  {/* Seq (1 caractere) */}
                   <Txt
-                    className="col-span-1 text-center"
-                    defaultValue="1"
-                  />
-
-                  {/* Classe */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Classe
-                  </Label>
-
-                  <Txt
-                    className="col-span-1 text-center bg-gray-200"
+                    className="col-span-1 bg-gray-200 text-center"
                     readOnly
-                    defaultValue="13"
+                    maxLength={1}
                   />
 
+                  {/* Transferência */}
                   <Txt
-                    className="col-span-2 bg-gray-200"
-                    readOnly
-                    placeholder="Classe Veículo"
-                    defaultValue="CAVALO TRUCADO"
-                  />
-
-                </div>
-
-
-                {/* ===== Linha 5 - Datas / KM Final ===== */}
-                <div className="grid grid-cols-12 gap-2 items-center mt-2">
-
-                  {/* BLOCO ESQUERDO: Cadastro + Início Prev. + Hora */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Cadastro
-                  </Label>
-
-                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
-
-                    {/* Cadastro */}
-                    <Txt
-                      type="date"
-                      className="col-span-4"
-                      defaultValue="2025-10-20"
-                    />
-
-                    {/* Label Início Prev. */}
-                    <Label className="col-span-3 flex items-center justify-end">
-                      Início Prev.
-                    </Label>
-
-                    {/* Data Início */}
-                    <Txt
-                      type="date"
-                      className="col-span-3"
-                      defaultValue="2025-10-20"
-                    />
-
-                    {/* Hora */}
-                    <Txt
-                      type="time"
-                      className="col-span-2"
-                      defaultValue="16:31"
-                    />
-
-                  </div>
-
-
-                  {/* Chegada Prev. (Data + Hora) */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Chegada Prev.
-                  </Label>
-                  <div className="col-span-3 grid grid-cols-4 gap-2 items-center">
-                    <Txt type="date" className="col-span-3" defaultValue="2025-10-26" />
-                    <Txt type="time" className="col-span-1" defaultValue="16:00" />
-                  </div>
-
-                  {/* KM Final */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    KM Final
-                  </Label>
-                  <Txt className="col-span-1 text-center" defaultValue="0" />
-
-                </div>
-
-
-                {/* ===== Linha 6 - Observação + Tab. Agregado ===== */}
-                <div className="grid grid-cols-12 gap-2 items-center mt-2">
-
-                  {/* Observação */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Observação
-                  </Label>
-
-                  <Txt
-                    className="col-span-5"
-                    placeholder="Observações gerais da viagem"
-                    defaultValue="Teste"
-                  />
-
-                  {/* Tabela Agregado */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Tab. Agreg.
-                  </Label>
-
-                  {/* BLOCO Tab. Agregado: Combo + Ícone */}
-                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
-
-                    <Sel className="col-span-11">
-                      <option>000077 - TABELA AGREGADO</option>
-                    </Sel>
-
-                    <div className="col-span-1 flex justify-end">
-                      <button
-                        title="Trocar Tabela Agregado"
-                        className="border border-gray-300 rounded p-[4px] hover:bg-gray-100 text-blue-700"
-                      >
-                        <FileSpreadsheet size={14} />
-                      </button>
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-
-
-
-
-              </fieldset>
-
-              {/* === CARD 4 - Ações === */}
-              <fieldset className="border border-gray-300 rounded p-3 mt-3 bg-white">
-                <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                  Ações
-                </legend>
-
-                <div className="grid grid-cols-12 gap-2 items-center">
-
-                  {/* Lucratividade */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Lucratividade
-                  </Label>
-                  <Txt
-                    className={`col-span-1 text-center font-semibold bg-gray-200 ${lucratividade >= 0
-                      ? "text-green-700 border-green-300"
-                      : "text-red-700 border-red-300"
-                      }`}
-                    value={`${lucratividade}%`}
+                    className="col-span-3 bg-gray-200 text-center"
+                    defaultValue="Transferência"
                     readOnly
                   />
 
-                  {/* Peso Total */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Peso Total
-                  </Label>
-                  <Txt
-                    className="col-span-1 text-right bg-gray-200"
-                    defaultValue="0"
-                    readOnly
-                  />
-
-                  {/* Custo Viagem */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Custo Viagem
-                  </Label>
-                  <Txt
-                    className="col-span-1 text-right bg-gray-200"
-                    readOnly
-                    value={custoViagem.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  />
-
-                  {/* Valor Frete */}
-                  <Label className="col-span-1 flex items-center justify-end">
-                    Valor Frete
-                  </Label>
-                  <Txt
-                    className="col-span-1 text-right bg-gray-200"
-                    readOnly
-                    value={valorFrete.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  />
-
-                  {/* Espaço */}
-                  <div className="col-span-1" />
-
-                  {/* Botões */}
-                  <div className="col-span-3 flex justify-end gap-2">
-
+                  {/* Botão + */}
+                  <div className="col-span-1 flex items-center justify-center">
                     <button
-                      onClick={() => setModalMontarMinutaOpen(true)}
-                      className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
-                      title="Montar Minuta"
+                      title="Adicionar"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100 flex items-center justify-center"
                     >
-                      <FileText size={14} />
-                      Montar Minuta
+                      <PlusCircle size={16} className="text-green-600" />
                     </button>
-
-                    <button
-                      onClick={() => setModalMontarCteOpen(true)}
-                      className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
-                      title="Montar CTe"
-                    >
-                      <Truck size={14} className="text-red-700" />
-                      Montar CTe
-                    </button>
-
                   </div>
 
                 </div>
-              </fieldset>
 
+                {/* Manifesto */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Manifesto
+                </Label>
+                <Txt className="col-span-1" />
 
+                {/* Coleta */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Coleta
+                </Label>
+                <Txt className="col-span-1" />
 
-              {/* === CARD 5 - Notas Fiscais === */}
-              <fieldset className="border border-gray-300 rounded p-3 mt-3 bg-white">
+                {/* Status */}
+                <Label className="col-span-1 flex items-center justify-end">Tipo Carga</Label>
+                <Sel className="col-span-1 w-full">
+                  <option>Fracionada</option>
+                  <option>Fechada</option>
+                </Sel>
+                <Txt
+                  className="col-span-2 text-center bg-gray-200 font-medium"
+                  defaultValue="Em Andamento"
+                  readOnly
+                />
 
-                {/* Legend clicável */}
-                <legend
-                  className="px-2 text-red-700 font-semibold text-[13px] cursor-pointer select-none flex items-center gap-1"
-                  onClick={() => setOpenNotas(!openNotas)}
-                >
-                  {openNotas ? "▼" : "▶"} Notas Fiscais
-                </legend>
-
-                {/* Conteúdo (somente quando aberto) */}
-                {openNotas && (
-                  <div className="overflow-auto mt-2">
-
-                    <table className="min-w-full border text-[12px]">
-                      <thead className="bg-gray-100 text-gray-700">
-                        <tr>
-                          {[
-                            "Filial",
-                            "Nº NF",
-                            "Série",
-                            "Tipo Doc",
-                            "Nº Controle",
-                            "Nº Impresso",
-                            "CNPJ Remetente",
-                            "Data Emissão",
-                          ].map((h) => (
-                            <th key={h} className="border px-2 py-1 text-left">
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {[...Array(2)].map((_, i) => (
-                          <tr key={i} className="hover:bg-gray-50">
-                            <td className="border px-2 py-1">001</td>
-                            <td className="border px-2 py-1">00012345</td>
-                            <td className="border px-2 py-1">1</td>
-                            <td className="border px-2 py-1">NF-e</td>
-                            <td className="border px-2 py-1">000987</td>
-                            <td className="border px-2 py-1">000534</td>
-                            <td className="border px-2 py-1">45.333.888/0001-10</td>
-                            <td className="border px-2 py-1">10/10/2025</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-
-                  </div>
-                )}
-
-              </fieldset>
-
-
-              {/* === CARD 6 - Rodapé === */}
-              <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between mt-3">
-
-                {/* === ÍCONES DE AÇÃO (à esquerda) === */}
-                <div className="flex items-center gap-5">
-
-                  {/* Fechar */}
-                  <button
-                    onClick={() => navigate(-1)}
-                    title="Fechar Tela"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <XCircle size={20} />
-                    <span>Fechar</span>
-                  </button>
-
-                  {/* Limpar */}
-                  <button
-                    title="Limpar Campos"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <RotateCcw size={20} />
-                    <span>Limpar</span>
-                  </button>
-
-                  {/* Incluir */}
-                  <button
-                    title="Incluir Viagem"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <PlusCircle size={20} />
-                    <span>Incluir</span>
-                  </button>
-
-                  {/* Alterar */}
-                  <button
-                    title="Alterar Viagem"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <Edit size={20} />
-                    <span>Alterar</span>
-                  </button>
-
-                  {/* Excluir */}
-                  <button
-                    title="Excluir Viagem"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <Trash2 size={20} />
-                    <span>Excluir</span>
-                  </button>
-
-                  {/* Pagamento */}
-                  <button
-                    onClick={() => setModalPagamentoOpen(true)}
-                    title="Pagamento"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <DollarSign size={20} />
-                    <span>Pagto</span>
-                  </button>
-
-                  {/* Monitoramento */}
-                  <button
-                    onClick={() => setModalMonitoramentoOpen(true)}
-                    title="Monitoramento"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <MapPin size={20} />
-                    <span>Monitorar</span>
-                  </button>
-
-                  {/* Buonny */}
-                  <button
-                    title="Buonny"
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                  >
-                    <UserCheck size={20} />
-                    <span>Buonny</span>
-                  </button>
-
-
-                </div>
-
-                {/* === OPERADOR E DATA (à direita) === */}
-                <div className="flex items-center gap-2 text-[12px] text-gray-700">
-                  <Label>Operador</Label>
-                  <Txt className="w-[150px] text-center bg-gray-100" defaultValue="SUPORTE" readOnly />
-                  <Txt className="w-[100px] text-center bg-gray-100" defaultValue="29/10/2025" readOnly />
-                </div>
               </div>
 
-            </>
-          )}
-        </div> {/* FIM DO CONTAINER INTERNO */}
+
+
+              {/* Linha 2 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                {/* Empresa */}
+                <Label className="col-span-1 flex items-center justify-end">Empresa</Label>
+                <Sel className="col-span-3 w-full">
+                  <option>001 - MANTRAN TRANSPORTES LTDA</option>
+                </Sel>
+
+                {/* Filial */}
+                <Label className="col-span-1 flex items-center justify-end">Filial</Label>
+                <Sel className="col-span-3 w-full">
+                  <option>001 - MANTRAN TRANSPORTES LTDA</option>
+                </Sel>
+
+                {/* Tipo Carga */}
+
+
+                {/* Divisão */}
+                <Label className="col-span-2 flex items-center justify-end">Divisão</Label>
+                <Sel className="col-span-2 w-full">
+                  <option>Logística</option>
+                  <option>Administrativo</option>
+                </Sel>
+              </div>
+
+              {/* Linha 3 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+              </div>
+            </fieldset>
+
+
+
+            {/* === CARD 2 - Origem === */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Origem
+              </legend>
+              {/* Linha 1 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+
+                {/* Cliente */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Cliente
+                </Label>
+
+                {/* BLOCO ÚNICO: CNPJ + Razão Social */}
+                <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
+
+                  {/* CNPJ (14 caracteres) */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    placeholder="CNPJ"
+                    maxLength={14}
+                  />
+
+                  {/* Razão Social */}
+                  <Txt
+                    className="col-span-5 bg-gray-200"
+                    readOnly
+                    placeholder="Razão Social"
+                  />
+
+                </div>
+
+
+                {/* Expedidor */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Expedidor
+                </Label>
+
+                {/* BLOCO ÚNICO: CNPJ + Razão Social */}
+                <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
+
+                  {/* CNPJ (14 caracteres máx.) */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    placeholder="CNPJ"
+                    maxLength={14}
+                  />
+
+                  {/* Razão Social */}
+                  <Txt
+                    className="col-span-5 bg-gray-200"
+                    readOnly
+                    placeholder="Razão Social"
+                  />
+
+                </div>
+
+
+              </div>
+
+              {/* Linha 2 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                {/* Remetente */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Remetente
+                </Label>
+
+                {/* BLOCO ÚNICO: CNPJ + Razão Social */}
+                <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
+
+                  {/* CNPJ (14 caracteres) */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    placeholder="CNPJ"
+                    maxLength={14}
+                  />
+
+                  {/* Razão Social */}
+                  <Txt
+                    className="col-span-5 bg-gray-200"
+                    readOnly
+                    placeholder="Razão Social"
+                  />
+
+                </div>
+
+
+                {/* Origem */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Origem
+                </Label>
+
+                <div className="col-span-5 grid grid-cols-6 gap-2 items-center">
+                  <Txt className="col-span-2" placeholder="CEP" />
+                  <Txt className="col-span-3 bg-gray-200" readOnly placeholder="Cidade" />
+                  <Txt className="col-span-1 text-center bg-gray-200" readOnly placeholder="UF" />
+                </div>
+
+              </div>
+
+
+              {/* Linha 3 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                {/* Tabela Frete */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Tab. Frete
+                </Label>
+
+                {/* BLOCO ÚNICO: Tabela + Tipo + Rateio */}
+                <div className="col-span-4 grid grid-cols-7 gap-2 items-center">
+
+                  {/* Tabela Frete */}
+                  <Sel className="col-span-4">
+                    <option>000083 - TABELA TESTE HNK</option>
+                  </Sel>
+
+                  {/* Tipo */}
+                  <Sel className="col-span-2">
+                    <option>CEVA</option>
+                    <option>GB</option>
+                    <option>NF</option>
+                  </Sel>
+
+                  {/* Rateio */}
+                  <div className="col-span-1 flex items-center">
+                    <label className="flex items-center gap-1 text-[12px] whitespace-nowrap">
+                      <input type="checkbox" />
+                      Rateio Frete(Contrato)
+                    </label>
+                  </div>
+
+                </div>
+
+                {/* Veículo Solicitado */}
+                <Label className="col-span-1 col-start-7 flex items-center justify-end">
+                  Veículo
+                </Label>
+                <Sel className="col-span-3">
+                  <option>01 - UTILITÁRIO</option>
+                  <option>02 - VAN</option>
+                  <option>03 - 3/4</option>
+                  <option>04 - TOCO</option>
+                  <option>05 - TRUCK</option>
+                  <option>06 - BITRUCK</option>
+                  <option>07 - CAVALO MECÂNICO</option>
+                  <option>08 - CAVALO TRUCADO</option>
+                </Sel>
+
+                {/* Botão Custos Adicionais — ALINHADO À DIREITA */}
+                <div className="col-span-2 flex justify-end">
+                  <button className="border border-gray-300 text-gray-700 hover:bg-gray-100 rounded px-3 py-[4px] flex items-center gap-1">
+                    <DollarSign size={14} className="text-red-700" />
+                    Custos Adicionais
+                  </button>
+                </div>
+
+              </div>
+
+            </fieldset>
+
+
+            {/* === CARD 3 - Destino === */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Destino
+              </legend>
+
+              {/* Linha 1 */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+
+                {/* Destinatário */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Destinatário
+                </Label>
+
+                {/* BLOCO Destinatário: CNPJ (14) + Razão Social (RO) + Lápis */}
+                <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                  {/* CNPJ (14 caracteres) */}
+                  <Txt
+                    className="col-span-3 text-center"
+                    maxLength={14}
+                    placeholder="CNPJ"
+                  />
+
+                  {/* Razão Social (não editável) */}
+                  <Txt
+                    className="col-span-8 bg-gray-200"
+                    readOnly
+                    placeholder="Razão Social"
+                  />
+
+                  {/* Lápis – no final do bloco */}
+                  <div className="col-span-1 flex justify-start">
+                    <button
+                      title="Selecionar Destinatário"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+
+                </div>
+
+
+                {/* Cidade Destino */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Cidade Dest.
+                </Label>
+
+                <div className="col-span-5 grid grid-cols-6 gap-2 items-center">
+                  <Txt className="col-span-2 text-center" placeholder="CEP" />
+                  <Txt className="col-span-3 bg-gray-200" readOnly placeholder="Cidade" />
+                  <Txt className="col-span-1 bg-gray-200 text-center" readOnly placeholder="UF" />
+                </div>
+
+              </div>
+
+
+              {/* ===== Linha 2 - Motorista + Agregado + KM Inicial + Nº Ficha ===== */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                {/* Motorista */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Motorista
+                </Label>
+
+                {/* BLOCO Motorista: CNH (14) + Nome (RO) + Lápis */}
+                <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                  {/* CNH (14 caracteres) */}
+                  <Txt
+                    className="col-span-3 text-center"
+                    maxLength={14}
+                    placeholder="CNH"
+                  />
+
+                  {/* Nome do Motorista (não editável) */}
+                  <Txt
+                    className="col-span-8 bg-gray-200"
+                    readOnly
+                    placeholder="Nome do Motorista"
+                  />
+
+                  {/* Lápis – agora no FINAL real do bloco */}
+                  <div className="col-span-1 flex justify-start">
+                    <button
+                      title="Selecionar Motorista"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+
+                </div>
+
+
+                {/* Agregado (SEM LABEL) */}
+                <div className="col-span-3 grid grid-cols-6 gap-1 items-center">
+
+                  {/* Agregado (não editável) */}
+                  <Txt
+                    className="col-span-5 bg-gray-200"
+                    readOnly
+                    placeholder="Agregado"
+                  />
+
+                  {/* Lápis */}
+                  <div className="col-span-1 flex justify-start ">
+                    <button
+                      title="Selecionar Agregado"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* KM Inicial + Trocar Empresa */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  KM Inicial
+                </Label>
+
+                <div className="col-span-2 grid grid-cols-3 gap-1 items-center">
+
+                  {/* KM Inicial */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    placeholder="0"
+                  />
+
+                  {/* Trocar Empresa (ícone) */}
+                  <div className="col-span-1 flex justify-center">
+                    <button
+                      title="Trocar Empresa Agregado"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <RefreshCcw size={14} className="text-blue-700" />
+                    </button>
+                  </div>
+                </div>
+
+
+
+              </div>
+
+
+
+              {/* ===== Linha 3 - Tração + Reboque ===== */}
+              <div className="grid grid-cols-12 gap-2 items-center mt-2">
+
+                {/* Tração */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Tração
+                </Label>
+
+                {/* BLOCO Tração: Código + Descrição + Tipo + Lápis */}
+                <div className="col-span-5 grid grid-cols-12  gap-2 items-center">
+
+                  {/* Código */}
+                  <Txt
+                    className="col-span-3 text-center"
+                    placeholder="Código"
+                    defaultValue="0035719"
+                  />
+
+                  {/* Placa / Descrição (não editável) */}
+                  <Txt
+                    className="col-span-5 bg-gray-200"
+                    readOnly
+                    placeholder="Placa / Descrição"
+                    defaultValue="RXW4I56 - CAVALO MEC - ITAJAÍ"
+                  />
+
+                  {/* Tipo (não editável) */}
+                  <Txt
+                    className="col-span-3 bg-gray-200 text-center"
+                    readOnly
+                    placeholder="Tipo"
+                    defaultValue="Frota"
+                  />
+
+                  {/* Lápis */}
+                  <div className="col-span-1 flex justify-start">
+                    <button
+                      title="Selecionar Tração"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+
+                </div>
+
+                {/* Reboque */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Reboque
+                </Label>
+
+                {/* BLOCO Reboque: Código + Descrição + Lápis */}
+                <div className="col-span-5 grid grid-cols-7 gap-2 items-center">
+
+                  {/* Código */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    placeholder="Código"
+                    defaultValue="0034811"
+                  />
+
+                  {/* Placa / Descrição (não editável) */}
+                  <Txt
+                    className="col-span-4 bg-gray-200"
+                    readOnly
+                    placeholder="Placa / Descrição"
+                    defaultValue="RKW3E53 - CARRETA SIDER - ITAJAÍ"
+                  />
+
+                  {/* Lápis */}
+                  <div className="col-span-1 flex justify-start">
+                    <button
+                      title="Selecionar Reboque"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* ===== Linha 4 - Recebedor ===== */}
+              <div className="grid grid-cols-12 gap-2 items-center mt-2">
+
+                {/* Recebedor */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Recebedor
+                </Label>
+
+                {/* BLOCO Recebedor: CNPJ + Razão Social (RO) + Lápis */}
+                <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                  {/* CNPJ (14 caracteres) */}
+                  <Txt
+                    className="col-span-3 text-center"
+                    maxLength={14}
+                    placeholder="CNPJ"
+                    defaultValue="05254957006551"
+                  />
+
+                  {/* Razão Social (não editável) */}
+                  <Txt
+                    className="col-span-8 bg-gray-200"
+                    readOnly
+                    placeholder="Razão Social"
+                    defaultValue="HNK-SALVADOR-AGUA MI"
+                  />
+
+                  {/* Lápis */}
+                  <div className="col-span-1 flex justify-start">
+                    <button
+                      title="Selecionar Recebedor"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100"
+                    >
+                      <Pencil size={14} className="text-red-700" />
+                    </button>
+                  </div>
+
+                </div>
+
+                {/* KM Atual */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Km Atual
+                </Label>
+
+                <Txt
+                  className="col-span-1 text-center"
+                  defaultValue="1"
+                />
+
+                {/* Classe */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Classe
+                </Label>
+
+                <Txt
+                  className="col-span-1 text-center bg-gray-200"
+                  readOnly
+                  defaultValue="13"
+                />
+
+                <Txt
+                  className="col-span-2 bg-gray-200"
+                  readOnly
+                  placeholder="Classe Veículo"
+                  defaultValue="CAVALO TRUCADO"
+                />
+
+              </div>
+
+
+              {/* ===== Linha 5 - Datas / KM Final ===== */}
+              <div className="grid grid-cols-12 gap-2 items-center mt-2">
+
+                {/* BLOCO ESQUERDO: Cadastro + Início Prev. + Hora */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Cadastro
+                </Label>
+
+                <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                  {/* Cadastro */}
+                  <Txt
+                    type="date"
+                    className="col-span-4"
+                    defaultValue="2025-10-20"
+                  />
+
+                  {/* Label Início Prev. */}
+                  <Label className="col-span-3 flex items-center justify-end">
+                    Início Prev.
+                  </Label>
+
+                  {/* Data Início */}
+                  <Txt
+                    type="date"
+                    className="col-span-3"
+                    defaultValue="2025-10-20"
+                  />
+
+                  {/* Hora */}
+                  <Txt
+                    type="time"
+                    className="col-span-2"
+                    defaultValue="16:31"
+                  />
+
+                </div>
+
+
+                {/* Chegada Prev. (Data + Hora) */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Chegada Prev.
+                </Label>
+                <div className="col-span-3 grid grid-cols-4 gap-2 items-center">
+                  <Txt type="date" className="col-span-3" defaultValue="2025-10-26" />
+                  <Txt type="time" className="col-span-1" defaultValue="16:00" />
+                </div>
+
+                {/* KM Final */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  KM Final
+                </Label>
+                <Txt className="col-span-1 text-center" defaultValue="0" />
+
+              </div>
+
+
+              {/* ===== Linha 6 - Observação + Tab. Agregado ===== */}
+              <div className="grid grid-cols-12 gap-2 items-center mt-2">
+
+                {/* Observação */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Observação
+                </Label>
+
+                <Txt
+                  className="col-span-5"
+                  placeholder="Observações gerais da viagem"
+                  defaultValue="Teste"
+                />
+
+                {/* Tabela Agregado */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Tab. Agreg.
+                </Label>
+
+                {/* BLOCO Tab. Agregado: Combo + Ícone */}
+                <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                  <Sel className="col-span-11">
+                    <option>000077 - TABELA AGREGADO</option>
+                  </Sel>
+
+                  <div className="col-span-1 flex justify-end">
+                    <button
+                      title="Trocar Tabela Agregado"
+                      className="border border-gray-300 rounded p-[4px] hover:bg-gray-100 text-blue-700"
+                    >
+                      <FileSpreadsheet size={14} />
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+
+
+
+            </fieldset>
+
+            {/* === CARD 4 - Ações === */}
+            <fieldset className="border border-gray-300 rounded p-3 mt-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Ações
+              </legend>
+
+              <div className="grid grid-cols-12 gap-2 items-center">
+
+                {/* Lucratividade */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Lucratividade
+                </Label>
+                <Txt
+                  className={`col-span-1 text-center font-semibold bg-gray-200 ${lucratividade >= 0
+                    ? "text-green-700 border-green-300"
+                    : "text-red-700 border-red-300"
+                    }`}
+                  value={`${lucratividade}%`}
+                  readOnly
+                />
+
+                {/* Peso Total */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Peso Total
+                </Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  defaultValue="0"
+                  readOnly
+                />
+
+                {/* Custo Viagem */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Custo Viagem
+                </Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  readOnly
+                  value={custoViagem.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                />
+
+                {/* Valor Frete */}
+                <Label className="col-span-1 flex items-center justify-end">
+                  Valor Frete
+                </Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  readOnly
+                  value={valorFrete.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                />
+
+                {/* Espaço */}
+                <div className="col-span-1" />
+
+                {/* Botões */}
+                <div className="col-span-3 flex justify-end gap-2">
+
+                  <button
+                    onClick={() => setModalMontarMinutaOpen(true)}
+                    className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
+                    title="Montar Minuta"
+                  >
+                    <FileText size={14} />
+                    Montar Minuta
+                  </button>
+
+                  <button
+                    onClick={() => setModalMontarCteOpen(true)}
+                    className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[5px] text-[12px] hover:bg-gray-100"
+                    title="Montar CTe"
+                  >
+                    <Truck size={14} className="text-red-700" />
+                    Montar CTe
+                  </button>
+
+                </div>
+
+              </div>
+            </fieldset>
+
+
+
+            {/* === CARD 5 - Notas Fiscais === */}
+            <fieldset className="border border-gray-300 rounded p-3 mt-3 bg-white">
+
+              {/* Legend clicável */}
+              <legend
+                className="px-2 text-red-700 font-semibold text-[13px] cursor-pointer select-none flex items-center gap-1"
+                onClick={() => setOpenNotas(!openNotas)}
+              >
+                {openNotas ? "▼" : "▶"} Notas Fiscais
+              </legend>
+
+              {/* Conteúdo (somente quando aberto) */}
+              {openNotas && (
+                <div className="overflow-auto mt-2">
+
+                  <table className="min-w-full border text-[12px]">
+                    <thead className="bg-gray-100 text-gray-700">
+                      <tr>
+                        {[
+                          "Filial",
+                          "Nº NF",
+                          "Série",
+                          "Tipo Doc",
+                          "Nº Controle",
+                          "Nº Impresso",
+                          "CNPJ Remetente",
+                          "Data Emissão",
+                        ].map((h) => (
+                          <th key={h} className="border px-2 py-1 text-left">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {[...Array(2)].map((_, i) => (
+                        <tr key={i} className="hover:bg-gray-50">
+                          <td className="border px-2 py-1">001</td>
+                          <td className="border px-2 py-1">00012345</td>
+                          <td className="border px-2 py-1">1</td>
+                          <td className="border px-2 py-1">NF-e</td>
+                          <td className="border px-2 py-1">000987</td>
+                          <td className="border px-2 py-1">000534</td>
+                          <td className="border px-2 py-1">45.333.888/0001-10</td>
+                          <td className="border px-2 py-1">10/10/2025</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                </div>
+              )}
+
+            </fieldset>
+
+
+            {/* === CARD 6 - Rodapé === */}
+            <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between mt-3">
+
+              {/* === ÍCONES DE AÇÃO (à esquerda) === */}
+              <div className="flex items-center gap-5">
+
+                {/* Fechar */}
+                <button
+                  onClick={() => navigate(-1)}
+                  title="Fechar Tela"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <XCircle size={20} />
+                  <span>Fechar</span>
+                </button>
+
+                {/* Limpar */}
+                <button
+                  title="Limpar Campos"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <RotateCcw size={20} />
+                  <span>Limpar</span>
+                </button>
+
+                {/* Incluir */}
+                <button
+                  title="Incluir Viagem"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <PlusCircle size={20} />
+                  <span>Incluir</span>
+                </button>
+
+                {/* Alterar */}
+                <button
+                  title="Alterar Viagem"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <Edit size={20} />
+                  <span>Alterar</span>
+                </button>
+
+                {/* Excluir */}
+                <button
+                  title="Excluir Viagem"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <Trash2 size={20} />
+                  <span>Excluir</span>
+                </button>
+
+                {/* Pagamento */}
+                <button
+                  onClick={() => setModalPagamentoOpen(true)}
+                  title="Pagamento"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <DollarSign size={20} />
+                  <span>Pagto</span>
+                </button>
+
+                {/* Monitoramento */}
+                <button
+                  onClick={() => setModalMonitoramentoOpen(true)}
+                  title="Monitoramento"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <MapPin size={20} />
+                  <span>Monitorar</span>
+                </button>
+
+                {/* Buonny */}
+                <button
+                  title="Buonny"
+                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+                >
+                  <UserCheck size={20} />
+                  <span>Buonny</span>
+                </button>
+
+
+              </div>
+
+              {/* === OPERADOR E DATA (à direita) === */}
+              <div className="flex items-center gap-2 text-[12px] text-gray-700">
+                <Label>Operador</Label>
+                <Txt className="w-[150px] text-center bg-gray-100" defaultValue="SUPORTE" readOnly />
+                <Txt className="w-[100px] text-center bg-gray-100" defaultValue="29/10/2025" readOnly />
+              </div>
+            </div>
+
+          </>
+        )}
+
 
         {/* ===================== ABA CONSULTA ===================== */}
         {activeTab === "consulta" && (
           <div className="flex flex-row gap-2">
-            {/* ====== CARD 1 - FILTROS (compacto, sem scroll de página) ====== */}
-            <fieldset className="border border-gray-300 rounded p-2 flex-1">
-              <legend className="text-red-700 font-semibold px-2">Filtros</legend>
+            {/* ====== CARD 1 - FILTROS (PADRÃO GRID 12) ====== */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="text-red-700 font-semibold px-2 text-[13px]">Filtros</legend>
 
-              <div className="space-y-1 text-[12px]">
+              <div className="space-y-2 text-[12px]">
+
                 {/* Linha 1 */}
-                <div className="flex items-center gap-1">
-                  <Label>Filial Origem</Label>
-                  <Sel className="flex-1 min-w-[220px]">
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Filial Origem</Label>
+                  <Sel className="col-span-3 w-full">
                     <option>001 - TESTE MANTRAN</option>
                   </Sel>
 
-                  <Label className="w-[80px] text-right">Tp. Carga</Label>
-                  <Sel className="w-[140px]">
+                  <Label className="col-span-1 justify-end">Tp. Carga</Label>
+                  <Sel className="col-span-2 w-full">
                     <option>TODAS</option>
                     <option>FRACIONADA</option>
                     <option>FECHADA</option>
                   </Sel>
 
-                  <Label className="w-[100px] text-right">Status</Label>
-                  <Sel className="w-[160px]">
+                  <Label className="col-span-1 justify-end">Nº Viagem</Label>
+                  <Txt className="col-span-1 text-center" />
+                  <Label className="col-span-1 justify-end">Status</Label>
+                  <Sel className="col-span-2 w-full">
                     <option>TODOS</option>
                     <option>NÃO INICIADA</option>
                     <option>EM ANDAMENTO</option>
                     <option>ENCERRADA</option>
                   </Sel>
+
+
                 </div>
 
                 {/* Linha 2 */}
-                <div className="flex items-center gap-1">
-                  <Label>Cliente</Label>
-                  <Txt className="w-[130px] ml-[35px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Razão Social" />
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Cliente</Label>
+                  <Txt className="col-span-2 text-center" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" readOnly placeholder="Razão Social" />
 
-                  <label className="ml-[135px]">
-                    <input type="checkbox" /> Apenas Agregados
-                  </label>
-                  <label className="flex items-center gap-1">
-                    <input type="checkbox" /> Viagens s/ Frete
-                  </label>
+                  <div className="col-span-2 flex items-center gap-2 justify-end">
+                    <label className="flex items-center gap-1">
+                      <input type="checkbox" />
+                      Apenas Agregados
+                    </label>
+
+                  </div>
+                  <Label className="col-span-2  justify-end">Nº Solicitação</Label>
+                  <Txt className="col-span-1 text-center" />
                 </div>
 
                 {/* Linha 3 */}
-                <div className="flex items-center gap-1">
-                  <Label>Remetente</Label>
-                  <Txt className="w-[130px] ml-[13px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Razão Social" />
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Remetente</Label>
+                  <Txt className="col-span-2 text-center" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" readOnly placeholder="Razão Social" />
 
-                  <Label className="w-[52px] text-right">Origem</Label>
-                  <Txt className="w-[90px]" placeholder="CEP" />
-                  <Txt className="w-[170px]" placeholder="Cidade" />
-                  <Txt className="w-[36px] text-center" placeholder="UF" />
+                  <Label className="col-span-1 justify-end">Origem</Label>
+                  <Txt className="col-span-1 text-center" placeholder="CEP" />
+                  <Txt className="col-span-2 bg-gray-200" readOnly placeholder="Cidade" />
+                  <Txt className="col-span-1 text-center bg-gray-200" readOnly placeholder="UF" />
                 </div>
 
                 {/* Linha 4 */}
-                <div className="flex items-center gap-1">
-                  <Label>Destinatário</Label>
-                  <Txt className="w-[130px] ml-[8px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Razão Social" />
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Destinatário</Label>
+                  <Txt className="col-span-2 text-center" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" readOnly placeholder="Razão Social" />
 
-                  <Label className="w-[52px] text-right">Destino</Label>
-                  <Txt className="w-[90px]" placeholder="CEP" />
-                  <Txt className="w-[170px]" placeholder="Cidade" />
-                  <Txt className="w-[36px] text-center" placeholder="UF" />
+                  <Label className="col-span-1 justify-end">Destino</Label>
+                  <Txt className="col-span-1 text-center" placeholder="CEP" />
+                  <Txt className="col-span-2 bg-gray-200" readOnly placeholder="Cidade" />
+                  <Txt className="col-span-1 text-center bg-gray-200" readOnly placeholder="UF" />
                 </div>
 
                 {/* Linha 5 */}
-                <div className="flex items-center gap-1">
-                  <Label>Agregado</Label>
-                  <Txt className="w-[130px] ml-[20px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Nome do Agregado" />
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Agregado</Label>
+                  <Txt className="col-span-2 text-center" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" readOnly placeholder="Nome do Agregado" />
 
-                  <Label className="ml-[160px] w-[56px] text-right">Divisão</Label>
-                  <Sel className="w-[160px]">
+                  <Label className="col-span-1 justify-end">Divisão</Label>
+                  <Sel className="col-span-2 w-full">
                     <option>TODAS</option>
                     <option>LOGÍSTICA</option>
                     <option>ADMINISTRATIVO</option>
                   </Sel>
+                  <div className="col-span-2 flex items-center gap-2 justify-end">
+                    <label className="flex items-center gap-1">
+                      <input type="checkbox" />
+                      Viagens s/ Frete
+                    </label>
+                  </div>
                 </div>
 
                 {/* Linha 6 */}
-                <div className="flex items-center gap-1">
-                  <Label>Motorista</Label>
-                  <Txt className="w-[130px] ml-[22px]" placeholder="CNH" />
-                  <Txt className="flex-1" placeholder="Nome do Motorista" />
-                  <Label className=" w-[52px] text-right">Veículo</Label>
-                  <Txt className="w-[90px]" placeholder="Placa" />
-                  <Txt className="w-[210px]" />
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Motorista</Label>
+                  <Txt className="col-span-2 text-center" placeholder="CNH" />
+                  <Txt className="col-span-4 bg-gray-200" readOnly placeholder="Nome do Motorista" />
+
+                  <Label className="col-span-1 justify-end">Veículo</Label>
+                  <Txt className="col-span-1 text-center" placeholder="Placa" />
+                  <Txt className="col-span-3 bg-gray-200" readOnly />
                 </div>
 
-                {/* Linha 7 (com wrap só dos campos do lado direito) */}
-                <div className="flex items-center gap-1">
-                  <Label>Período</Label>
-                  <Txt type="date" className="w-[130px] ml-[30px]" />
-                  <Label>a</Label>
-                  <Txt type="date" className="w-[130px]" />
+                {/* Linha 7 */}
+                <div className="grid grid-cols-12 gap-2 items-center">
 
-                  <div className="flex items-center gap-1 flex-wrap ml-2">
-                    <label className="flex items-center gap-1">
-                      <input type="checkbox" /> Dt. Início Prev.
+                  {/* Label Período */}
+                  <Label className="col-span-1 flex items-center justify-end">
+                    Período
+                  </Label>
+
+                  {/* BLOCO ÚNICO – tudo dentro de 5 colunas */}
+                  <div className="col-span-5 grid grid-cols-12 gap-2 items-center">
+
+                    {/* Data inicial */}
+                    <Txt
+                      type="date"
+                      className="col-span-5"
+                    />
+
+
+
+                    {/* Data final */}
+                    <Txt
+                      type="date"
+                      className="col-span-5"
+                    />
+
+                    {/* Checkbox */}
+                    <label className="col-span-2 flex items-center gap-1 text-[12px] whitespace-nowrap">
+                      <input type="checkbox" />
+                      Dt. Início Prev.
                     </label>
 
-                    <Label className="w-[64px] text-right">Viagem</Label>
-                    <Txt className="w-[72px]" />
-
-                    <Label className="w-[64px] text-right">Coleta</Label>
-                    <Txt className="w-[72px]" />
-
-                    <Label className="w-[52px] text-right">CTRC</Label>
-                    <Txt className="w-[72px]" />
-
-
-
-                    <Label className="w-[96px] text-right">Nº Solicitação</Label>
-                    <Txt className="w-[96px]" />
                   </div>
+
+
+
+
+                  <Label className="col-span-2 justify-end">CTRC</Label>
+                  <Txt className="col-span-1 text-center" />
+
+
+                  <Label className="col-span-2 justify-end">Coleta</Label>
+                  <Txt className="col-span-1 text-center" />
+
+
+
+                  {/* Se quiser manter Nº Solicitação na mesma linha, substitui os 3 campos finais por: 
+          Label col-span-2 + Txt col-span-2 (mas estoura 12).
+          Recomendo colocar Nº Solicitação numa Linha 8 (fica perfeito). */}
                 </div>
+
+                {/* Linha 8 (recomendado p/ não estourar colunas) */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+
+                  <div className="col-span-9" />
+                </div>
+
               </div>
             </fieldset>
 
 
-            {/* ====== CARD 2 - BOTÕES LATERAIS ====== */}
+
+
             {/* ====== CARD 2 - BOTÕES LATERAIS ====== */}
             <div className="flex flex-col gap-2 w-[140px]">
               <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded py-2 text-[13px] text-gray-700 flex items-center justify-center gap-2">
@@ -1641,97 +1687,146 @@ export default function Viagem({ open }) {
               </div>
 
               {/* === TOTAIS === */}
-              <div className="flex items-center justify-between mt-3 flex-wrap">
-                <div className="flex items-center gap-3 text-[13px] flex-wrap">
-                  <Label>QT Docs</Label>
-                  <Txt className="w-[60px] text-center" value={qtDocs} readOnly />
-                  <Label>Vr. Mercadoria</Label>
-                  <Txt
-                    className="w-[100px] text-right"
-                    value={totalVrMercadoria.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                    })}
-                    readOnly
-                  />
-                  <Label>Frete</Label>
-                  <Txt
-                    className="w-[100px] text-right"
-                    value={totalFrete.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                    })}
-                    readOnly
-                  />
-                  <Label>Cubagem</Label>
-                  <Txt className="w-[80px]" defaultValue="0" />
-                  <Label>Frete Peso</Label>
-                  <Txt className="w-[80px]" defaultValue="125,00" />
-                  <Label>Frete Líquido</Label>
-                  <Txt className="w-[80px]" defaultValue="116,25" />
-                </div>
+              <div className="grid grid-cols-12 gap-2 items-center mt-3 text-[12px]">
+
+                {/* QT Docs */}
+                <Label className="col-span-1 justify-end">QT Docs</Label>
+                <Txt
+                  className="col-span-1 text-center bg-gray-200"
+                  value={qtDocs}
+                  readOnly
+                />
+
+                {/* Vr. Mercadoria */}
+                <Label className="col-span-1 justify-end">Vr. Mercadoria</Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  value={totalVrMercadoria.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                  readOnly
+                />
+
+                {/* Frete */}
+                <Label className="col-span-1 justify-end">Frete</Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  value={totalFrete.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                  readOnly
+                />
+
+                {/* Cubagem */}
+                <Label className="col-span-1 justify-end">Cubagem</Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  value="0"
+                  readOnly
+                />
+
+                {/* Frete Peso */}
+                <Label className="col-span-1 justify-end">Frete Peso</Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  value="125,00"
+                  readOnly
+                />
+
+                {/* Frete Líquido */}
+                <Label className="col-span-1 justify-end">Frete Líquido</Label>
+                <Txt
+                  className="col-span-1 text-right bg-gray-200"
+                  value="116,25"
+                  readOnly
+                />
+
               </div>
+
+
+
             </fieldset>
 
 
 
             {/* === CARD 2 - Adicionar CTRC's === */}
             <fieldset className="border border-gray-300 rounded p-3 w-full min-w-0">
-              <legend className="text-red-700 font-semibold px-2">Adicionar CTRC's na Viagem</legend>
+              <legend className="text-red-700 font-semibold px-2">
+                Adicionar CTRC's na Viagem
+              </legend>
 
-              {/* === FILTROS === */}
               <div className="flex flex-col gap-2 mb-2">
-                {/* === LINHA 1 === */}
-                <div className="flex items-center gap-2">
-                  <Label>Cliente</Label>
-                  <Txt className="w-[160px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Razão Social" />
-                  <Label className="w-[80px] text-right">Nº Doc.</Label>
-                  <Txt className="w-[120px]" />
-                  <Label className="w-[80px] text-right">Período</Label>
-                  <Txt type="date" className="w-[140px]" />
-                  <Label className="w-[30px] text-center">até</Label>
-                  <Txt type="date" className="w-[140px]" />
+
+                {/* ===== LINHA 1 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Cliente</Label>
+                  <Txt className="col-span-2" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" placeholder="Razão Social" readOnly />
+
+                  <Label className="col-span-1 justify-end">Período</Label>
+                  <Txt type="date" className="col-span-2" />
+                  <Txt type="date" className="col-span-2" />
                 </div>
 
-                {/* === LINHA 2 === */}
-                <div className="flex items-center gap-2">
-                  <Label>Remetente</Label>
-                  <Txt className="w-[160px]" placeholder="CNPJ" />
-                  <Txt className="flex-1" placeholder="Razão Social" />
-                  <label className="flex items-center gap-1 text-[12px] ml-3">
-                    <input type="checkbox" /> Doctos não encerrados
-                  </label>
-                  <label className="flex items-center gap-1 text-[12px]">
-                    <input type="checkbox" /> Incluir Cancelados
-                  </label>
+                {/* ===== LINHA 2 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Remetente</Label>
+                  <Txt className="col-span-2" placeholder="CNPJ" />
+                  <Txt className="col-span-4 bg-gray-200" placeholder="Razão Social" readOnly />
+
+                  <div className="col-span-2 col-start-9 flex items-center gap-2">
+                    <label className="flex items-center gap-1 text-[12px]">
+                      <input type="checkbox" />
+                      Doctos não encerrados
+                    </label>
+                  </div>
+
+                  <div className="col-span-2 flex items-center gap-2">
+                    <label className="flex items-center gap-1 text-[12px]">
+                      <input type="checkbox" />
+                      Incluir Cancelados
+                    </label>
+                  </div>
                 </div>
 
-                {/* === LINHA 3 (Filial, Tipo Docs e Botões) === */}
-                <div className="flex items-center gap-2">
-                  <Label className="w-[60px] text-right">Filial</Label>
-                  <Sel className="w-[220px]">
+                {/* ===== LINHA 3 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Filial</Label>
+                  <Sel className="col-span-3 w-full">
                     <option>TODAS</option>
                   </Sel>
 
-                  <Label className="w-[80px] text-right">Tipo Docs</Label>
-                  <Sel className="w-[220px]">
+                  <Label className="col-span-1 justify-end">Tipo Docs</Label>
+                  <Sel className="col-span-2 w-full">
                     <option>Coleta</option>
                     <option>CTe - Impresso</option>
                     <option>CTe - Controle</option>
                     <option>Minuta</option>
                     <option>Doc Ant</option>
                   </Sel>
+                  <Label className="col-span-1 justify-end">Nº Doc.</Label>
+                  <Txt className="col-span-1" />
+                  <Label className="col-span-1 justify-end">Viagem</Label>
+                  <Txt className="col-span-1" />
 
-                  <div className="ml-auto flex items-center gap-2">
+
+                </div>
+
+                {/* ===== LINHA 4 - BOTÕES ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-1">
+                  <div className="col-span-12 flex justify-end gap-2">
                     <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded px-4 py-[4px] text-[13px] text-gray-700">
                       Protocolos
                     </button>
+
                     <button className="border border-gray-300 bg-white hover:bg-gray-100 rounded px-4 py-[4px] text-[13px] text-gray-700">
                       Pesquisar
                     </button>
-
                   </div>
                 </div>
+
               </div>
+
 
 
               {/* ===== GRID DE ADIÇÃO ===== */}
@@ -1863,261 +1958,266 @@ export default function Viagem({ open }) {
 
             {/* === CARD 1 - Valores de Frete de Terceiros === */}
             <fieldset className="border border-gray-300 rounded p-3 bg-white">
-              <legend className="text-red-700 font-semibold px-2">Valores de Frete de Terceiros</legend>
+              <legend className="text-red-700 font-semibold px-2">
+                Valores de Frete de Terceiros
+              </legend>
 
               <div className="space-y-2">
 
                 {/* ===== LINHA 1 ===== */}
                 <div className="grid grid-cols-12 gap-2 items-center">
+
+                  {/* CIOT – ocupa 3 colunas no total */}
+                  <Label className="col-span-1 justify-end">CIOT</Label>
+
                   <div className="col-span-2 flex items-center gap-1">
-                    <Label>CIOT</Label>
-                    <Txt className="w-full" />
-                  </div>
-
-                  <div className="col-span-1 flex justify-start">
+                    <Txt className="flex-1" />
                     <button
-                      type="button" title="CIOT"
-                      className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center justify-center"
+                      type="button"
+                      title="CIOT"
+                      className="border border-gray-300 rounded px-2 py-[4px] hover:bg-gray-100"
                     >
-
-
                       <DollarSign size={14} className="text-green-600" />
                     </button>
                   </div>
 
-                  <div className="col-span-1 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Sest/Senat</Label>
-                    <Txt className="w-full text-right" defaultValue="0" />
+
+                  {/* === BLOCO TRIBUTOS + TOTAL (limite 9 colunas) === */}
+                  <div className="col-span-9 grid grid-cols-10 gap-2 items-center">
+
+                    {/* Sest/Senat */}
+                    <Label className="col-span-1 justify-end">Sest/Senat</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0" />
+
+                    {/* INSS */}
+                    <Label className="col-span-1 justify-end">INSS</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0" />
+
+                    {/* IRRF */}
+                    <Label className="col-span-1 justify-end">IRRF</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0" />
+
+                    {/* Descarga */}
+                    <Label className="col-span-1 justify-end">Descarga</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+
+                    {/* Valor Total (destaque) */}
+                    <Label className="col-span-1 justify-end font-semibold">
+                      Valor Total
+                    </Label>
+                    <Txt
+                      className="col-span-1 text-right bg-gray-200 font-semibold"
+                      defaultValue="1.450,00"
+                      readOnly
+                    />
                   </div>
 
-                  <div className="col-span-1 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">INSS</Label>
-                    <Txt className="w-full text-right" defaultValue="0" />
-                  </div>
-
-                  <div className="col-span-1 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">IRRF</Label>
-                    <Txt className="w-full text-right" defaultValue="0" />
-                  </div>
-
-                  <div className="col-span-1 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Descarga</Label>
-                    <Txt className="w-full text-right" defaultValue="0,00" />
-                  </div>
-
-                  <div className="col-span-3 col-start-10 flex items-center justify-end gap-2">
-                    <Label className="whitespace-nowrap">Valor Total</Label>
-                    <Txt className="w-[120px] text-right bg-gray-100" defaultValue="1450,00" readOnly />
-                  </div>
                 </div>
 
                 {/* ===== LINHA 2 ===== */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-2 flex items-center gap-1">
-                    <Label>Frete Tabela</Label>
-                    <Txt className="w-full text-right" defaultValue="1450,00" />
+
+                  <Label className="col-span-1 justify-end">Frete Tabela</Label>
+                  <Txt className="col-span-2 text-right" defaultValue="1.450,00" />
+
+                  {/* === BLOCO (9 COLUNAS) === */}
+                  <div className="col-span-9 grid grid-cols-10 gap-2 items-center">
+                    {/* Cooperativa */}
+                    <Label className="col-span-1 justify-end">Cooperativa</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0" />
+
+
+
+                    {/* Adiantamento */}
+                    <Label className="col-span-1 justify-end">Adiantamento</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0" />
+
+                    {/* Adicional */}
+                    <Label className="col-span-1 justify-end">Adicional</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+
+                    {/* Pacotes */}
+                    <Label className="col-span-3 justify-end">Pacotes</Label>
+                    <div className="col-span-1 flex gap-1">
+                      <Txt className="w-1/2 text-right" defaultValue="0" />
+                      <Txt className="w-1/2 text-right" defaultValue="0" />
+                    </div>
+
                   </div>
 
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Cooperativa</Label>
-                    <Txt className="w-full text-right" defaultValue="0" />
-                  </div>
-
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Adiantamento</Label>
-                    <Txt className="w-full text-right" defaultValue="0" />
-                  </div>
-
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Adicional</Label>
-                    <Txt className="w-full text-right" defaultValue="0,00" />
-                  </div>
-
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Pacotes</Label>
-                    <Txt className="w-[45%] text-right" defaultValue="0" />
-                    <span>/</span>
-                    <Txt className="w-[45%] text-right" defaultValue="0" />
-                  </div>
-
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Vr. Pacote</Label>
-                    <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                  </div>
                 </div>
 
                 {/* ===== LINHA 3 ===== */}
                 <div className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-2 flex items-center gap-1">
-                    <Label>Nº CTRB/Seq</Label>
-                    <Txt className="w-[70px]" defaultValue="079032" />
-                    <Txt className="w-[40px]" defaultValue="1" />
+
+                  <Label className="col-span-1 justify-end">Nº CTRB</Label>
+                  <Txt className="col-span-1 text-center" defaultValue="079032" />
+                  <Txt className="col-span-1 text-center" defaultValue="1" />
+                  <div className="col-span-9 grid grid-cols-10 gap-2 items-center">
+
+
+                    <Label className="col-span-1 justify-end">Pedágio</Label>
+                    <Txt className="col-span-1" />
+
+                    <Txt className="col-span-3 bg-gray-200" readOnly placeholder="Descrição do pedágio..." />
+
+                    <Label className="col-span-1 justify-end">Nº Comp.</Label>
+                    <Txt className="col-span-2" />
+
+                    <Label className="col-span-1 justify-end">Vr. Pedágio</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
                   </div>
 
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label>Pedágio</Label>
-                    <Txt className="w-full" />
-                  </div>
-
-                  <div className="col-span-3">
-                    <Txt className="w-full" placeholder="Campo longo..." />
-                  </div>
-
-                  <div className="col-span-2 flex items-center gap-1 justify-end">
-                    <Label className="whitespace-nowrap">Nº Comp. Pedágio</Label>
-                    <Txt className="w-full" />
-                  </div>
-
-                  {/* Vr. Pedágio + Botão Alterar no final */}
-                  <div className="col-span-3 flex items-center gap-2 justify-end">
-                    <Label className="whitespace-nowrap">Pedágio</Label>
-                    <Txt className="w-[80px] text-right" defaultValue="0,00" />
-                    <button
-                      type="button"
-                      className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1 text-red-700"
-                      title="Alterar"
-                    >
-                      <Edit size={14} className="text-red-700" />
-                      Alterar
-                    </button>
-                  </div>
                 </div>
-
-
+                <div className="col-span-1 flex justify-end">
+                  <button
+                    type="button"
+                    title="Alterar"
+                    className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1 text-red-700"
+                  >
+                    <Edit size={14} />
+                    Alterar
+                  </button>
+                </div>
               </div>
             </fieldset>
 
 
 
             {/* === CARD 2 - Despesas Diversas === */}
-            <fieldset className="border border-gray-300 rounded p-2 bg-white">
-              <legend className="text-red-700 font-semibold px-2">Despesas Diversas</legend>
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="text-red-700 font-semibold px-2">
+                Despesas Diversas
+              </legend>
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-[12px]">
 
                 {/* ===== LINHA 1 ===== */}
-                <div className="flex justify-end gap-8">
-                  <div className="flex items-center gap-2">
-                    <Label>DT Acerto Conta</Label>
-                    <Txt className="w-[140px]" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Dt. Acerto Conta</Label>
+                  <Txt type="date" className="col-span-2" />
 
-                  <div className="flex items-center gap-2">
-                    <Label>Saldo Ficha</Label>
-                    <Txt
-                      className="w-5/6 text-right"
-                      value={despesas.reduce((acc, d) => acc + d.valor, 0).toFixed(2)}
-                      readOnly
-                    />
-                  </div>
+                  <Label className="col-span-1 col-start-10 justify-end">Saldo Ficha</Label>
+                  <Txt
+                    className="col-span-2 text-right bg-gray-200"
+                    value={despesas.reduce((acc, d) => acc + d.valor, 0).toFixed(2)}
+                    readOnly
+                  />
                 </div>
 
-
                 {/* ===== LINHA 2 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Cidade Origem</Label>
-                    <Txt className="flex-1 w-5/6 ml-[10px]" defaultValue="CAMPINAS" />
-                    <Txt className="w-[60px] text-center" defaultValue="SP" />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label>Cidade Destino</Label>
-                    <Txt className="flex-1 w-5/6" defaultValue="JUNDIAÍ" />
-                    <Txt className="w-[60px] text-center" defaultValue="SP" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Cidade Origem</Label>
+                  <Txt className="col-span-4 bg-gray-200" defaultValue="CAMPINAS" readOnly />
+                  <Txt className="col-span-1 text-center bg-gray-200" defaultValue="SP" readOnly />
+
+                  <Label className="col-span-1 col-start-7 justify-end">Cidade Destino</Label>
+                  <Txt className="col-span-4 bg-gray-200" defaultValue="JUNDIAÍ" readOnly />
+                  <Txt className="col-span-1 text-center bg-gray-200" defaultValue="SP" readOnly />
                 </div>
 
                 {/* ===== LINHA 3 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Data </Label>
-                    <Txt type="date" className="w-[135px] ml-[70px]" defaultValue="2025-10-28" />
-                    <Label>Hora </Label>
-                    <Txt type="time" className="w-[120px]" defaultValue="12:23" />
-                    <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100">
-                      Abastecimento
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  {/* Label Data (1 coluna) */}
+                  <Label className="col-span-1 flex items-center justify-end">
+                    Data
+                  </Label>
+
+                  {/* BLOCO: Data + Hora + Botão (5 colunas) */}
+                  <div className="col-span-5 grid grid-cols-5 gap-2 items-center">
+
+                    {/* Data */}
+                    <Txt
+                      type="date"
+                      className="col-span-2"
+                      defaultValue="2025-10-28"
+                    />
+
+                    {/* Hora */}
+                    <Txt
+                      type="time"
+                      className="col-span-1"
+                      defaultValue="12:23"
+                    />
+
+                    {/* Botão Abastecimento (ícone) */}
+                    <button
+                      title="Abastecimento"
+                      className="col-span-2 border border-gray-300 rounded py-[4px] hover:bg-gray-100 flex items-center justify-center"
+                    >
+                      <Fuel size={16} className="text-red-700" />
                     </button>
+
                   </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label> Filial</Label>
-                    <Txt className="w-[100px] ml-[60px]" />
-                    <Label>Nº Frota</Label>
-                    <Txt className="w-5/6" />
-                  </div>
+
+
+                  <Label className="col-span-1 justify-end">Filial</Label>
+                  <Txt className="col-span-1 bg-gray-200" readOnly />
+                  <Label className="col-span-1  col-start-10 justify-end">Nº Frota</Label>
+                  <Txt className="col-span-2 bg-gray-200" readOnly />
                 </div>
 
                 {/* ===== LINHA 4 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Evento</Label>
-                    <Txt className="w-[80px] text-center ml-[60px]" defaultValue="027" />
-                    <Txt className="flex-1 w-5/6" defaultValue="ABASTECIMENTO" />
-                    <Txt className="w-[50px] text-center" defaultValue="D" />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label>Complemento</Label>
-                    <Txt className="w-5/6 ml-[10px]" defaultValue="TESTE" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Evento</Label>
+                  <Txt className="col-span-1 text-center " defaultValue="027" />
+                  <Txt className="col-span-3 bg-gray-200" defaultValue="ABASTECIMENTO" readOnly />
+                  <Txt className="col-span-1 text-center bg-gray-200" defaultValue="D" readOnly />
+
+                  <Label className="col-span-1 justify-end">Complemento</Label>
+                  <Txt className="col-span-5 " defaultValue="TESTE" />
                 </div>
 
                 {/* ===== LINHA 5 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Categoria</Label>
-                    <Txt className="w-[80px] text-center ml-[45px]" defaultValue="2" />
-                    <Txt className="flex-1 w-5/6" defaultValue="DESPESAS OPERACIONAIS" />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label>Sub Categoria</Label>
-                    <Txt className="ml-[10px] w-[80px] text-center" defaultValue="33" />
-                    <Txt className="ml-[10px] flex-1 w-5/6" defaultValue="COMBUSTÍVEL" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Categoria</Label>
+                  <Txt className="col-span-1 text-center " defaultValue="2" />
+                  <Txt className="col-span-4 bg-gray-200" defaultValue="DESPESAS OPERACIONAIS" />
+
+                  <Label className="col-span-1 justify-end">Sub Categoria</Label>
+                  <Txt className="col-span-1 text-center " defaultValue="33" />
+                  <Txt className="col-span-4 bg-gray-200" defaultValue="COMBUSTÍVEL" />
                 </div>
 
                 {/* ===== LINHA 6 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Tipo Pagto</Label>
-                    <Txt className="w-[80px] text-center ml-[40px]" defaultValue="5" />
-                    <Txt className="flex-1 w-5/6" defaultValue="DÉBITO OU CRÉDITO" />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label>Status Viagem</Label>
-                    <Txt className="ml-[10px] w-5/6" defaultValue="ATIVA" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Tipo Pagto</Label>
+                  <Txt className="col-span-1 text-center" defaultValue="5" />
+                  <Txt className="col-span-4 bg-gray-200" defaultValue="DÉBITO OU CRÉDITO" readOnly />
+
+                  <Label className="col-span-1 justify-end">Status Viagem</Label>
+                  <Txt className="col-span-5 bg-gray-200" defaultValue="ATIVA" readOnly />
                 </div>
 
                 {/* ===== LINHA 7 ===== */}
-                <div className="flex justify-between gap-8">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Label>Valor</Label>
-                    <Txt className="w-[180px] text-right ml-[70px]" defaultValue="450,00" />
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 ">
-                    <Label>Conta Corrente</Label>
-                    <Txt className="w-[120px] text-center" defaultValue="000000" />
-                    <Txt className="w-[80px] text-center" defaultValue="999" />
-                    <Txt className="w-[100px] text-center" defaultValue="0000-0" />
-                  </div>
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 justify-end">Valor</Label>
+                  <Txt className="col-span-2 text-right" defaultValue="450,00" />
+
+                  <Label className="col-span-1 col-start-7 justify-end">Conta Corrente</Label>
+                  <Txt className="col-span-2 text-center bg-gray-200" defaultValue="000000" readOnly />
+                  <Txt className="col-span-1 text-center bg-gray-200" defaultValue="999" readOnly />
+                  <Txt className="col-span-2 text-center bg-gray-200" defaultValue="0000-0" readOnly />
                 </div>
 
                 {/* ===== LINHA 8 - BOTÕES ===== */}
-                <div className="flex justify-end gap-2 mt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
-                    onClick={() => setModalDespesaOpen(true)}   // <-- aqui está a correção
+                    onClick={() => setModalDespesaOpen(true)}
                     className="border border-gray-300 rounded px-3 py-[4px] text-[12px] flex items-center gap-1 text-green-700"
                   >
-                    <DollarSign size={14} /> Pagamento
+                    <DollarSign size={14} />
+                    Pagamento
                   </button>
-                  <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 flex items-center gap-1 text-red-600">
-                    <RotateCcw size={14} /> Estornar </button>
 
+                  <button className="border border-gray-300 rounded px-3 py-[4px] text-[12px] flex items-center gap-1 text-red-600 hover:bg-gray-100">
+                    <RotateCcw size={14} />
+                    Estornar
+                  </button>
                 </div>
 
               </div>
             </fieldset>
-
-
 
             {/* === CARD 3 - GRID DE DESPESAS === */}
             <fieldset className="border border-gray-300 rounded p-3 bg-white w-full min-w-0">
@@ -2288,54 +2388,101 @@ export default function Viagem({ open }) {
                 <legend className="text-red-700 font-semibold px-2">Filtros</legend>
 
                 <div className="flex flex-col gap-2 text-[13px]">
+
                   {/* === Linha 1 - Filial / Ocorrência === */}
                   <div className="grid grid-cols-12 gap-2 items-center">
-                    {/* Filial à esquerda */}
-                    <div className="col-span-9 flex items-center gap-2">
-                      <Label className="whitespace-nowrap">Filial</Label>
-                      <Sel className="flex-1">
-                        <option>001 - ENTREGATEX LOGISTICA E TECNOLO</option>
-                      </Sel>
-                    </div>
 
-                    {/* Ocorrência à direita */}
-                    <div className="col-span-3 flex items-center gap-2 justify-end">
-                      <Label className="whitespace-nowrap">Ocorrência</Label>
-                      <Txt className="w-[80px] text-center" defaultValue="0" />
-                    </div>
+                    {/* Filial */}
+                    <Label className="col-span-1 flex items-center justify-end">
+                      Filial
+                    </Label>
+                    <Sel className="col-span-5 w-full">
+                      <option>001 - ENTREGATEX LOGISTICA E TECNOLO</option>
+                    </Sel>
+
+                    {/* Ocorrência */}
+                    <Label className="col-span-1 flex items-center justify-end">
+                      Ocorrência
+                    </Label>
+                    <Txt
+                      className="col-span-2 text-center bg-gray-200" readOnly
+                      defaultValue="0"
+                    />
                   </div>
 
                   {/* === Linha 2 - Veículo / Motorista === */}
                   <div className="grid grid-cols-12 gap-2 items-center">
-                    {/* Veículo à esquerda */}
-                    <div className="col-span-6 flex items-center gap-2">
-                      <Label>Veículo</Label>
-                      <Txt className="w-[100px] text-center" defaultValue="0000008" />
+
+                    {/* Veículo */}
+                    <Label className="col-span-1 flex items-center justify-end">
+                      Veículo
+                    </Label>
+
+                    <div className="col-span-5 grid grid-cols-5 gap-2 items-center">
+                      {/* Código */}
                       <Txt
-                        className="flex-1"
+                        className="col-span-1 text-center"
+                        defaultValue="0000008"
+                      />
+
+                      {/* Placa / Descrição (não editável) */}
+                      <Txt
+                        className="col-span-4 bg-gray-200"
+                        readOnly
                         defaultValue="EQA3A89 - FORD CARGO 1517 E - TOCO - IMPERATRIZ"
                       />
                     </div>
 
-                    {/* Motorista à direita */}
-                    <div className="col-span-6 flex items-center gap-2 justify-end">
-                      <Label>Motorista</Label>
-                      <Txt className="w-[130px] text-center" defaultValue="03521315904" />
-                      <Txt className="flex-1" defaultValue="CLEBSON PEREIRA DE SOUSA" />
+                    {/* Motorista */}
+                    <Label className="col-span-1 flex items-center justify-end">
+                      Motorista
+                    </Label>
+
+                    <div className="col-span-5 grid grid-cols-5 gap-2 items-center">
+                      {/* CNH */}
+                      <Txt
+                        className="col-span-1 text-center"
+                        maxLength={14}
+                        defaultValue="03521315904"
+                      />
+
+                      {/* Nome (não editável) */}
+                      <Txt
+                        className="col-span-4 bg-gray-200"
+                        readOnly
+                        defaultValue="CLEBSON PEREIRA DE SOUSA"
+                      />
                     </div>
                   </div>
 
                   {/* === Linha 3 - Período === */}
                   <div className="grid grid-cols-12 gap-2 items-center">
-                    <div className="col-span-12 flex items-center gap-2">
-                      <Label>Período</Label>
-                      <Txt type="date" className="w-[160px]" defaultValue="2025-11-01" />
-                      <Label className="mx-1">até</Label>
-                      <Txt type="date" className="w-[160px]" defaultValue="2025-11-04" />
+
+                    <Label className="col-span-1 flex items-center justify-end">
+                      Período
+                    </Label>
+
+                    <div className="col-span-5 grid grid-cols-5 gap-2 items-center">
+                      <Txt
+                        type="date"
+                        className="col-span-2"
+                        defaultValue="2025-11-01"
+                      />
+                      <Label className="col-span-1 flex items-center justify-center">
+                        até
+                      </Label>
+                      <Txt
+                        type="date"
+                        className="col-span-2"
+                        defaultValue="2025-11-04"
+                      />
                     </div>
+
                   </div>
+
                 </div>
               </fieldset>
+
 
               {/* === CARD 2 - BOTÕES === */}
               <fieldset className="border border-gray-300 rounded p-3 bg-white w-[150px] flex flex-col justify-start items-stretch gap-2">
@@ -2531,7 +2678,6 @@ export default function Viagem({ open }) {
                         debito: "100,00",
                         saldo: "-100",
                         fechamento: "17/01/2024 00:00:00",
-
                       },
                       {
                         status: "ABERTA",
@@ -2541,7 +2687,6 @@ export default function Viagem({ open }) {
                         debito: "100,00",
                         saldo: "-100",
                         fechamento: "",
-
                       },
                       {
                         status: "ABERTA",
@@ -2551,20 +2696,40 @@ export default function Viagem({ open }) {
                         debito: "10,00",
                         saldo: "-10",
                         fechamento: "",
-
                       },
                     ].map((row, i) => (
                       <tr
                         key={i}
-                        className={`${row.cor} hover:bg-gray-100 transition`}
+                        className="hover:bg-gray-100 transition"
                       >
-                        <td className="border px-2">{row.status}</td>
-                        <td className="border px-2 text-center">{row.viagem}</td>
-                        <td className="border px-2">{row.motorista}</td>
-                        <td className="border px-2 text-right">{row.credito}</td>
-                        <td className="border px-2 text-right">{row.debito}</td>
-                        <td className="border px-2 text-right">{row.saldo}</td>
-                        <td className="border px-2 text-center">
+                        <td className="border px-2 whitespace-nowrap">
+                          {row.status}
+                        </td>
+
+                        <td className="border px-2 text-center whitespace-nowrap">
+                          {row.viagem}
+                        </td>
+
+                        <td
+                          className="border px-2 whitespace-nowrap"
+                          title={row.motorista}
+                        >
+                          {row.motorista}
+                        </td>
+
+                        <td className="border px-2 text-right whitespace-nowrap">
+                          {row.credito}
+                        </td>
+
+                        <td className="border px-2 text-right whitespace-nowrap">
+                          {row.debito}
+                        </td>
+
+                        <td className="border px-2 text-right whitespace-nowrap">
+                          {row.saldo}
+                        </td>
+
+                        <td className="border px-2 text-center whitespace-nowrap">
                           {row.fechamento || "--"}
                         </td>
                       </tr>
@@ -2572,6 +2737,7 @@ export default function Viagem({ open }) {
                   </tbody>
                 </table>
               </div>
+
 
               {/* === TOTAL DE REGISTROS === */}
               <div className="text-[13px] text-gray-700 mt-2">
