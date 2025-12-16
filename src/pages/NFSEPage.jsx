@@ -254,7 +254,7 @@ export default function NFSEPage({ open }) {
       </div>
 
       {/* Conteúdo */}
-      <div className="p-3 bg-white border-x border-b border-gray-200 rounded-b-md flex flex-col gap-3 max-h-[calc(100vh-160px)] overflow-y-auto">
+      <div className="flex flex-col flex-1 min-h-0">
         {activeTab === "cadastro" ? (
           <>
             {/* --- CARD 1 - NÃO ALTERADO --- */}

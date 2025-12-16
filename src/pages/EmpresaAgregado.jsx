@@ -25,20 +25,28 @@ import {
 =============================== */
 function Label({ children, className = "" }) {
   return (
-    <label className={`text-[12px] text-gray-700 ${className}`}>
+    <label
+      className={`text-[12px] text-gray-700 flex items-center ${className}`}
+    >
       {children}
     </label>
   );
 }
 
-function Txt(props) {
+function Txt({ className = "", readOnly, ...props }) {
   return (
     <input
       {...props}
-      className={`border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] ${props.className || ""}`}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-200" : "bg-white"}
+        ${className}
+      `}
     />
   );
 }
+
 
 function Sel({ children, className = "", ...rest }) {
   return (
@@ -372,801 +380,830 @@ export default function EmpresaAgregado({ open }) {
             key={t}
             onClick={() => setAba(t)}
             className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${aba === t
-                ? "bg-white text-red-700 border-gray-300"
-                : "bg-gray-100 text-gray-600 border-transparent"
+              ? "bg-white text-red-700 border-gray-300"
+              : "bg-gray-100 text-gray-600 border-transparent"
               } ${t !== "cadastro" ? "ml-1" : ""}`}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
+      {/* CONTAINER INTERNO */}
+      <div className="flex flex-col flex-1 min-h-0">
 
-      <div className="flex-1 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto">
+        {/* CONTEÚDO COM SCROLL */}
+        <div className="flex-1 overflow-y-auto p-3 bg-white border-x border-b border-gray-200 rounded-b-md">
 
-        {/* ==================================================
+          {/* ==================================================
                 ABA CADASTRO
         ================================================== */}
-        {aba === "cadastro" && (
-          <>
-            {/* ---------------------------------------------------
-                CARD 1 - DADOS EMPRESA
-            --------------------------------------------------- */}
-            <fieldset className="border border-gray-300 rounded p-3 mb-3">
-              <legend className="px-2 text-red-700 font-semibold">Dados Empresa</legend>
-
-              {/* ====== LINHA 1  ====== */}
-              <div className="grid grid-cols-[100px_180px_1fr_180px_1fr_120px_200px_140px_1fr] gap-3 items-center">
-
-                {/* CNPJ / CPF */}
-                <Sel
-                  value={tpDoc}
-                  onChange={(e) => {
-                    setTpDoc(e.target.value);
-                    setDoc("");
-                  }}
-                >
-                  <option>CNPJ</option>
-                  <option>CPF</option>
-                </Sel>
-
-                {/* Nº do documento */}
-                <Txt
-                  value={doc}
-                  onChange={handleDocChange}
-                  placeholder={tpDoc}
-                />
-
-                {/* IE */}
-                <Label className="text-right">IE</Label>
-                <Txt
-                  name="ie"
-                  value={dados.ie}
-                  onChange={handleChange}
-                />
-
-                {/* RNTRC */}
-                <Label className="text-right">RNTRC</Label>
-                <Txt
-                  name="rntrc"
-                  value={dados.rntrc}
-                  onChange={handleChange}
-                />
-
-                {/* Tipo */}
-                <Label className="text-right">Tipo</Label>
-                <Sel name="tipo" value={dados.tipo} onChange={handleChange}>
-                  <option>Agregado</option>
-                  <option>Terceirizado</option>
-                  <option>Cooperativa</option>
-                </Sel>
-
-                {/* TAC / ETC */}
-                <Sel
-                  name="tpAgregado"
-                  value={dados.tpAgregado}
-                  onChange={handleChange}
-                >
-                  <option>TAC</option>
-                  <option>ETC</option>
-                </Sel>
-
-              </div>
-
-
-              {/* ====== LINHA 2 ====== */}
-              <div className="grid grid-cols-[100px_1fr] gap-3 mt-2">
-                <Label className="text-right">Razão Social</Label>
-                <Txt
-                  name="razao"
-                  value={dados.razao}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* ====== LINHA 3 ====== */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_80px_1fr] gap-3 mt-2">
-                <Label className="text-right">CEP</Label>
-                <Txt name="cep" value={dados.cep} onChange={handleChange} />
-
-                <Label className="text-right">Endereço</Label>
-                <Txt name="endereco" value={dados.endereco} onChange={handleChange} />
-
-                <Label className="text-right">Bairro</Label>
-                <Txt name="bairro" value={dados.bairro} onChange={handleChange} />
-              </div>
-
-              {/* ====== LINHA 4 ====== */}
-              <div className="grid grid-cols-[100px_1fr_50px_1fr_60px_1fr_70px_1fr] gap-3 mt-2">
-                <Label className="text-right">Cidade</Label>
-                <Txt name="cidade" value={dados.cidade} onChange={handleChange} />
-
-                <Label className="text-right">UF</Label>
-                <Txt
-                  name="uf"
-                  maxLength={2}
-                  className="text-center"
-                  value={dados.uf}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Fone</Label>
-                <Txt name="fone1" value={dados.fone1} onChange={handleChange} />
-
-                <Label className="text-right">Fone 2</Label>
-                <Txt name="fone2" value={dados.fone2} onChange={handleChange} />
-              </div>
-
-              {/* ====== LINHA 5 ====== */}
-              <div className="grid grid-cols-[100px_1fr_110px_1fr_150px_1fr] gap-3 mt-2">
-                <Label className="text-right">Contrato</Label>
-
-                <Txt
-                  type="date"
-                  name="desligamento"
-                  value={dados.contrato}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Desligamento</Label>
-                <Txt
-                  type="date"
-                  name="desligamento"
-                  value={dados.desligamento}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Filial Vinculo</Label>
-                <Txt
-                  name="filialVinculo"
-                  value={dados.filialVinculo}
-                  onChange={handleChange}
-                />
-              </div>
-
-              {/* ====== LINHA 6 ====== */}
-              <div className="grid grid-cols-[100px_70px_100px_90px_140px_120px_100px_1fr] gap-3 mt-2 items-center">
-
-                <Label className="text-right">Cód. Banco</Label>
-                <Txt
-                  name="banco"
-                  maxLength={3}
-                  value={dados.banco}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Agência</Label>
-                <Txt
-                  name="agencia"
-                  maxLength={6}
-                  value={dados.agencia}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Conta Corrente</Label>
-                <Txt
-                  name="conta"
-                  maxLength={10}
-                  value={dados.conta}
-                  onChange={handleChange}
-                />
-
-                <Label className="text-right">Chave Pix</Label>
-                <Txt
-                  name="pix"
-                  value={dados.pix}
-                  onChange={handleChange}
-                />
-
-              </div>
-
-              {/* ====== LINHA 7 ====== */}
-              <div className="grid grid-cols-[100px_1fr_120px_1fr] gap-3 mt-2">
-                <Label className="text-right">Contato</Label>
-                <Txt name="contato" value={dados.contato} onChange={handleChange} />
-                <Label className="text-right">Favorecido Conta</Label>
-                <Txt name="favorecido" value={dados.favorecido} onChange={handleChange} />
-              </div>
-
-              {/* ====== LINHA 8 ====== */}
-              <div className="grid grid-cols-[100px_1fr] gap-3 mt-2">
-                <Label className="text-right">Observação</Label>
-                <textarea
-                  name="obs"
-                  value={dados.obs}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded px-2 py-1 text-[13px] w-full"
-                  rows={1}
-                />
-              </div>
-            </fieldset>
-
-
-            {/* ---------------------------------------------------
-    CARD 2 - ADICIONAIS
+          {aba === "cadastro" && (
+            <>
+              {/* ---------------------------------------------------
+    CARD 1 - DADOS EMPRESA
 --------------------------------------------------- */}
-            <fieldset className="border border-gray-300 rounded mb-3">
-              <legend
-                className="px-2 text-red-700 font-semibold flex items-center justify-between cursor-pointer select-none"
-                onClick={() => setShowAdicionais(!showAdicionais)}
-              >
-                Adicionais
-                <span className="text-gray-500 text-sm">
-                  {showAdicionais ? "▲" : "▼"}
-                </span>
-              </legend>
+              <fieldset className="border border-gray-300 rounded p-3 mb-3 bg-white">
+                <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                  Dados Empresa
+                </legend>
 
-              {showAdicionais && (
-                <div className="p-3">
-
-                  {/* ======================= LINHA 1 ======================= */}
-                  <div
-                    className="
-          grid
-          grid-cols-[100px_200px_90px_60px_160px_200px_1fr_110px_100px]
-          gap-3 items-center
-        "
+                {/* ===== LINHA 1 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  {/* Tipo Documento */}
+                  <Label className="col-span-1 justify-end">Doc</Label>
+                  <Sel
+                    className="col-span-1 w-full"
+                    value={tpDoc}
+                    onChange={(e) => {
+                      setTpDoc(e.target.value);
+                      setDoc("");
+                    }}
                   >
-                    <Label className="text-right">PIS</Label>
-                    <Txt
-                      name="pis"
-                      value={dados.pis}
-                      onChange={handleChange}
-                    />
+                    <option>CNPJ</option>
+                    <option>CPF</option>
+                  </Sel>
 
-                    <Label className="text-right">Dependentes</Label>
-                    <Txt
-                      name="dependentes"
-                      value={dados.dependentes}
-                      onChange={handleChange}
-                      className="w-[50px] text-center"
-                      maxLength={2}
-                    />
+                  {/* Nº Documento */}
+                  <Txt
+                    className="col-span-2"
+                    value={doc}
+                    onChange={handleDocChange}
+                    placeholder={tpDoc}
+                  />
 
-                    <Label className="text-right">Nº Cartão CIOT</Label>
-                    <Txt
-                      name="ciot"
-                      value={dados.ciot}
-                      onChange={handleChange}
-                    />
+                  <Label className="col-span-1 justify-end">IE</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="ie"
+                    value={dados.ie}
+                    onChange={handleChange}
+                  />
 
-                    {/* coluna vazia para empurrar Pagto Bloq pro final */}
-                    <div></div>
+                  <Label className="col-span-1 justify-end">RNTRC</Label>
+                  <Txt
+                    className="col-span-1"
+                    name="rntrc"
+                    value={dados.rntrc}
+                    onChange={handleChange}
+                  />
 
-                    <Label className="text-right">Pagto Bloq.</Label>
+                  <Label className="col-span-1 justify-end">Tipo</Label>
+
+                  {/* Wrapper dos dois selects ocupando 2 colunas */}
+                  <div className="col-span-2 grid grid-cols-12 gap-2">
+                    {/* Tipo (maior) */}
                     <Sel
-                      name="pagBloq"
-                      value={dados.pagBloq}
+                      className="col-span-7 w-full"
+                      name="tipo"
+                      value={dados.tipo}
                       onChange={handleChange}
-                      className="min-w-[100px]"
                     >
-                      <option>Não</option>
-                      <option>Sim</option>
+                      <option>Agregado</option>
+                      <option>Terceirizado</option>
+                      <option>Cooperativa</option>
+                    </Sel>
+
+                    {/* TAC / ETC (menor) */}
+                    <Sel
+                      className="col-span-5 w-full text-center"
+                      name="tpAgregado"
+                      value={dados.tpAgregado}
+                      onChange={handleChange}
+                    >
+                      <option>TAC</option>
+                      <option>ETC</option>
                     </Sel>
                   </div>
 
-                  {/* ======================= LINHA 2 ======================= */}
-                  <div
-                    className="
-          grid
-          grid-cols-[100px_160px_110px_140px_40px_80px_40px_150px_90px_150px]
-          gap-3 items-center mt-2
-        "
+                </div>
+
+                {/* ===== LINHA 2 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+
+
+                  <Label className="col-span-1 justify-end">Razão Social</Label>
+                  <Txt
+                    className="col-span-11"
+                    name="razao"
+                    value={dados.razao}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* ===== LINHA 3 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">CEP</Label>
+                  <Txt
+                    className="col-span-1"
+                    name="cep"
+                    value={dados.cep}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Endereço</Label>
+                  <Txt
+                    className="col-span-6"
+                    name="endereco"
+                    value={dados.endereco}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Bairro</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="bairro"
+                    value={dados.bairro}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* ===== LINHA 4 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">Cidade</Label>
+                  <Txt
+                    className="col-span-4"
+                    name="cidade"
+                    value={dados.cidade}
+                    onChange={handleChange}
+                  />
+
+
+                  <Txt
+                    className="col-span-1 text-center"
+                    name="uf"
+                    maxLength={2}
+                    value={dados.uf}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Fone</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="fone1"
+                    value={dados.fone1}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Fone 2</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="fone2"
+                    value={dados.fone2}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* ===== LINHA 5 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">Contrato</Label>
+                  <Txt
+                    type="date"
+                    className="col-span-2"
+                    name="contrato"
+                    value={dados.contrato}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Desligamento</Label>
+                  <Txt
+                    type="date"
+                    className="col-span-2"
+                    name="desligamento"
+                    value={dados.desligamento}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Filial Vínculo</Label>
+
+                  <Sel
+                    className="col-span-5 w-full"
+                    name="filialVinculo"
+                    value={dados.filialVinculo}
+                    onChange={handleChange}
                   >
-                    {/* RG */}
-                    <Label className="text-right">RG</Label>
-                    <Txt name="rg" value={dados.rg} onChange={handleChange} />
+                    <option value="">Selecione</option>
+                    <option value="001">001 - MATRIZ</option>
+                    <option value="002">002 - FILIAL SP</option>
+                    <option value="003">003 - FILIAL BA</option>
+                  </Sel>
 
-                    {/* Data Emissão */}
-                    <Label className="text-right">DT Emissão</Label>
+                </div>
+
+                {/* ===== LINHA 6 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">Banco</Label>
+                  <Txt
+                    className="col-span-1"
+                    name="banco"
+                    maxLength={3}
+                    value={dados.banco}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Agência</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="agencia"
+                    maxLength={6}
+                    value={dados.agencia}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Conta</Label>
+                  <Txt
+                    className="col-span-2"
+                    name="conta"
+                    maxLength={10}
+                    value={dados.conta}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Pix</Label>
+                  <Txt
+                    className="col-span-3"
+                    name="pix"
+                    value={dados.pix}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* ===== LINHA 7 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">Contato</Label>
+                  <Txt
+                    className="col-span-5"
+                    name="contato"
+                    value={dados.contato}
+                    onChange={handleChange}
+                  />
+
+                  <Label className="col-span-1 justify-end">Favorecido</Label>
+                  <Txt
+                    className="col-span-5"
+                    name="favorecido"
+                    value={dados.favorecido}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* ===== LINHA 8 ===== */}
+                <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                  <Label className="col-span-1 justify-end">Observação</Label>
+                  <textarea
+                    className="col-span-11 border border-gray-300 rounded px-2 py-1 text-[13px]"
+                    name="obs"
+                    rows={1}
+                    value={dados.obs}
+                    onChange={handleChange}
+                  />
+                </div>
+              </fieldset>
+
+
+
+              {/* ---------------------------------------------------
+    CARD 2 - ADICIONAIS
+--------------------------------------------------- */}
+              <fieldset className="border border-gray-300 rounded mb-3">
+                <legend
+                  className="px-2 text-red-700 font-semibold flex items-center justify-between cursor-pointer select-none"
+                  onClick={() => setShowAdicionais(!showAdicionais)}
+                >
+                  Adicionais
+                  <span className="text-gray-500 text-sm">
+                    {showAdicionais ? "▲" : "▼"}
+                  </span>
+                </legend>
+
+                {showAdicionais && (
+                  <div className="p-3 space-y-2 text-[13px]">
+
+                    {/* ===== LINHA 1 ===== */}
+                    <div className="grid grid-cols-12 gap-2 items-center">
+                      <Label className="col-span-1 justify-end">PIS</Label>
+                      <Txt className="col-span-2" name="pis" value={dados.pis} onChange={handleChange} />
+
+
+                      <Label className="col-span-1 justify-end">Nº Cartão CIOT</Label>
+                      <Txt className="col-span-2" name="ciot" value={dados.ciot} onChange={handleChange} />
+
+                      <Label className="col-span-2 justify-end">Pagto Bloq.</Label>
+                      <Sel className="col-span-2 w-full" name="pagBloq" value={dados.pagBloq} onChange={handleChange}>
+                        <option>Não</option>
+                        <option>Sim</option>
+                      </Sel>
+                      <Label className="col-span-1 justify-end">Depend.</Label>
+                      <Txt
+                        className="col-span-1 text-center"
+                        name="dependentes"
+                        maxLength={2}
+                        value={dados.dependentes}
+                        onChange={handleChange}
+                      />
+
+                    </div>
+
+                    {/* ===== LINHA 2 ===== */}
+                    <div className="grid grid-cols-12 gap-2 items-center">
+                      <Label className="col-span-1 justify-end">RG</Label>
+                      <Txt className="col-span-2" name="rg" value={dados.rg} onChange={handleChange} />
+                      <Label className="col-span-1 justify-end">CPF</Label>
+                      <Txt
+                        className="col-span-2"
+                        name="cpf"
+                        value={dados.cpf}
+                        onChange={(e) =>
+                          setDados((p) => ({ ...p, cpf: maskCPF(e.target.value) }))
+                        }
+                      />
+                      <Label className="col-span-2 justify-end">Dt. Emissão</Label>
+                      <Txt
+                        type="date"
+                        className="col-span-2"
+                        name="dtemissao"
+                        value={dados.dtemissao}
+                        onChange={handleChange}
+                      />
+
+                      <Label className="col-span-1 justify-end">UF</Label>
+                      <Sel className="col-span-1 w-full" name="ufemissao" value={dados.ufemissao} onChange={handleChange}>
+                        {[
+                          "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
+                          "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RO", "RR", "RS", "SC", "SP", "SE", "TO"
+                        ].map((uf) => (
+                          <option key={uf}>{uf}</option>
+                        ))}
+                      </Sel>
+
+
+                    </div>
+
+                    {/* ===== LINHA 3 ===== */}
+                    <div className="grid grid-cols-12 gap-2 items-center">
+                      <Label className="col-span-1 justify-end">Nascimento</Label>
+                      <Txt
+                        type="date"
+                        className="col-span-2"
+                        name="nascimento"
+                        value={dados.nascimento}
+                        onChange={handleChange}
+                      />
+
+                      <Label className="col-span-1 justify-end">Local Nasc.</Label>
+                      <Txt
+                        className="col-span-5"
+                        name="localNascCidade"
+                        value={dados.localNascCidade}
+                        onChange={handleChange}
+                      />
+
+
+                      <Txt
+                        className="col-span-1 text-center"
+                        name="localNascUF"
+                        maxLength={2}
+                        value={dados.localNascUF}
+                        onChange={handleChange}
+                      />
+
+                      <Label className="col-span-1 justify-end">Sexo</Label>
+                      <Sel className="col-span-1 w-full" name="sexo" value={dados.sexo} onChange={handleChange}>
+                        <option>Masculino</option>
+                        <option>Feminino</option>
+                      </Sel>
+                    </div>
+
+                    {/* ===== LINHA 4 ===== */}
+                    <div className="grid grid-cols-12 gap-2 items-center">
+                      <Label className="col-span-1 justify-end">Tipo Conta</Label>
+                      <Sel className="col-span-2 w-full" name="tipoConta" value={dados.tipoConta} onChange={handleChange}>
+                        <option>Conta Corrente</option>
+                        <option>Poupança</option>
+                        <option>PIX</option>
+                      </Sel>
+
+                      <Label className="col-span-1 justify-end">Tabela Frete</Label>
+                      <Sel
+                        className="col-span-5 w-full"
+                        name="tabelaFrete"
+                        value={dados.tabelaFrete}
+                        onChange={handleChange}
+                      >
+                        <option value="000000">000000 - TABELA PADRÃO</option>
+                        <option value="000001">000001 - MARFRIG EXPORTAÇÃO/MERCADO INTERNO</option>
+                        <option value="000002">000002 - ZANCHETTA VENDA</option>
+                        <option value="000003">000003 - TABELA LOGGI</option>
+                        <option value="000004">000004 - HEINEKEN CANAIS ESPECIAIS</option>
+                        <option value="000055">000055 - RODONAVES NATAL TESTE</option>
+                        <option value="000056">000056 - RODONAVES NATAL</option>
+                        <option value="000094">000094 - ADIMAX</option>
+                      </Sel>
+                    </div>
+
+                  </div>
+                )}
+              </fieldset>
+
+
+
+
+
+              {/* ---------------------------------------------------
+                CARD 3 - BOTÕES ESPECIAIS
+            --------------------------------------------------- */}
+              <div className="flex gap-3 mb-4">
+                <button
+                  onClick={() => setShowTabelaFrete(true)}
+                  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+                >
+                  <FileSpreadsheet size={14} /> Tabela Frete
+                </button>
+                <button
+                  onClick={() => setShowVeiculos(true)}
+                  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+                >
+                  <Truck size={14} /> Veículos
+                </button>
+                <button
+                  onClick={() => setShowMotoristas(true)}
+                  className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
+                >
+                  <Users size={14} /> Motoristas
+                </button>
+
+                <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
+                  <FileSpreadsheet size={14} /> Conta Corrente
+                </button>
+                <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
+                  <CalendarDays size={14} /> Agend. Eventos
+                </button>
+              </div>
+
+            </>
+          )}
+
+          {/* ==================================================
+    ABA CONSULTA
+================================================== */}
+          {aba === "consulta" && (
+            <>
+              <fieldset className="border border-gray-300 rounded p-3 mb-3 w-full">
+                <legend className="px-2 text-red-700 font-semibold">
+                  Parâmetros
+                </legend>
+
+                <div className="space-y-2 text-[13px]">
+
+                  {/* ===== LINHA 1 ===== */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-1 justify-end">Razão Social</Label>
                     <Txt
-                      type="date"
-                      name="dtemissao"
-                      value={dados.dtemissao}
-                      onChange={handleChange}
-                    />
-
-                    {/* UF Emissão */}
-                    <Label className="text-right">UF</Label>
-                    <Sel
-                      name="ufemissao"
-                      value={dados.ufemissao}
-                      onChange={handleChange}
-                      className="w-full"
-                    >
-                      {[
-                        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-                        "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-                        "RO", "RR", "RS", "SC", "SP", "SE", "TO",
-                      ].map((uf) => (
-                        <option key={uf}>{uf}</option>
-                      ))}
-                    </Sel>
-
-                    {/* CPF */}
-                    <Label className="text-right">CPF</Label>
-                    <Txt
-                      name="cpf"
-                      value={dados.cpf}
+                      className="col-span-5"
+                      value={filtros.razao}
                       onChange={(e) =>
-                        setDados((p) => ({ ...p, cpf: maskCPF(e.target.value) }))
+                        setFiltros({ ...filtros, razao: e.target.value })
                       }
                     />
 
-                    {/* Estado Civil */}
-                    <Label className="text-right">Estado Civil</Label>
+                    <Label className="col-span-1 justify-end">Cidade</Label>
+                    <Txt
+                      className="col-span-5"
+                      value={filtros.cidade}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, cidade: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  {/* ===== LINHA 2 ===== */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-1 justify-end">CPF/CNPJ</Label>
+                    <Txt
+                      className="col-span-2"
+                      value={filtros.doc}
+                      onChange={(e) =>
+                        setFiltros({
+                          ...filtros,
+                          doc:
+                            e.target.value.length <= 14
+                              ? maskCPF(e.target.value)
+                              : maskCNPJ(e.target.value),
+                        })
+                      }
+                    />
+
+                    <Label className="col-span-1 justify-end">Tipo</Label>
                     <Sel
-                      name="estadoCivil"
-                      value={dados.estadoCivil}
-                      onChange={handleChange}
+                      className="col-span-2 w-full"
+                      value={filtros.tipo}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, tipo: e.target.value })
+                      }
                     >
-                      <option>Solteiro</option>
-                      <option>Casado</option>
-                      <option>Divorciado</option>
-                      <option>Separado</option>
-                      <option>Viúvo</option>
-                      <option>União Estável</option>
+                      <option>Todos</option>
+                      <option>Agregado</option>
+                      <option>Terceirizado</option>
+                      <option>Cooperativa</option>
+                    </Sel>
+
+                    <Label className="col-span-1 justify-end">Tipo Agr.</Label>
+                    <Sel
+                      className="col-span-1 w-full"
+                      value={filtros.tpAgregado}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, tpAgregado: e.target.value })
+                      }
+                    >
+                      <option>Todos</option>
+                      <option>TAC</option>
+                      <option>ETC</option>
+                    </Sel>
+
+                    <Label className="col-span-1 justify-end">Empresa</Label>
+                    <Sel
+                      className="col-span-3 w-full"
+                      value={filtros.empresa}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, empresa: e.target.value })
+                      }
+                    >
+                      <option>Todos</option>
+                      <option>Pessoa Física</option>
+                      <option>Pessoa Jurídica</option>
                     </Sel>
                   </div>
 
-                  {/* ======================= LINHA 3 ======================= */}
-                  <div
-                    className="
-    grid
-    grid-cols-[100px_160px_100px_1fr_60px_70px_100px_150px]
-    gap-3 items-center mt-2
-  "
-                  >
-                    <Label className="text-right">Data Nasc.</Label>
+                  {/* ===== LINHA 3 ===== */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-1 justify-end">Situação</Label>
+                    <Sel
+                      className="col-span-2 w-full"
+                      value={filtros.situacao}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, situacao: e.target.value })
+                      }
+                    >
+                      <option>Todos</option>
+                      <option>Ativos</option>
+                      <option>Inativos</option>
+                    </Sel>
+
+                    <Label className="col-span-1 justify-end">Dt Inclusão</Label>
                     <Txt
                       type="date"
-                      name="nascimento"
-                      value={dados.nascimento}
-                      onChange={handleChange}
+                      className="col-span-2"
+                      value={filtros.dtIncl}
+                      onChange={(e) =>
+                        setFiltros({ ...filtros, dtIncl: e.target.value })
+                      }
                     />
 
-                    <Label className="text-right">Local Nasc.</Label>
+                    <div className="col-span-2 flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={filtros.usarData}
+                        onChange={(e) =>
+                          setFiltros({ ...filtros, usarData: e.target.checked })
+                        }
+                      />
+                      <span>Utilizar Data</span>
+                    </div>
 
-                    {/* Cidade */}
-                    <Txt
-                      name="localNascCidade"
-                      value={dados.localNascCidade}
-                      onChange={handleChange}
-                    />
+                    {/* BOTÕES */}
+                    <div className="col-span-4 flex justify-end gap-2">
+                      <button className="border border-gray-300 rounded px-3 py-[4px] flex items-center gap-1 hover:bg-gray-100">
+                        <FileSpreadsheet size={14} />
+                        Exportar
+                      </button>
 
-                    <Label className="text-right">UF</Label>
+                      <button
+                        onClick={() => {
+                          setFiltros({
+                            razao: "",
+                            cidade: "",
+                            doc: "",
+                            tipo: "Todos",
+                            tpAgregado: "Todos",
+                            empresa: "Todos",
+                            situacao: "Todos",
+                            dtIncl: "",
+                            usarData: false,
+                          });
+                          setResultados([]);
+                        }}
+                        className="border border-gray-300 rounded px-3 py-[4px] flex items-center gap-1 hover:bg-gray-100"
+                      >
+                        <RotateCcw size={14} />
+                        Limpar
+                      </button>
 
-                    {/* UF */}
-                    <Txt
-                      name="localNascUF"
-                      value={dados.localNascUF}
-                      maxLength={2}
-                      className="text-center"
-                      onChange={handleChange}
-                    />
-
-                    <Label className="text-right">Sexo</Label>
-                    <Sel
-                      name="sexo"
-                      value={dados.sexo}
-                      onChange={handleChange}
-                      className="w-full"
-                    >
-                      <option>Masculino</option>
-                      <option>Feminino</option>
-                    </Sel>
-                  </div>
-
-
-                  {/* ======================= LINHA 4 ======================= */}
-                  <div
-                    className="
-          grid
-          grid-cols-[100px_200px_120px_1fr]
-          gap-3 items-center mt-2
-        "
-                  >
-                    <Label className="text-right">Tipo Conta</Label>
-                    <Sel
-                      name="tipoConta"
-                      value={dados.tipoConta}
-                      onChange={handleChange}
-                    >
-                      <option>Conta Corrente</option>
-                      <option>Poupança</option>
-                      <option>PIX</option>
-                    </Sel>
-
-                    <Label className="text-right">Tabela Frete</Label>
-                    <Sel
-                      name="tabelaFrete"
-                      value={dados.tabelaFrete}
-                      onChange={handleChange}
-                      className="w-full"
-                    >
-                      <option value="000000">000000 - TABELA PADRÃO</option>
-                      <option value="000001">000001 - MARFRIG EXPORTAÇÃO/MERCADO INTERNO</option>
-                      <option value="000002">000002 - ZANCHETTA VENDA</option>
-                      <option value="000003">000003 - TABELA LOGGI</option>
-                      <option value="000004">000004 - HEINEKEN CANAIS ESPECIAIS</option>
-                      <option value="000055">000055 - RODONAVES NATAL TESTE</option>
-                      <option value="000056">000056 - RODONAVES NATAL</option>
-                      <option value="000094">000094 - ADIMAX</option>
-                    </Sel>
+                      <button
+                        onClick={handlePesquisar}
+                        className="border border-gray-300 rounded px-3 py-[4px] flex items-center gap-1 hover:bg-gray-100"
+                      >
+                        <Search size={14} />
+                        Pesquisar
+                      </button>
+                    </div>
                   </div>
 
                 </div>
-              )}
-            </fieldset>
+              </fieldset>
+            </>
+          )}
 
+          {/* ------------------------- GRID ------------------------- */}
+          <fieldset className="border border-gray-300 rounded p-3 min-w-0">
+            <legend className="px-2 text-red-700 font-semibold">
+              Resultados
+            </legend>
 
+            <div className="block w-full min-w-0 border border-gray-300 rounded bg-white mt-2 max-h-[400px] overflow-auto">
+              <table className="min-w-[1600px] text-[12px] border-collapse">
+                <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10">
+                  <tr>
+                    {[
+                      "CNPJ/CPF",
+                      "Razão Social",
+                      "IE",
+                      "Endereço",
+                      "Bairro",
+                      "Cidade",
+                      "CEP",
+                      "UF",
+                      "Contrato",
+                      "Fone",
+                      "Fone 2",
+                      "DT Contrato",
+                      "Desligamento",
+                      "Banco",
+                      "Agência",
+                      "Conta",
+                      "Observação",
+                      "Tipo",
+                      "Pg Bloq",
+                      "Favorecido",
+                      "PIS",
+                      "Dependentes",
+                      "Nascimento",
+                      "CIOT",
+                      "Tabela Frete",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="border px-2 py-1 whitespace-nowrap text-left"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-
-            {/* ---------------------------------------------------
-                CARD 3 - BOTÕES ESPECIAIS
-            --------------------------------------------------- */}
-            <div className="flex gap-3 mb-4">
-              <button
-                onClick={() => setShowTabelaFrete(true)}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
-              >
-                <FileSpreadsheet size={14} /> Tabela Frete
-              </button>
-              <button
-                onClick={() => setShowVeiculos(true)}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
-              >
-                <Truck size={14} /> Veículos
-              </button>
-              <button
-                onClick={() => setShowMotoristas(true)}
-                className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100"
-              >
-                <Users size={14} /> Motoristas
-              </button>
-
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
-                <FileSpreadsheet size={14} /> Conta Corrente
-              </button>
-              <button className="border px-3 py-[4px] rounded flex items-center gap-1 text-sm hover:bg-gray-100">
-                <CalendarDays size={14} /> Agend. Eventos
-              </button>
+                <tbody>
+                  {resultados.map((item, i) => (
+                    <tr
+                      key={item.id}
+                      onClick={() => selecionarLinha(item)}
+                      className={`cursor-pointer ${i % 2 === 0 ? "bg-orange-50" : "bg-white"
+                        } hover:bg-gray-100`}
+                    >
+                      <td className="border px-2 whitespace-nowrap">{item.doc}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.razao}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.ie}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.endereco}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.bairro}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.cidade}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.cep}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.uf}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.contrato}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.fone1}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.fone2}</td>
+                      <td className="border px-2 whitespace-nowrap"></td>
+                      <td className="border px-2 whitespace-nowrap">{item.desligamento}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.banco}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.agencia}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.conta}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.obs}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.tipo}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.pagBloq}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.favorecido}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.pis}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.dependentes}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.nascimento}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.ciot}</td>
+                      <td className="border px-2 whitespace-nowrap">{item.tabelaFrete}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
-            {/* ===================== RODAPÉ PADRÃO MANTRAN ===================== */}
-            <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
-
-              {/* FECHAR */}
-              <button
-                onClick={() => window.history.back()}
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <XCircle size={20} />
-                <span>Fechar</span>
-              </button>
-
-              {/* LIMPAR */}
-              <button
-                onClick={handleLimpar}
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <RotateCcw size={20} />
-                <span>Limpar</span>
-              </button>
-
-              {/* INCLUIR */}
-              <button
-                onClick={handleIncluir}
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <PlusCircle size={20} />
-                <span>Incluir</span>
-              </button>
-
-              {/* ALTERAR */}
-              <button
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <Edit size={20} />
-                <span>Alterar</span>
-              </button>
-
-              {/* EXCLUIR */}
-              <button
-                onClick={handleExcluir}
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <Trash2 size={20} />
-                <span>Excluir</span>
-              </button>
-
-              {/* EXPORTAR EXCEL */}
-              <button
-                className={`flex flex-col items-center text-[11px] transition 
-            ${footerIconColorNormal} hover:${footerIconColorHover}`}
-              >
-                <FileSpreadsheet size={20} />
-                <span>Excel</span>
-              </button>
-
+            <div className="text-right text-[12px] mt-2 text-gray-600">
+              Total de Registros: {resultados.length}
             </div>
+          </fieldset>
 
-          </>
+        </div>
+
+
+
+        {/* === CHAMADA DO MODAL TABELA FRETE === */}
+        {showTabelaFrete && (
+          <EmpresaAgregadoTabelaFrete
+            onClose={() => setShowTabelaFrete(false)}
+            cnpj={doc}
+            razao={dados.razao}
+          />
         )}
 
-        {/* ==================================================
-                ABA CONSULTA
-        ================================================== */}
-        {aba === "consulta" && (
-          <>
-            <fieldset className="border border-gray-300 rounded p-3 mb-3 max-w-full">
-              <legend className="px-2 text-red-700 font-semibold">Parâmetros</legend>
+        {showVeiculos && (
+          <EmpresaAgregadoVeiculos
+            onClose={() => setShowVeiculos(false)}
+            onCadastroVeiculo={() => {
+              setShowVeiculos(false);     // fecha a lista
+              alert("Abrir tela Veiculo.jsx");  // aqui você chama sua tela real
+            }}
+          />
+        )}
 
-              {/* LINHA 1 */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr] gap-3 items-center w-full">
-
-                <Label className="text-right">Razão Social</Label>
-                <Txt
-                  value={filtros.razao}
-                  onChange={(e) => setFiltros({ ...filtros, razao: e.target.value })}
-                />
-
-                <Label className="text-right">Cidade</Label>
-                <Txt
-                  value={filtros.cidade}
-                  onChange={(e) => setFiltros({ ...filtros, cidade: e.target.value })}
-                />
-              </div>
-
-              {/* LINHA 2 */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_100px_1fr_100px_1fr] gap-3 mt-2 items-center w-full">
-
-                {/* CPF/CNPJ */}
-                <Label className="text-right">CPF/CNPJ</Label>
-                <Txt
-                  value={filtros.doc}
-                  onChange={(e) =>
-                    setFiltros({
-                      ...filtros,
-                      doc:
-                        e.target.value.length <= 14
-                          ? maskCPF(e.target.value)
-                          : maskCNPJ(e.target.value),
-                    })
-                  }
-                />
-
-                <Label className="text-right">Tipo</Label>
-                <Sel
-                  value={filtros.tipo}
-                  onChange={(e) => setFiltros({ ...filtros, tipo: e.target.value })}
-                >
-                  <option>Todos</option>
-                  <option>Agregado</option>
-                  <option>Terceirizado</option>
-                  <option>Cooperativa</option>
-                </Sel>
-
-                <Label className="text-right">Tipo Agr.</Label>
-                <Sel
-                  value={filtros.tpAgregado}
-                  onChange={(e) => setFiltros({ ...filtros, tpAgregado: e.target.value })}
-                >
-                  <option>Todos</option>
-                  <option>TAC</option>
-                  <option>ETC</option>
-                </Sel>
-
-                <Label className="text-right">Empresa</Label>
-                <Sel
-                  value={filtros.empresa}
-                  onChange={(e) => setFiltros({ ...filtros, empresa: e.target.value })}
-                >
-                  <option>Todos</option>
-                  <option>Pessoa Física</option>
-                  <option>Pessoa Jurídica</option>
-                </Sel>
-              </div>
-
-              {/* LINHA 3 */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_1fr_300px] gap-3 mt-2 items-center w-full">
-
-                <Label className="text-right">Situação</Label>
-                <Sel
-                  value={filtros.situacao}
-                  onChange={(e) => setFiltros({ ...filtros, situacao: e.target.value })}
-                >
-                  <option>Todos</option>
-                  <option>Ativos</option>
-                  <option>Inativos</option>
-                </Sel>
-
-                <Label className="text-right">Dt Inclusão</Label>
-                <Txt
-                  type="date"
-                  value={filtros.dtIncl}
-                  onChange={(e) => setFiltros({ ...filtros, dtIncl: e.target.value })}
-                />
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filtros.usarData}
-                    onChange={(e) => setFiltros({ ...filtros, usarData: e.target.checked })}
-                  />
-                  Utilizar Data
-                </div>
-
-                {/* Botões ajustáveis */}
-                <div className="flex justify-end gap-2">
-
-                  <button className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100">
-                    <FileSpreadsheet size={14} /> Exportar
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setFiltros({
-                        razao: "",
-                        cidade: "",
-                        doc: "",
-                        tipo: "Todos",
-                        tpAgregado: "Todos",
-                        empresa: "Todos",
-                        situacao: "Todos",
-                        dtIncl: "",
-                        usarData: false,
-                      });
-                      setResultados([]);
-                    }}
-                    className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100"
-                  >
-                    <RotateCcw size={14} /> Limpar
-                  </button>
-
-                  <button
-                    onClick={handlePesquisar}
-                    className="border px-3 py-[4px] rounded flex items-center gap-1 hover:bg-gray-100"
-                  >
-                    <Search size={14} /> Pesquisar
-                  </button>
-
-                </div>
-              </div>
-            </fieldset>
-
-
-            {/* ------------------------- GRID ------------------------- */}
-            <fieldset className="border border-gray-300 rounded p-3 min-w-0">
-              <legend className="px-2 text-red-700 font-semibold">
-                Resultados
-              </legend>
-
-              <div className="block w-full min-w-0 border border-gray-300 rounded bg-white mt-2 max-h-[400px] overflow-auto">
-                <table className="min-w-[1600px] text-[12px] border-collapse">
-                  <thead className="bg-gray-100 text-gray-700 sticky top-0 z-10">
-                    <tr>
-                      {[
-                        "CNPJ/CPF",
-                        "Razão Social",
-                        "IE",
-                        "Endereço",
-                        "Bairro",
-                        "Cidade",
-                        "CEP",
-                        "UF",
-                        "Contrato",
-                        "Fone",
-                        "Fone 2",
-                        "DT Contrato",
-                        "Desligamento",
-                        "Banco",
-                        "Agência",
-                        "Conta",
-                        "Observação",
-                        "Tipo",
-                        "Pg Bloq",
-                        "Favorecido",
-                        "PIS",
-                        "Dependentes",
-                        "Nascimento",
-                        "CIOT",
-                        "Tabela Frete",
-                      ].map((h) => (
-                        <th
-                          key={h}
-                          className="border px-2 py-1 whitespace-nowrap text-left"
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {resultados.map((item, i) => (
-                      <tr
-                        key={item.id}
-                        onClick={() => selecionarLinha(item)}
-                        className={`cursor-pointer ${i % 2 === 0 ? "bg-orange-50" : "bg-white"
-                          } hover:bg-gray-100`}
-                      >
-                        <td className="border px-2 whitespace-nowrap">{item.doc}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.razao}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.ie}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.endereco}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.bairro}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.cidade}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.cep}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.uf}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.contrato}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.fone1}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.fone2}</td>
-                        <td className="border px-2 whitespace-nowrap"></td>
-                        <td className="border px-2 whitespace-nowrap">{item.desligamento}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.banco}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.agencia}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.conta}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.obs}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.tipo}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.pagBloq}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.favorecido}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.pis}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.dependentes}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.nascimento}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.ciot}</td>
-                        <td className="border px-2 whitespace-nowrap">{item.tabelaFrete}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="text-right text-[12px] mt-2 text-gray-600">
-                Total de Registros: {resultados.length}
-              </div>
-            </fieldset>
-          </>
+        {showMotoristas && (
+          <EmpresaAgregadoMotorista
+            onClose={() => setShowMotoristas(false)}
+            onCadastroMotorista={() => {
+              setShowMotoristas(false);
+              alert("Abrir tela CadastroMotorista.jsx");
+            }}
+            onContratoCooperativa={() => {
+              alert("Abrir tela ContratoCooperativa.jsx");
+            }}
+          />
         )}
       </div>
+      {/* ===================== RODAPÉ PADRÃO MANTRAN ===================== */}
+      <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 shrink-0">
 
-      {/* === CHAMADA DO MODAL TABELA FRETE === */}
-      {showTabelaFrete && (
-        <EmpresaAgregadoTabelaFrete
-          onClose={() => setShowTabelaFrete(false)}
-          cnpj={doc}
-          razao={dados.razao}
-        />
-      )}
+        {/* FECHAR */}
+        <button
+          onClick={() => window.history.back()}
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <XCircle size={20} />
+          <span>Fechar</span>
+        </button>
 
-      {showVeiculos && (
-        <EmpresaAgregadoVeiculos
-          onClose={() => setShowVeiculos(false)}
-          onCadastroVeiculo={() => {
-            setShowVeiculos(false);     // fecha a lista
-            alert("Abrir tela Veiculo.jsx");  // aqui você chama sua tela real
-          }}
-        />
-      )}
+        {/* LIMPAR */}
+        <button
+          onClick={handleLimpar}
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <RotateCcw size={20} />
+          <span>Limpar</span>
+        </button>
 
-      {showMotoristas && (
-        <EmpresaAgregadoMotorista
-          onClose={() => setShowMotoristas(false)}
-          onCadastroMotorista={() => {
-            setShowMotoristas(false);
-            alert("Abrir tela CadastroMotorista.jsx");
-          }}
-          onContratoCooperativa={() => {
-            alert("Abrir tela ContratoCooperativa.jsx");
-          }}
-        />
-      )}
+        {/* INCLUIR */}
+        <button
+          onClick={handleIncluir}
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <PlusCircle size={20} />
+          <span>Incluir</span>
+        </button>
+
+        {/* ALTERAR */}
+        <button
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Edit size={20} />
+          <span>Alterar</span>
+        </button>
+
+        {/* EXCLUIR */}
+        <button
+          onClick={handleExcluir}
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Trash2 size={20} />
+          <span>Excluir</span>
+        </button>
+
+        {/* EXPORTAR EXCEL */}
+        <button
+          className={`flex flex-col items-center text-[11px] transition 
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <FileSpreadsheet size={20} />
+          <span>Excel</span>
+        </button>
+
+      </div>
 
 
-    </div>
+    </div >
+
   );
 }

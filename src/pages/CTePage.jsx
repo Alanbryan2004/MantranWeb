@@ -117,6 +117,9 @@ export default function CTePage({ open }) {
     setActiveTab("cte");           // muda para a aba CTe
   };
 
+  const sidebarWidth = open ? "192px" : "56px";
+
+
   const dados = [
     ["001", "001", "I", "058840", "000001", "001", "Autorizado o uso do CT-e", "15/10/2025", "15/10/2025", "HNK-SALVADOR", "HNK-ITU", "AV. PRIMO SCHINCARIOL", "ITAIM"],
     ["001", "001", "I", "058839", "000002", "001", "Autorizado o uso do CT-e", "15/10/2025", "15/10/2025", "HNK-ITU", "HNK PARNAMIRIM", "R RIO JORDAO", "NATAL/RN"],
@@ -210,16 +213,15 @@ export default function CTePage({ open }) {
         </button>
       </div>
 
+
       {/* Conteúdo */}
-      <div className="flex-1 p-3 bg-white border-x border-b border-gray-200 rounded-b-md flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
+      <div className="flex flex-col flex-1 min-h-0 pb-[56px] overflow-y-auto">
 
         {activeTab === "cte" ? (
           <>
             {/* CARD 1 — Dados Principais */}
             <fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
-              <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                Dados Principais
-              </legend>
+
 
               {/* LINHA 1 */}
               <div className="grid grid-cols-12 gap-2 items-center">
@@ -387,81 +389,81 @@ export default function CTePage({ open }) {
             </fieldset>
 
 
-            {/* CARD 2 — Participantes */}
-            <div className="border border-gray-300 rounded p-1 bg-white space-y-2">
-              <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+            {/* CARD — PARTICIPANTES */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
                 Participantes
-              </h2>
+              </legend>
 
-              {/* Cabeçalho */}
-              <div className="grid grid-cols-[100px_180px_1fr_180px_60px_30px] gap-[4px] mb-1 items-center">
-                <div></div>
-                <div className="font-semibold text-xs text-gray-600">CGC / CPF</div>
-                <div className="font-semibold text-xs text-gray-600">Razão Social</div>
-                <div className="font-semibold text-xs text-gray-600">Cidade</div>
-                <div className="font-semibold text-xs text-gray-600">UF</div>
-                <div></div>
-              </div>
+              <div className="space-y-2 text-[13px]">
 
-              {/* Linhas */}
-              {[
-                ["Cliente", "50221019000136", "HNK BR INDUSTRIA DE BEBIDAS LTDA", "ITU", "SP"],
-                ["Remetente", "50221019000136", "HNK BR INDUSTRIA DE BEBIDAS LTDA", "ITU", "SP"],
-                ["Destinatário", "0525495700651", "HNK BR LOGISTICA E DISTRIBUICAO LTDA", "SALVADOR", "BA"],
-                ["Expedidor", "", "", "", ""],
-                ["Recebedor", "", "", "", ""],
-                ["Seguradora", "002", "LIBERTY SEGUROS", "", ""],
-              ].map(([label, cgc, razao, cidade, uf], i) => (
-                <div
-                  key={i}
-                  className="grid grid-cols-[100px_180px_1fr_180px_60px_30px] gap-[4px] items-center"
-                >
-                  <Label className="text-right pr-2">{label}</Label>
+                {[
+                  { label: "Cliente", cgc: "50221019000136", razao: "HNK BR INDUSTRIA DE BEBIDAS LTDA", cidade: "ITU", uf: "SP" },
+                  { label: "Remetente", cgc: "50221019000136", razao: "HNK BR INDUSTRIA DE BEBIDAS LTDA", cidade: "ITU", uf: "SP", nf: true },
+                  { label: "Destinatário", cgc: "0525495700651", razao: "HNK BR LOGISTICA E DISTRIBUICAO LTDA", cidade: "SALVADOR", uf: "BA" },
+                  { label: "Expedidor", cgc: "", razao: "", cidade: "", uf: "" },
+                  { label: "Recebedor", cgc: "", razao: "", cidade: "", uf: "" },
+                  { label: "Seguradora", cgc: "002", razao: "LIBERTY SEGUROS", cidade: "", uf: "" },
+                ].map((p, i) => (
+                  <div
+                    key={i}
+                    className="grid grid-cols-12 gap-2 items-center"
+                  >
+                    {/* LABEL */}
+                    <Label className="col-span-1 justify-end">
+                      {p.label}
+                    </Label>
 
-                  {/* CGC / CPF */}
-                  {label === "Remetente" ? (
-                    <div className="flex items-center gap-1">
-                      <Txt className="w-[150px]" defaultValue={cgc} />
+                    {/* CGC / CPF */}
+                    <div className="col-span-2 flex items-center gap-1">
+                      <Txt className="w-full" defaultValue={p.cgc} />
+
+                      {p.nf && (
+                        <button
+                          title="Notas Fiscais"
+                          onClick={() => abrirModal("notaFiscal")}
+                          className="border border-gray-300 rounded w-[26px] h-[26px] flex items-center justify-center hover:bg-gray-100"
+                        >
+                          <FileText size={14} className="text-red-700" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* RAZÃO SOCIAL */}
+                    <Txt
+                      className="col-span-4 bg-gray-200"
+                      defaultValue={p.razao}
+                      readOnly
+                    />
+
+                    {/* CIDADE */}
+                    <Txt
+                      className="col-span-3 bg-gray-200"
+                      defaultValue={p.cidade}
+                      readOnly
+                    />
+
+                    {/* UF */}
+                    <Txt
+                      className="col-span-1 text-center bg-gray-200"
+                      defaultValue={p.uf}
+                      readOnly
+                    />
+
+                    {/* AÇÃO */}
+                    <div className="col-span-1 flex justify-center">
                       <button
-                        onClick={() => abrirModal("notaFiscal")}
-                        title="Notas Fiscais do Remetente"
-                        className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded w-[24px] h-[22px] flex items-center justify-center"
+                        title={`Editar ${p.label}`}
+                        onClick={() => abrirModal(p.label.toLowerCase())}
+                        className="border border-gray-300 rounded w-[26px] h-[26px] flex items-center justify-center hover:bg-gray-100"
                       >
-                        <FileText size={13} color="red" />
+                        <Edit size={14} />
                       </button>
                     </div>
-                  ) : (
-                    <Txt className="w-[180px]" defaultValue={cgc} />
-                  )}
-
-                  {/* Razão Social — NÃO EDITÁVEL */}
-                  <Txt
-                    defaultValue={razao}
-                    readOnly
-                    className="bg-gray-200"
-                  />
-
-                  {/* Cidade — NÃO EDITÁVEL */}
-                  <Txt
-                    defaultValue={cidade}
-                    readOnly
-                    className="bg-gray-200"
-                  />
-
-                  {/* UF — NÃO EDITÁVEL */}
-                  <Txt
-                    defaultValue={uf}
-                    readOnly
-                    className="text-center bg-gray-200"
-                  />
-
-                  <IconeLapis
-                    title={`Abrir cadastro ${label}`}
-                    onClick={() => abrirModal(label.toLowerCase())}
-                  />
-                </div>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            </fieldset>
 
 
 
@@ -546,11 +548,13 @@ export default function CTePage({ open }) {
               </div>
             </fieldset>
 
+
+
             {/* === CARD 4 — Dados Complementares === */}
-            <div className="border border-gray-300 rounded p-3 bg-white space-y-2">
-              <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+            <fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
                 Dados Complementares
-              </h2>
+              </legend>
 
               {/* LINHA 1 — Centro Custo / Carga IMO / Custos / Tabela / Modal */}
               <div className="grid grid-cols-12 gap-2 items-center">
@@ -694,7 +698,7 @@ export default function CTePage({ open }) {
                 <Label className="col-span-1 justify-end">Nº Fatura</Label>
                 <Txt className="col-span-1 bg-gray-200" readOnly />
               </div>
-            </div>
+            </fieldset>
 
 
             {/* Faixa de Averbação */}
@@ -703,113 +707,7 @@ export default function CTePage({ open }) {
               <span className="text-green-700 font-semibold">06513102504086140001415700100005880134</span> e Protocolo:{" "}
               <span className="text-green-700 font-semibold">TESTE</span>
             </div>
-            {/* Rodapé */}
-            <div className="border-t border-gray-300 bg-white py-1 px-3 flex items-center justify-between">
-              <div className="flex items-center gap-4">
 
-                {/* FECHAR */}
-                <button
-                  onClick={() => navigate(-1)}
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <XCircle size={18} />
-                  <span>Fechar</span>
-                </button>
-
-                {/* LIMPAR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <RotateCcw size={18} />
-                  <span>Limpar</span>
-                </div>
-
-                {/* INCLUIR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <PlusCircle size={18} />
-                  <span>Incluir</span>
-                </div>
-
-                {/* ALTERAR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Edit size={18} />
-                  <span>Alterar</span>
-                </div>
-
-                {/* EXCLUIR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Trash2 size={18} />
-                  <span>Excluir</span>
-                </div>
-
-                {/* NOTA FISCAL */}
-                <button
-                  onClick={() => setShowNotaFiscalCte(true)}
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <FileText size={18} />
-                  <span>Nota Fiscal</span>
-                </button>
-
-                {/* VALORES */}
-                <button
-                  onClick={() => setShowValoresCte(true)}
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <DollarSign size={18} />
-                  <span>Valores</span>
-                </button>
-
-                {/* COMEX */}
-                <button
-                  onClick={() => setShowComex(true)}
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Globe2 size={18} />
-                  <span>Comex</span>
-                </button>
-
-                {/* GNRE */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <FileSpreadsheet size={18} />
-                  <span>GNRE</span>
-                </div>
-
-                {/* IMPRIMIR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Printer size={18} />
-                  <span>Imprimir</span>
-                </div>
-
-                {/* DUPLICAR */}
-                <div
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Copy size={18} />
-                  <span>Duplicar</span>
-                </div>
-
-                {/* SEFAZ */}
-                <button
-                  onClick={() => setShowConsultaSefaz(true)}
-                  className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                  <Search size={18} />
-                  <span>Sefaz</span>
-                </button>
-
-              </div>
-            </div>
 
           </>
         ) : (
@@ -1089,9 +987,127 @@ export default function CTePage({ open }) {
               )}
             </div>
 
+
           </div>
 
+
+
         )}
+        {/* Rodapé */}
+        <div
+          style={{
+            left: sidebarWidth,
+            width: `calc(100% - ${sidebarWidth})`,
+          }}
+          className="fixed bottom-0 z-50 border-t border-gray-300 bg-white py-1 px-3 flex items-center justify-between"
+        >
+
+
+          <div className="flex items-center gap-4">
+
+            {/* FECHAR */}
+            <button
+              onClick={() => navigate(-1)}
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <XCircle size={18} />
+              <span>Fechar</span>
+            </button>
+
+            {/* LIMPAR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <RotateCcw size={18} />
+              <span>Limpar</span>
+            </div>
+
+            {/* INCLUIR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <PlusCircle size={18} />
+              <span>Incluir</span>
+            </div>
+
+            {/* ALTERAR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Edit size={18} />
+              <span>Alterar</span>
+            </div>
+
+            {/* EXCLUIR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Trash2 size={18} />
+              <span>Excluir</span>
+            </div>
+
+            {/* NOTA FISCAL */}
+            <button
+              onClick={() => setShowNotaFiscalCte(true)}
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <FileText size={18} />
+              <span>Nota Fiscal</span>
+            </button>
+
+            {/* VALORES */}
+            <button
+              onClick={() => setShowValoresCte(true)}
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <DollarSign size={18} />
+              <span>Valores</span>
+            </button>
+
+            {/* COMEX */}
+            <button
+              onClick={() => setShowComex(true)}
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Globe2 size={18} />
+              <span>Comex</span>
+            </button>
+
+            {/* GNRE */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <FileSpreadsheet size={18} />
+              <span>GNRE</span>
+            </div>
+
+            {/* IMPRIMIR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Printer size={18} />
+              <span>Imprimir</span>
+            </div>
+
+            {/* DUPLICAR */}
+            <div
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Copy size={18} />
+              <span>Duplicar</span>
+            </div>
+
+            {/* SEFAZ */}
+            <button
+              onClick={() => setShowConsultaSefaz(true)}
+              className={`flex flex-col items-center text-[11px] cursor-pointer ${footerIconColorNormal} hover:${footerIconColorHover}`}
+            >
+              <Search size={18} />
+              <span>Sefaz</span>
+            </button>
+
+          </div>
+        </div>
       </div>
 
       {/* Modal de Custos Adicionais */}
