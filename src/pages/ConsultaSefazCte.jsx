@@ -14,6 +14,48 @@ import {
   ChevronDown,
 } from "lucide-react";
 
+// ===== Helpers padrão Mantran =====
+function Label({ children, className = "" }) {
+  return (
+    <label
+      className={`text-[12px] text-gray-600 flex items-center justify-end ${className}`}
+    >
+      {children}
+    </label>
+  );
+}
+
+function Txt({ className = "", readOnly = false, ...props }) {
+  return (
+    <input
+      {...props}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-200 text-gray-600" : "bg-white"}
+        ${className}
+      `}
+    />
+  );
+}
+
+function Sel({ children, className = "", ...rest }) {
+  return (
+    <select
+      {...rest}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px] bg-white
+        ${className}
+      `}
+    >
+      {children}
+    </select>
+  );
+}
+
+
 export default function ConsultaSefazCte({ onClose }) {
   const isGlobalModal = !!onClose;
   const navigate = useNavigate();
@@ -148,117 +190,119 @@ export default function ConsultaSefazCte({ onClose }) {
 
         {/* === CARD 1 - Filtros === */}
         <div className="border border-gray-300 rounded p-3 bg-white mt-3">
-          <div className="flex flex-col gap-2">
-            {/* Linha 1 */}
-            <div className="flex items-center gap-3">
-              <label className="w-28 text-[12px] text-gray-700">Filtrar CTe</label>
-              <select className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[180px]">
+          <div className="space-y-2">
+
+            {/* LINHA 01 — FILTRO / CLIENTE */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Filtrar CTe</Label>
+
+              <Sel className="col-span-3 w-full">
                 <option>TODOS</option>
                 <option>AUTORIZADOS</option>
                 <option>CANCELADOS</option>
                 <option>REJEITADOS</option>
-              </select>
+              </Sel>
 
-              <label className="w-60 text-right text-[12px] text-gray-700">Cliente</label>
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[140px] text-[13px]"
-              />
-              <input
-                type="text"
+              <Label className="col-span-2">Cliente</Label>
+
+              {/* CNPJ */}
+              <Txt className="col-span-2" placeholder="CNPJ" />
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-4 bg-gray-200"
+                readOnly
                 placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] flex-1 text-[13px]"
               />
             </div>
 
-            {/* Linha 2 */}
-            <div className="flex items-center gap-3">
-              <label className="w-28 text-[12px] text-gray-700">Período</label>
-              <input
-                type="date"
-                defaultValue="2025-11-06"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[150px]"
-              />
-              <span className="text-[12px] text-gray-700">à</span>
-              <input
-                type="date"
-                defaultValue="2025-11-06"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[150px]"
-              />
+            {/* LINHA 02 — PERÍODO / REMETENTE */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Período</Label>
 
-              <label className="w-20 text-right text-[12px] text-gray-700 ml-[10px]">Remetente</label>
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[140px] text-[13px]"
-              />
-              <input
-                type="text"
+              {/* Datas juntas = 3 colunas */}
+              <div className="col-span-3 flex items-center gap-1 min-w-0">
+                <Txt
+                  type="date"
+                  className="flex-1 min-w-0"
+                  defaultValue="2025-11-06"
+                />
+                <span className="text-[12px] text-gray-600 shrink-0">à</span>
+                <Txt
+                  type="date"
+                  className="flex-1 min-w-0"
+                  defaultValue="2025-11-06"
+                />
+              </div>
+
+              <Label className="col-span-2">Remetente</Label>
+
+              {/* CNPJ */}
+              <Txt className="col-span-2" placeholder="CNPJ" />
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-4 bg-gray-200"
+                readOnly
                 placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] flex-1 text-[13px]"
               />
             </div>
 
-            {/* Linha 3 */}
-            <div className="flex items-center gap-3">
-              <label className="w-28 text-[12px] text-gray-700">Nº CTe</label>
-              <input
-                type="text"
-                placeholder="Inicial"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px]"
-              />
-              <span className="text-[12px] text-gray-700">à</span>
-              <input
-                type="text"
-                placeholder="Final"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px]"
-              />
+            {/* LINHA 03 — Nº CTe / DESTINATÁRIO */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Nº CTe</Label>
 
-              <label className="w-20 text-right text-[12px] text-gray-700 ml-[110px]">Destinatário</label>
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[140px] text-[13px]"
-              />
-              <input
-                type="text"
+              {/* Inicial + Final juntos */}
+              <div className="col-span-3 flex items-center gap-1 min-w-0">
+                <Txt className="flex-1 min-w-0" placeholder="Inicial" />
+                <span className="text-[12px] text-gray-600 shrink-0">à</span>
+                <Txt className="flex-1 min-w-0" placeholder="Final" />
+              </div>
+
+              <Label className="col-span-2">Destinatário</Label>
+
+              {/* CNPJ */}
+              <Txt className="col-span-2" placeholder="CNPJ" />
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-4 bg-gray-200"
+                readOnly
                 placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] flex-1 text-[13px]"
               />
             </div>
 
-            {/* Linha 4 */}
-            <div className="flex items-center gap-3 justify-between">
-              <div className="flex items-center gap-2">
-                <label className="w-28 text-[12px] text-gray-700">Nº Controle</label>
-                <input
-                  type="text"
-                  placeholder="Inicial"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px] ml-[5px]"
-                />
-                <span className="text-[12px] text-gray-700">à</span>
-                <input
-                  type="text"
-                  placeholder="Final"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px] ml-[8px]"
-                />
+            {/* LINHA 04 — Nº CONTROLE / AÇÕES */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Nº Controle</Label>
 
-                <label className="w-20 text-right text-[12px] text-gray-700 ml-[120px]">Nº Viagem</label>
-                <input
-                  type="text"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[80px] text-[13px]"
-                />
+              {/* Inicial + Final juntos */}
+              <div className="col-span-3 flex items-center gap-1 min-w-0">
+                <Txt className="flex-1 min-w-0" placeholder="Inicial" />
+                <span className="text-[12px] text-gray-600 shrink-0">à</span>
+                <Txt className="flex-1 min-w-0" placeholder="Final" />
+              </div>
 
-                <label className="flex items-center gap-1 text-[12px] text-gray-700 ml-4">
-                  <input type="checkbox" className="accent-red-700" /> Filtrar CTe c/ GNRE
+              <Label className="col-span-2">Nº Viagem</Label>
+
+              <Txt className="col-span-2" />
+
+              <div className="col-span-2 flex items-center gap-2">
+                <label className="flex items-center gap-1 text-[12px] text-gray-700">
+                  <input type="checkbox" className="accent-red-700" />
+                  Filtrar CTe c/ GNRE
                 </label>
               </div>
 
-              <button className="border border-gray-300 rounded px-3 py-[4px] bg-gray-50 hover:bg-gray-100 flex items-center gap-1 text-sm">
-                <Search size={14} className="text-blue-600" /> Pesquisar
-              </button>
+              {/* Botão à direita */}
+              <div className="col-span-2 flex justify-end">
+                <button className="border border-gray-300 rounded px-3 py-[4px] bg-gray-50 hover:bg-gray-100 flex items-center gap-1 text-sm">
+                  <Search size={14} className="text-blue-600" />
+                  Pesquisar
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
 

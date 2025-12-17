@@ -1,5 +1,46 @@
 import { XCircle, RotateCcw, Edit, FilePlus2 } from "lucide-react";
 
+// ===== Helpers padrão Mantran =====
+function Label({ children, className = "" }) {
+  return (
+    <label
+      className={`text-[12px] text-gray-600 flex items-center justify-end ${className}`}
+    >
+      {children}
+    </label>
+  );
+}
+
+function Txt({ className = "", readOnly = false, ...props }) {
+  return (
+    <input
+      {...props}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-200 text-gray-600" : "bg-white"}
+        ${className}
+      `}
+    />
+  );
+}
+
+function Sel({ children, className = "", ...rest }) {
+  return (
+    <select
+      {...rest}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px] bg-white
+        ${className}
+      `}
+    >
+      {children}
+    </select>
+  );
+}
+
 export default function ManifestoInfoComplementar({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-[13px]">
@@ -11,115 +52,128 @@ export default function ManifestoInfoComplementar({ onClose }) {
 
         <div className="space-y-3 max-h-[75vh] overflow-y-auto pr-1">
           {/* ===== CARD 1 - CIOT ===== */}
-          <fieldset className="border border-gray-300 rounded p-3">
+          <fieldset className="border border-gray-300 rounded p-3 bg-white">
             <legend className="text-[13px] text-red-700 font-medium px-2">
               CIOT
             </legend>
 
-            {/* Linha 1 */}
-            <div className="flex items-center gap-2 mb-2">
-              <label className="w-20 text-[12px]">Número</label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1"
+            {/* LINHA 01 */}
+            <div className="grid grid-cols-12 gap-2 items-center mb-2">
+              <Label className="col-span-2">Número</Label>
+
+              <Txt
+                className="col-span-10"
                 defaultValue="3527534573452371"
               />
             </div>
 
-            {/* Linha 2 */}
-            <div className="flex items-center gap-2">
-              <label className="w-20 text-[12px]">Responsável</label>
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[180px]"
+            {/* LINHA 02 */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-2">Responsável</Label>
+
+              {/* CNPJ */}
+              <Txt
+                className="col-span-3"
                 defaultValue="50221019000136"
+                placeholder="CNPJ"
               />
-              <input
-                type="text"
-                placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1"
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-7 bg-gray-200"
+                readOnly
                 defaultValue="HNK-ITU (1) MATRIZ"
+                placeholder="Razão Social"
               />
             </div>
           </fieldset>
 
+
           {/* ===== CARD 2 - VALE PEDÁGIO ===== */}
-          <fieldset className="border border-gray-300 rounded p-3">
+          <fieldset className="border border-gray-300 rounded p-3 bg-white">
             <legend className="text-[13px] text-red-700 font-medium px-2">
               Vale Pedágio
             </legend>
 
-            {/* Linha 1 */}
-            <div className="flex items-center gap-2 mb-2">
-              <label className="w-20 text-[12px]">Fornecedor</label>
-              <input
-                type="text"
-                placeholder="CNPJ"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[180px]"
+            {/* LINHA 01 — FORNECEDOR */}
+            <div className="grid grid-cols-12 gap-2 items-center mb-2">
+              <Label className="col-span-2">Fornecedor</Label>
+
+              {/* CNPJ */}
+              <Txt
+                className="col-span-3"
                 defaultValue="07369701000141"
+                placeholder="CNPJ"
               />
-              <input
-                type="text"
-                placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1"
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-7 bg-gray-200"
+                readOnly
                 defaultValue="SEM PARAR"
+                placeholder="Razão Social"
               />
             </div>
 
-            {/* Linha 2 */}
-            <div className="flex items-center gap-2">
-              <label className="w-20 text-[12px]">Comprovante</label>
-              <input
-                type="text"
-                placeholder="Nº Comprovante"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1"
+            {/* LINHA 02 — COMPROVANTE / VALOR */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-2">Comprovante</Label>
+
+              <Txt
+                className="col-span-6"
                 defaultValue="456324652432"
+                placeholder="Nº Comprovante"
               />
-              <label className="ml-auto text-[12px]">Valor</label>
-              <input
-                type="text"
-                placeholder="0,00"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] text-right w-[120px]"
+
+              <Label className="col-span-2">Valor</Label>
+
+              <Txt
+                className="col-span-2 text-right"
                 defaultValue="75,67"
+                placeholder="0,00"
               />
             </div>
           </fieldset>
 
           {/* ===== CARD 3 - CONTRATANTE ===== */}
-          <fieldset className="border border-gray-300 rounded p-3">
+          <fieldset className="border border-gray-300 rounded p-3 bg-white">
             <legend className="text-[13px] text-red-700 font-medium px-2">
               Contratante
             </legend>
 
-            {/* Linha 1 */}
-            <div className="flex items-center gap-2 mb-2">
-              <label className="w-24 text-[12px]">Contratante</label>
-              <select className="border border-gray-300 rounded px-2 py-[2px] h-[24px] text-[13px] w-[200px]">
+            {/* LINHA 01 */}
+            <div className="grid grid-cols-12 gap-2 items-center mb-2">
+              <Label className="col-span-2">Contratante</Label>
+
+              <Sel className="col-span-3 w-full">
                 <option>Emitente</option>
                 <option>Remetente</option>
                 <option>Destinatário</option>
                 <option>Outros</option>
-              </select>
+              </Sel>
             </div>
 
-            {/* Linha 2 */}
-            <div className="flex items-center gap-2">
-              <label className="w-24 text-[12px]">CNPJ / CPF</label>
-              <input
-                type="text"
-                placeholder="CNPJ / CPF"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[180px]"
+            {/* LINHA 02 */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-2">CNPJ / CPF</Label>
+
+              {/* Documento */}
+              <Txt
+                className="col-span-3"
                 defaultValue="04086814000141"
+                placeholder="CNPJ / CPF"
               />
-              <input
-                type="text"
-                placeholder="Razão Social"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1"
+
+              {/* Razão Social — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-7 bg-gray-200"
+                readOnly
                 defaultValue="MANTRAN TESTES"
+                placeholder="Razão Social"
               />
             </div>
           </fieldset>
+
         </div>
 
         {/* ===== CARD 4 - RODAPÉ ===== */}

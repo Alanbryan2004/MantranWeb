@@ -11,6 +11,47 @@ import {
   RotateCcw,
   CheckSquare,
 } from "lucide-react";
+// ===== Helpers padrão Mantran =====
+function Label({ children, className = "" }) {
+  return (
+    <label
+      className={`text-[12px] text-gray-600 flex items-center justify-end ${className}`}
+    >
+      {children}
+    </label>
+  );
+}
+
+function Txt({ className = "", readOnly = false, ...props }) {
+  return (
+    <input
+      {...props}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-200 text-gray-600" : "bg-white"}
+        ${className}
+      `}
+    />
+  );
+}
+
+function Sel({ children, className = "", ...rest }) {
+  return (
+    <select
+      {...rest}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px] bg-white
+        ${className}
+      `}
+    >
+      {children}
+    </select>
+  );
+}
+
 
 export default function ConsultaSefazMDFe({ onClose }) {
   const isGlobalModal = !!onClose;
@@ -31,88 +72,107 @@ export default function ConsultaSefazMDFe({ onClose }) {
 
         {/* CARD 1 - Filtros */}
         <div className="border border-gray-300 rounded p-3 bg-white mt-3">
-          <div className="flex flex-col gap-2">
-            {/* Linha 1 */}
-            <div className="flex items-center gap-3">
-              <label className="w-28 text-[12px] text-gray-700">Filtrar MDF-e</label>
-              <select className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[200px]">
+          <div className="space-y-2">
+
+            {/* LINHA 01 — FILTRO MDF-e / MOTORISTA */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Filtrar MDF-e</Label>
+
+              <Sel className="col-span-3 w-full">
                 <option>TODOS</option>
                 <option>AUTORIZADOS</option>
                 <option>ENCERRADOS</option>
                 <option>REJEITADOS</option>
-              </select>
+              </Sel>
 
-              {/* Motorista alinhado mais à direita */}
-              <div className="ml-auto flex items-center gap-2">
-                <label className="w-24 text-right text-[12px] text-gray-700">Motorista</label>
-                <input
-                  type="text"
-                  placeholder="CNH"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[120px] text-[13px]"
+              <div className="col-span-1" />
+
+              <Label className="col-span-1">Motorista</Label>
+
+              {/* CNH */}
+              <Txt className="col-span-2" placeholder="CNH" />
+
+              {/* Nome — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-4 bg-gray-200"
+                readOnly
+                placeholder="Nome do Motorista"
+              />
+            </div>
+
+            {/* LINHA 02 — PERÍODO / VEÍCULO */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Período</Label>
+
+
+
+              <div className="col-span-3 flex items-center gap-1 min-w-0">
+                <Txt
+                  type="date"
+                  className="flex-1 min-w-0"
+                  defaultValue="2025-10-01"
                 />
-                <input
-                  type="text"
-                  placeholder="Nome do Motorista"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[300px] text-[13px]"
+
+
+                <Txt
+                  type="date"
+                  className="flex-1 min-w-0"
+                  defaultValue="2025-10-24"
                 />
               </div>
-            </div>
 
-            {/* Linha 2 */}
-            <div className="flex items-center gap-3">
-              <label className="w-28 text-[12px] text-gray-700">Período</label>
-              <input
-                type="date"
-                defaultValue="2025-10-01"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[160px]"
-              />
-              <span className="text-[12px] text-gray-700">à</span>
-              <input
-                type="date"
-                defaultValue="2025-10-24"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] text-[13px] w-[160px]"
-              />
 
-              <label className="w-28 text-right text-[12px] text-gray-700">Veículo</label>
-              <input
-                type="text"
-                placeholder="Código"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px]"
-              />
-              <input
-                type="text"
+              <Label className="col-span-2">Veículo</Label>
+
+              {/* Código */}
+              <Txt className="col-span-2" placeholder="Código" />
+
+              {/* Descrição — NÃO EDITÁVEL */}
+              <Txt
+                className="col-span-4 bg-gray-200"
+                readOnly
                 placeholder="Placa / Descrição"
-                className="border border-gray-300 rounded px-2 py-[2px] h-[26px] flex-1 text-[13px]"
               />
             </div>
 
-            {/* Linha 3 */}
-            <div className="flex items-center gap-3 justify-between">
-              <div className="flex items-center gap-2">
-                <label className="w-28 text-[12px] text-gray-700">Nº MDF-e</label>
-                <input
-                  type="text"
+            {/* LINHA 03 — Nº MDF-e / AÇÕES */}
+            <div className="grid grid-cols-12 gap-2 items-center">
+              <Label className="col-span-1">Nº MDF-e</Label>
+
+              <div className="col-span-3 flex items-center gap-1 min-w-0">
+                <Txt
+                  className="flex-1 min-w-0"
                   placeholder="Inicial"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px]"
                 />
-                <span className="text-[12px] text-gray-700">à</span>
-                <input
-                  type="text"
+
+                <span className="text-[12px] text-gray-600 shrink-0">à</span>
+
+                <Txt
+                  className="flex-1 min-w-0"
                   placeholder="Final"
-                  className="border border-gray-300 rounded px-2 py-[2px] h-[26px] w-[100px] text-[13px]"
                 />
-                <label className="flex items-center gap-1 ml-4 text-[12px] text-gray-700">
-                  <input type="checkbox" /> Emitir em Contingência
+              </div>
+
+
+              <div className="col-span-3  col-start-7 flex items-center gap-2">
+                <label className="flex items-center gap-1 text-[12px] text-gray-700">
+                  <input type="checkbox" />
+                  Emitir em Contingência
                 </label>
               </div>
 
               {/* Botão à direita */}
-              <button className="border border-gray-300 rounded px-4 py-1 bg-gray-50 hover:bg-gray-100 flex items-center gap-1 text-sm">
-                <Search size={14} className="text-blue-600" /> Pesquisar
-              </button>
+              <div className="col-span-3 flex justify-end">
+                <button className="border border-gray-300 rounded px-4 py-1 bg-gray-50 hover:bg-gray-100 flex items-center gap-1 text-sm">
+                  <Search size={14} className="text-blue-600" />
+                  Pesquisar
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
+
 
 
         {/* CARD 2 - Grid */}

@@ -9,6 +9,48 @@ import {
   XCircle,
 } from "lucide-react";
 
+
+// ===== Helpers padrão Mantran =====
+function Label({ children, className = "" }) {
+  return (
+    <label
+      className={`text-[12px] text-gray-600 flex items-center justify-end ${className}`}
+    >
+      {children}
+    </label>
+  );
+}
+
+function Txt({ className = "", readOnly = false, ...props }) {
+  return (
+    <input
+      {...props}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-200 text-gray-600" : "bg-white"}
+        ${className}
+      `}
+    />
+  );
+}
+
+function Sel({ children, className = "", ...rest }) {
+  return (
+    <select
+      {...rest}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px] bg-white
+        ${className}
+      `}
+    >
+      {children}
+    </select>
+  );
+}
+
 export default function ManifestoSeguro({ onClose }) {
   // === Estados da primeira parte (Seguradora) ===
   const [codigo, setCodigo] = useState("");
@@ -76,50 +118,59 @@ export default function ManifestoSeguro({ onClose }) {
             Seguradora
           </legend>
 
-          {/* Linha 1 */}
-          <div className="flex items-center gap-2 mb-2">
-            <label className="w-20 text-[12px] text-gray-600">Código</label>
-            <input
+          {/* LINHA 01 */}
+          <div className="grid grid-cols-12 gap-2 items-center mb-2">
+            <Label className="col-span-2">Código</Label>
+
+            {/* Código */}
+            <Txt
+              className="col-span-2"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
-              className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[100px] text-[13px]"
             />
-            <input
+
+            {/* Descrição — NÃO EDITÁVEL */}
+            <Txt
+              className="col-span-8 bg-gray-200"
+              readOnly
               value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
               placeholder="Nome da Seguradora"
-              className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1 text-[13px]"
             />
           </div>
 
-          {/* Linha 2 */}
-          <div className="flex items-center gap-2">
-            <label className="w-20 text-[12px] text-gray-600">Responsável</label>
-            <select
+          {/* LINHA 02 */}
+          <div className="grid grid-cols-12 gap-2 items-center">
+            <Label className="col-span-2">Responsável</Label>
+
+            <Sel
+              className="col-span-2 w-full"
               value={responsavel}
               onChange={(e) => setResponsavel(e.target.value)}
-              className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[150px] text-[13px]"
             >
               <option>Emitente</option>
               <option>Tomador</option>
               <option>Destinatário</option>
-            </select>
-            <label className="w-14 text-[12px] text-gray-600 text-right">
-              CNPJ
-            </label>
-            <input
+            </Sel>
+
+            <Label className="col-span-1">CNPJ</Label>
+
+            {/* CNPJ */}
+            <Txt
+              className="col-span-3"
               value={cnpj}
               onChange={(e) => setCnpj(e.target.value)}
-              className="border border-gray-300 rounded px-2 py-[2px] h-[24px] w-[150px] text-[13px]"
             />
-            <input
+
+            {/* Razão Social — NÃO EDITÁVEL */}
+            <Txt
+              className="col-span-4 bg-gray-200"
+              readOnly
               value={razao}
-              onChange={(e) => setRazao(e.target.value)}
               placeholder="Razão Social"
-              className="border border-gray-300 rounded px-2 py-[2px] h-[24px] flex-1 text-[13px]"
             />
           </div>
         </fieldset>
+
 
         {/* === CARD 2 e 3 (Grid + Botões) === */}
         <div className="flex gap-2 mt-2">
@@ -145,9 +196,8 @@ export default function ManifestoSeguro({ onClose }) {
                   <tr
                     key={i}
                     onClick={() => setSelectedSegIndex(i)}
-                    className={`cursor-pointer ${
-                      selectedSegIndex === i ? "bg-red-50" : ""
-                    }`}
+                    className={`cursor-pointer ${selectedSegIndex === i ? "bg-red-50" : ""
+                      }`}
                   >
                     <td className="border p-1">{s.codigo}</td>
                     <td className="border p-1">{s.descricao}</td>
@@ -222,9 +272,8 @@ export default function ManifestoSeguro({ onClose }) {
                   <tr
                     key={i}
                     onClick={() => setSelectedAverbIndex(i)}
-                    className={`cursor-pointer ${
-                      selectedAverbIndex === i ? "bg-red-50" : ""
-                    }`}
+                    className={`cursor-pointer ${selectedAverbIndex === i ? "bg-red-50" : ""
+                      }`}
                   >
                     <td className="border p-1">{a}</td>
                   </tr>
