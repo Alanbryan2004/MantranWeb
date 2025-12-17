@@ -12,55 +12,136 @@ export function NotificacaoProvider({ children }) {
     const [notificacoes, setNotificacoes] = useState([]);
 
     useEffect(() => {
-        // roda uma vez ao montar
-        verificarEventos();
+        verificarNotificacoes();
 
-        // depois verifica a cada 30s
-        const interval = setInterval(() => verificarEventos(), 30 * 1000);
+        const interval = setInterval(() => verificarNotificacoes(), 30 * 1000);
         return () => clearInterval(interval);
     }, [getEventosVisiveis]);
 
-    function verificarEventos() {
+    // ======================================
+    // 🔔 VERIFICA TODAS AS NOTIFICAÇÕES
+    // ======================================
+    function verificarNotificacoes() {
         const agora = new Date();
-        const eventos = getEventosVisiveis();
 
-        setNotificacoes((prev) => {
-            const novas = eventos
-                // só eventos com lembrete configurado
-                .filter((ev) => ev.lembreteMinutosAntes > 0)
-                // só eventos dentro da janela de lembrete → evento futuro, mas lembrete já disparou
-                .filter((ev) => {
-                    const eventoData = new Date(ev.start);
-                    const lembreteData = new Date(
-                        eventoData.getTime() - ev.lembreteMinutosAntes * 60000
-                    );
-                    return lembreteData <= agora && eventoData >= agora;
-                })
-                // monta a notificação mantendo o "lido" se já existia
-                .map((ev) => {
-                    const existente = prev.find((n) => n.id === ev.id);
-                    return {
-                        id: ev.id,
-                        titulo: ev.titulo,
-                        start: ev.start,
-                        tipo: ev.tipo,
-                        origem: "agenda",
-                        lido: existente?.lido ?? false,
-                    };
-                });
+        const rawModulo =
+            localStorage.getItem("mantran_modulo") || "operacao";
 
-            return novas;
-        });
+        // 🔥 NORMALIZA O NOME DO MÓDULO
+        const moduloAtivo =
+            rawModulo === "operacional" ? "operacao" : rawModulo;
+
+        const notificacoesAgenda = gerarNotificacoesAgenda(agora);
+        const notificacoesFinanceiro = gerarNotificacoesFinanceiro();
+
+        const todas = [...notificacoesAgenda, ...notificacoesFinanceiro];
+
+        // 🔒 FILTRO FINAL POR MÓDULO
+        const filtradas = todas.filter(
+            (n) => !n.modulos || n.modulos.includes(moduloAtivo)
+        );
+
+        setNotificacoes((prev) =>
+            filtradas.map((n) => {
+                const existente = prev.find((p) => p.id === n.id);
+                return {
+                    ...n,
+                    lido: existente?.lido ?? false,
+                };
+            })
+        );
     }
 
+    // ======================================
+    // 📅 NOTIFICAÇÕES DA AGENDA
+    // ======================================
+    function gerarNotificacoesAgenda(agora) {
+        const eventos = getEventosVisiveis();
+
+        return eventos
+            .filter((ev) => ev.lembreteMinutosAntes > 0)
+            .filter((ev) => {
+                const eventoData = new Date(ev.start);
+                const lembreteData = new Date(
+                    eventoData.getTime() - ev.lembreteMinutosAntes * 60000
+                );
+                return lembreteData <= agora && eventoData >= agora;
+            })
+            .map((ev) => ({
+                id: `agenda-${ev.id}`,
+                titulo: ev.titulo,
+                start: ev.start,
+                tipo: ev.tipo,
+                origem: "agenda",
+                modulos: ["operacao", "financeiro"], // 👈 aparece nos dois
+            }));
+    }
+
+    // ======================================
+    // 💰 NOTIFICAÇÕES DO FINANCEIRO (SISTEMA)
+    // ======================================
+    function gerarNotificacoesFinanceiro() {
+        const lista = [];
+
+        const notifContasHoje =
+            localStorage.getItem("fin_notif_contas_hoje") !== "false";
+
+        const notifContasVencidas =
+            localStorage.getItem("fin_notif_contas_vencidas") === "true";
+
+        const notifCertificados =
+            localStorage.getItem("fin_notif_certificados") !== "false";
+
+        const diasCert =
+            Number(localStorage.getItem("fin_notif_cert_dias")) || 30;
+
+        // 🔴 CONTAS A PAGAR — SOMENTE FINANCEIRO
+        if (notifContasHoje) {
+            lista.push({
+                id: "fin-contas-hoje",
+                titulo: "Contas a pagar vencendo hoje",
+                origem: "financeiro",
+                modulos: ["financeiro"], // 👈 REGRA APLICADA
+            });
+        }
+
+        if (notifContasVencidas) {
+            lista.push({
+                id: "fin-contas-vencidas",
+                titulo: "Existem contas a pagar vencidas",
+                origem: "financeiro",
+                modulos: ["financeiro"], // 👈 REGRA APLICADA
+            });
+        }
+
+        // 🟢 CERTIFICADOS — OPERACAO + FINANCEIRO
+        if (notifCertificados) {
+            lista.push({
+                id: "fin-certificados",
+                titulo: `Certificados vencendo em até ${diasCert} dias`,
+                origem: "financeiro",
+                modulos: ["operacao", "financeiro"], // 👈 APARECE NOS DOIS
+            });
+        }
+
+        return lista;
+    }
+
+    // ======================================
+    // ✔️ MARCAR COMO LIDO
+    // ======================================
     function marcarComoLido(id) {
         setNotificacoes((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, lido: true } : n))
+            prev.map((n) =>
+                n.id === id ? { ...n, lido: true } : n
+            )
         );
     }
 
     return (
-        <NotificacaoContext.Provider value={{ notificacoes, marcarComoLido }}>
+        <NotificacaoContext.Provider
+            value={{ notificacoes, marcarComoLido }}
+        >
             {children}
         </NotificacaoContext.Provider>
     );

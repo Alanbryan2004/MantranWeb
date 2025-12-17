@@ -10,14 +10,15 @@ export default function HomeFinanceiro() {
 
         // 🏷️ Título da guia do navegador
         document.title = "Mantran - Financeiro";
+
+        // 🔥 DEFINE O MÓDULO ATIVO (FALTAVA ISSO)
+        localStorage.setItem("mantran_modulo", "financeiro");
     }, [setIconColor]);
 
-    // Mesmo padrão usado no Operação
     const logoBg = useMemo(() => localStorage.getItem("param_logoBg"), []);
 
     return (
         <main className="relative flex-1 min-h-[calc(100vh-48px)] p-4 overflow-auto mt-4 ml-4">
-            {/* MARCA D'ÁGUA */}
             {logoBg && (
                 <div
                     className="absolute inset-0 pointer-events-none"
@@ -31,7 +32,6 @@ export default function HomeFinanceiro() {
                 />
             )}
 
-            {/* CONTEÚDO REAL */}
             <div className="relative z-10">
                 {/* cards, gráficos, grids do financeiro */}
             </div>

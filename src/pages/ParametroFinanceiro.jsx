@@ -1,5 +1,4 @@
 // src/pages/ParametroFinanceiro.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,6 +9,10 @@ import {
     LayoutGrid,
     Palette,
     Settings2,
+    Bell,
+    SlidersHorizontal,
+    Image as ImageIcon,
+    ListChecks,
 } from "lucide-react";
 
 import { useIconColor } from "../context/IconColorContext";
@@ -47,7 +50,7 @@ export default function ParametroFinanceiro({ onClose }) {
 
         DEFAULT_ICON_COLOR,
         DEFAULT_FOOTER_NORMAL,
-        DEFAULT_FOOTER_HOVER
+        DEFAULT_FOOTER_HOVER,
     } = useIconColor();
 
     const {
@@ -67,7 +70,26 @@ export default function ParametroFinanceiro({ onClose }) {
 
     const [showMenuRapido, setShowMenuRapido] = useState(false);
 
+    // =============================
+    // ABAS (NOVO)
+    // =============================
+    const [abaAtiva, setAbaAtiva] = useState("geral"); // geral | visual | menu | notificacoes
 
+    // =============================
+    // NOTIFICAÇÕES (NOVO - parâmetros apenas)
+    // =============================
+    const [notifContasHoje, setNotifContasHoje] = useState(
+        localStorage.getItem("fin_notif_contas_hoje") !== "false"
+    );
+    const [notifContasVencidas, setNotifContasVencidas] = useState(
+        localStorage.getItem("fin_notif_contas_vencidas") === "true"
+    );
+    const [notifCertificados, setNotifCertificados] = useState(
+        localStorage.getItem("fin_notif_certificados") !== "false"
+    );
+    const [diasAntecedenciaCert, setDiasAntecedenciaCert] = useState(
+        Number(localStorage.getItem("fin_notif_cert_dias") || 30)
+    );
 
     const coresBase = [
         { value: "red", label: "Vermelho" },
@@ -91,7 +113,6 @@ export default function ParametroFinanceiro({ onClose }) {
         setIntensidade(nivel);
     }, [iconColor]);
 
-
     const atualizarCorIcones = (cor, nivel) => {
         const classe = `text-${cor}-${nivel}`;
 
@@ -104,9 +125,12 @@ export default function ParametroFinanceiro({ onClose }) {
     };
 
     // ============== RODAPÉ NORMAL =============
-    const [footerBase, setFooterBase] = useState(footerIconColorNormal.split("-")[1]);
-    const [footerInt, setFooterInt] = useState(footerIconColorNormal.split("-")[2]);
-
+    const [footerBase, setFooterBase] = useState(
+        footerIconColorNormal.split("-")[1]
+    );
+    const [footerInt, setFooterInt] = useState(
+        footerIconColorNormal.split("-")[2]
+    );
 
     useEffect(() => {
         if (!footerIconColorNormal) return;
@@ -128,8 +152,12 @@ export default function ParametroFinanceiro({ onClose }) {
     };
 
     // ============== RODAPÉ HOVER =============
-    const [footerHoverBase, setFooterHoverBase] = useState(footerIconColorHover.split("-")[1]);
-    const [footerHoverInt, setFooterHoverInt] = useState(footerIconColorHover.split("-")[2]);
+    const [footerHoverBase, setFooterHoverBase] = useState(
+        footerIconColorHover.split("-")[1]
+    );
+    const [footerHoverInt, setFooterHoverInt] = useState(
+        footerIconColorHover.split("-")[2]
+    );
 
     useEffect(() => {
         if (!footerIconColorHover) return;
@@ -149,6 +177,7 @@ export default function ParametroFinanceiro({ onClose }) {
         setFooterIconColorHover(classe);
         localStorage.setItem("fin_footerHover", classe);
     };
+
     // =============================
     // PADRÃO (CORES)
     // =============================
@@ -167,9 +196,6 @@ export default function ParametroFinanceiro({ onClose }) {
 
         setFooterHoverBase(DEFAULT_FOOTER_HOVER.split("-")[1]);
         setFooterHoverInt(DEFAULT_FOOTER_HOVER.split("-")[2]);
-
-        // garante persistência do prefixo do Financeiro (seu context usa prefix fin_)
-
     };
 
     // =====================================
@@ -178,6 +204,12 @@ export default function ParametroFinanceiro({ onClose }) {
     const salvar = () => {
         localStorage.setItem("fin_exibirDashboard", exibirDashboard);
         localStorage.setItem("fin_corFundo", corFundo);
+
+        // NOVO - Notificações
+        localStorage.setItem("fin_notif_contas_hoje", String(notifContasHoje));
+        localStorage.setItem("fin_notif_contas_vencidas", String(notifContasVencidas));
+        localStorage.setItem("fin_notif_certificados", String(notifCertificados));
+        localStorage.setItem("fin_notif_cert_dias", String(diasAntecedenciaCert));
 
         alert("Parâmetros do Financeiro salvos!");
     };
@@ -190,6 +222,17 @@ export default function ParametroFinanceiro({ onClose }) {
         setBackgroundImage(null);
         restaurarPadrao();
 
+        // NOVO - Notificações
+        setNotifContasHoje(true);
+        setNotifContasVencidas(false);
+        setNotifCertificados(true);
+        setDiasAntecedenciaCert(30);
+
+        localStorage.setItem("fin_notif_contas_hoje", "true");
+        localStorage.setItem("fin_notif_contas_vencidas", "false");
+        localStorage.setItem("fin_notif_certificados", "true");
+        localStorage.setItem("fin_notif_cert_dias", "30");
+
         alert("Parâmetros restaurados.");
     };
 
@@ -198,17 +241,39 @@ export default function ParametroFinanceiro({ onClose }) {
     // =============================
     const Card = ({ title, children }) => (
         <div className="border border-gray-300 rounded bg-white p-4 shadow-sm space-y-2">
-            <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">{title}</h2>
+            <h2 className="text-[14px] font-semibold text-red-700 border-b pb-1">
+                {title}
+            </h2>
             {children}
         </div>
     );
 
     // =============================
-    // CAMPOS
+    // ABAS UI (NOVO)
     // =============================
-    const campos = (
-        <>
+    const TabButton = ({ id, icon: Icon, label }) => {
+        const ativo = abaAtiva === id;
+        return (
+            <button
+                type="button"
+                onClick={() => setAbaAtiva(id)}
+                className={`
+          px-3 py-2 text-[13px] flex items-center gap-2 border-b-2 transition
+          ${ativo ? "border-red-700 text-red-700 font-semibold" : "border-transparent text-gray-600 hover:text-red-700"}
+        `}
+            >
+                <Icon size={16} />
+                {label}
+            </button>
+        );
+    };
 
+    // =============================
+    // CONTEÚDOS POR ABA (NOVO)
+    // =============================
+
+    const abaGeral = (
+        <>
             {/* DASHBOARD */}
             <div className="flex items-center gap-3">
                 <label className="w-[160px] text-right text-sm font-medium text-gray-700">
@@ -234,76 +299,15 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="w-[60px] h-[28px] border rounded"
                 />
 
-                <div
-                    className="px-4 py-2 rounded text-sm"
-                    style={{ backgroundColor: corFundo }}
-                >
+                <div className="px-4 py-2 rounded text-sm" style={{ backgroundColor: corFundo }}>
                     Exemplo
                 </div>
             </div>
-            {/* MENU RÁPIDO */}
-            <div className="flex items-center gap-3 mt-4">
-                {/* Label */}
-                <label className="w-[160px] text-right text-sm font-medium text-gray-700">
-                    Menu Rápido:
-                </label>
+        </>
+    );
 
-                {/* Select */}
-                <div className="relative flex-1">
-                    <button
-                        type="button"
-                        onClick={() => setShowMenuRapido(prev => !prev)}
-                        className="w-full border border-gray-300 rounded px-3 py-[6px] bg-white text-left text-sm flex justify-between items-center"
-                    >
-                        Selecionar Atalhos
-                        <span className="text-gray-500">▼</span>
-                    </button>
-
-                    {showMenuRapido && (
-                        <div className="absolute z-50 bg-white border border-gray-300 rounded w-full mt-1 shadow-lg max-h-64 overflow-y-auto p-2">
-                            {CATALOGO_FINANCEIRO.map((op) => {
-                                const rotaNormalizada = op.rota.startsWith("/modulo-financeiro")
-                                    ? op.rota
-                                    : `/modulo-financeiro${op.rota}`;
-
-                                const ativo = atalhos.some(a => a.rota === rotaNormalizada);
-
-                                return (
-                                    <label
-                                        key={op.id}
-                                        className="flex items-center gap-2 p-1 hover:bg-gray-100 cursor-pointer text-sm"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={ativo}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    adicionarAtalho({ ...op, rota: rotaNormalizada });
-                                                } else {
-                                                    removerAtalho(rotaNormalizada);
-                                                }
-                                            }}
-                                        />
-
-                                        <i className={`fa-solid ${op.icone} text-gray-700`} />
-                                        {op.label}
-                                    </label>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-
-                {/* Botão Restaurar Padrão */}
-                <button
-                    type="button"
-                    onClick={restaurarPadrao}
-                    className="text-xs text-red-700 hover:text-red-900 underline whitespace-nowrap"
-                >
-                    Restaurar Padrão
-                </button>
-            </div>
-
+    const abaVisual = (
+        <>
             {/* LOGO FUNDO */}
             <div className="flex items-center gap-3">
                 <label className="w-[160px] text-right text-sm font-medium">
@@ -327,6 +331,7 @@ export default function ParametroFinanceiro({ onClose }) {
                 />
 
                 <button
+                    type="button"
                     className="text-xs border px-2 py-[2px] rounded text-red-700"
                     onClick={() => {
                         setBackgroundImage(null);
@@ -349,7 +354,9 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
+                        <option key={c.value} value={c.value}>
+                            {c.label}
+                        </option>
                     ))}
                 </select>
 
@@ -370,7 +377,6 @@ export default function ParametroFinanceiro({ onClose }) {
                 >
                     Padrão
                 </button>
-
             </div>
 
             {/* RODAPÉ NORMAL */}
@@ -385,7 +391,9 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
+                        <option key={c.value} value={c.value}>
+                            {c.label}
+                        </option>
                     ))}
                 </select>
 
@@ -413,7 +421,9 @@ export default function ParametroFinanceiro({ onClose }) {
                     className="border rounded px-2 py-[4px] text-[13px]"
                 >
                     {coresBase.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
+                        <option key={c.value} value={c.value}>
+                            {c.label}
+                        </option>
                     ))}
                 </select>
 
@@ -428,11 +438,143 @@ export default function ParametroFinanceiro({ onClose }) {
 
                 <Palette size={20} className={`text-${footerHoverBase}-${footerHoverInt}`} />
             </div>
+        </>
+    );
 
-            {/* ========================= */}
-            {/* MENU RÁPIDO (IGUAL DO OPERACIONAL) */}
-            {/* ========================= */}
+    const abaMenuRapido = (
+        <>
+            <div className="flex items-start gap-3 mt-2">
 
+
+                <div className="flex-1">
+                    {/* VARAL DE OPÇÕES */}
+                    <div className="border border-gray-300 rounded bg-white p-3 shadow-inner h-[50vh] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-2">
+                            {CATALOGO_FINANCEIRO.map((op) => {
+                                const rotaNormalizada = op.rota.startsWith("/modulo-financeiro")
+                                    ? op.rota
+                                    : `/modulo-financeiro${op.rota}`;
+
+                                const ativo = atalhos.some(
+                                    (a) => a.rota === rotaNormalizada
+                                );
+
+                                return (
+                                    <label
+                                        key={op.id}
+                                        className={`
+                                        flex items-center gap-2 p-2 rounded cursor-pointer text-sm border
+                                        ${ativo
+                                                ? "bg-red-50 border-red-300"
+                                                : "bg-white border-gray-200 hover:bg-gray-50"}
+                                    `}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={ativo}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    adicionarAtalho({
+                                                        ...op,
+                                                        rota: rotaNormalizada,
+                                                    });
+                                                } else {
+                                                    removerAtalho(rotaNormalizada);
+                                                }
+                                            }}
+                                        />
+
+                                        <i className={`fa-solid ${op.icone} text-gray-700`} />
+                                        <span className="flex-1">{op.label}</span>
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* AÇÃO */}
+                    <div className="mt-2 text-right">
+                        <button
+                            type="button"
+                            onClick={restaurarPadrao}
+                            className="text-xs text-red-700 hover:text-red-900 underline"
+                        >
+                            Restaurar Padrão
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+
+
+    const abaNotificacoes = (
+        <>
+            <div className="border border-gray-300 rounded bg-white p-4 shadow-sm space-y-3">
+                <h2 className="text-[14px] font-semibold text-red-700 border-b pb-2 flex items-center gap-2">
+                    <Bell size={16} /> Notificações do Financeiro (Parâmetros)
+                </h2>
+
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={notifContasHoje}
+                        onChange={(e) => setNotifContasHoje(e.target.checked)}
+                    />
+                    Notificar contas a pagar vencendo hoje
+                </label>
+
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={notifContasVencidas}
+                        onChange={(e) => setNotifContasVencidas(e.target.checked)}
+                    />
+                    Notificar contas vencidas
+                </label>
+
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={notifCertificados}
+                        onChange={(e) => setNotifCertificados(e.target.checked)}
+                    />
+                    Notificar vencimento de certificados
+                </label>
+
+                <div className="flex items-center gap-3 text-sm">
+                    <span className="w-[160px] text-right font-medium text-gray-700">
+                        Avisar com:
+                    </span>
+
+                    <input
+                        type="number"
+                        className="border border-gray-300 rounded h-8 px-2 text-sm text-right w-[90px]"
+                        value={diasAntecedenciaCert}
+                        min={0}
+                        onChange={(e) => setDiasAntecedenciaCert(Number(e.target.value) || 0)}
+                    />
+
+                    <span className="text-gray-600">dias de antecedência</span>
+                </div>
+
+                <p className="text-[12px] text-gray-500 pt-1">
+                    Obs: aqui é só o parâmetro. A ação de notificar no Header será ligada depois.
+                </p>
+            </div>
+        </>
+    );
+
+    // =============================
+    // CAMPOS (ANTES ERA TUDO JUNTO)
+    // agora é por aba, mas SEM PERDER NADA
+    // =============================
+    const camposPorAba = (
+        <>
+            {abaAtiva === "geral" && abaGeral}
+            {abaAtiva === "visual" && abaVisual}
+            {abaAtiva === "menu" && abaMenuRapido}
+            {abaAtiva === "notificacoes" && abaNotificacoes}
         </>
     );
 
@@ -442,7 +584,6 @@ export default function ParametroFinanceiro({ onClose }) {
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="w-[720px] bg-gray-100 rounded shadow-lg border border-gray-300 flex flex-col">
-
                 {/* HEADER */}
                 <div className="bg-gradient-to-r from-red-700 to-black text-white px-4 py-2 rounded-t flex items-center justify-between">
                     <h1 className="text-sm font-semibold flex items-center gap-2">
@@ -455,6 +596,14 @@ export default function ParametroFinanceiro({ onClose }) {
                     >
                         <XCircle size={18} /> Fechar
                     </button>
+                </div>
+
+                {/* ABAS (NOVO) */}
+                <div className="bg-white border-b border-gray-300 px-2 flex gap-1">
+                    <TabButton id="geral" icon={SlidersHorizontal} label="Geral" />
+                    <TabButton id="visual" icon={ImageIcon} label="Visual" />
+                    <TabButton id="menu" icon={ListChecks} label="Menu Rápido" />
+                    <TabButton id="notificacoes" icon={Bell} label="Notificações" />
                 </div>
 
                 {/* MODO CARDS */}
@@ -474,10 +623,11 @@ export default function ParametroFinanceiro({ onClose }) {
                 <div className="p-4 overflow-auto max-h-[70vh]">
                     {modoCards ? (
                         <div className="space-y-3">
-                            <Card title="Configurações">{campos}</Card>
+                            <Card title="Configurações">{camposPorAba}</Card>
 
                             <div className="flex justify-between">
                                 <button
+                                    type="button"
                                     onClick={() => setModoCards(false)}
                                     className="flex items-center gap-1 text-sm text-gray-700 hover:text-red-700"
                                 >
@@ -485,6 +635,7 @@ export default function ParametroFinanceiro({ onClose }) {
                                 </button>
 
                                 <button
+                                    type="button"
                                     onClick={salvar}
                                     className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
                                 >
@@ -493,13 +644,14 @@ export default function ParametroFinanceiro({ onClose }) {
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-3">{campos}</div>
+                        <div className="space-y-3">{camposPorAba}</div>
                     )}
                 </div>
 
                 {/* RODAPÉ */}
                 <div className="flex justify-between bg-white px-4 py-2 border-t rounded-b">
                     <button
+                        type="button"
                         onClick={limpar}
                         className="text-red-700 hover:text-red-800 text-sm flex items-center gap-1"
                     >
@@ -508,6 +660,7 @@ export default function ParametroFinanceiro({ onClose }) {
 
                     {!modoCards && (
                         <button
+                            type="button"
                             onClick={salvar}
                             className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
                         >

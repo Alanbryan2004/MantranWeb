@@ -9,6 +9,7 @@ import {
     Settings,
     Image as ImageIcon,
     Calendar,
+    Check
 } from "lucide-react";
 
 import Logo from "../assets/logo_mantran.png";
@@ -188,11 +189,21 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                                             {!n.lido && (
                                                 <button
-                                                    className="ml-2 bg-green-600 hover:bg-green-700 text-white px-1.5 py-[2px] text-xs rounded"
                                                     onClick={() => marcarComoLido(n.id)}
+                                                    title="Marcar como lido"
+                                                    className="
+    ml-2
+    w-6 h-6
+    flex items-center justify-center
+    rounded
+    bg-green-600 hover:bg-green-700
+    transition
+    shrink-0
+  "
                                                 >
-                                                    ✓
+                                                    <Check size={14} className="text-white" />
                                                 </button>
+
                                             )}
                                         </div>
                                     ))

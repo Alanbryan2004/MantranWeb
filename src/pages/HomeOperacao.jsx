@@ -5,20 +5,23 @@ export default function HomeOperacao() {
     const { setIconColor } = useIconColor();
 
     useEffect(() => {
+        // 🔐 DEFINE O MÓDULO ATIVO (ESSENCIAL)
+        localStorage.setItem("mantran_modulo", "operacao");
+
         // 🔴 Cor padrão do módulo Operação
         setIconColor("text-red-700");
 
-        // 🏷️ Título da guia do navegador
+        // 🏷️ Título da aba
         document.title = "Mantran - Operação";
     }, [setIconColor]);
 
-    // Hoje você salva assim no Parametro.jsx: localStorage.setItem("param_logoBg", ...)
-    // então a Home precisa ler a mesma chave:
-    const logoBg = useMemo(() => localStorage.getItem("param_logoBg"), []);
+    const logoBg = useMemo(
+        () => localStorage.getItem("param_logoBg"),
+        []
+    );
 
     return (
         <div className="relative min-h-[calc(100vh-48px)] p-6">
-            {/* Marca d'água */}
             {logoBg && (
                 <div
                     className="absolute inset-0 pointer-events-none"
@@ -32,9 +35,8 @@ export default function HomeOperacao() {
                 />
             )}
 
-            {/* Conteúdo */}
             <div className="relative z-10">
-                {/* seus cards/atalhos/etc */}
+                {/* conteúdo do Operação */}
             </div>
         </div>
     );
