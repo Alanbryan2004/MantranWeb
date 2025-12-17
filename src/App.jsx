@@ -97,6 +97,8 @@ import IntegracaoMulticte from "./pages/IntegracaoMulticte";
 import HomeModulos from "./pages/HomeModulos";
 import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
+import RelConhecimento from "./pages/RelConhecimento";
+import RelConhecimentoResultado from "./pages/Relatorios/Operacao/RelConhecimentoResultado";
 
 // Home WMS (fica em pages, como você pediu)
 import HomeWMS from "./pages/HomeWMS";
@@ -262,6 +264,9 @@ export default function App() {
               <Route path="/cliente" element={<Cliente open={sidebarOpen} />} />
               <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
               <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
+
+              <Route path="/rel-conhecimento" element={<RelConhecimento open={sidebarOpen} />} />
+              <Route path="/relatorios/operacao/conhecimento/resultado" element={<RelConhecimentoResultado open={sidebarOpen} />} />
 
               <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
               <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />

@@ -6,12 +6,9 @@ import {
     Search,
     FileSpreadsheet,
 } from "lucide-react";
-
 import { useIconColor } from "../context/IconColorContext";
 
-/* ======================
-   COMPONENTES PADRÃO
-====================== */
+/* ================= HELPERS PADRÃO ================= */
 function Label({ children, className = "" }) {
     return (
         <label
@@ -52,32 +49,33 @@ function Sel({ children, className = "", ...rest }) {
     );
 }
 
-/* ======================
-   TELA PRINCIPAL
-====================== */
-export default function RelConhecimento() {
+/* ================= TELA ================= */
+export default function RelConhecimento({ open }) {
     const navigate = useNavigate();
-    const {
-        footerIconColorNormal,
-        footerIconColorHover,
-    } = useIconColor();
+    const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
+    /* ===== MOCK ===== */
     const [dados, setDados] = useState({
         empresa: "001",
         filial: "001",
-        grupoEconomico: "01",
+        grupoEconomico: "01 - HEINEKEN",
         statusCte: "1",
         tipoData: "1",
         modeloRelatorio: "1",
-        clienteCodigo: "5022101900136",
+
+        clienteCod: "5022101900136",
         clienteNome: "HNK-ITU (1) MATRIZ",
-        remetenteCodigo: "5022101900136",
+
+        remetenteCod: "5022101900136",
         remetenteNome: "HNK-ITU (1) MATRIZ",
-        destinatarioCodigo: "5022101900136",
+
+        destinatarioCod: "5022101900136",
         destinatarioNome: "HNK-ITU (1) MATRIZ",
-        cidadeDestino: "1310000",
+
+        cidadeCod: "1310000",
         cidadeNome: "CAMPINAS",
-        ufDestino: "SP",
+        uf: "SP",
+
         dataIni: "2025-12-01",
         dataFim: "2025-12-16",
     });
@@ -85,81 +83,72 @@ export default function RelConhecimento() {
     const handleChange = (campo) => (e) =>
         setDados({ ...dados, [campo]: e.target.value });
 
-    const handleLimpar = () => {
-        setDados({
-            ...dados,
-            clienteCodigo: "",
+    const limpar = () => {
+        setDados((prev) => ({
+            ...prev,
+            clienteCod: "",
             clienteNome: "",
-            remetenteCodigo: "",
+            remetenteCod: "",
             remetenteNome: "",
-            destinatarioCodigo: "",
+            destinatarioCod: "",
             destinatarioNome: "",
-            cidadeDestino: "",
+            cidadeCod: "",
             cidadeNome: "",
-            ufDestino: "",
+            uf: "",
             dataIni: "",
             dataFim: "",
-        });
+        }));
     };
 
     return (
-        <div className="flex flex-col h-full p-4 gap-3">
-            {/* ======================
-          CARD FILTROS
-      ====================== */}
-            <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                    Relatório de Conhecimentos
-                </legend>
+        <div
+            className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 
+      bg-gray-50 h-[calc(100vh-56px)] flex flex-col
+      ${open ? "ml-[192px]" : "ml-[56px]"}`}
+        >
+            {/* TÍTULO */}
+            <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
+                RELATÓRIO DE CONHECIMENTOS
+            </h1>
 
-                <div className="space-y-2">
+            {/* CONTEÚDO */}
+            <div className="flex-1 p-3 bg-white border-x border-b border-gray-300 rounded-b-md overflow-y-auto flex flex-col gap-3">
+                <fieldset className="border border-gray-300 rounded p-3 bg-white">
+                    <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                        Parâmetros do Relatório
+                    </legend>
+
                     {/* LINHA 1 */}
-                    <div className="grid grid-cols-12 gap-2">
+                    <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-1">Empresa</Label>
-                        <Sel
-                            className="col-span-5"
-                            value={dados.empresa}
-                            onChange={handleChange("empresa")}
-                        >
+                        <Sel className="col-span-5" value={dados.empresa}>
                             <option value="001">001 - MANTRAN TRANSPORTES LTDA</option>
                         </Sel>
 
                         <Label className="col-span-1">Cliente</Label>
-                        <Txt className="col-span-2" value={dados.clienteCodigo} />
-                        <Txt
-                            className="col-span-3"
-                            value={dados.clienteNome}
-                            readOnly
-                        />
+                        <Txt className="col-span-2" value={dados.clienteCod} />
+                        <Txt className="col-span-3" value={dados.clienteNome} readOnly />
                     </div>
 
                     {/* LINHA 2 */}
-                    <div className="grid grid-cols-12 gap-2">
+                    <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-1">Filial</Label>
-                        <Sel
-                            className="col-span-5"
-                            value={dados.filial}
-                            onChange={handleChange("filial")}
-                        >
+                        <Sel className="col-span-5" value={dados.filial}>
                             <option value="001">001 - TESTE MANTRAN</option>
                         </Sel>
 
                         <Label className="col-span-1">Remetente</Label>
-                        <Txt className="col-span-2" value={dados.remetenteCodigo} />
-                        <Txt
-                            className="col-span-3"
-                            value={dados.remetenteNome}
-                            readOnly
-                        />
+                        <Txt className="col-span-2" value={dados.remetenteCod} />
+                        <Txt className="col-span-3" value={dados.remetenteNome} readOnly />
                     </div>
 
                     {/* LINHA 3 */}
-                    <div className="grid grid-cols-12 gap-2">
+                    <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-1">Grupo Econ.</Label>
-                        <Txt className="col-span-5" value="01 - HEINEKEN" readOnly />
+                        <Txt className="col-span-5" value={dados.grupoEconomico} readOnly />
 
                         <Label className="col-span-1">Destinatário</Label>
-                        <Txt className="col-span-2" value={dados.destinatarioCodigo} />
+                        <Txt className="col-span-2" value={dados.destinatarioCod} />
                         <Txt
                             className="col-span-3"
                             value={dados.destinatarioNome}
@@ -168,7 +157,7 @@ export default function RelConhecimento() {
                     </div>
 
                     {/* LINHA 4 */}
-                    <div className="grid grid-cols-12 gap-2">
+                    <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-1">Status CT-e</Label>
                         <Sel
                             className="col-span-2"
@@ -191,9 +180,9 @@ export default function RelConhecimento() {
                         </Sel>
 
                         <Label className="col-span-1">Cidade Dest</Label>
-                        <Txt className="col-span-2" value={dados.cidadeDestino} />
+                        <Txt className="col-span-2" value={dados.cidadeCod} />
                         <Txt className="col-span-2" value={dados.cidadeNome} readOnly />
-                        <Txt className="col-span-1" value={dados.ufDestino} readOnly />
+                        <Txt className="col-span-1" value={dados.uf} readOnly />
                     </div>
 
                     {/* LINHA 5 */}
@@ -222,49 +211,61 @@ export default function RelConhecimento() {
                             onChange={handleChange("dataFim")}
                         />
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
 
-            {/* ======================
-          RODAPÉ
-      ====================== */}
-            <div className="mt-auto border-t pt-2 flex justify-end gap-3">
+            {/* RODAPÉ */}
+            <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
+
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-1"
-                    style={{ color: footerIconColorNormal }}
-                    onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = footerIconColorHover)
+                    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                >
+                    <XCircle size={20} />
+                    <span>Fechar</span>
+                </button>
+
+                <button
+                    onClick={limpar}
+                    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                >
+                    <RotateCcw size={20} />
+                    <span>Limpar</span>
+                </button>
+
+                <button
+                    onClick={() =>
+                        navigate("/relatorios/operacao/conhecimento/resultado", {
+                            state: {
+                                cliente: dados.clienteNome,
+                                periodo: `${dados.dataIni} até ${dados.dataFim}`,
+                                status: dados.statusCte,
+                                tipoData: dados.tipoData,
+                                filtros: dados, // opcional: passa tudo
+                            },
+                        })
                     }
-                    onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = footerIconColorNormal)
-                    }
+                    className={`flex flex-col items-center text-[11px] 
+    ${footerIconColorNormal} hover:${footerIconColorHover}`}
                 >
-                    <XCircle size={18} /> Fechar
+                    <Search size={20} />
+                    <span>Gerar</span>
                 </button>
 
-                <button
-                    onClick={handleLimpar}
-                    className="flex items-center gap-1"
-                    style={{ color: footerIconColorNormal }}
-                >
-                    <RotateCcw size={18} /> Limpar
-                </button>
 
                 <button
-                    className="flex items-center gap-1"
-                    style={{ color: footerIconColorNormal }}
+                    className={`flex flex-col items-center text-[11px] 
+      ${footerIconColorNormal} hover:${footerIconColorHover}`}
                 >
-                    <Search size={18} /> Gerar
+                    <FileSpreadsheet size={20} />
+                    <span>Exportar</span>
                 </button>
 
-                <button
-                    className="flex items-center gap-1"
-                    style={{ color: footerIconColorNormal }}
-                >
-                    <FileSpreadsheet size={18} /> Exportar
-                </button>
             </div>
+
+
         </div>
     );
 }

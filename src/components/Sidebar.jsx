@@ -975,11 +975,44 @@ export default function Sidebar({ open }) {
           </div>
 
           {/* === RELATÓRIO === */}
-          <button className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md mt-1">
-            <BarChart3 className={`w-5 h-5 ${iconColor}`} />
+          <div
+            className="group relative mt-1"
+            onMouseEnter={() => setActiveMenu("relatorio")}
+            onMouseLeave={() => setActiveMenu(null)}
+          >
+            <button
+              onClick={() => handleToggle("relatorio")}
+              className="flex items-center w-full px-2 py-2 hover:bg-gray-100 rounded-md transition"
+            >
+              <BarChart3 className={`w-5 h-5 ${iconColor}`} />
 
-            {open && <span className="ml-3">Relatório</span>}
-          </button>
+              {open && (
+                <>
+                  <span className="ml-3 flex-1 text-left">Relatório</span>
+                  <ChevronRight
+                    size={14}
+                    className={`text-gray-500 transition-transform ${activeMenu === "relatorio" ? "rotate-90" : ""
+                      }`}
+                  />
+                </>
+              )}
+            </button>
+
+            {activeMenu === "relatorio" && (
+              <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-xl rounded-md w-52 p-1 z-[999]">
+                <ul className="text-[13px] text-gray-700">
+                  <li className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer">
+                    <Link
+                      to="/rel-conhecimento"
+                      className="block w-full h-full text-gray-700"
+                    >
+                      CTes Emitidos
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
 
           {/* === SAC === */}
           <div
