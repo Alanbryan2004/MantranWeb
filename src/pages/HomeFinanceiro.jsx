@@ -1,4 +1,3 @@
-// src/pages/HomeFinanceiro.jsx
 import { useEffect, useMemo } from "react";
 import { useIconColor } from "../context/IconColorContext";
 
@@ -6,7 +5,11 @@ export default function HomeFinanceiro() {
     const { setIconColor } = useIconColor();
 
     useEffect(() => {
+        // 🟢 Cor padrão do módulo Financeiro
         setIconColor("text-green-700");
+
+        // 🏷️ Título da guia do navegador
+        document.title = "Mantran - Financeiro";
     }, [setIconColor]);
 
     // Mesmo padrão usado no Operação

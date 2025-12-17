@@ -1,7 +1,12 @@
-// src/pages/HomeWMS.jsx
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function HomeWMS() {
+
+    useEffect(() => {
+        // 🏷️ Título da guia do navegador
+        document.title = "Mantran - WMS";
+    }, []);
+
     const logoBg = useMemo(() => localStorage.getItem("param_logoBg"), []);
 
     return (

@@ -1,4 +1,3 @@
-// src/pages/HomeOperacao.jsx
 import { useEffect, useMemo } from "react";
 import { useIconColor } from "../context/IconColorContext";
 
@@ -6,7 +5,11 @@ export default function HomeOperacao() {
     const { setIconColor } = useIconColor();
 
     useEffect(() => {
+        // 🔴 Cor padrão do módulo Operação
         setIconColor("text-red-700");
+
+        // 🏷️ Título da guia do navegador
+        document.title = "Mantran - Operação";
     }, [setIconColor]);
 
     // Hoje você salva assim no Parametro.jsx: localStorage.setItem("param_logoBg", ...)
