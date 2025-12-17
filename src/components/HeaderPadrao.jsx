@@ -16,7 +16,7 @@ export default function HeaderWMS({ toggleSidebar }) {
             </button>
 
             <img src={Logo} className="h-7" />
-            <span className="text-sm font-semibold text-gray-700">WMS</span>
+            <span className="text-sm font-semibold text-gray-700">MÓDULOS</span>
         </header>
     );
 }
