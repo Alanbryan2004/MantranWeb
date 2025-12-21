@@ -36,8 +36,16 @@ export default function SidebarFinanceiro({ open }) {
     const [showAlterarSenha, setShowAlterarSenha] = useState(false);
 
     const [usuarios, setUsuarios] = useState([
-        { nome: "Alan", online: true, ultimaMsg: "Olá!", naoLidas: 0 },
-        { nome: "Admin", online: false, ultimaMsg: "Atualizando dados", naoLidas: 0 },
+        { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
+        { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
+        { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
+        { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍", naoLidas: 0 },
+        { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
+        { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
+        { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
+        { nome: "Marcio", online: false, ultimaMsg: "", naoLidas: 0 },
+        { nome: "Raul", online: false, ultimaMsg: "", naoLidas: 0 },
+        { nome: "Marisa", online: false, ultimaMsg: "", naoLidas: 0 },
     ]);
 
     const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
@@ -70,19 +78,51 @@ export default function SidebarFinanceiro({ open }) {
 
         s.on("novaMensagem", (msg) => {
             if (msg.de === usuarioLogado || msg.para === usuarioLogado) {
-                setMensagens((prev) => [...prev, msg]);
 
-                if (msg.para === usuarioLogado) {
-                    setUsuarios((prev) =>
-                        prev.map((u) =>
-                            u.nome === msg.de ? { ...u, naoLidas: (u.naoLidas || 0) + 1 } : u
-                        )
+                // evita duplicar mensagem
+                setMensagens((prev) => {
+                    const jaExiste = prev.some(
+                        (m) =>
+                            m.de === msg.de &&
+                            m.para === msg.para &&
+                            m.texto === msg.texto &&
+                            m.hora === msg.hora
                     );
-                }
+                    if (jaExiste) return prev;
+                    return [...prev, msg];
+                });
+
+                // atualiza ultimaMsg e naoLidas
+                setUsuarios((prev) => {
+                    const atualizados = prev.map((u) => {
+                        if (u.nome === (msg.de === usuarioLogado ? msg.para : msg.de)) {
+                            return {
+                                ...u,
+                                ultimaMsg: msg.texto,
+                                naoLidas:
+                                    msg.para === usuarioLogado
+                                        ? (u.naoLidas || 0) + 1
+                                        : u.naoLidas,
+                            };
+                        }
+                        return u;
+                    });
+
+                    // atualiza contador geral
+                    const total = atualizados.filter((u) => u.naoLidas > 0).length;
+                    setContatosComMensagensNaoLidas(total);
+
+                    return atualizados;
+                });
             }
         });
-
-        return () => s.disconnect();
+        return () => {
+            s.off("usersOnline");
+            s.off("novaMensagem");
+            s.off("connect");
+            s.off("disconnect");
+            s.disconnect();
+        };
     }, []);
 
     const enviarMensagem = () => {
@@ -598,10 +638,12 @@ export default function SidebarFinanceiro({ open }) {
 
                         {contatosComMensagensNaoLidas > 0 && (
                             <span
-                                className="ml-auto bg-red-600 text-white text-[10px] px-2 py-[1px] rounded-full"
+                                className="absolute top-1 right-3 bg-red-600 text-white text-[10px] font-semibold
+             w-4 h-4 flex items-center justify-center rounded-full shadow-md"
                             >
                                 {contatosComMensagensNaoLidas}
                             </span>
+
                         )}
                     </button>
                 </nav>
@@ -630,30 +672,111 @@ export default function SidebarFinanceiro({ open }) {
             }
 
             {/* CHAT */}
-            {
-                chatOpen && (
-                    <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] 
-                    bg-white border-l border-gray-200 shadow-2xl z-50 flex flex-col">
-                        {/* Cabeçalho */}
-                        <div className="flex justify-between items-center p-3 border-b">
-                            <h2 className="font-semibold text-gray-700 text-sm">
-                                {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
-                            </h2>
-                            <button
-                                onClick={() =>
-                                    chatAtivo ? setChatAtivo(null) : setChatOpen(false)
-                                }
-                                className="text-red-700 hover:text-black"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-
-                        {/* Conteúdo do chat */}
-                        {/* (todo seu código original aqui sem alterações) */}
+            {chatOpen && (
+                <div
+                    className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)]
+    bg-white border-l border-gray-200 shadow-2xl z-50 flex flex-col"
+                >
+                    {/* Cabeçalho */}
+                    <div className="flex justify-between items-center p-3 border-b">
+                        <h2 className="font-semibold text-gray-700 text-sm">
+                            {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
+                        </h2>
+                        <button
+                            onClick={() =>
+                                chatAtivo ? setChatAtivo(null) : setChatOpen(false)
+                            }
+                            className="text-red-700 hover:text-black"
+                        >
+                            <X size={16} />
+                        </button>
                     </div>
-                )
-            }
+
+                    {/* LISTA DE CONTATOS */}
+                    {!chatAtivo && (
+                        <div className="flex-1 overflow-y-auto">
+                            {usuarios.map((u) => (
+                                <div
+                                    key={u.nome}
+                                    onClick={() => {
+                                        setChatAtivo(u);
+
+                                        // zera não lidas do contato clicado
+                                        setUsuarios((prev) => {
+                                            const atualizados = prev.map((x) =>
+                                                x.nome === u.nome ? { ...x, naoLidas: 0 } : x
+                                            );
+
+                                            const total = atualizados.filter(
+                                                (x) => x.naoLidas > 0
+                                            ).length;
+
+                                            setContatosComMensagensNaoLidas(total);
+                                            return atualizados;
+                                        });
+                                    }}
+                                    className="relative flex items-center justify-between px-3 py-2
+                       hover:bg-gray-50 cursor-pointer border-b"
+                                >
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            {u.online ? (
+                                                <CircleDot className="text-green-500 w-3 h-3" />
+                                            ) : (
+                                                <Circle className="text-gray-400 w-3 h-3" />
+                                            )}
+                                            <span className="font-medium text-sm">{u.nome}</span>
+                                        </div>
+
+                                        <div className="text-gray-500 text-xs truncate w-52">
+                                            {u.ultimaMsg}
+                                        </div>
+                                    </div>
+
+                                    {/* Badge individual */}
+                                    {u.naoLidas > 0 && (
+                                        <span
+                                            className="absolute right-3 top-2 bg-red-600 text-white
+                text-[10px] font-semibold w-4 h-4
+                flex items-center justify-center rounded-full"
+                                        >
+                                            {u.naoLidas}
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* CONVERSA ATIVA */}
+                    {chatAtivo && (
+                        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                            {mensagens
+                                .filter(
+                                    (m) =>
+                                        (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
+                                        (m.de === chatAtivo.nome && m.para === usuarioLogado)
+                                )
+                                .map((m, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`max-w-[75%] px-3 py-2 rounded-lg text-sm
+                ${m.de === usuarioLogado
+                                                ? "bg-red-600 text-white ml-auto"
+                                                : "bg-gray-200 text-gray-800 mr-auto"
+                                            }`}
+                                    >
+                                        {m.texto}
+                                        <div className="text-[10px] opacity-70 text-right">
+                                            {m.hora}
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
         </>
     );
 }

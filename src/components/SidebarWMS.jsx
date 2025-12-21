@@ -41,10 +41,16 @@ export default function SidebarWMS({ open }) {
     const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
 
     const [usuarios, setUsuarios] = useState([
-        { nome: "Alan", online: true, ultimaMsg: "Olá!", naoLidas: 0 },
-        { nome: "Admin", online: false, ultimaMsg: "Atualizando dados", naoLidas: 0 },
-        { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o estoque?", naoLidas: 0 },
-        { nome: "Filipe", online: true, ultimaMsg: "Recebimento OK 👍", naoLidas: 0 },
+        { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
+        { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
+        { nome: "Fernanda", online: true, ultimaMsg: "Pode revisar o frete?", naoLidas: 0 },
+        { nome: "Filipe", online: true, ultimaMsg: "Conferi a coleta 👍", naoLidas: 0 },
+        { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
+        { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
+        { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
+        { nome: "Marcio", online: false, ultimaMsg: "", naoLidas: 0 },
+        { nome: "Raul", online: false, ultimaMsg: "", naoLidas: 0 },
+        { nome: "Marisa", online: false, ultimaMsg: "", naoLidas: 0 },
     ]);
 
     const [socket, setSocket] = useState(null);
@@ -110,7 +116,13 @@ export default function SidebarWMS({ open }) {
             }
         });
 
-        return () => s.disconnect();
+        return () => {
+            s.off("usersOnline");
+            s.off("novaMensagem");
+            s.off("connect");
+            s.off("disconnect");
+            s.disconnect();
+        };
     }, []);
 
     const enviarMensagem = () => {
@@ -277,16 +289,26 @@ export default function SidebarWMS({ open }) {
 
             {/* ================= PAINEL CHAT ================= */}
             {chatOpen && (
-                <div className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)] bg-white border-l shadow-xl z-40 flex flex-col">
+                <div
+                    className="fixed right-0 top-[48px] w-80 h-[calc(100vh-48px)]
+    bg-white border-l border-gray-200 shadow-2xl z-40 flex flex-col"
+                >
+                    {/* Cabeçalho */}
                     <div className="flex justify-between items-center p-3 border-b">
-                        <span className="font-semibold text-sm">
+                        <h2 className="font-semibold text-gray-700 text-sm">
                             {chatAtivo ? `Chat com ${chatAtivo.nome}` : "Mensagens"}
-                        </span>
-                        <button onClick={() => chatAtivo ? setChatAtivo(null) : setChatOpen(false)}>
+                        </h2>
+                        <button
+                            onClick={() =>
+                                chatAtivo ? setChatAtivo(null) : setChatOpen(false)
+                            }
+                            className="text-red-700 hover:text-black"
+                        >
                             <X size={16} />
                         </button>
                     </div>
 
+                    {/* LISTA DE CONTATOS */}
                     {!chatAtivo && (
                         <div className="flex-1 overflow-y-auto">
                             {usuarios.map((u) => (
@@ -294,55 +316,82 @@ export default function SidebarWMS({ open }) {
                                     key={u.nome}
                                     onClick={() => {
                                         setChatAtivo(u);
-                                        setUsuarios((prev) =>
-                                            prev.map((x) =>
+
+                                        // zera mensagens não lidas do contato
+                                        setUsuarios((prev) => {
+                                            const atualizados = prev.map((x) =>
                                                 x.nome === u.nome ? { ...x, naoLidas: 0 } : x
-                                            )
-                                        );
+                                            );
+
+                                            setContatosComMensagensNaoLidas(
+                                                atualizados.filter((x) => x.naoLidas > 0).length
+                                            );
+
+                                            return atualizados;
+                                        });
                                     }}
-                                    className="px-3 py-2 border-b hover:bg-gray-50 cursor-pointer"
+                                    className="relative flex items-center justify-between px-3 py-2
+                       hover:bg-gray-50 cursor-pointer border-b"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        {u.online ? (
-                                            <CircleDot className="text-green-500 w-3 h-3" />
-                                        ) : (
-                                            <Circle className="text-gray-400 w-3 h-3" />
-                                        )}
-                                        <span className="text-sm font-medium">{u.nome}</span>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            {u.online ? (
+                                                <CircleDot className="text-green-500 w-3 h-3" />
+                                            ) : (
+                                                <Circle className="text-gray-400 w-3 h-3" />
+                                            )}
+                                            <span className="font-medium text-sm">{u.nome}</span>
+                                        </div>
+
+                                        <div className="text-gray-500 text-xs truncate w-52">
+                                            {u.ultimaMsg || " "}
+                                        </div>
                                     </div>
-                                    <div className="text-xs text-gray-500 truncate">{u.ultimaMsg}</div>
+
+                                    {/* Badge individual */}
+                                    {u.naoLidas > 0 && (
+                                        <span
+                                            className="absolute right-3 top-2 bg-red-600 text-white
+                text-[10px] font-semibold w-4 h-4
+                flex items-center justify-center rounded-full"
+                                        >
+                                            {u.naoLidas}
+                                        </span>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
 
+                    {/* CONVERSA ATIVA */}
                     {chatAtivo && (
                         <>
-                            <div className="flex-1 p-3 overflow-y-auto bg-gray-50">
+                            <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
                                 {mensagens
                                     .filter(
                                         (m) =>
                                             (m.de === usuarioLogado && m.para === chatAtivo.nome) ||
-                                            (m.para === usuarioLogado && m.de === chatAtivo.nome)
+                                            (m.de === chatAtivo.nome && m.para === usuarioLogado)
                                     )
-                                    .map((m, i) => (
+                                    .map((m, idx) => (
                                         <div
-                                            key={i}
-                                            className={`mb-2 flex ${m.de === usuarioLogado ? "justify-end" : "justify-start"}`}
+                                            key={idx}
+                                            className={`max-w-[75%] px-3 py-2 rounded-lg text-sm
+                  ${m.de === usuarioLogado
+                                                    ? "bg-red-600 text-white ml-auto"
+                                                    : "bg-white text-gray-800 mr-auto shadow"
+                                                }`}
                                         >
-                                            <div className={`px-3 py-1 rounded-lg text-sm shadow
-                                                ${m.de === usuarioLogado
-                                                    ? "bg-red-600 text-white"
-                                                    : "bg-white text-gray-800"}`}
-                                            >
-                                                {m.texto}
-                                                <div className="text-[10px] opacity-70">{m.hora}</div>
+                                            {m.texto}
+                                            <div className="text-[10px] opacity-70 text-right">
+                                                {m.hora}
                                             </div>
                                         </div>
                                     ))}
                             </div>
 
-                            <div className="flex items-center gap-2 border-t p-2">
+                            {/* INPUT */}
+                            <div className="flex items-center gap-2 border-t p-2 relative">
                                 <input
                                     value={novaMensagem}
                                     onChange={(e) => setNovaMensagem(e.target.value)}
@@ -351,13 +400,18 @@ export default function SidebarWMS({ open }) {
                                     placeholder={`Mensagem para ${chatAtivo.nome}`}
                                 />
 
-                                <button onClick={() => setMostrarEmoji(!mostrarEmoji)}>😊</button>
+                                <button
+                                    onClick={() => setMostrarEmoji(!mostrarEmoji)}
+                                    className="text-lg"
+                                >
+                                    😊
+                                </button>
 
                                 {mostrarEmoji && (
-                                    <div className="absolute bottom-14 right-14 z-50">
+                                    <div className="absolute bottom-14 right-10 z-50">
                                         <EmojiPicker
                                             onEmojiClick={(e) => {
-                                                setNovaMensagem((p) => p + e.emoji);
+                                                setNovaMensagem((prev) => prev + e.emoji);
                                                 setMostrarEmoji(false);
                                             }}
                                         />
@@ -366,7 +420,7 @@ export default function SidebarWMS({ open }) {
 
                                 <button
                                     onClick={enviarMensagem}
-                                    className="bg-red-700 text-white p-2 rounded"
+                                    className="bg-red-700 hover:bg-red-800 text-white p-2 rounded"
                                 >
                                     <Send size={14} />
                                 </button>
@@ -375,6 +429,7 @@ export default function SidebarWMS({ open }) {
                     )}
                 </div>
             )}
+
         </>
     );
 
