@@ -27,21 +27,38 @@ import {
 } from "lucide-react";
 
 function Label({ children, className = "" }) {
-  return <label className={`text-[12px] text-gray-600 ${className}`}>{children}</label>;
+  return (
+    <label
+      className={`text-[12px] text-gray-600 flex items-center justify-end ${className}`}
+    >
+      {children}
+    </label>
+  );
 }
-function Txt(props) {
+function Txt({ className = "", readOnly = false, ...props }) {
   return (
     <input
       {...props}
-      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] ${props.className || ""}`}
+      readOnly={readOnly}
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px]
+        ${readOnly ? "bg-gray-100 text-gray-600" : "bg-white"}
+        ${className}
+      `}
     />
   );
 }
-function Sel({ children, ...rest }) {
+
+function Sel({ children, className = "", ...rest }) {
   return (
     <select
       {...rest}
-      className="border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px]"
+      className={`
+        border border-gray-300 rounded
+        px-2 py-[2px] h-[26px] text-[13px] bg-white
+        ${className}
+      `}
     >
       {children}
     </select>
@@ -154,6 +171,7 @@ export default function Cliente({ open }) {
   };
 
 
+
   const onlyDigits = (v = "") => v.replace(/\D+/g, "");
 
   const maskCNPJ = (v) =>
@@ -225,33 +243,34 @@ export default function Cliente({ open }) {
         {activeTab === "cliente" && (
           <>
             {/* === CARD 1 - DADOS CLIENTE === */}
-            <div className="border border-gray-300 rounded p-2 bg-white space-y-2 w-full">
-              {/* === Linha 1 === */}
-              <div className="grid grid-cols-[100px_260px_100px_200px_120px_1fr] gap-2 items-center">
-                <Label className="text-right">Filial</Label>
-                <Sel defaultValue="001 - MANTRAN TRANSPORTES">
+            <div className="border border-gray-300 rounded p-3 bg-white space-y-2 w-full">
+
+              {/* === LINHA 1 — FILIAL / TIPO / DOCUMENTO === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Filial</Label>
+                <Sel className="col-span-5 w-full">
                   <option>001 - MANTRAN TRANSPORTES</option>
                   <option>002 - FILIAL EXEMPLO</option>
                 </Sel>
 
-                <Label className="text-right">Tp. Cliente</Label>
-                <Sel defaultValue="Correntista">
+                <Label className="col-span-1">Tp. Cliente</Label>
+                <Sel className="col-span-1 w-full">
                   <option>Correntista</option>
                   <option>Eventual</option>
                 </Sel>
 
-                <label className="flex items-center gap-2">
+                <div className="col-span-1 flex items-center gap-1">
                   <input
                     type="checkbox"
                     checked={estrangeiro}
                     onChange={(e) => setEstrangeiro(e.target.checked)}
                   />
-                  Estrangeiro
-                </label>
+                  <span className="text-[12px]">Estrang.</span>
+                </div>
 
-                <div className="flex items-center gap-2 justify-end">
+                <div className="col-span-3 col-start-10 flex items-center gap-1 min-w-0">
                   <Sel
-                    className="w-[120px]"
+                    className="w-[80px]"
                     value={tpDoc}
                     onChange={(e) => {
                       setTpDoc(e.target.value);
@@ -262,241 +281,207 @@ export default function Cliente({ open }) {
                     <option value="CNPJ">CNPJ</option>
                     <option value="CPF">CPF</option>
                   </Sel>
+
                   <Txt
+                    className="flex-1 min-w-0"
                     placeholder={estrangeiro ? "Documento Livre" : tpDoc}
                     value={doc}
                     onChange={handleDocChange}
                     inputMode="numeric"
-                    className="w-[220px]"
                   />
                 </div>
               </div>
 
-              {/* === Linha 2 === */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Razão Social</Label>
-                <Txt />
-                <Label className="text-right">Fantasia</Label>
-                <Txt />
+              {/* === LINHA 2 — RAZÃO / FANTASIA === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Razão Social</Label>
+                <Txt className="col-span-5" />
+
+                <Label className="col-span-1">Fantasia</Label>
+                <Txt className="col-span-5" />
               </div>
 
-              {/* === Linha 3 === */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_100px_1fr_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Inscr. Estadual</Label>
-                <Txt />
-                <Label className="text-right">Inscr. Municipal</Label>
-                <Txt />
-                <Label className="text-right">% Comissão</Label>
-                <Txt inputMode="decimal" className="text-right" />
-                <Label className="text-right">% Redução ICMS</Label>
-                <Txt inputMode="decimal" className="text-right" />
+              {/* === LINHA 3 — INSCRIÇÕES / COMISSÕES === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Inscr. Estadual</Label>
+                <Txt className="col-span-2" />
+
+                <Label className="col-span-1">Inscr. Municipal</Label>
+                <Txt className="col-span-2" />
+
+                <Label className="col-span-1">% Comissão</Label>
+                <Txt className="col-span-1 text-right" inputMode="decimal" />
+
+                <Label className="col-span-2">% Redução ICMS</Label>
+                <Txt className="col-span-2 text-right" inputMode="decimal" />
               </div>
 
-              {/* === Linha 4 - CEP, Cidade, UF, Bairro === */}
-              <div className="grid grid-cols-[100px_150px_100px_1fr_100px_80px_100px_1fr] gap-2 items-center">
-                <Label className="text-right">CEP</Label>
+              {/* === LINHA 4 — CEP / CIDADE / UF / BAIRRO === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">CEP</Label>
                 <Txt
-                  placeholder="00000-000"
+                  className="col-span-2"
                   value={cep}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "").slice(0, 8);
-                    setCep(value.replace(/(\d{5})(\d)/, "$1-$2"));
-                    if (value.length === 8) buscarEndereco(value);
-                  }}
-                  onBlur={() => {
-                    const clean = cep.replace(/\D/g, "");
-                    if (clean.length === 8) buscarEndereco(clean);
-                  }}
-                />
-                <Label className="text-right">Cidade</Label>
-                <Txt value={cidade} onChange={(e) => setCidade(e.target.value)} />
-
-                <Label className="text-right">UF</Label>
-                <Txt
-                  value={uf}
-                  onChange={(e) => setUf(e.target.value.toUpperCase().slice(0, 2))}
-                  className="text-center"
+                  onChange={(e) => setCep(e.target.value)}
                 />
 
-                <Label className="text-right">Bairro</Label>
-                <Txt value={bairro} onChange={(e) => setBairro(e.target.value)} />
+                <Label className="col-span-1">Cidade</Label>
+                <Txt className="col-span-4" value={cidade} />
+
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly value={uf} />
+
+                <Label className="col-span-1">Bairro</Label>
+                <Txt className="col-span-2" value={bairro} />
               </div>
 
-              {/* === Linha 5 - Endereço, Nº, Compl === */}
-              <div className="grid grid-cols-[100px_1fr_100px_150px_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Endereço</Label>
-                <Txt value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+              {/* === LINHA 5 — ENDEREÇO === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Endereço</Label>
+                <Txt className="col-span-6" value={endereco} />
 
-                <Label className="text-right">Nº</Label>
-                <Txt className="text-center" />
+                <Label className="col-span-1">Nº</Label>
+                <Txt className="col-span-1 text-center" />
 
-                <Label className="text-right">Compl</Label>
-                <Txt />
+                <Label className="col-span-1">Compl</Label>
+                <Txt className="col-span-2" />
               </div>
 
-              {/* === Linha 6 - Fone, Fone 2, Ativ. Econômica === */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_130px_1fr] gap-2 items-center">
-                <Label className="text-right">Fone</Label>
+              {/* === LINHA 6 — EMAIL (NOVA) === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">E-mail</Label>
                 <Txt
-                  value={fone1}
-                  onChange={(e) => setFone1(maskPhone(e.target.value))}
-                  placeholder="(00) 00000-0000"
-                  inputMode="numeric"
+                  className="col-span-11"
+                  placeholder="email@cliente.com.br"
+                  inputMode="email"
                 />
+              </div>
 
-                <Label className="text-right">Fone 2</Label>
-                <Txt
-                  value={fone2}
-                  onChange={(e) => setFone2(maskPhone(e.target.value))}
-                  placeholder="(00) 00000-0000"
-                  inputMode="numeric"
-                />
+              {/* === LINHA 7 — FONES / ATIV. ECONÔMICA === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Fone</Label>
+                <Txt className="col-span-2" value={fone1} />
 
-                <Label className="text-right">Ativ. Econômica</Label>
-                <Sel>
+                <Label className="col-span-1">Fone 2</Label>
+                <Txt className="col-span-2" value={fone2} />
+
+                <Label className="col-span-2">Ativ. Econômica</Label>
+                <Sel className="col-span-4 w-full">
                   <option>0001 - SERVIÇO DA MESMA NATUREZA TRAN</option>
                   <option>0002 - ESTAB. INDUSTRIAL NORMAL</option>
-                  <option>0003 - ESTAB. INDUSTRIAL EXPORTAÇÃO</option>
-                  <option>0004 - ESTAB. DE PREST. SERV. COMUNIC</option>
-                  <option>0005 - ESTAB. GER. OU DIST. ENE. ELET</option>
-                  <option>0006 - DE PRODUTOR RURAL</option>
-                  <option>0007 - SERV. TRANSP. A NAO CONTRIB.</option>
-                  <option>0008 - ESTAB. COMERCIAL EXPORTAÇÃO</option>
-                  <option>0009 - ESTAB. INDUSTRIAL IMPORTAÇÃO</option>
-                  <option>0010 - ESTAB. PRESTAÇÃO COMERCIAL</option>
-                  <option>0011 - ESTAB. COMERCIAL IMPORTAÇÃO</option>
-                  <option>0012 - HEINEKEN PARANAGUA PONTA GROSS</option>
-                  <option>0013 - COM VAREJISTA DE MAT ELET</option>
-                  <option>0014 - ESTAB. PREST SERV SEGURO</option>
-                  <option>0015 - MOAGEM FAB. PROD. OR VEGETAL</option>
-                  <option>0016 - COM A VAREJO DE AUTOMOVEIS</option>
                 </Sel>
               </div>
 
-              {/* === Linha 7 - Tipo de Carga, Situação, Operação, Cond. ICMS === */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_100px_1fr_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Tipo de Carga</Label>
-                <Sel defaultValue="Mista">
+              {/* === LINHA 8 — TIPO / SITUAÇÃO / OPERAÇÃO / ICMS === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Tipo de Carga</Label>
+                <Sel className="col-span-2">
                   <option>Mista</option>
                   <option>Fracionada</option>
                   <option>Fechada</option>
                 </Sel>
 
-                <Label className="text-right">Situação</Label>
-                <Sel defaultValue="NORMAL">
+                <Label className="col-span-1">Situação</Label>
+                <Sel className="col-span-2">
                   <option>NORMAL</option>
-                  <option>FORNECEDOR</option>
-                  <option>PROSPECT</option>
                   <option>INATIVO</option>
                 </Sel>
 
-                <Label className="text-right">Operação</Label>
-                <Sel value={operacao} onChange={(e) => setOperacao(e.target.value)}>
-                  <option value="NORMAL">NORMAL</option>
-                  <option value="BLOQUEADO">BLOQUEADO</option>
+                <Label className="col-span-1">Operação</Label>
+                <Sel className="col-span-2">
+                  <option>NORMAL</option>
+                  <option>BLOQUEADO</option>
                 </Sel>
 
-                <Label className="text-right">Cond. ICMS</Label>
-                <Sel defaultValue="Regime de Estimativa">
+                <Label className="col-span-1">Cond. ICMS</Label>
+                <Sel className="col-span-2">
                   <option>Regime de Estimativa</option>
-                  <option>Pessoa Fisica</option>
                   <option>Isento</option>
-                  <option>Micro Empresa</option>
-                  <option>Substituição Tributária</option>
                 </Sel>
               </div>
 
-              {/* === Linha 8 - Seguradora, Flags e Vendedor === */}
-              <div className="grid grid-cols-[100px_1fr_100px_120px_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Seguradora</Label>
-                <Sel>
-                  <option>002 - LIBERTY SEGUROS</option>
+              {/* === LINHA 9 — SEGURADORA / FLAGS / VENDEDOR === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Seguradora</Label>
+                <Sel className="col-span-2">
+                  <option>002 - LIBERTY</option>
                   <option>003 - PORTO</option>
-                  <option>004 - TOKIO</option>
                 </Sel>
 
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" /> RCF-DC
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" /> RCTR-C
-                </label>
-
-                <Label className="text-right">Vendedor</Label>
-                <Txt placeholder="Nome do vendedor" />
-              </div>
-              {/* === Linha 9 - Tabela de Seguro, Vr Frete Adic., Instrução Protesto === */}
-              <div className="grid grid-cols-[100px_1fr_130px_1fr_140px_1fr] gap-2 items-center">
-                <Label className="text-right">Tabela de Seguro</Label>
-                <Sel defaultValue="">
-                  <option value=""> </option>
-                  <option>001 - PADRÃO</option>
-                  <option>002 - ESPECIAL</option>
-                  <option>003 - PERSONALIZADA</option>
-                </Sel>
-
-                <Label className="text-right">Vr. Frete Adic.</Label>
-                <Txt inputMode="decimal" className="text-right" placeholder="0,00" />
-
-                <Label className="text-right">Instrução Protesto</Label>
-                <Txt placeholder="Informe instrução..." />
-              </div>
-
-              {/* === Linha 10 - Cód Cliente, Cód Contábil, Cta Reduzida, Cta Compl === */}
-              <div className="grid grid-cols-[100px_1fr_100px_1fr_100px_1fr_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Cód. Cliente</Label>
-                <Txt placeholder="Código interno" />
-
-                <Label className="text-right">Cód. Contábil</Label>
-                <Txt placeholder="Conta contábil" />
-
-                <Label className="text-right">Cta Reduzida</Label>
-                <Txt />
-
-                <Label className="text-right">Cta Compl.</Label>
-                <Txt />
-              </div>
-
-              {/* === Linha 11 - Prazo Entrega, Rede/Varejo, Modelo Fatura Dif. === */}
-              <div className="grid grid-cols-[100px_100px_30px_1fr_100px_1fr] gap-2 items-center">
-                <Label className="text-right">Prazo Entrega</Label>
-                <div className="flex items-center gap-1">
-                  <Txt inputMode="numeric" className="w-[80px] text-right" />
-                  <span className="text-[12px] text-gray-600">Hr.</span>
-                </div>
-
-                <div className="flex items-center gap-4 col-span-2">
+                <div className="col-span-2 flex gap-3 col-start-5 justify-start">
                   <label className="flex items-center gap-1">
-                    <input type="checkbox" /> Rede
+                    <input type="checkbox" /> RCF-DC
                   </label>
                   <label className="flex items-center gap-1">
+                    <input type="checkbox" /> RCTR-C
+                  </label>
+                </div>
+                <Label className="col-span-1">Tabela Juros</Label>
+                <Sel className="col-span-2">
+                  <option> </option>
+                  <option>0.00% Juros + Multa de R$ 0.00</option>
+                  <option>2.00% Juros + Multa de R$ 0.00</option>
+                </Sel>
+                <Label className="col-span-1">Vendedor</Label>
+                <Txt className="col-span-2" />
+              </div>
+
+              {/* === LINHA 10 — TABELA / FRETE / PROTESTO === */}
+
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Cód. Cliente</Label>
+                <Txt className="col-span-2" />
+
+                <Label className="col-span-1">Cód. Contábil</Label>
+                <Txt className="col-span-2" />
+
+                <Label className="col-span-1">Cta Reduzida</Label>
+                <Txt className="col-span-2" />
+
+                <Label className="col-span-1">Cta Compl.</Label>
+                <Txt className="col-span-2" />
+              </div>
+
+              {/* === LINHA 12 — PRAZO / FLAGS / FATURA === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Prazo Entrega</Label>
+
+                <div className="col-span-2 flex items-center gap-4 min-w-0">
+                  {/* Prazo (Horas) */}
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Txt className="w-[60px] text-right" />
+                    <span className="text-[12px] text-gray-600 shrink-0">Hr.</span>
+                  </div>
+
+                  {/* Flags */}
+                  <label className="flex items-center gap-1 text-[12px] shrink-0">
+                    <input type="checkbox" /> Rede
+                  </label>
+
+                  <label className="flex items-center gap-1 text-[12px] shrink-0">
                     <input type="checkbox" /> Varejo
                   </label>
                 </div>
 
-                <Label className="text-right">Mod. Fatura Dif.</Label>
-                <Txt placeholder="Ex: .rpt" />
+                <Label className="col-span-1">Vr. Frete Adic.</Label>
+                <Txt className="col-span-2 text-right" />
+                <Label className="col-span-1 col-start-10">Mod. Fatura Dif.</Label>
+                <Txt className="col-span-2" />
               </div>
 
-              {/* === Linha 12 - Observação === */}
-              <div className="grid grid-cols-[100px_1fr] gap-2 items-start">
-                <Label className="text-right mt-[4px]">Observação</Label>
-                <textarea
-                  className="border border-gray-300 rounded px-2 py-1 text-[13px] w-full min-h-[50px] resize-y"
-                  placeholder="Digite observações gerais do cliente..."
-                ></textarea>
+              {/* === LINHA 13 — OBSERVAÇÃO === */}
+              <div className="grid grid-cols-12 gap-2">
+                <Label className="col-span-1">Observação</Label>
+                <textarea className="col-span-10 border border-gray-300 rounded px-2 py-1" />
               </div>
 
-              {/* === Linha 13 - Info Fixa CTe === */}
-              <div className="grid grid-cols-[100px_1fr] gap-2 items-start">
-                <Label className="text-right mt-[4px]">Info. Fixa CT-e</Label>
-                <textarea
-                  className="border border-gray-300 rounded px-2 py-1 text-[13px] w-full min-h-[50px] resize-y"
-                  placeholder="Informações fixas que aparecerão no CT-e..."
-                ></textarea>
+              {/* === LINHA 14 — INFO FIXA CTe === */}
+              <div className="grid grid-cols-12 gap-2">
+                <Label className="col-span-1">Info. Fixa CT-e</Label>
+                <textarea className="col-span-10 border border-gray-300 rounded px-2 py-1" />
               </div>
 
             </div>
+
 
 
             {/* === CARD 2 - PARÂMETROS === */}
@@ -610,15 +595,16 @@ export default function Cliente({ open }) {
         {activeTab === "consulta" && (
           <>
             {/* === CARD DE FILTROS === */}
-            <fieldset className="border border-gray-300 rounded p-3">
-              <legend className="text-red-700 font-semibold px-2">
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="text-red-700 font-semibold px-2 text-[13px]">
                 Parâmetros de Pesquisa
               </legend>
 
-              {/* === LINHA 1 === */}
-              <div className="grid grid-cols-[100px_250px_100px_1fr_60px_80px_120px_1fr] gap-2 items-center">
-                <Label className="text-right">Filial</Label>
+              {/* === LINHA 1 — FILIAL / CIDADE / UF / TIPO CLIENTE === */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Filial</Label>
                 <Sel
+                  className="col-span-3 w-full"
                   value={filtros.filial}
                   onChange={(e) => setFiltros({ ...filtros, filial: e.target.value })}
                 >
@@ -627,29 +613,62 @@ export default function Cliente({ open }) {
                   <option>002 - MANTRAN TECNOLOGIAS VALINHOS</option>
                 </Sel>
 
-                <Label className="text-right">Cidade</Label>
+                <Label className="col-span-1">Cidade</Label>
                 <Txt
+                  className="col-span-3"
                   value={filtros.cidade}
                   onChange={(e) => setFiltros({ ...filtros, cidade: e.target.value })}
                 />
 
-                <Label className="text-right">UF</Label>
-                <Txt
+                <Label className="col-span-1">UF</Label>
+                <Sel
+                  className="col-span-1 w-full"
                   value={filtros.uf}
                   onChange={(e) =>
                     setFiltros({
                       ...filtros,
-                      uf: e.target.value.toUpperCase().slice(0, 2),
+                      uf: e.target.value,
                     })
                   }
-                  className="text-center w-[60px]"
-                  maxLength={2}
-                />
+                >
+                  <option value=""></option>
+                  <option value="AC">AC</option>
+                  <option value="AL">AL</option>
+                  <option value="AP">AP</option>
+                  <option value="AM">AM</option>
+                  <option value="BA">BA</option>
+                  <option value="CE">CE</option>
+                  <option value="DF">DF</option>
+                  <option value="ES">ES</option>
+                  <option value="GO">GO</option>
+                  <option value="MA">MA</option>
+                  <option value="MT">MT</option>
+                  <option value="MS">MS</option>
+                  <option value="MG">MG</option>
+                  <option value="PA">PA</option>
+                  <option value="PB">PB</option>
+                  <option value="PR">PR</option>
+                  <option value="PE">PE</option>
+                  <option value="PI">PI</option>
+                  <option value="RJ">RJ</option>
+                  <option value="RN">RN</option>
+                  <option value="RS">RS</option>
+                  <option value="RO">RO</option>
+                  <option value="RR">RR</option>
+                  <option value="SC">SC</option>
+                  <option value="SP">SP</option>
+                  <option value="SE">SE</option>
+                  <option value="TO">TO</option>
+                </Sel>
 
-                <Label className="text-right">Tipo Cliente</Label>
+
+                <Label className="col-span-1">Tipo Cliente</Label>
                 <Sel
+                  className="col-span-1 w-full"
                   value={filtros.tipoCliente}
-                  onChange={(e) => setFiltros({ ...filtros, tipoCliente: e.target.value })}
+                  onChange={(e) =>
+                    setFiltros({ ...filtros, tipoCliente: e.target.value })
+                  }
                 >
                   <option>Todos</option>
                   <option>Eventual</option>
@@ -657,56 +676,76 @@ export default function Cliente({ open }) {
                 </Sel>
               </div>
 
-              {/* === LINHA 2 === */}
-              <div className="grid grid-cols-[100px_120px_200px_100px_1fr_100px_1fr] gap-2 items-center mt-2">
-                <Label className="text-right">Documento</Label>
-                <Sel
-                  className="w-[100px]"
-                  value={filtros.tipoDoc}
-                  onChange={(e) => setFiltros({ ...filtros, tipoDoc: e.target.value })}
-                >
-                  <option value="CNPJ">CNPJ</option>
-                  <option value="CPF">CPF</option>
-                </Sel>
+              {/* === LINHA 2 — DOCUMENTO / FANTASIA / RAZÃO === */}
+              <div className="grid grid-cols-12 gap-2 items-center mt-2">
+                <Label className="col-span-1">Documento</Label>
+
+                {/* Tipo + Número juntos */}
+                <div className="col-span-3 flex items-center gap-1 min-w-0">
+                  <Sel
+                    className="w-[80px]"
+                    value={filtros.tipoDoc}
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, tipoDoc: e.target.value })
+                    }
+                  >
+                    <option value="CNPJ">CNPJ</option>
+                    <option value="CPF">CPF</option>
+                  </Sel>
+
+                  <Txt
+                    className="flex-1 min-w-0"
+                    value={filtros.doc}
+                    placeholder={
+                      filtros.tipoDoc === "CNPJ"
+                        ? "00.000.000/0000-00"
+                        : "000.000.000-00"
+                    }
+                    onChange={(e) =>
+                      setFiltros({ ...filtros, doc: e.target.value })
+                    }
+                  />
+                </div>
+
+                <Label className="col-span-1">Fantasia</Label>
                 <Txt
-                  value={filtros.doc}
-                  onChange={(e) => setFiltros({ ...filtros, doc: e.target.value })}
-                  placeholder={
-                    filtros.tipoDoc === "CNPJ"
-                      ? "00.000.000/0000-00"
-                      : "000.000.000-00"
+                  className="col-span-3"
+                  value={filtros.fantasia}
+                  onChange={(e) =>
+                    setFiltros({ ...filtros, fantasia: e.target.value })
                   }
                 />
 
-                <Label className="text-right">Fantasia</Label>
+                <Label className="col-span-1">Razão Social</Label>
                 <Txt
-                  value={filtros.fantasia}
-                  onChange={(e) => setFiltros({ ...filtros, fantasia: e.target.value })}
-                />
-
-                <Label className="text-right">Razão Social</Label>
-                <Txt
+                  className="col-span-3"
                   value={filtros.razao}
-                  onChange={(e) => setFiltros({ ...filtros, razao: e.target.value })}
+                  onChange={(e) =>
+                    setFiltros({ ...filtros, razao: e.target.value })
+                  }
                 />
               </div>
 
-              {/* === LINHA 3 === */}
-              <div className="flex justify-end gap-2 mt-3">
-                <button
-                  onClick={handleLimpar}
-                  className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100"
-                >
-                  <RotateCcw size={14} /> Limpar
-                </button>
-                <button
-                  onClick={handlePesquisar}
-                  className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 text-red-700"
-                >
-                  <Search size={14} /> Pesquisar
-                </button>
+              {/* === LINHA 3 — AÇÕES === */}
+              <div className="grid grid-cols-12 gap-2 mt-3">
+                <div className="col-span-12 flex justify-end gap-2">
+                  <button
+                    onClick={handleLimpar}
+                    className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100"
+                  >
+                    <RotateCcw size={14} /> Limpar
+                  </button>
+
+                  <button
+                    onClick={handlePesquisar}
+                    className="flex items-center gap-1 border border-gray-300 rounded px-3 py-[4px] text-[12px] hover:bg-gray-100 text-red-700"
+                  >
+                    <Search size={14} /> Pesquisar
+                  </button>
+                </div>
               </div>
             </fieldset>
+
 
             {/* === GRID DE RESULTADOS === */}
             <fieldset className="border border-gray-300 rounded p-3 mt-2">

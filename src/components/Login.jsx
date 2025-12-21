@@ -14,6 +14,9 @@ export default function Login({ onLogin }) {
     "Gabriel",
     "Guilherme",
     "Daniel",
+    "Marcio",
+    "Marisa",
+    "Raul",
   ];
 
   const handleSubmit = (e) => {

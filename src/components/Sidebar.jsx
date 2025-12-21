@@ -46,6 +46,9 @@ export default function Sidebar({ open }) {
     { nome: "Gabriel", online: false, ultimaMsg: "Atualizando dados...", naoLidas: 0 },
     { nome: "Guilherme", online: true, ultimaMsg: "Nova viagem liberada", naoLidas: 0 },
     { nome: "Daniel", online: false, ultimaMsg: "Aguardando retorno", naoLidas: 0 },
+    { nome: "Marcio", online: false, ultimaMsg: "", naoLidas: 0 },
+    { nome: "Raul", online: false, ultimaMsg: "", naoLidas: 0 },
+    { nome: "Marisa", online: false, ultimaMsg: "", naoLidas: 0 },
   ]);
   const [contatosComMensagensNaoLidas, setContatosComMensagensNaoLidas] = useState(0);
 
