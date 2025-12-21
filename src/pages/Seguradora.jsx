@@ -500,7 +500,7 @@ function ClientesExcluidosModal({ onClose }) {
             <div className="grid grid-cols-12 gap-2 mb-2">
               <Label col={2}>Código</Label>
               <Txt
-                col={3} 
+                col={3}
                 name="codigo"
                 value={dados.codigo}
                 onChange={handleChange}
@@ -1178,9 +1178,8 @@ export default function Seguradora({ open }) {
   return (
     <>
       <div
-        className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-          open ? "ml-[192px]" : "ml-[56px]"
-        }`}
+        className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+          }`}
       >
         <div className="bg-white border border-gray-300 shadow p-4 rounded flex-1 flex flex-col">
           {/* Título */}
@@ -1407,56 +1406,57 @@ export default function Seguradora({ open }) {
             </fieldset>
           </div>
 
-          {/* Rodapé principal */}
-          <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
-            <button
-              onClick={handleFechar}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <XCircle size={20} />
-              <span>Fechar</span>
-            </button>
 
-            <button
-              onClick={limpar}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <RotateCcw size={20} />
-              <span>Limpar</span>
-            </button>
+        </div>
+        {/* Rodapé principal */}
+        <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
+          <button
+            onClick={handleFechar}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <XCircle size={20} />
+            <span>Fechar</span>
+          </button>
 
-            <button
-              onClick={incluir}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <PlusCircle size={20} />
-              <span>Incluir</span>
-            </button>
+          <button
+            onClick={limpar}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <RotateCcw size={20} />
+            <span>Limpar</span>
+          </button>
 
-            <button
-              onClick={alterar}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <Edit size={20} />
-              <span>Alterar</span>
-            </button>
+          <button
+            onClick={incluir}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <PlusCircle size={20} />
+            <span>Incluir</span>
+          </button>
 
-            <button
-              onClick={excluir}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <Trash2 size={20} />
-              <span>Excluir</span>
-            </button>
+          <button
+            onClick={alterar}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <Edit size={20} />
+            <span>Alterar</span>
+          </button>
 
-            <button
-              onClick={() => setShowPercurso(true)}
-              className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-            >
-              <Route size={20} />
-              <span>Percurso</span>
-            </button>
-          </div>
+          <button
+            onClick={excluir}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <Trash2 size={20} />
+            <span>Excluir</span>
+          </button>
+
+          <button
+            onClick={() => setShowPercurso(true)}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <Route size={20} />
+            <span>Percurso</span>
+          </button>
         </div>
       </div>
 

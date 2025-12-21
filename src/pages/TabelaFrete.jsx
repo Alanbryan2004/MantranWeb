@@ -651,63 +651,64 @@ export default function TabelaFrete({ open }) {
           </>
         )}
 
-        {/* ===================== RODAPÉ ===================== */}
-        <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between text-red-700 
+
+      </div>
+      {/* ===================== RODAPÉ ===================== */}
+      <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between text-red-700 
   sticky bottom-0 left-0 right-0 z-50 shadow-md">
 
-          <div className="flex items-center gap-5 text-red-700">
-            {[
-              { icon: XCircle, label: "Fechar", action: () => navigate(-1) },
-              { icon: RotateCcw, label: "Limpar", action: handleLimparForm },
-              { icon: PlusCircle, label: "Incluir" },
-              { icon: Edit, label: "Alterar" },
-              { icon: Trash2, label: "Excluir" },
-              { icon: DollarSign, label: "Tarifa", action: () => setMostrarTarifa(true) },
-              { icon: Navigation2, label: "Percurso", action: () => window.dispatchEvent(new CustomEvent("abrirPercurso")) },
-              { icon: Percent, label: "Reajuste", action: () => setMostrarReajuste(true) },
-              { icon: Upload, label: "Importar", action: () => setMostrarImportacao(true) },
-            ].map(({ icon: Icon, label, action }) => (
-              <button
-                key={label}
-                onClick={action}
-                title={label}
-                className={`flex flex-col items-center text-[11px] transition ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        <div className="flex items-center gap-5 text-red-700">
+          {[
+            { icon: XCircle, label: "Fechar", action: () => navigate(-1) },
+            { icon: RotateCcw, label: "Limpar", action: handleLimparForm },
+            { icon: PlusCircle, label: "Incluir" },
+            { icon: Edit, label: "Alterar" },
+            { icon: Trash2, label: "Excluir" },
+            { icon: DollarSign, label: "Tarifa", action: () => setMostrarTarifa(true) },
+            { icon: Navigation2, label: "Percurso", action: () => window.dispatchEvent(new CustomEvent("abrirPercurso")) },
+            { icon: Percent, label: "Reajuste", action: () => setMostrarReajuste(true) },
+            { icon: Upload, label: "Importar", action: () => setMostrarImportacao(true) },
+          ].map(({ icon: Icon, label, action }) => (
+            <button
+              key={label}
+              onClick={action}
+              title={label}
+              className={`flex flex-col items-center text-[11px] transition ${footerIconColorNormal} hover:${footerIconColorHover}`}
 
-              >
-                <Icon size={20} />
-                <span>{label}</span>
-              </button>
-            ))}
+            >
+              <Icon size={20} />
+              <span>{label}</span>
+            </button>
+          ))}
 
-            {mostrarTarifa && (
-              <TabelaFreteTarifa
-                open={open}
-                onClose={() => setMostrarTarifa(false)}
-              />
-            )}
+          {mostrarTarifa && (
+            <TabelaFreteTarifa
+              open={open}
+              onClose={() => setMostrarTarifa(false)}
+            />
+          )}
 
-            {mostrarIncluirTarifa && (
-              <TabelaFreteIncluirTarifa onClose={() => setMostrarIncluirTarifa(false)} />
-            )}
+          {mostrarIncluirTarifa && (
+            <TabelaFreteIncluirTarifa onClose={() => setMostrarIncluirTarifa(false)} />
+          )}
 
-            {mostrarIncluirFaixa && (
-              <TabelaFreteIncluirFaixa onClose={() => setMostrarIncluirFaixa(false)} />
-            )}
+          {mostrarIncluirFaixa && (
+            <TabelaFreteIncluirFaixa onClose={() => setMostrarIncluirFaixa(false)} />
+          )}
 
-            {mostrarPercurso && (
-              <TabelaFretePercurso onClose={() => setMostrarPercurso(false)} />
-            )}
+          {mostrarPercurso && (
+            <TabelaFretePercurso onClose={() => setMostrarPercurso(false)} />
+          )}
 
-            {mostrarReajuste && (
-              <TabelaFreteReajuste onClose={() => setMostrarReajuste(false)} />
-            )}
+          {mostrarReajuste && (
+            <TabelaFreteReajuste onClose={() => setMostrarReajuste(false)} />
+          )}
 
 
-            {mostrarImportacao && (
-              <TabelaFreteImportacao onClose={() => setMostrarImportacao(false)} />
-            )}
+          {mostrarImportacao && (
+            <TabelaFreteImportacao onClose={() => setMostrarImportacao(false)} />
+          )}
 
-          </div>
         </div>
       </div>
     </div>

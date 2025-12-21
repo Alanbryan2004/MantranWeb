@@ -20,9 +20,8 @@ function Txt({ col = 3, readOnly = false, className = "", ...rest }) {
     <input
       {...rest}
       readOnly={readOnly}
-      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] w-full col-span-${col} ${
-        readOnly ? "bg-gray-200" : ""
-      } ${className}`}
+      className={`border border-gray-300 rounded px-1 py-[2px] h-[26px] text-[13px] w-full col-span-${col} ${readOnly ? "bg-gray-200" : ""
+        } ${className}`}
     />
   );
 }
@@ -160,27 +159,27 @@ export default function EventoDespesa({ open, onClose }) {
       prev.map((l) =>
         l.codigo === dados.codigo
           ? {
-              ...l,
-              descricao: dados.descricao,
-              valor: dados.valor || "0,00",
-              dc: dados.dc,
-              categoria: `${dados.categoriaCod} - ${dados.categoriaDesc}`,
-              subcategoria:
-                dados.subcategoriaCod && dados.subcategoriaDesc
-                  ? `${dados.subcategoriaCod} - ${dados.subcategoriaDesc}`
-                  : "",
-              percFrete: dados.percFrete || "0,00",
-              abastec: dados.abastec ? "S" : "N",
-              inss: dados.inss ? "S" : "N",
-              sestSenat: dados.sestSenat ? "S" : "N",
+            ...l,
+            descricao: dados.descricao,
+            valor: dados.valor || "0,00",
+            dc: dados.dc,
+            categoria: `${dados.categoriaCod} - ${dados.categoriaDesc}`,
+            subcategoria:
+              dados.subcategoriaCod && dados.subcategoriaDesc
+                ? `${dados.subcategoriaCod} - ${dados.subcategoriaDesc}`
+                : "",
+            percFrete: dados.percFrete || "0,00",
+            abastec: dados.abastec ? "S" : "N",
+            inss: dados.inss ? "S" : "N",
+            sestSenat: dados.sestSenat ? "S" : "N",
 
-              // NOVOS CAMPOS
-              inserirAuto: dados.inserirAuto ? "S" : "N",
-              tipoPagtoCod: dados.tipoPagtoCod,
-              tipoPagtoDesc: dados.tipoPagtoDesc,
-              padraoAdiantamento: dados.padraoAdiantamento ? "S" : "N",
-              adiantamentoCiot: dados.adiantamentoCiot ? "S" : "N",
-            }
+            // NOVOS CAMPOS
+            inserirAuto: dados.inserirAuto ? "S" : "N",
+            tipoPagtoCod: dados.tipoPagtoCod,
+            tipoPagtoDesc: dados.tipoPagtoDesc,
+            padraoAdiantamento: dados.padraoAdiantamento ? "S" : "N",
+            adiantamentoCiot: dados.adiantamentoCiot ? "S" : "N",
+          }
           : l
       )
     );
@@ -225,9 +224,8 @@ export default function EventoDespesa({ open, onClose }) {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       <div className="bg-white border border-gray-300 shadow p-4 rounded flex-1 flex flex-col">
 
@@ -252,12 +250,12 @@ export default function EventoDespesa({ open, onClose }) {
             =============================== */}
             <div className="grid grid-cols-12 gap-2 mb-2">
               <Label col={1}>Evento</Label>
-              <Txt col={1} name="codigo"  readOnly value={dados.codigo} onChange={handleChange} />
+              <Txt col={1} name="codigo" readOnly value={dados.codigo} onChange={handleChange} />
 
-              
+
               <Txt col={4} name="descricao" value={dados.descricao} onChange={handleChange} />
 
-              
+
               <div className="col-span-4 flex items-center gap-2 ml-2">
                 <input
                   type="checkbox"
@@ -277,8 +275,8 @@ export default function EventoDespesa({ open, onClose }) {
                 <span className="text-[12px]">Evento Padrão de Adiantamento</span>
               </div>
             </div>
-              
-            
+
+
             {/* ===============================
                 LINHA 2
             =============================== */}
@@ -333,7 +331,7 @@ export default function EventoDespesa({ open, onClose }) {
                 <span className="text-[12px]">Incide SEST/SENAT</span>
               </div>
 
-                    
+
 
               <div className="col-span-3 flex items-center gap-2">
                 <input
@@ -397,50 +395,51 @@ export default function EventoDespesa({ open, onClose }) {
           </fieldset>
         </div>
 
-        {/* ===============================
+
+      </div>
+      {/* ===============================
             RODAPÉ
         =============================== */}
-        <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
-          <button
-            onClick={handleFechar}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <XCircle size={20} />
-            <span>Fechar</span>
-          </button>
+      <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
+        <button
+          onClick={handleFechar}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <XCircle size={20} />
+          <span>Fechar</span>
+        </button>
 
-          <button
-            onClick={limpar}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <RotateCcw size={20} />
-            <span>Limpar</span>
-          </button>
+        <button
+          onClick={limpar}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <RotateCcw size={20} />
+          <span>Limpar</span>
+        </button>
 
-          <button
-            onClick={incluir}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <PlusCircle size={20} />
-            <span>Incluir</span>
-          </button>
+        <button
+          onClick={incluir}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <PlusCircle size={20} />
+          <span>Incluir</span>
+        </button>
 
-          <button
-            onClick={alterar}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <Edit size={20} />
-            <span>Alterar</span>
-          </button>
+        <button
+          onClick={alterar}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Edit size={20} />
+          <span>Alterar</span>
+        </button>
 
-          <button
-            onClick={excluir}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <Trash2 size={20} />
-            <span>Excluir</span>
-          </button>
-        </div>
+        <button
+          onClick={excluir}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Trash2 size={20} />
+          <span>Excluir</span>
+        </button>
       </div>
     </div>
   );

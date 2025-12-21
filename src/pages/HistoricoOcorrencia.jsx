@@ -26,9 +26,8 @@ function Txt({ col = 3, readOnly = false, className = "", ...rest }) {
     <input
       {...rest}
       readOnly={readOnly}
-      className={`border border-gray-300 rounded px-1 h-[26px] text-[13px] w-full col-span-${col} ${
-        readOnly ? "bg-gray-200" : ""
-      } ${className}`}
+      className={`border border-gray-300 rounded px-1 h-[26px] text-[13px] w-full col-span-${col} ${readOnly ? "bg-gray-200" : ""
+        } ${className}`}
     />
   );
 }
@@ -102,11 +101,11 @@ export default function HistoricoOcorrencia({ open }) {
       prev.map((l) =>
         l.codigo === dados.codigo
           ? {
-              codigo: dados.codigo,
-              descricao: dados.descricao,
-              reentrega: dados.reentrega ? "S" : "N",
-              devolucao: dados.devolucao ? "S" : "N",
-            }
+            codigo: dados.codigo,
+            descricao: dados.descricao,
+            reentrega: dados.reentrega ? "S" : "N",
+            devolucao: dados.devolucao ? "S" : "N",
+          }
           : l
       )
     );
@@ -130,9 +129,8 @@ export default function HistoricoOcorrencia({ open }) {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       <div className="bg-white border border-gray-300 shadow p-4 rounded flex-1 flex flex-col">
 
@@ -231,49 +229,50 @@ export default function HistoricoOcorrencia({ open }) {
 
         </div>
 
-        {/* RODAPÉ */}
-        <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
-          <button
-            onClick={() => window.history.back()}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <XCircle size={20} />
-            <span>Fechar</span>
-          </button>
 
-          <button
-            onClick={limpar}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <RotateCcw size={20} />
-            <span>Limpar</span>
-          </button>
 
-          <button
-            onClick={incluir}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <PlusCircle size={20} />
-            <span>Incluir</span>
-          </button>
+      </div>
+      {/* RODAPÉ */}
+      <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6 mt-3">
+        <button
+          onClick={() => window.history.back()}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <XCircle size={20} />
+          <span>Fechar</span>
+        </button>
 
-          <button
-            onClick={alterar}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <Edit size={20} />
-            <span>Alterar</span>
-          </button>
+        <button
+          onClick={limpar}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <RotateCcw size={20} />
+          <span>Limpar</span>
+        </button>
 
-          <button
-            onClick={excluir}
-            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-          >
-            <Trash2 size={20} />
-            <span>Excluir</span>
-          </button>
-        </div>
+        <button
+          onClick={incluir}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <PlusCircle size={20} />
+          <span>Incluir</span>
+        </button>
 
+        <button
+          onClick={alterar}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Edit size={20} />
+          <span>Alterar</span>
+        </button>
+
+        <button
+          onClick={excluir}
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+        >
+          <Trash2 size={20} />
+          <span>Excluir</span>
+        </button>
       </div>
     </div>
   );

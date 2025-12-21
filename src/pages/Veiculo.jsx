@@ -335,10 +335,9 @@ export default function Veiculo({ open }) {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 flex flex-col h-[calc(100vh-56px)] ${open ? "ml-[192px]" : "ml-[56px]"}`}
     >
+
       {/* TÍTULO */}
       <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
         VEÍCULO
@@ -350,11 +349,10 @@ export default function Veiculo({ open }) {
           <button
             key={tab}
             onClick={() => setAba(tab)}
-            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${
-              aba === tab
-                ? "bg-white text-red-700 border-gray-300"
-                : "bg-gray-100 text-gray-600 border-transparent"
-            } ${tab !== "cadastro" ? "ml-1" : ""}`}
+            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${aba === tab
+              ? "bg-white text-red-700 border-gray-300"
+              : "bg-gray-100 text-gray-600 border-transparent"
+              } ${tab !== "cadastro" ? "ml-1" : ""}`}
           >
             {tab === "cadastro" ? "Cadastro" : "Consulta"}
           </button>
@@ -362,7 +360,8 @@ export default function Veiculo({ open }) {
       </div>
 
       {/* CONTEÚDO */}
-      <div className="flex-1 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto flex flex-col gap-2">
+      <div className="flex-1 p-3 bg-white border-x border-b border-gray-200 rounded-b-md overflow-y-auto flex flex-col gap-2 pb-[88px]">
+
         {/* ==================================================
             ABA CADASTRO
         ================================================== */}
@@ -370,321 +369,321 @@ export default function Veiculo({ open }) {
           <>
             {/* CARD 1 – Dados do Veículo */}
             <fieldset className="border border-gray-300 rounded p-3">
-      {/* Linha 1 */}
-<div className="grid grid-cols-12 gap-4 items-center">
+              {/* Linha 1 */}
+              <div className="grid grid-cols-12 gap-4 items-center">
 
-  {/* Código */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label>Código</Label>
-    <Txt
-      className="w-full text-center ml-[60px]"
-      value={cadastro.codigo}
-      onChange={(e) => setCadastro({ ...cadastro, codigo: e.target.value })}
-    />
-  </div>
+                {/* Código */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label>Código</Label>
+                  <Txt
+                    className="w-full text-center ml-[60px]"
+                    value={cadastro.codigo}
+                    onChange={(e) => setCadastro({ ...cadastro, codigo: e.target.value })}
+                  />
+                </div>
 
-  {/* Placa */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label className="ml-[40px]">Placa</Label>
-    <Txt
-      className="w-full text-center"
-      maxLength={7}
-      value={cadastro.placa}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, placa: maskPlaca(e.target.value) })
-      }
-    />
-  </div>
+                {/* Placa */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label className="ml-[40px]">Placa</Label>
+                  <Txt
+                    className="w-full text-center"
+                    maxLength={7}
+                    value={cadastro.placa}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, placa: maskPlaca(e.target.value) })
+                    }
+                  />
+                </div>
 
-  {/* Tipo */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label className="ml-[45px]">Tipo</Label>
-    <Sel
-      className="w-full"
-      value={cadastro.tipo}
-      onChange={(e) => setCadastro({ ...cadastro, tipo: e.target.value })}
-    >
-      <option value="F">FROTA</option>
-      <option value="A">AGREGADO</option>
-    </Sel>
-  </div>
-
-  {/* Descrição */}
-  <div className="col-span-5 flex items-center gap-1">
-    <Label className="ml-[30px]">Descrição</Label>
-    <Txt
-      className="flex-1"
-      value={cadastro.descricao}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, descricao: e.target.value })
-      }
-    />
-  </div>
-
-  {/* Licenciado - Agora no final da linha 1 */}
-  <div className="col-span-1 flex justify-end">
-    <label className="flex items-center gap-1 text-[12px]">
-      <input
-        type="checkbox"
-        checked={cadastro.licenciado}
-        onChange={(e) =>
-          setCadastro({ ...cadastro, licenciado: e.target.checked })
-        }
-      />
-      Licenciado
-    </label>
-  </div>
-</div>
-
-
-      {/* Linha 2 */}
-<div className="grid grid-cols-12 gap-4 mt-2 items-center">
-
-  {/* Ano */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label >Ano</Label>
-    <Txt
-      className="w-full text-center ml-[77px]"
-      maxLength={4}
-      value={cadastro.ano}
-      onChange={(e) => setCadastro({ ...cadastro, ano: onlyDigits(e.target.value) })}
-    />
-  </div>
-
-  {/* Qtd Eixos */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label className="ml-[15px]">Qtd. Eixos</Label>
-    <Txt
-      className="w-[60px] text-center"
-      maxLength={2}
-      value={cadastro.qtdEixos}
-      onChange={(e) => setCadastro({ ...cadastro, qtdEixos: onlyDigits(e.target.value) })}
-    />
-  </div>
-
-  {/* Contratação */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Label className="ml-[5px]">Contratação</Label>
-    <Txt
-      type="date"
-      className="w-full"
-      value={cadastro.contratacao}
-      onChange={(e) => setCadastro({ ...cadastro, contratacao: e.target.value })}
-    />
-  </div>
-
-  {/* RNTRC */}
-  <div className="col-span-4 flex items-center gap-1">
-    <Label className="ml-[40px]">RNTRC</Label>
-    <Txt
-      className="w-[140px] text-center"
-      maxLength={8}
-      value={cadastro.rntrc}
-      onChange={(e) => setCadastro({ ...cadastro, rntrc: onlyDigits(e.target.value) })}
-    />
-  </div>
-
-  {/* Tipo Utilização - FINAL DA LINHA */}
-  <div className="col-span-2 flex justify-end items-center gap-4">
-    <Label>Utilização</Label>
-
-    <label className="flex items-center gap-1 text-[12px]">
-      <input
-        type="radio"
-        name="tracaoReboque"
-        checked={cadastro.tracaoReboque === "T"}
-        onChange={() => setCadastro({ ...cadastro, tracaoReboque: "T" })}
-      /> Tração
-    </label>
-
-    <label className="flex items-center gap-1 text-[12px]">
-      <input
-        type="radio"
-        name="tracaoReboque"
-        checked={cadastro.tracaoReboque === "R"}
-        onChange={() => setCadastro({ ...cadastro, tracaoReboque: "R" })}
-      /> Reboque
-    </label>
-  </div>
-</div>
-
-    {/* Linha 3 */}
-<div className="grid grid-cols-12 gap-4 mt-2 items-center">
-
-  {/* Proprietário */}
-  <div className="col-span-6 flex items-center gap-1">
-    <Label>Proprietário</Label>
-
-    <Txt
-      className="w-[140px] ml-[35px]"
-      placeholder="CNPJ"
-      value={cadastro.cnpjProprietario}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, cnpjProprietario: onlyDigits(e.target.value) })
-      }
-    />
-
-    <Txt
-      className="flex-1 bg-gray-100"
-      placeholder="Razão Social"
-      readOnly
-      value={cadastro.razaoProprietario}
-    />
-  </div>
-
-  {/* Cidade + UF — FINAL DA LINHA */}
-  <div className="col-span-6 flex items-center justify-end gap-1">
-    <Label className="ml-[45px]">Cidade</Label>
-
-    <Txt
-      className="w-[500px]"
-      value={cadastro.cidadeLic}
-      onChange={(e) => setCadastro({ ...cadastro, cidadeLic: e.target.value })}
-    />
-
-    <Txt
-      className="w-[50px] text-center"
-      maxLength={2}
-      value={cadastro.ufLic}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, ufLic: e.target.value.toUpperCase() })
-      }
-    />
-  </div>
-</div>
-
-              {/* Linha 4 */}
-<div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-  <div className="col-span-4 flex items-center gap-1">
-    <Label >Marca</Label>
-    <Txt
-      className="flex-1 ml-[65px]"
-      value={cadastro.marca}
-      onChange={(e) => setCadastro({ ...cadastro, marca: e.target.value })}
-    />
-  </div>
-
-  <div className="col-span-2 flex items-center gap-1">
-    <Label className="min-w-[70px]">KM Atual</Label>
-    <Txt
-      className="w-full text-right"
-      value={maskKM(cadastro.kmAtual)}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, kmAtual: onlyDigits(e.target.value) })
-      }
-    />
-  </div>
-
-  <div className="col-span-6 flex items-center gap-2">
-    <Label className="ml-[35px]" >Nº Chassi</Label>
-    <Txt
-      className="flex-1"
-      value={cadastro.chassi}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, chassi: e.target.value })
-      }
-    />
-  </div>
-
-</div>
-
-             {/* Linha 5 */}
-<div className="grid grid-cols-12 gap-2 mt-2 items-center">
-
-  <div className="col-span-4 flex items-center gap-1">
-    <Label>Classe</Label>
-    <Sel
-      className="flex-1 ml-[60px]"
-      value={cadastro.classe}
-      onChange={(e) => setCadastro({ ...cadastro, classe: e.target.value })}
-    >
-      <option value="01">UTILITARIO</option>
-      <option value="02">VAN</option>
-      <option value="03">3/4</option>
-      <option value="04">TOCO</option>
-      <option value="05">TRUCK</option>
-      <option value="06">VUC</option>
-      <option value="07">BI-TRUCK</option>
-    </Sel>
-  </div>
-
- <Label> Combustível</Label>
+                {/* Tipo */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label className="ml-[45px]">Tipo</Label>
                   <Sel
                     className="w-full"
-                    value={cadastro.combustivel}
-                    onChange={(e) =>
-                      setCadastro({
-                        ...cadastro,
-                        combustivel: e.target.value,
-                      })
-                    }
+                    value={cadastro.tipo}
+                    onChange={(e) => setCadastro({ ...cadastro, tipo: e.target.value })}
                   >
-                    <option>DIESEL</option>
-                    <option>GASOLINA</option>
-                    <option>ETANOL</option>
-                    <option>GNV</option>
-                    <option>ELÉTRICO</option>
+                    <option value="F">FROTA</option>
+                    <option value="A">AGREGADO</option>
                   </Sel>
-  
+                </div>
 
-  <div className="col-span-6 flex items-center gap-1 justify-end">
-    <Label className="ml-[35px]">Carroceria</Label>
-    <Sel
-      className="flex-1"
-      value={cadastro.carroceria}
-      onChange={(e) => setCadastro({ ...cadastro, carroceria: e.target.value })}
-    >
-      <option value="01">BAU FECHADO</option>
-      <option value="02">BAU SIDER</option>
-      <option value="03">BAU FRIGORIFICO</option>
-      <option value="04">SEM CARROCERIA</option>
-      <option value="05">CARR ABERTA</option>
-      <option value="06">PORTA CONTAINER</option>
-      <option value="07">TRAC/CAV.TRATOR</option>
-      <option value="08">BAU PLATAFORMA</option>
-    </Sel>
-  </div>
-</div>
+                {/* Descrição */}
+                <div className="col-span-5 flex items-center gap-1">
+                  <Label className="ml-[30px]">Descrição</Label>
+                  <Txt
+                    className="flex-1"
+                    value={cadastro.descricao}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, descricao: e.target.value })
+                    }
+                  />
+                </div>
 
-  
-  {/* Linha 6 */}
-<div className="grid grid-cols-12 gap-2 mt-2 items-center">
+                {/* Licenciado - Agora no final da linha 1 */}
+                <div className="col-span-1 flex justify-end">
+                  <label className="flex items-center gap-1 text-[12px]">
+                    <input
+                      type="checkbox"
+                      checked={cadastro.licenciado}
+                      onChange={(e) =>
+                        setCadastro({ ...cadastro, licenciado: e.target.checked })
+                      }
+                    />
+                    Licenciado
+                  </label>
+                </div>
+              </div>
 
-  {/* Modelo – mesma largura da Carroceria */}
-  <div className="col-span-6 flex items-center gap-1">
-    <Label>Modelo</Label>
-    <Sel
-      className="flex-1 ml-[60px]"
-      value={cadastro.modelo}
-      onChange={(e) => setCadastro({ ...cadastro, modelo: e.target.value })}
-    >
-      <option value="003">XRE 300</option>
-      <option value="01">TRACAO</option>
-      <option value="02">IMPLEMENTO</option>
-    </Sel>
-  </div>
 
-  {/* Renavam – mesma largura e posição do bloco Mês/Validade */}
-  <div className="col-span-6 flex items-center gap-2">
-    <Label className="ml-[35px]">Renavam</Label>
+              {/* Linha 2 */}
+              <div className="grid grid-cols-12 gap-4 mt-2 items-center">
 
-    <Txt
-      className="flex-1"
-      value={cadastro.renavam}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, renavam: onlyDigits(e.target.value) })
-      }
-    />
-  </div>
+                {/* Ano */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label >Ano</Label>
+                  <Txt
+                    className="w-full text-center ml-[77px]"
+                    maxLength={4}
+                    value={cadastro.ano}
+                    onChange={(e) => setCadastro({ ...cadastro, ano: onlyDigits(e.target.value) })}
+                  />
+                </div>
 
-</div>
+                {/* Qtd Eixos */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label className="ml-[15px]">Qtd. Eixos</Label>
+                  <Txt
+                    className="w-[60px] text-center"
+                    maxLength={2}
+                    value={cadastro.qtdEixos}
+                    onChange={(e) => setCadastro({ ...cadastro, qtdEixos: onlyDigits(e.target.value) })}
+                  />
+                </div>
+
+                {/* Contratação */}
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label className="ml-[5px]">Contratação</Label>
+                  <Txt
+                    type="date"
+                    className="w-full"
+                    value={cadastro.contratacao}
+                    onChange={(e) => setCadastro({ ...cadastro, contratacao: e.target.value })}
+                  />
+                </div>
+
+                {/* RNTRC */}
+                <div className="col-span-4 flex items-center gap-1">
+                  <Label className="ml-[40px]">RNTRC</Label>
+                  <Txt
+                    className="w-[140px] text-center"
+                    maxLength={8}
+                    value={cadastro.rntrc}
+                    onChange={(e) => setCadastro({ ...cadastro, rntrc: onlyDigits(e.target.value) })}
+                  />
+                </div>
+
+                {/* Tipo Utilização - FINAL DA LINHA */}
+                <div className="col-span-2 flex justify-end items-center gap-4">
+                  <Label>Utilização</Label>
+
+                  <label className="flex items-center gap-1 text-[12px]">
+                    <input
+                      type="radio"
+                      name="tracaoReboque"
+                      checked={cadastro.tracaoReboque === "T"}
+                      onChange={() => setCadastro({ ...cadastro, tracaoReboque: "T" })}
+                    /> Tração
+                  </label>
+
+                  <label className="flex items-center gap-1 text-[12px]">
+                    <input
+                      type="radio"
+                      name="tracaoReboque"
+                      checked={cadastro.tracaoReboque === "R"}
+                      onChange={() => setCadastro({ ...cadastro, tracaoReboque: "R" })}
+                    /> Reboque
+                  </label>
+                </div>
+              </div>
+
+              {/* Linha 3 */}
+              <div className="grid grid-cols-12 gap-4 mt-2 items-center">
+
+                {/* Proprietário */}
+                <div className="col-span-6 flex items-center gap-1">
+                  <Label>Proprietário</Label>
+
+                  <Txt
+                    className="w-[140px] ml-[35px]"
+                    placeholder="CNPJ"
+                    value={cadastro.cnpjProprietario}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, cnpjProprietario: onlyDigits(e.target.value) })
+                    }
+                  />
+
+                  <Txt
+                    className="flex-1 bg-gray-100"
+                    placeholder="Razão Social"
+                    readOnly
+                    value={cadastro.razaoProprietario}
+                  />
+                </div>
+
+                {/* Cidade + UF — FINAL DA LINHA */}
+                <div className="col-span-6 flex items-center justify-end gap-1">
+                  <Label className="ml-[45px]">Cidade</Label>
+
+                  <Txt
+                    className="w-[500px]"
+                    value={cadastro.cidadeLic}
+                    onChange={(e) => setCadastro({ ...cadastro, cidadeLic: e.target.value })}
+                  />
+
+                  <Txt
+                    className="w-[50px] text-center"
+                    maxLength={2}
+                    value={cadastro.ufLic}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, ufLic: e.target.value.toUpperCase() })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Linha 4 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                <div className="col-span-4 flex items-center gap-1">
+                  <Label >Marca</Label>
+                  <Txt
+                    className="flex-1 ml-[65px]"
+                    value={cadastro.marca}
+                    onChange={(e) => setCadastro({ ...cadastro, marca: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-2 flex items-center gap-1">
+                  <Label className="min-w-[70px]">KM Atual</Label>
+                  <Txt
+                    className="w-full text-right"
+                    value={maskKM(cadastro.kmAtual)}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, kmAtual: onlyDigits(e.target.value) })
+                    }
+                  />
+                </div>
+
+                <div className="col-span-6 flex items-center gap-2">
+                  <Label className="ml-[35px]" >Nº Chassi</Label>
+                  <Txt
+                    className="flex-1"
+                    value={cadastro.chassi}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, chassi: e.target.value })
+                    }
+                  />
+                </div>
+
+              </div>
+
+              {/* Linha 5 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                <div className="col-span-4 flex items-center gap-1">
+                  <Label>Classe</Label>
+                  <Sel
+                    className="flex-1 ml-[60px]"
+                    value={cadastro.classe}
+                    onChange={(e) => setCadastro({ ...cadastro, classe: e.target.value })}
+                  >
+                    <option value="01">UTILITARIO</option>
+                    <option value="02">VAN</option>
+                    <option value="03">3/4</option>
+                    <option value="04">TOCO</option>
+                    <option value="05">TRUCK</option>
+                    <option value="06">VUC</option>
+                    <option value="07">BI-TRUCK</option>
+                  </Sel>
+                </div>
+
+                <Label> Combustível</Label>
+                <Sel
+                  className="w-full"
+                  value={cadastro.combustivel}
+                  onChange={(e) =>
+                    setCadastro({
+                      ...cadastro,
+                      combustivel: e.target.value,
+                    })
+                  }
+                >
+                  <option>DIESEL</option>
+                  <option>GASOLINA</option>
+                  <option>ETANOL</option>
+                  <option>GNV</option>
+                  <option>ELÉTRICO</option>
+                </Sel>
+
+
+                <div className="col-span-6 flex items-center gap-1 justify-end">
+                  <Label className="ml-[35px]">Carroceria</Label>
+                  <Sel
+                    className="flex-1"
+                    value={cadastro.carroceria}
+                    onChange={(e) => setCadastro({ ...cadastro, carroceria: e.target.value })}
+                  >
+                    <option value="01">BAU FECHADO</option>
+                    <option value="02">BAU SIDER</option>
+                    <option value="03">BAU FRIGORIFICO</option>
+                    <option value="04">SEM CARROCERIA</option>
+                    <option value="05">CARR ABERTA</option>
+                    <option value="06">PORTA CONTAINER</option>
+                    <option value="07">TRAC/CAV.TRATOR</option>
+                    <option value="08">BAU PLATAFORMA</option>
+                  </Sel>
+                </div>
+              </div>
+
+
+              {/* Linha 6 */}
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
+
+                {/* Modelo – mesma largura da Carroceria */}
+                <div className="col-span-6 flex items-center gap-1">
+                  <Label>Modelo</Label>
+                  <Sel
+                    className="flex-1 ml-[60px]"
+                    value={cadastro.modelo}
+                    onChange={(e) => setCadastro({ ...cadastro, modelo: e.target.value })}
+                  >
+                    <option value="003">XRE 300</option>
+                    <option value="01">TRACAO</option>
+                    <option value="02">IMPLEMENTO</option>
+                  </Sel>
+                </div>
+
+                {/* Renavam – mesma largura e posição do bloco Mês/Validade */}
+                <div className="col-span-6 flex items-center gap-2">
+                  <Label className="ml-[35px]">Renavam</Label>
+
+                  <Txt
+                    className="flex-1"
+                    value={cadastro.renavam}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, renavam: onlyDigits(e.target.value) })
+                    }
+                  />
+                </div>
+
+              </div>
 
 
               {/* Linha 7 */}
-<div className="grid grid-cols-12 gap-2 mt-2 items-center">
+              <div className="grid grid-cols-12 gap-2 mt-2 items-center">
 
-  <div className="col-span-6 flex items-center gap-1">
+                <div className="col-span-6 flex items-center gap-1">
                   <Label>Filial de Vínculo</Label>
                   <Sel
                     className="flex-1 ml-[14px]"
@@ -700,42 +699,42 @@ export default function Veiculo({ open }) {
                   </Sel>
                 </div>
 
-  {/* Mês + Validade Licenciamento — AGORA ATÉ O FINAL */}
-  <div className="col-span-6 flex items-center gap-2 justify-end">
-    <Label className="ml-[35px] min-w-[200px]">
-      Mês / Validade Licenciamento
-    </Label>
+                {/* Mês + Validade Licenciamento — AGORA ATÉ O FINAL */}
+                <div className="col-span-6 flex items-center gap-2 justify-end">
+                  <Label className="ml-[35px] min-w-[200px]">
+                    Mês / Validade Licenciamento
+                  </Label>
 
-    {/* Mês */}
-    <Txt
-      className="w-[50px] text-center"
-      maxLength={2}
-      value={cadastro.mesLic}
-      onChange={(e) =>
-        setCadastro({ ...cadastro, mesLic: maskMes(e.target.value) })
-      }
-    />
+                  {/* Mês */}
+                  <Txt
+                    className="w-[50px] text-center"
+                    maxLength={2}
+                    value={cadastro.mesLic}
+                    onChange={(e) =>
+                      setCadastro({ ...cadastro, mesLic: maskMes(e.target.value) })
+                    }
+                  />
 
-    {/* Validade → agora EXPANDE até o final */}
-    <Txt
-      className="flex-1 text-center"
-      maxLength={10}
-      value={cadastro.validadeLic}
-      onChange={(e) =>
-        setCadastro({
-          ...cadastro,
-          validadeLic: maskDate(e.target.value),
-        })
-      }
-    />
-  </div>
+                  {/* Validade → agora EXPANDE até o final */}
+                  <Txt
+                    className="flex-1 text-center"
+                    maxLength={10}
+                    value={cadastro.validadeLic}
+                    onChange={(e) =>
+                      setCadastro({
+                        ...cadastro,
+                        validadeLic: maskDate(e.target.value),
+                      })
+                    }
+                  />
+                </div>
 
-</div>
+              </div>
 
 
               {/* Linha 8 */}
               <div className="grid grid-cols-12 gap-2 mt-2 items-center">
-                
+
 
 
                 <div className="col-span-6 flex items-center gap-1">
@@ -833,82 +832,7 @@ export default function Veiculo({ open }) {
               </div>
             </fieldset>
 
-            {/* RODAPÉ CADASTRO */}
-            <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center justify-between mt-3">
-              {/* Ícones esquerda */}
-              <div className="flex items-center gap-5">
-                {/* Fechar */}
-                <button
-                  onClick={() => navigate(-1)}
-                  title="Fechar Tela"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <XCircle size={20} />
-                  <span>Fechar</span>
-                </button>
 
-                {/* Limpar */}
-                <button
-                  onClick={limparCadastro}
-                  title="Limpar Campos"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <RotateCcw size={20} />
-                  <span>Limpar</span>
-                </button>
-
-                {/* Incluir */}
-                <button
-                  title="Incluir Veículo"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <PlusCircle size={20} />
-                  <span>Incluir</span>
-                </button>
-
-                {/* Alterar */}
-                <button
-                  title="Alterar Veículo"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <Edit size={20} />
-                  <span>Alterar</span>
-                </button>
-
-                {/* Excluir */}
-                <button
-                  title="Excluir Veículo"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <Trash2 size={20} />
-                  <span>Excluir</span>
-                </button>
-
-                {/* Excel */}
-                <button
-                  title="Exportar Excel"
-                  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
-                >
-                  <FileSpreadsheet size={20} />
-                  <span>Excel</span>
-                </button>
-              </div>
-
-              {/* Operador/Data à direita */}
-              <div className="flex items-center gap-2 text-[12px] text-gray-700">
-                <Label>Operador</Label>
-                <Txt
-                  className="w-[150px] text-center bg-gray-100"
-                  readOnly
-                  value={cadastro.operador}
-                />
-                <Txt
-                  className="w-[100px] text-center bg-gray-100"
-                  readOnly
-                  value={hoje}
-                />
-              </div>
-            </div>
           </>
         )}
 
@@ -916,7 +840,7 @@ export default function Veiculo({ open }) {
             ABA CONSULTA
         ================================================== */}
         {aba === "consulta" && (
-         <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
 
 
             {/* CARD 1 – Parâmetros */}
@@ -991,7 +915,7 @@ export default function Veiculo({ open }) {
                     placeholder="Nome do Proprietário"
                     readOnly
                     value={filtros.proprietarioNome}
-                    onChange={() => {}}
+                    onChange={() => { }}
                   />
                 </div>
 
@@ -1112,6 +1036,67 @@ export default function Veiculo({ open }) {
             </fieldset>
           </div>
         )}
+      </div>
+
+
+      {/* ================= RODAPÉ FIXO ================= */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-300 p-2 flex items-center justify-between mt-auto z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
+
+        {/* Ícones esquerda */}
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => navigate(-1)}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <XCircle size={20} />
+            <span>Fechar</span>
+          </button>
+
+          <button
+            onClick={limparCadastro}
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <RotateCcw size={20} />
+            <span>Limpar</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <PlusCircle size={20} />
+            <span>Incluir</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <Edit size={20} />
+            <span>Alterar</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <Trash2 size={20} />
+            <span>Excluir</span>
+          </button>
+
+          <button
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+          >
+            <FileSpreadsheet size={20} />
+            <span>Excel</span>
+          </button>
+        </div>
+
+        {/* Operador / Data */}
+        <div className="flex items-center gap-2 text-[12px] text-gray-700">
+          <Label>Operador</Label>
+          <Txt className="w-[150px] text-center bg-gray-100" readOnly value={cadastro.operador} />
+          <Txt className="w-[100px] text-center bg-gray-100" readOnly value={hoje} />
+        </div>
+
+
       </div>
 
       {/* ===================== MODAIS ===================== */}
