@@ -99,6 +99,11 @@ import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
 import RelConhecimento from "./pages/RelConhecimento";
 import RelConhecimentoResultado from "./pages/Relatorios/Operacao/RelConhecimentoResultado";
+import ModuloParametro from "./pages/ModuloParametro";
+import GNREParametro from "./pages/GNREParametro";
+import CreditoCombustivelParametro from "./pages/CreditoCombustivelParametro";
+import CreditoCombustivelLancamento from "./pages/CreditoCombustivelLancamento";
+import CreditoCombustivelHistorico from "./pages/CreditoCombustivelHistorico";
 
 // Home WMS (fica em pages, como você pediu)
 import HomeWMS from "./pages/HomeWMS";
@@ -108,6 +113,9 @@ import WMSOS from "./pages/WMSOS";
 
 import ParametroFinanceiro from "./pages/ParametroFinanceiro";
 import ContasPagar from "./pages/ContasPagar";
+import TrocaPortador from "./pages/TrocaPortador";
+import TrocaCliente from "./pages/TrocaCliente";
+import TrocaStatusCTRC from "./pages/TrocaStatusCTRC";
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
 import "./index.css";
@@ -300,15 +308,27 @@ export default function App() {
               <Route path="/feriado" element={<Feriado open={sidebarOpen} />} />
               <Route path="/aduaneira" element={<LocalidadeAduaneira open={sidebarOpen} />} />
 
+
+
+              <Route path="/modulo-parametro" element={<ModuloParametro open={sidebarOpen} />} />
+              <Route path="/parametro-gnre" element={<GNREParametro open={sidebarOpen} />} />
+              <Route path="/credito-combustivel-parametro" element={<CreditoCombustivelParametro open={sidebarOpen} />} />
+              <Route path="/credito-combustivel-lancamento" element={<CreditoCombustivelLancamento open={sidebarOpen} />} />
+              <Route path="/credito-combustivel-historico" element={<CreditoCombustivelHistorico open={sidebarOpen} />} />
               <Route path="/produto" element={<Produto open={sidebarOpen} />} />
               <Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
               <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
               <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
 
+
+
               <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
               <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
               <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
               <Route path="/acertocontas" element={<ViagemPagamento open={sidebarOpen} isModal={false} />} />
+              <Route path="/troca-portador" element={<TrocaPortador open={sidebarOpen} />} />
+              <Route path="/troca-cliente" element={<TrocaCliente open={sidebarOpen} />} />
+              <Route path="/troca-status-ctrc" element={<TrocaStatusCTRC open={sidebarOpen} />} />
 
               <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
               <Route

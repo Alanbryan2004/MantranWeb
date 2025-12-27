@@ -253,6 +253,29 @@ export default function SidebarFinanceiro({ open }) {
                                         {item.label}
                                     </Link>
                                 ))}
+
+                                <div className="border-t border-gray-200 my-1"></div>
+
+                                <Link
+                                    to="/troca-portador"
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
+                                >
+                                    Trocar Portador
+                                </Link>
+
+                                <Link
+                                    to="/troca-cliente"
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
+                                >
+                                    Trocar Cliente
+                                </Link>
+
+                                <Link
+                                    to="/troca-status-ctrc"
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
+                                >
+                                    Trocar Status CTRC / Minuta
+                                </Link>
                             </div>
                         )}
                     </div>

@@ -241,6 +241,7 @@ export default function Sidebar({ open }) {
                     "Prazo de Entrega",
                     "Parâmetro GNRE",
                     "Parâmetro Módulo",
+                    "Crédito de Combustivel",
                     "Produto",
                     "Seguro",
                     "Ocorrência",
@@ -257,6 +258,7 @@ export default function Sidebar({ open }) {
                         if (item === "Produto") setActiveSubMenu("Produto");
                         if (item === "Ocorrência") setActiveSubMenu("Ocorrência");
                         if (item === "Seguro") setActiveSubMenu("Seguro");
+                        if (item === "Crédito de Combustivel") setActiveSubMenu("Crédito de Combustivel");
                       }}
 
                       onMouseLeave={() => setActiveSubMenu(null)}
@@ -379,9 +381,13 @@ export default function Sidebar({ open }) {
                                         ? "/evento-despesa"
                                         : item === "Prazo de Entrega"
                                           ? "/prazo-entrega"
-                                          : item === "Seguro"
-                                            ? "/seguradora"
-                                            : "#"
+                                          : item === "Parâmetro Módulo"
+                                            ? "/modulo-parametro"
+                                            : item === "Parâmetro GNRE"
+                                              ? "/parametro-gnre"
+                                              : item === "Seguro"
+                                                ? "/seguradora"
+                                                : "#"
                           }
                           className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
                         >
@@ -578,6 +584,30 @@ export default function Sidebar({ open }) {
                             Tabela IRRF
                           </Link>
 
+                        </div>
+                      )}
+
+                      {/* Submenu Crédito de Combustivel */}
+                      {item === "Crédito de Combustivel" && activeSubMenu === "Crédito de Combustivel" && (
+                        <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-56 p-1 z-50">
+                          <Link
+                            to="/credito-combustivel-parametro"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Parâmetros
+                          </Link>
+                          <Link
+                            to="/credito-combustivel-lancamento"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Lançamentos
+                          </Link>
+                          <Link
+                            to="/credito-combustivel-historico"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            Histórico
+                          </Link>
                         </div>
                       )}
 
@@ -972,6 +1002,29 @@ export default function Sidebar({ open }) {
                     </Link>
                   )
                 )}
+
+                <div className="border-t border-gray-200 my-1"></div>
+
+                <Link
+                  to="/troca-portador"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Trocar Portador
+                </Link>
+
+                <Link
+                  to="/troca-cliente"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Trocar Cliente
+                </Link>
+
+                <Link
+                  to="/troca-status-ctrc"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Trocar Status CTRC / Minuta
+                </Link>
 
               </div>
             )}
