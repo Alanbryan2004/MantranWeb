@@ -21,6 +21,7 @@ import { useIconColor } from "../context/IconColorContext";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
+import ModalTrocarFilial from "./ModalTrocarFilial";
 
 // Ícone estilo Google Apps
 function AppDotsIcon({ size = 20, color = "#15803d" }) {
@@ -59,6 +60,7 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
     const [showAppsMenu, setShowAppsMenu] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showAlterarSenha, setShowAlterarSenha] = useState(false);
+    const [showTrocarFilial, setShowTrocarFilial] = useState(false);
 
     const navigate = useNavigate();
 
@@ -269,7 +271,10 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
 
                         {showUserMenu && (
                             <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 py-1">
-                                <button className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
+                                <button
+                                    onClick={() => setShowTrocarFilial(true)}
+                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                                >
                                     <Building2 className={iconColor} size={16} />
                                     Trocar Filial
                                 </button>
@@ -316,6 +321,10 @@ export default function HeaderFinanceiro({ toggleSidebar }) {
             {/* MODAL ALTERAR SENHA */}
             {showAlterarSenha && (
                 <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+            )}
+
+            {showTrocarFilial && (
+                <ModalTrocarFilial open={showTrocarFilial} onClose={() => setShowTrocarFilial(false)} />
             )}
         </>
     );

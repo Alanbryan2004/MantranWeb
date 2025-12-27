@@ -15,8 +15,10 @@ import { useNotificacao } from "../context/NotificacaoContext";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
+import ModalTrocarFilial from "./ModalTrocarFilial";
 import { useIconColor } from "../context/IconColorContext";
 import { useMenuRapido } from "../context/MenuRapidoContext";
+import { useFilial } from "../context/FilialContext";
 
 function AppDotsIcon({ size = 20, color = "#b91c1c" }) {
   const dotSize = size / 5;
@@ -54,6 +56,8 @@ export default function Header({ toggleSidebar }) {
   const [showAppsMenu, setShowAppsMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAlterarSenha, setShowAlterarSenha] = useState(false);
+  const [showTrocarFilial, setShowTrocarFilial] = useState(false);
+  const { filialAtiva } = useFilial();
 
   // Notificações REAIS da Agenda
   const { notificacoes, marcarComoLido } = useNotificacao();
@@ -91,6 +95,19 @@ export default function Header({ toggleSidebar }) {
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* FILIAL ATIVA - CENTRO */}
+        <div className="absolute left-1/2 -translate-x-1/2">
+          {filialAtiva ? (
+            <div className="bg-gray-100 border border-gray-300 rounded px-4 py-[3px] text-sm text-gray-700 font-semibold">
+              Filial {filialAtiva.codigo} – {filialAtiva.nome}
+            </div>
+          ) : (
+            <div className="bg-yellow-100 border border-yellow-300 rounded px-4 py-[3px] text-sm text-yellow-800">
+              Nenhuma filial selecionada
+            </div>
+          )}
         </div>
 
         {/* LADO DIREITO */}
@@ -244,7 +261,10 @@ export default function Header({ toggleSidebar }) {
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 py-1">
 
-                <button className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
+                <button
+                  onClick={() => setShowTrocarFilial(true)}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+                >
                   <Building2 className={iconColor} size={16} />
                   Trocar Filial
                 </button>
@@ -290,6 +310,10 @@ export default function Header({ toggleSidebar }) {
 
       {showAlterarSenha && (
         <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+      )}
+
+      {showTrocarFilial && (
+        <ModalTrocarFilial open={showTrocarFilial} onClose={() => setShowTrocarFilial(false)} />
       )}
     </>
   );

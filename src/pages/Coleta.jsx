@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Comex from "./Comex";
 import InicioColetaModal from "./InicioColetaModal";
 import EncerraColetaModal from "./EncerraColetaModal";
 import { useIconColor } from "../context/IconColorContext";
+import { useFilial } from "../context/FilialContext";
 
 import {
   XCircle,
@@ -65,6 +66,7 @@ function Sel({ children, className = "", ...rest }) {
 
 
 export default function Coleta({ open }) {
+  const { filialAtiva } = useFilial();
   const [showModalInicio, setShowModalInicio] = useState(false);
   const [showModalEncerrar, setShowModalEncerrar] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null); // já usado no Iniciar
@@ -72,7 +74,13 @@ export default function Coleta({ open }) {
   const [showNotaFiscal, setShowNotaFiscal] = useState(false);
   const [showComex, setShowComex] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [filialSelecionada, setFilialSelecionada] = useState("");
 
+  useEffect(() => {
+    if (filialAtiva) {
+      setFilialSelecionada(filialAtiva.codigo);
+    }
+  }, [filialAtiva]);
   const navigate = useNavigate();
 
   const {
@@ -130,9 +138,18 @@ export default function Coleta({ open }) {
                 </Sel>
 
                 <Label className="col-span-1 text-right">Filial</Label>
-                <Sel className="col-span-5">
-                  <option>001 - TESTE MANTRAN</option>
+                <Sel
+                  className="col-span-5"
+                  value={filialSelecionada}
+                  disabled
+                >
+                  {filialAtiva && (
+                    <option value={filialAtiva.codigo}>
+                      {filialAtiva.codigo} - {filialAtiva.nome}
+                    </option>
+                  )}
                 </Sel>
+
               </div>
 
               {/* LINHA 2 */}

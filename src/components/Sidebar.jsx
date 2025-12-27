@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"; // ✅ adiciona o useEffect aqui
 import { io } from "socket.io-client"; // ✅ adiciona esta linha
 import EmojiPicker from "emoji-picker-react";
 import UsuarioAlterarSenha from "../pages/UsuarioAlterarSenha";
+import ModalTrocarFilial from "./ModalTrocarFilial";
 import { useIconColor } from "../context/IconColorContext";
 import { useModulos } from "../context/ModulosContext";
 
@@ -38,6 +39,7 @@ export default function Sidebar({ open }) {
   const [mostrarEmoji, setMostrarEmoji] = useState(false);
   const [mensagens, setMensagens] = useState([]);
   const [showAlterarSenha, setShowAlterarSenha] = useState(false);
+  const [showTrocarFilial, setShowTrocarFilial] = useState(false);
   const [usuarios, setUsuarios] = useState([
     { nome: "Alan", online: true, ultimaMsg: "Olá, tudo bem?", naoLidas: 0 },
     { nome: "Admin", online: false, ultimaMsg: "CT-e finalizado com sucesso", naoLidas: 0 },
@@ -1157,6 +1159,7 @@ export default function Sidebar({ open }) {
                     className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer"
                     onClick={() => {
                       if (sub === "Alterar Senha") setShowAlterarSenha(true);
+                      if (sub === "Trocar Filial") setShowTrocarFilial(true);
                     }}
                   >
                     {sub}
@@ -1216,6 +1219,10 @@ export default function Sidebar({ open }) {
 
       {showAlterarSenha && (
         <UsuarioAlterarSenha onClose={() => setShowAlterarSenha(false)} />
+      )}
+
+      {showTrocarFilial && (
+        <ModalTrocarFilial open={showTrocarFilial} onClose={() => setShowTrocarFilial(false)} />
       )}
 
       {/* === PAINEL LATERAL DO CHAT === */}
