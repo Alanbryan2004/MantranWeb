@@ -19,6 +19,7 @@ function Txt({ className = "", readOnly = false, ...props }) {
         <input
             {...props}
             readOnly={readOnly}
+            tabIndex={readOnly ? -1 : undefined}
             className={`
         border border-gray-300 rounded
         px-2 py-[2px] h-[26px] text-[13px]
@@ -45,65 +46,40 @@ function Sel({ children, className = "", ...rest }) {
 }
 
 /* ================= COMPONENTE ================= */
-export default function TrocaStatusCTRC({ open }) {
+export default function TrocaSeguradora({ open }) {
     const navigate = useNavigate();
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
     const [dados, setDados] = useState({
-        empresa: "001 - MANTRAN TECNOLOGIAS LTDA ME",
-        filial: "001 - MANTRAN TECNOLOGIAS LTDA ME",
+        empresa: "001 - MANTRAN TRANSPORTES",
+        filial: "001 - TESTE MANTRAN",
+        seguradoraCodigo: "",
+        seguradoraDescricao: "",
         serie: "",
-        conhecimento: "",
-        minuta: "",
-        cliente: "",
-        valor: "",
-        status: "F",
+        conhecimentoIni: "",
+        conhecimentoFim: "",
     });
 
     const [modalMsg, setModalMsg] = useState(false);
 
-    /* ===== Regras de Exclusão ===== */
-    const onSerieConhecimento = (campo, valor) => {
-        setDados((prev) => ({
-            ...prev,
-            [campo]: valor,
-            minuta: "",
-        }));
-    };
-
-    const onMinuta = (valor) => {
-        setDados((prev) => ({
-            ...prev,
-            minuta: valor,
-            serie: "",
-            conhecimento: "",
-        }));
-    };
-
-    /* ===== MOCK de carga ===== */
-    const carregarDados = () => {
-        if (
-            (dados.serie && dados.conhecimento) ||
-            dados.minuta
-        ) {
+    /* ===== MOCK: carregar descrição da seguradora ===== */
+    const carregarSeguradora = () => {
+        if (dados.seguradoraCodigo) {
             setDados((prev) => ({
                 ...prev,
-                cliente: "AUTO CLEAN TRANSPORTES LTDA ME",
-                valor: "1.270,81",
+                seguradoraDescricao: "PORTO SEGURO CIA DE SEGUROS GERAIS",
             }));
         }
     };
 
     const limpar = () => {
         setDados({
-            empresa: dados.empresa,
-            filial: dados.filial,
+            ...dados,
+            seguradoraCodigo: "",
+            seguradoraDescricao: "",
             serie: "",
-            conhecimento: "",
-            minuta: "",
-            cliente: "",
-            valor: "",
-            status: "F",
+            conhecimentoIni: "",
+            conhecimentoFim: "",
         });
     };
 
@@ -119,99 +95,90 @@ export default function TrocaStatusCTRC({ open }) {
         >
             {/* ================= TÍTULO ================= */}
             <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
-                TROCAR STATUS DO CTE / MINUTA
+                TROCAR SEGURADORA
             </h1>
 
             {/* ================= CONTEÚDO ================= */}
             <div className="flex-1 p-3 bg-white border-x border-b border-gray-300 rounded-b-md overflow-y-auto flex flex-col gap-3">
                 <fieldset className="border border-gray-300 rounded p-3">
                     <legend className="px-2 text-red-700 font-semibold text-[13px]">
-                        Trocar Status
+                        Trocar Seguradora
                     </legend>
 
                     {/* Linha 1 */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-1">Empresa</Label>
-                        <Sel className="col-span-5" value={dados.empresa}>
-                            <option>{dados.empresa}</option>
+                        <Sel
+                            className="col-span-5 w-full"
+                            value={dados.empresa}
+                            onChange={(e) =>
+                                setDados({ ...dados, empresa: e.target.value })
+                            }
+                        >
+                            <option>001 - MANTRAN TRANSPORTES</option>
+                            <option>002 - AUTO CLEAN TRANSPORTES</option>
                         </Sel>
 
                         <Label className="col-span-1">Filial</Label>
-                        <Sel className="col-span-5" value={dados.filial}>
-                            <option>{dados.filial}</option>
+                        <Sel
+                            className="col-span-5 w-full"
+                            value={dados.filial}
+                            onChange={(e) =>
+                                setDados({ ...dados, filial: e.target.value })
+                            }
+                        >
+                            <option>001 - TESTE MANTRAN</option>
+                            <option>002 - MATRIZ</option>
                         </Sel>
                     </div>
 
                     {/* Linha 2 */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
-                        <Label className="col-span-1">Série</Label>
+                        <Label className="col-span-1">Seguradora</Label>
                         <Txt
                             className="col-span-1"
-                            value={dados.serie}
-                            disabled={!!dados.minuta}
+                            value={dados.seguradoraCodigo}
                             onChange={(e) =>
-                                onSerieConhecimento("serie", e.target.value)
+                                setDados({ ...dados, seguradoraCodigo: e.target.value })
                             }
-                            onBlur={carregarDados}
+                            onBlur={carregarSeguradora}
                         />
 
-                        <Label className="col-span-1">Conhecimento</Label>
                         <Txt
-                            className="col-span-3"
-                            value={dados.conhecimento}
-                            disabled={!!dados.minuta}
-                            onChange={(e) =>
-                                onSerieConhecimento("conhecimento", e.target.value)
-                            }
-                            onBlur={carregarDados}
-                        />
-
-                        <Label className="col-span-1">Nº Minuta</Label>
-                        <Txt
-                            className="col-span-3"
-                            value={dados.minuta}
-                            disabled={!!dados.serie || !!dados.conhecimento}
-                            onChange={(e) => onMinuta(e.target.value)}
-                            onBlur={carregarDados}
+                            className="col-span-10"
+                            readOnly
+                            value={dados.seguradoraDescricao}
                         />
                     </div>
 
                     {/* Linha 3 */}
-                    <div className="grid grid-cols-12 gap-2 mb-2">
-                        <Label className="col-span-1">Cliente</Label>
-                        <Txt
-                            className="col-span-11"
-                            readOnly
-                            value={dados.cliente}
-                        />
-                    </div>
-
-                    {/* Linha 4 */}
-                    <div className="grid grid-cols-12 gap-2 mb-2">
-                        <Label className="col-span-1">Valor</Label>
-                        <Txt
-                            className="col-span-3 text-right"
-                            readOnly
-                            value={dados.valor}
-                        />
-                    </div>
-
-                    {/* Linha 5 */}
                     <div className="grid grid-cols-12 gap-2">
-                        <Label className="col-span-1">Status</Label>
-                        <Sel
-                            className="col-span-3"
-                            value={dados.status}
+                        <Label className="col-span-1">Série</Label>
+                        <Txt
+                            className="col-span-1"
+                            value={dados.serie}
                             onChange={(e) =>
-                                setDados({ ...dados, status: e.target.value })
+                                setDados({ ...dados, serie: e.target.value })
                             }
-                        >
-                            <option value="F">F - Faturado</option>
-                            <option value="A">A - A Pagar</option>
-                            <option value="P">P - Pago</option>
-                            <option value="B">B - Bloqueado</option>
-                            <option value="C">C - Cortesia</option>
-                        </Sel>
+                        />
+
+                        <Label className="col-span-1 col-start-5">Do Conhecimento</Label>
+                        <Txt
+                            className="col-span-3"
+                            value={dados.conhecimentoIni}
+                            onChange={(e) =>
+                                setDados({ ...dados, conhecimentoIni: e.target.value })
+                            }
+                        />
+
+                        <Label className="col-span-1">Ao Conhecimento</Label>
+                        <Txt
+                            className="col-span-3"
+                            value={dados.conhecimentoFim}
+                            onChange={(e) =>
+                                setDados({ ...dados, conhecimentoFim: e.target.value })
+                            }
+                        />
                     </div>
                 </fieldset>
             </div>
@@ -248,7 +215,7 @@ export default function TrocaStatusCTRC({ open }) {
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white p-6 shadow-lg rounded border text-center w-[300px]">
                         <p className="text-green-700 font-bold mb-4">
-                            Status alterado com sucesso!
+                            Seguradora alterada com sucesso!
                         </p>
                         <button
                             className="px-3 py-1 bg-red-700 text-white rounded"

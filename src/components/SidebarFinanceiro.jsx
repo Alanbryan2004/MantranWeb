@@ -274,7 +274,14 @@ export default function SidebarFinanceiro({ open }) {
                                     to="/troca-status-ctrc"
                                     className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
                                 >
-                                    Trocar Status CTRC / Minuta
+                                    Trocar Status CTRC
+                                </Link>
+
+                                <Link
+                                    to="/troca-seguradora"
+                                    className="block px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer text-gray-700"
+                                >
+                                    Trocar Seguradora
                                 </Link>
                             </div>
                         )}

@@ -116,6 +116,8 @@ import ContasPagar from "./pages/ContasPagar";
 import TrocaPortador from "./pages/TrocaPortador";
 import TrocaCliente from "./pages/TrocaCliente";
 import TrocaStatusCTRC from "./pages/TrocaStatusCTRC";
+import TrocaSeguradora from "./pages/TrocaSeguradora";
+import Perfil from "./pages/Perfil";
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext";
 
 import "./index.css";
@@ -329,6 +331,8 @@ export default function App() {
               <Route path="/troca-portador" element={<TrocaPortador open={sidebarOpen} />} />
               <Route path="/troca-cliente" element={<TrocaCliente open={sidebarOpen} />} />
               <Route path="/troca-status-ctrc" element={<TrocaStatusCTRC open={sidebarOpen} />} />
+              <Route path="/troca-seguradora" element={<TrocaSeguradora open={sidebarOpen} />} />
+              <Route path="/perfil" element={<Perfil open={sidebarOpen} />} />
 
               <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
               <Route

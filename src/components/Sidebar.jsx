@@ -1023,7 +1023,14 @@ export default function Sidebar({ open }) {
                   to="/troca-status-ctrc"
                   className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
                 >
-                  Trocar Status CTRC / Minuta
+                  Trocar Status CTRC
+                </Link>
+
+                <Link
+                  to="/troca-seguradora"
+                  className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700 cursor-pointer"
+                >
+                  Trocar Seguradora
                 </Link>
 
               </div>

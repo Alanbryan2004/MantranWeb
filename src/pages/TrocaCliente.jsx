@@ -50,8 +50,8 @@ export default function TrocaCliente({ open }) {
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
     const [dados, setDados] = useState({
-        empresa: "022 - AUTO CLEAN TRANSPORTES LTDA ME",
-        filial: "022 - AUTO CLEAN TRANSPORTES LTDA ME",
+        empresa: "001 - MANTRAN TECNOLOGIAS LTDA ME",
+        filial: "001 - MANTRAN TECNOLOGIAS LTDA ME",
         serie: "",
         conhecimento: "",
         clienteAtual: "",
