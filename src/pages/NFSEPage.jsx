@@ -257,72 +257,82 @@ export default function NFSEPage({ open }) {
       <div className="flex flex-col flex-1 min-h-0">
         {activeTab === "cadastro" ? (
           <>
-            {/* --- CARD 1 - NÃO ALTERADO --- */}
             <fieldset
               key={cadastroKey}
-              className="border border-gray-300 rounded p-2 bg-white space-y-3"
+              className="border border-gray-300 rounded p-3 bg-white space-y-3"
             >
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                Dados da Nota Fiscal
+              </legend>
 
-
-              {/* Linha 01 */}
+              {/* ================= Linha 01 ================= */}
               <div className="grid grid-cols-12 gap-2 items-center">
-                {/* Empresa */}
-                <Label className="col-span-1 text-right">Empresa</Label>
+                <Label className="col-span-1 flex items-center justify-end">Empresa</Label>
                 <Sel
-                  className="col-span-3 min-w-[200px]"
+                  className="col-span-4 w-full"
                   defaultValue={selectedNF?.emp || "001"}
                 >
                   <option value="001">001 - MANTRAN TRANSPORTES LTDA</option>
                 </Sel>
 
-                {/* Filial */}
-                <Label className="col-span-1 text-right">Filial</Label>
+                <Label className="col-span-1 flex items-center justify-end">Filial</Label>
                 <Sel
-                  className="col-span-3 min-w-[180px]"
+                  className="col-span-4 w-full"
                   defaultValue={selectedNF?.fil || "001"}
                 >
                   <option value="001">001 - TESTE MANTRAN</option>
                 </Sel>
-
-                <Label className="col-span-1 text-right">Fatura</Label>
-                <Txt className="col-span-1 text-center" maxLength={9} />
-
-                {/* Nº NFSE — sempre no fim da linha */}
-                <Label className="col-span-1 text-right">Nº NFSE</Label>
-                <Txt className="col-span-1 w-[100px]" />
-              </div>
-
-              {/* Linha 02 */}
-              <div className="grid grid-cols-12 gap-2 items-center">
-                <Label className="col-span-1 text-right">Nº NF</Label>
-
-                {/* Nº NF */}
-                <Txt
-                  className="col-span-1 w-[130px]"
-                  defaultValue={selectedNF?.nf || ""}
-                />
-
-                {/* Série, coladinho e 3 dígitos */}
-                <Txt
-                  className="col-span-1 w-[50px] text-center ml-10"
-                  maxLength={3}
-                  defaultValue={selectedNF?.serie || ""}
-                />
-
-                <Label className="col-span-2 text-right">Cadastro</Label>
+                <Label className="col-span-1 flex items-center justify-end">Cadastro</Label>
                 <Txt
                   type="date"
-                  className="col-span-3"
+                  className="col-span-1 bg-gray-200" readOnly
                   defaultValue={isoOrDefault(selectedNF?.dtISO, "2025-10-20")}
                 />
 
-                <Label className="col-span-3 text-right">CFOP</Label>
-                <Txt className="col-span-1 text-center" maxLength={4} />
+
+
               </div>
 
-              {/* Linha 03 */}
+              {/* ================= Linha 02 ================= */}
               <div className="grid grid-cols-12 gap-2 items-center">
-                <Label className="col-span-1 text-right">Cliente</Label>
+                <Label className="col-span-1 flex items-center justify-end">Nº NF</Label>
+                {/* ===== Nº NF + Série (ocupam 2 colunas no grid principal) ===== */}
+                <div className="col-span-2 grid grid-cols-3 gap-2 items-center">
+
+                  {/* Nº NF */}
+                  <Txt
+                    className="col-span-2 text-center"
+                    maxLength={6}
+                    defaultValue={selectedNF?.nf || ""}
+                  />
+
+                  {/* Série */}
+                  <Txt
+                    className="col-span-1 text-center"
+                    maxLength={3}
+                    defaultValue={selectedNF?.serie || ""}
+                  />
+
+                </div>
+
+                <Label className="col-span-1 flex items-center justify-end">Nº NFSE</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly />
+                <Label className="col-span-1 flex items-center justify-end">Divisão</Label>
+                <Sel className="col-span-2 w-full">
+                  <option>1054 - LEO CAMPINAS</option>
+                  <option>1500 - LEO CD</option>
+                </Sel>
+                <Label className="col-span-1 flex items-center justify-end ">CFOP</Label>
+                <Txt className="col-span-1 text-center" maxLength={4} />
+                <Label className="col-span-1 flex items-center justify-end">Fatura</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" maxLength={9} readOnly />
+
+
+              </div>
+
+              {/* ================= Linha 03 ================= */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 flex items-center justify-end">Cliente</Label>
 
                 <Txt
                   className="col-span-2"
@@ -332,30 +342,40 @@ export default function NFSEPage({ open }) {
                 />
 
                 <Txt
-                  className="col-span-4"
-                  maxLength={50}
+                  className="col-span-4 bg-gray-200"
+                  readOnly
                   placeholder="Razão Social"
                   defaultValue={selectedNF?.cliente || ""}
+                  tabIndex={-1}
                 />
 
-                <Txt className="col-span-4" placeholder="Cidade" />
                 <Txt
-                  className="col-span-1 text-center"
+                  className="col-span-4 bg-gray-200"
+                  readOnly
+                  placeholder="Cidade"
+                  tabIndex={-1}
+                />
+
+                <Txt
+                  className="col-span-1 text-center bg-gray-200"
+                  readOnly
                   placeholder="UF"
-                  maxLength={2}
+                  tabIndex={-1}
                 />
               </div>
 
-              {/* Linha 04 */}
+              {/* ================= Linha 04 ================= */}
               <div className="grid grid-cols-12 gap-2 items-center">
-                <Label className="col-span-1 text-right">Natureza</Label>
-                <Sel className="col-span-3">
+                <Label className="col-span-1 flex items-center justify-end">Natureza</Label>
+                <Sel className="col-span-4 w-full">
                   <option>PRESTAÇÃO DE SERVIÇO</option>
                   <option>DEVOLUÇÃO DE SERVIÇO</option>
                 </Sel>
 
-                <Label className="col-span-1 text-right">Tipo Serv.</Label>
-                <Sel className="col-span-2">
+                <Label className="col-span-1 flex items-center justify-end">
+                  Tipo Serv.
+                </Label>
+                <Sel className="col-span-4  w-full">
                   <option>TRANSPORTES</option>
                   <option>SERVIÇOS GERAIS</option>
                   <option>REEMBOLSO</option>
@@ -364,15 +384,18 @@ export default function NFSEPage({ open }) {
                   <option>ESCOLTA</option>
                 </Sel>
 
-                {/* Cancelamento somente leitura */}
-                <Label className="col-span-3 text-right">Cancelamento</Label>
+                <Label className="col-span-1 flex items-center justify-end">
+                  Cancelamento
+                </Label>
                 <Txt
-                  className="col-span-2 text-center bg-gray-100 text-gray-600"
+                  className="col-span-1 text-center bg-gray-200 text-gray-600"
                   readOnly
                   defaultValue="20/10/2025"
+                  tabIndex={-1}
                 />
               </div>
             </fieldset>
+
 
             {/* --- CARD 2 — NOVO LAYOUT (GRID + BOTÕES) --- */}
             <div className="border border-gray-300 rounded p-2 bg-white space-y-2">
@@ -465,20 +488,21 @@ export default function NFSEPage({ open }) {
               </div>
             </div>
 
-            {/* CARD 3 — Tributações (sem alterações) */}
-            <div className="border border-gray-300 rounded p-2 bg-white space-y-2">
-              <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+            {/* ================= CARD 3 — TRIBUTAÇÕES ================= */}
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
                 Tributações da Nota Fiscal de Serviço
-              </h2>
+              </legend>
 
-              {/* Linha 1 */}
-              <div className="flex items-center gap-2 flex-wrap text-[12px]">
-                <Label className="w-[80px] text-right">%VR Líquido</Label>
-                <Txt className="w-[70px] text-center" defaultValue="0" />
+              {/* ================= LINHA 1 ================= */}
+              <div className="grid grid-cols-12 gap-2 items-center text-[12px] mb-2">
 
-                <Label className="w-[60px] text-right">Trib ISS</Label>
-                <Sel className="w-[120px]">
-                  <option>EXIGIVEL</option>
+                <Label className="col-span-1 flex items-center justify-end">% VR Líquido</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly defaultValue="0" />
+
+                <Label className="col-span-1 flex items-center justify-end">Trib. ISS</Label>
+                <Sel className="col-span-2 w-full">
+                  <option>EXIGÍVEL</option>
                   <option>NÃO INCIDÊNCIA</option>
                   <option>ISENÇÃO</option>
                   <option>EXPORTAÇÃO</option>
@@ -486,163 +510,172 @@ export default function NFSEPage({ open }) {
                   <option>EXIGIBILIDADE SUSPENSA</option>
                 </Sel>
 
-                <Label className="w-[50px] text-right">Retido?</Label>
-                <input type="checkbox" className="w-4 h-4" />
+                <div className="col-span-1 flex items-center justify-center gap-2">
+                  <input type="checkbox" className="w-4 h-4" />
+                  <span className="text-[12px] text-gray-700">Retido?</span>
+                </div>
 
-                <Label className="w-[70px] text-right">VR ISSQN</Label>
-                <Txt className="w-[70px] text-center" defaultValue="0" />
+                <Label className="col-span-1 flex items-center justify-end">VR ISSQN</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly defaultValue="0" />
 
-                <Label className="w-[40px] text-right">%PIS</Label>
-                <Txt className="w-[60px] text-center" defaultValue="0,00" />
+                <Label className="col-span-1 flex items-center justify-end">% PIS</Label>
+                <Txt className="col-span-1 text-center" defaultValue="0,00" />
 
-                <Label className="w-[55px] text-right">%COFINS</Label>
-                <Txt className="w-[60px] text-center" defaultValue="0,00" />
-
-                <Label className="w-[90px] text-right">Divisão/Loja</Label>
-                <Sel className="flex-1 min-w-[160px] max-w-[250px]">
-                  <option>1054 - LEO CAMPINAS</option>
-                  <option>1500 - LEO CD</option>
-                </Sel>
+                <Label className="col-span-1 flex items-center justify-end">% COFINS</Label>
+                <Txt className="col-span-1 text-center" defaultValue="0,00" />
               </div>
 
-              {/* Linha 2 */}
-              <div className="flex items-center gap-2 flex-wrap text-[12px]">
-                <Label className="w-[80px] text-right">Total Serviço</Label>
-                <Txt className="w-[70px] text-center" defaultValue="0" />
+              {/* ================= LINHA 2 ================= */}
+              <div className="grid grid-cols-12 gap-2 items-center text-[12px] mb-2">
 
-                <Label className="w-[40px] text-right">%IRRF</Label>
-                <Txt className="w-[60px] text-center" defaultValue="0" />
+                <Label className="col-span-1 flex items-center justify-end">Total Serviço</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly defaultValue="0" />
 
-                <Label className="w-[70px] text-right">Valor IRRF</Label>
-                <Txt className="w-[70px] text-center" defaultValue="0" />
+                <Label className="col-span-1 flex items-center justify-end">% IRRF</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly defaultValue="0" />
 
-                <Label className="w-[40px] text-right">%ISQN</Label>
-                <Txt className="w-[60px] text-center" defaultValue="0" />
+                <Label className="col-span-1 flex items-center justify-end">Valor IRRF</Label>
+                <Txt className="col-span-1 text-center bg-gray-200" readOnly defaultValue="0" />
 
-                <Sel className="flex-1 min-w-[160px] max-w-[250px]">
+                <Label className="col-span-1 flex items-center justify-end">% ISSQN</Label>
+                <Txt className="col-span-1 text-center" defaultValue="0" />
+
+                <Sel className="col-span-4 w-full">
                   <option>
-                    Operação Tributável (Base de Calculo = Valor da Operação
-                    alíquota normal)
+                    Operação Tributável (Base de cálculo = Valor da Operação)
                   </option>
                   <option>
-                    Operação Tributável (Base de Calculo = Valor da Operação
-                    alíquota diferenciada)
+                    Operação Tributável (Alíquota diferenciada)
                   </option>
                   <option>
-                    Operação Tributável (Base de Calculo = quantidade vendida x
-                    aliquota por unidade)
+                    Operação Tributável (Qtd x Alíquota por unidade)
                   </option>
                   <option>
-                    Operação Tributável (Tributação monofásica(alíquota zero))
+                    Tributação monofásica (alíquota zero)
                   </option>
-                  <option>Operação Tributável (Substituição Tributária)</option>
-                  <option>Operação Tributável (alíquota zero)</option>
-                  <option>Operação Isenta da Contribuição</option>
+                  <option>Substituição Tributária</option>
+                  <option>Operação Isenta</option>
                 </Sel>
+
+
               </div>
 
-              {/* Linha 3 - Observação */}
-              <div className="flex items-center gap-2 text-[12px]">
-                <Label className="w-[80px] text-right">Observação</Label>
+              {/* ================= LINHA 3 ================= */}
+              <div className="grid grid-cols-12 gap-2 items-center text-[12px]">
+                <Label className="col-span-1 flex items-center justify-end">Observação</Label>
                 <Txt
-                  className="flex-1"
+                  className="col-span-11"
                   placeholder="Digite aqui observações adicionais..."
                 />
               </div>
-            </div>
+            </fieldset>
+
           </>
         ) : (
           <>
             {/* --- CONSULTA (SEM ALTERAÇÃO) --- */}
             {/* CARD 1 - Filtros */}
-            <div className="border border-gray-300 rounded p-2 bg-white space-y-2">
-              <h2 className="text-red-700 font-semibold text-[13px] mb-1">
+            <fieldset className="border border-gray-300 rounded p-3 bg-white">
+              <legend className="px-2 text-red-700 font-semibold text-[13px]">
                 Parâmetros de Pesquisa
-              </h2>
+              </legend>
 
-              {/* Linha 1 - Empresa e Filial ocupando toda a largura do card */}
-              <div className="flex items-center gap-3 w-full">
-                <Label className="w-[70px] text-right">Empresa</Label>
+              {/* LINHA 1 - Empresa / Filial */}
+              <div className="grid grid-cols-12 gap-2 mb-2">
+                <Label className="col-span-1 flex items-center justify-end">
+                  Empresa
+                </Label>
                 <Sel
-                  className="flex-[1.5]"
+                  className="col-span-5 w-full"
                   value={filtros.empresa}
                   onChange={handleFiltroChange("empresa")}
                 >
                   <option value="001">001 - MANTRAN TRANSPORTES LTDA</option>
                 </Sel>
-                <Label className="w-[300px] text-right">Filial</Label>
+
+                <Label className="col-span-1 flex items-center justify-end">
+                  Filial
+                </Label>
                 <Sel
-                  className="flex-[1]"
+                  className="col-span-5 w-full"
                   value={filtros.filial}
                   onChange={handleFiltroChange("filial")}
                 >
-                  <option value="001">
-                    001 - MANTRAN TECNOLOGIAS LTDA ME
-                  </option>
-                  <option value="002">
-                    002 - MANTRAN TECNOLOGIAS FILIAL 002
-                  </option>
-                  <option value="003">
-                    003 - MANTRAN TECNOLOGIAS FILIAL 003
-                  </option>
+                  <option value="001">001 - MANTRAN TECNOLOGIAS LTDA ME</option>
+                  <option value="002">002 - MANTRAN TECNOLOGIAS FILIAL 002</option>
+                  <option value="003">003 - MANTRAN TECNOLOGIAS FILIAL 003</option>
                 </Sel>
               </div>
 
-              {/* Linha 2 - Nº NF, Série, Cliente (CNPJ e Razão), Período */}
-              <div className="flex items-center gap-3">
-                <Label className="w-[70px] text-right">Nº NF</Label>
+              {/* LINHA 2 - Nº NF / Série / Cliente / Período */}
+              <div className="grid grid-cols-12 gap-2 mb-2">
+                <Label className="col-span-1 flex items-center justify-end">
+                  Nº NF
+                </Label>
                 <Txt
-                  className="w-[100px]"
+                  className="col-span-1 text-center"
                   value={filtros.nf}
                   onChange={handleFiltroChange("nf")}
                 />
-                <Label className="w-[40px] text-right">Série</Label>
+
+
                 <Txt
-                  className="w-[80px]"
+                  className="col-span-1 text-center"
+                  maxLength={3}
                   value={filtros.serie}
                   onChange={handleFiltroChange("serie")}
                 />
-                <Label className="w-[60px] text-right">Cliente</Label>
+
+                <Label className="col-span-1 flex items-center justify-end">
+                  Cliente
+                </Label>
                 <Txt
-                  className="w-[160px]"
+                  className="col-span-2"
                   maxLength={14}
                   placeholder="CNPJ"
                   value={filtros.cgc}
                   onChange={handleFiltroChange("cgc")}
                 />
+
                 <Txt
-                  className="flex-1"
+                  className="col-span-3 bg-gray-200"
+                  readOnly
                   maxLength={50}
                   placeholder="Razão Social"
                   value={filtros.cliente}
                   onChange={handleFiltroChange("cliente")}
                 />
-                <Label className="w-[60px] text-right">Período</Label>
+
+                <Label className="col-span-1 flex items-center justify-end">
+                  Período
+                </Label>
                 <Txt
                   type="date"
-                  className="w-[130px]"
+                  className="col-span-1"
                   value={filtros.dtInicio}
                   onChange={handleFiltroChange("dtInicio")}
                 />
-                <Label className="w-[20px] text-center">até</Label>
+
                 <Txt
                   type="date"
-                  className="w-[130px]"
+                  className="col-span-1"
                   value={filtros.dtFim}
                   onChange={handleFiltroChange("dtFim")}
                 />
               </div>
 
-              {/* Linha 3 - Botão Pesquisar alinhado à direita */}
+              {/* LINHA 3 - BOTÃO PESQUISAR */}
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handlePesquisar}
-                  className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded px-4 h-[28px] text-[12px] text-gray-700 font-medium"
+                  className="border border-gray-300 bg-gray-50 hover:bg-gray-100
+                 rounded px-4 h-[28px] text-[12px] text-gray-700 font-medium"
                 >
                   Pesquisar
                 </button>
               </div>
-            </div>
+            </fieldset>
+
 
             {/* CARD 2 - Grid */}
             <div className="border border-gray-300 rounded p-2 bg-white flex flex-col">
