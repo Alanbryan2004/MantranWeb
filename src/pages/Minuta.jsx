@@ -226,9 +226,8 @@ export default function Minuta({ open }) {
   /* ========================= Render ========================= */
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       {/* Título */}
       <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
@@ -244,11 +243,10 @@ export default function Minuta({ open }) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${
-              activeTab === tab.id
+            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === tab.id
                 ? "bg-white text-red-700 border-gray-300"
                 : "bg-gray-100 text-gray-600 border-transparent"
-            } ${tab.id !== "cadastro" ? "ml-1" : ""}`}
+              } ${tab.id !== "cadastro" ? "ml-1" : ""}`}
           >
             {tab.label}
           </button>
@@ -280,14 +278,14 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Nº Viagem</Label>
                 <Txt className="col-span-1 bg-gray-200" readOnly />
                 <Label className="col-span-1 text-right">Nº Fatura</Label>
-                <Txt className="col-span-1 bg-gray-200" readOnly/>
+                <Txt className="col-span-1 bg-gray-200" readOnly />
                 <Label className="col-span-2 text-right">Operador</Label>
                 <Txt
                   className="col-span-2 bg-gray-200"
                   readOnly
                   defaultValue="SUPORTE"
                 />
-                
+
               </div>
 
               {/* Linha 2 - Empresa / Filial / Divisão */}
@@ -313,17 +311,17 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Data</Label>
                 <Txt type="date" className="col-span-2" defaultValue={getHojeISO()} />
 
-               
-<Txt
-  maxLength={5}
-  placeholder="00:00"
-  onChange={(e) => {
-    let v = e.target.value.replace(/\D/g, "");
-    if (v.length >= 3) v = v.replace(/(\d{2})(\d)/, "$1:$2");
-    e.target.value = v;
-  }}
-  className="col-span-1"
-/>
+
+                <Txt
+                  maxLength={5}
+                  placeholder="00:00"
+                  onChange={(e) => {
+                    let v = e.target.value.replace(/\D/g, "");
+                    if (v.length >= 3) v = v.replace(/(\d{2})(\d)/, "$1:$2");
+                    e.target.value = v;
+                  }}
+                  className="col-span-1"
+                />
 
                 <Label className="col-span-1 text-right">Nº Coleta</Label>
                 <Txt className="col-span-1" />
@@ -331,7 +329,7 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Nº Solicitação</Label>
                 <Txt className="col-span-1" />
 
-                
+
 
 
                 <Label className="col-span-2 text-right">Veículo</Label>
@@ -367,69 +365,69 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Cotação</Label>
                 <Txt className="col-span-1" />
 
-                
+
 
                 <Label className="col-span-2 text-right">NF Serviço</Label>
                 <Txt className="col-span-2" />
               </div>
 
-{/* Linha 5 - Tração */}
-<div className="grid grid-cols-12 gap-2 items-center">
+              {/* Linha 5 - Tração */}
+              <div className="grid grid-cols-12 gap-2 items-center">
 
-  {/* === Tração === */}
-  <Label className="col-span-1 text-right">Tração</Label>
-  <Txt className="col-span-1" placeholder="Código" />
-  <Txt className="col-span-3" placeholder="Placa / Descrição" />
+                {/* === Tração === */}
+                <Label className="col-span-1 text-right">Tração</Label>
+                <Txt className="col-span-1" placeholder="Código" />
+                <Txt className="col-span-3" placeholder="Placa / Descrição" />
 
-  {/* Bloco Lápis + A (Agora col-span-1) */}
-  <div className="col-span-1 flex items-center gap-1">
-    <IconeLapis
-      title="Abrir cadastro Veículo"
-      onClick={() => navigate("/veiculo")}
-    />
-    <Txt
-      className="w-[100px] text-center px-1"
-      placeholder="AGREGADO"
-      maxLength={1}
-    />
-  </div>
+                {/* Bloco Lápis + A (Agora col-span-1) */}
+                <div className="col-span-1 flex items-center gap-1">
+                  <IconeLapis
+                    title="Abrir cadastro Veículo"
+                    onClick={() => navigate("/veiculo")}
+                  />
+                  <Txt
+                    className="w-[100px] text-center px-1"
+                    placeholder="AGREGADO"
+                    maxLength={1}
+                  />
+                </div>
 
-  {/* === Reboque === */}
-<Label className="col-span-1 text-right">Reboque</Label>
-<Txt className="col-span-1" placeholder="Código" />
+                {/* === Reboque === */}
+                <Label className="col-span-1 text-right">Reboque</Label>
+                <Txt className="col-span-1" placeholder="Código" />
 
-{/* Ícone + Placa/Descrição juntos */}
-<div className="col-span-4 flex items-center gap-1">
-  <IconeLapis
-    title="Abrir cadastro Veículo"
-    onClick={() => navigate("/veiculo")}
-  />
+                {/* Ícone + Placa/Descrição juntos */}
+                <div className="col-span-4 flex items-center gap-1">
+                  <IconeLapis
+                    title="Abrir cadastro Veículo"
+                    onClick={() => navigate("/veiculo")}
+                  />
 
-  <Txt
-    className="flex-1"
-    placeholder="Placa / Descrição"
-  />
-</div>
+                  <Txt
+                    className="flex-1"
+                    placeholder="Placa / Descrição"
+                  />
+                </div>
 
-  
-    
-  
 
-</div>
+
+
+
+              </div>
 
 
 
               {/* Linha 6 - Reboque */}
               <div className="grid grid-cols-12 gap-2 items-center">
-              
-                
-                  
+
+
+
               </div>
 
-          
+
               {/* Participantes (Cliente / Remetente / Destinatário / Expedidor / Recebedor) */}
               <div className="border border-gray-300 rounded p-2 bg-white space-y-1 mt-2">
-               
+
 
                 {/* Cabeçalho */}
                 <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600 mb-1">
@@ -458,53 +456,53 @@ export default function Minuta({ open }) {
                     readOnly
                   />
                   <div className="col-span-1 flex justify-center">
-                    <IconeLapis title="Abrir cadastro Cliente" onClick={() => {}} />
+                    <IconeLapis title="Abrir cadastro Cliente" onClick={() => { }} />
                   </div>
                 </div>
 
-               {/* Remetente */}
-<div className="grid grid-cols-12 gap-2 items-center">
-  <Label className="col-span-1 text-right">Remetente</Label>
+                {/* Remetente */}
+                <div className="grid grid-cols-12 gap-2 items-center">
+                  <Label className="col-span-1 text-right">Remetente</Label>
 
-  {/* CNPJ + Botão de Notas Fiscais */}
-  <div className="col-span-2 flex items-center gap-1">
-    <Txt
-      className="w-full"
-      value={dadosMinuta.remetenteCnpj}
-      onChange={handleDadosChange("remetenteCnpj")}
-    />
+                  {/* CNPJ + Botão de Notas Fiscais */}
+                  <div className="col-span-2 flex items-center gap-1">
+                    <Txt
+                      className="w-full"
+                      value={dadosMinuta.remetenteCnpj}
+                      onChange={handleDadosChange("remetenteCnpj")}
+                    />
 
-    {/* Botão igual ao CTe */}
-    <button
-  onClick={() => setShowNotasRemetente(true)}
-  title="Notas Fiscais do Remetente"
-  className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded w-[24px] h-[22px] flex items-center justify-center"
->
-  <FileText size={13} color="red" />
-</button>
-  </div>
+                    {/* Botão igual ao CTe */}
+                    <button
+                      onClick={() => setShowNotasRemetente(true)}
+                      title="Notas Fiscais do Remetente"
+                      className="border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded w-[24px] h-[22px] flex items-center justify-center"
+                    >
+                      <FileText size={13} color="red" />
+                    </button>
+                  </div>
 
-  {/* Razão Social */}
-  <Txt
-    className="col-span-4 bg-gray-200"
-    readOnly
-    value={dadosMinuta.remetenteRazao}
-  />
+                  {/* Razão Social */}
+                  <Txt
+                    className="col-span-4 bg-gray-200"
+                    readOnly
+                    value={dadosMinuta.remetenteRazao}
+                  />
 
-  {/* Cidade */}
-  <Txt className="col-span-3 bg-gray-200" readOnly />
+                  {/* Cidade */}
+                  <Txt className="col-span-3 bg-gray-200" readOnly />
 
-  {/* UF */}
-  <Txt className="col-span-1 bg-gray-200 text-center" readOnly />
+                  {/* UF */}
+                  <Txt className="col-span-1 bg-gray-200 text-center" readOnly />
 
-  {/* Ícone lápis (já existia) */}
-  <div className="col-span-1 flex justify-center">
-    <IconeLapis
-      title="Abrir cadastro Remetente"
-      onClick={() => {}}
-    />
-  </div>
-</div>
+                  {/* Ícone lápis (já existia) */}
+                  <div className="col-span-1 flex justify-center">
+                    <IconeLapis
+                      title="Abrir cadastro Remetente"
+                      onClick={() => { }}
+                    />
+                  </div>
+                </div>
 
 
                 {/* Destinatário */}
@@ -533,7 +531,7 @@ export default function Minuta({ open }) {
                   <div className="col-span-1 flex justify-center">
                     <IconeLapis
                       title="Abrir cadastro Destinatário"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     />
                   </div>
                 </div>
@@ -546,7 +544,7 @@ export default function Minuta({ open }) {
                   <Txt className="col-span-3 bg-gray-200" readOnly />
                   <Txt className="col-span-1 bg-gray-200 text-center" readOnly />
                   <div className="col-span-1 flex justify-center">
-                    <IconeLapis title="Abrir cadastro Expedidor" onClick={() => {}} />
+                    <IconeLapis title="Abrir cadastro Expedidor" onClick={() => { }} />
                   </div>
                 </div>
 
@@ -558,7 +556,7 @@ export default function Minuta({ open }) {
                   <Txt className="col-span-3 bg-gray-200" readOnly />
                   <Txt className="col-span-1 bg-gray-200 text-center" readOnly />
                   <div className="col-span-1 flex justify-center">
-                    <IconeLapis title="Abrir cadastro Recebedor" onClick={() => {}} />
+                    <IconeLapis title="Abrir cadastro Recebedor" onClick={() => { }} />
                   </div>
                 </div>
               </div>
@@ -567,7 +565,7 @@ export default function Minuta({ open }) {
               <div className="grid grid-cols-12 gap-2 items-center mt-2">
                 <Label className="col-span-1 text-right">Cidade Origem</Label>
                 <Txt className="col-span-1" placeholder="CEP" />
-                <Txt className="col-span-3 bg-gray-200" readOnly/>
+                <Txt className="col-span-3 bg-gray-200" readOnly />
                 <Txt className="col-span-1 bg-gray-200" readOnly />
 
                 <Label className="col-span-2 text-right">Cidade Destino</Label>
@@ -586,7 +584,7 @@ export default function Minuta({ open }) {
 
               {/* Linha 14 - Rota / Peso / Volume / Seguro */}
               <div className="grid grid-cols-12 gap-2 items-center">
-                
+
                 <Label className="col-span-1 text-right">Tab. Frete</Label>
                 <Sel className="col-span-3 w-full">
                   <option>000083 - TESTE HNK</option>
@@ -605,156 +603,156 @@ export default function Minuta({ open }) {
 
                 <Label className="col-span-1 text-right">Volume</Label>
                 <Txt className="col-span-1" />
-<Label className="col-span-1 text-right">VR Mercadoria</Label>
+                <Label className="col-span-1 text-right">VR Mercadoria</Label>
                 <Txt className="col-span-1 bg-gray-200 text-right" readOnly />
-              
+
               </div>
 
               {/* Linha 15 - Tabela Frete / Ajudante / Custos / Tarifa / VR Mercadoria */}
               <div className="grid grid-cols-12 gap-2 items-center">
-               
-               <Label className="col-span-1 text-right">Observação</Label>
-    <Txt className="col-span-6" />
-  <Label className="col-span-1 text-right">Seguro</Label>
+
+                <Label className="col-span-1 text-right">Observação</Label>
+                <Txt className="col-span-6" />
+                <Label className="col-span-1 text-right">Seguro</Label>
                 <Sel className="col-span-2 w-full">
                   <option>0 - Por conta do Remetente</option>
                   <option>1 - Por conta do Destinatário</option>
                 </Sel>
-                
- <Label className="col-span-1 text-right">TP Frete</Label>
+
+                <Label className="col-span-1 text-right">TP Frete</Label>
                 <Sel className="col-span-1 w-full" defaultValue="F">
                   <option value="F">F - Faturado</option>
                   <option value="A">A - A Pagar</option>
                   <option value="P">P - Pago</option>
                   <option value="C">C - Cortesia</option>
                 </Sel>
-             
 
-                
+
+
               </div>
             </div>
 
 
 
-<fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
-  <legend
-    className="text-red-700 font-semibold text-[13px] px-2 flex items-center justify-between cursor-pointer"
-    onClick={() => setOpenValores(!openValores)}
-  >
-    Valores do Frete
-    <span className="text-gray-600 text-[11px] ml-3">
-      {openValores ? "▲" : "▼"}
-    </span>
-  </legend>
+            <fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
+              <legend
+                className="text-red-700 font-semibold text-[13px] px-2 flex items-center justify-between cursor-pointer"
+                onClick={() => setOpenValores(!openValores)}
+              >
+                Valores do Frete
+                <span className="text-gray-600 text-[11px] ml-3">
+                  {openValores ? "▲" : "▼"}
+                </span>
+              </legend>
 
-  {/* =====================
+              {/* =====================
       SEMPRE EXIBIR — Linha 1
   ====================== */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    <Label className="col-span-1 text-right">Frete Peso</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1 text-right">Frete Peso</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <Label className="col-span-1 text-right">Frete Valor</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                <Label className="col-span-1 text-right">Frete Valor</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <Label className="col-span-1 text-right">Despacho</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                <Label className="col-span-1 text-right">Despacho</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <Label className="col-span-1 text-right">CAT</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                <Label className="col-span-1 text-right">CAT</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <Label className="col-span-1 text-right">Pedágio</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                <Label className="col-span-1 text-right">Pedágio</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <Label className="col-span-1 text-right">GRIS</Label>
-    <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                <Label className="col-span-1 text-right">GRIS</Label>
+                <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-    <div className="col-span-2" />
-  </div>
+                <div className="col-span-2" />
+              </div>
 
-  {/* =====================
+              {/* =====================
       CONTEÚDO EXPANDIDO
   ====================== */}
-  {openValores && (
-    <>
-      {/* Linha 2 */}
-      <div className="grid grid-cols-12 gap-2 items-center">
-        <Label className="col-span-1 text-right">Valor Outros</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+              {openValores && (
+                <>
+                  {/* Linha 2 */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-1 text-right">Valor Outros</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">VR Pernoite</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">VR Pernoite</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Taxa Coleta</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Taxa Coleta</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Adval</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Adval</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Ajudante</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Ajudante</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">DTA</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">DTA</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <div className="col-span-3" />
-      </div>
+                    <div className="col-span-3" />
+                  </div>
 
-      {/* Linha 3 */}
-      <div className="grid grid-cols-12 gap-2 items-center">
-        <Label className="col-span-1 text-right">Taxa Entrega</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                  {/* Linha 3 */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-1 text-right">Taxa Entrega</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Escolta</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Escolta</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Estadia</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Estadia</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Estaciona.</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">Estaciona.</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-3 text-right">CFOP</Label>
-        <Txt className="col-span-1" />
+                    <Label className="col-span-3 text-right">CFOP</Label>
+                    <Txt className="col-span-1" />
 
-        <div className="col-span-3" />
-      </div>
+                    <div className="col-span-3" />
+                  </div>
 
-      {/* Linha 4 */}
-      <div className="grid grid-cols-12 gap-2 items-center">
-        <Label className="col-span-3 text-right">Base ICMS</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                  {/* Linha 4 */}
+                  <div className="grid grid-cols-12 gap-2 items-center">
+                    <Label className="col-span-3 text-right">Base ICMS</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">AL ICMS</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">AL ICMS</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">VR ICMS</Label>
-        <Txt className="col-span-1 text-right" defaultValue="0,00" />
+                    <Label className="col-span-1 text-right">VR ICMS</Label>
+                    <Txt className="col-span-1 text-right" defaultValue="0,00" />
 
-        <Label className="col-span-1 text-right">Tarifa</Label>
-        <Txt className="col-span-1 bg-gray-200 text-right" readOnly />
+                    <Label className="col-span-1 text-right">Tarifa</Label>
+                    <Txt className="col-span-1 bg-gray-200 text-right" readOnly />
 
-        <Label className="col-span-1 text-right">Total</Label>
-        <Txt className="col-span-1 text-right bg-gray-200" readOnly defaultValue="0,00" />
-      </div>
-    </>
-  )}
+                    <Label className="col-span-1 text-right">Total</Label>
+                    <Txt className="col-span-1 text-right bg-gray-200" readOnly defaultValue="0,00" />
+                  </div>
+                </>
+              )}
 
-  {/* =====================
+              {/* =====================
       SEMPRE EXIBIR — Linha 6
   ====================== */}
-  <div className="grid grid-cols-12 gap-2 items-center">
-    
-    
-  </div>
-</fieldset>
+              <div className="grid grid-cols-12 gap-2 items-center">
+
+
+              </div>
+            </fieldset>
 
             {/* CARD 3 - Não Averbado + Cadastro/Subtotal */}
             <div className="text-center text-red-700 font-semibold text-[13px]">
               Não Averbado
             </div>
 
-          
+
           </div>
         )}
 
@@ -784,8 +782,8 @@ export default function Minuta({ open }) {
                   <option value="COM CTRC">COM CTRC</option>
                   <option value="TODOS">TODOS</option>
                 </Sel>
-                
-                   <Label className="col-span-1 text-right">Nº Minuta</Label>
+
+                <Label className="col-span-1 text-right">Nº Minuta</Label>
                 <Txt
                   className="col-span-1"
                   value={filtros.numeroMinuta}
@@ -820,7 +818,7 @@ export default function Minuta({ open }) {
                   onChange={handleFiltroChange("periodoAte")}
                 />
 
-             
+
 
                 <Label className="col-span-2 text-right">Motorista</Label>
                 <Txt
@@ -834,7 +832,7 @@ export default function Minuta({ open }) {
                   readOnly
                   placeholder="Nome do Motorista"
                   value={filtros.motoristaNome}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
               </div>
 
@@ -850,17 +848,17 @@ export default function Minuta({ open }) {
                   className="col-span-4 bg-gray-200"
                   readOnly
                   value={filtros.remetenteRazao}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
 
-                 <Label className="col-span-1 text-right">Nº Solicitação</Label>
+                <Label className="col-span-1 text-right">Nº Solicitação</Label>
                 <Txt
                   className="col-span-1"
                   value={filtros.solicitacao}
                   onChange={handleFiltroChange("solicitacao")}
                 />
 
-               
+
 
                 <Label className="col-span-1 text-right">Data de</Label>
                 <Sel
@@ -885,7 +883,7 @@ export default function Minuta({ open }) {
                   className="col-span-4 bg-gray-200"
                   readOnly
                   value={filtros.destinatarioRazao}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
 
                 <Label className="col-span-1 text-right">Baixada</Label>
@@ -1109,13 +1107,17 @@ export default function Minuta({ open }) {
         <CustosAdicionaisModal onClose={() => setShowCustos(false)} />
       )}
 
-      {showNotas && (  <NotaFiscalMinuta onClose={() => setShowNotas(false)} />)}
+      <NotaFiscalMinuta
+        isOpen={showNotas}
+        onClose={() => setShowNotas(false)}
+      />
 
-    
-     <NotasFiscalModal
-  isOpen={showNotasRemetente}
-  onClose={() => setShowNotasRemetente(false)}
-/>
+
+
+      <NotasFiscalModal
+        isOpen={showNotasRemetente}
+        onClose={() => setShowNotasRemetente(false)}
+      />
 
 
       {showComex && <Comex onClose={() => setShowComex(false)} />}

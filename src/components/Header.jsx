@@ -97,10 +97,12 @@ export default function Header({ toggleSidebar }) {
           </div>
         </div>
 
-        {/* FILIAL ATIVA - CENTRO */}
-        <div className="absolute left-1/2 -translate-x-1/2">
+
+
+        {/* LADO DIREITO */}
+        <div className="flex items-center gap-6">
           {filialAtiva ? (
-            <div className="bg-gray-100 border border-gray-300 rounded px-4 py-[3px] text-sm text-gray-700 font-semibold">
+            <div className="border-gray-300 rounded px-4 py-[3px] text-sm text-gray-400 font-semibold">
               Filial {filialAtiva.codigo} – {filialAtiva.nome}
             </div>
           ) : (
@@ -108,11 +110,6 @@ export default function Header({ toggleSidebar }) {
               Nenhuma filial selecionada
             </div>
           )}
-        </div>
-
-        {/* LADO DIREITO */}
-        <div className="flex items-center gap-6">
-
           {/* 🔔 NOTIFICAÇÕES */}
           <div className="relative">
             <button

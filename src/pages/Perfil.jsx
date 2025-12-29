@@ -39,7 +39,7 @@ export default function Perfil({ open }) {
     const [dados, setDados] = useState({
         nome: "Alan Robert",
         email: "alan@mantran.com.br",
-        usuario: "alan.robert",
+        usuario: "Suporte.Mantran",
         senha: "",
         cargo: "Desenvolvedor Sênior",
     });

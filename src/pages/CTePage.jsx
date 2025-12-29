@@ -1112,10 +1112,13 @@ export default function CTePage({ open }) {
 
       {/* Modal de Custos Adicionais */}
       {showCustos && <CustosAdicionaisModal onClose={() => setShowCustos(false)} />}
-      <NotasFiscalModal
-        isOpen={showNotaFiscal}
-        onClose={() => setShowNotaFiscal(false)}
-      />
+      {showNotaFiscal && (
+        <NotasFiscalModal
+          isOpen={showNotaFiscal}
+          onClose={() => setShowNotaFiscal(false)}
+        />
+      )}
+
 
       {showComex && <Comex onClose={() => setShowComex(false)} />}
 

@@ -1,6 +1,9 @@
 import { XCircle } from "lucide-react";
 
-export default function NotaFiscalMinuta({ onClose }) {
+export default function NotaFiscalMinuta({ isOpen, onClose }) {
+
+  // 🔑 ESTA LINHA É A CORREÇÃO
+  if (!isOpen) return null;
   const notas = [
     {
       numero: "00028548",
@@ -70,7 +73,7 @@ export default function NotaFiscalMinuta({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white w-[1200px] max-h-[85vh] overflow-hidden rounded shadow-2xl border border-gray-300 p-4">
-        
+
         <h2 className="text-center text-red-700 font-semibold text-[15px] border-b pb-1 mb-3">
           NOTAS FISCAIS DA MINUTA
         </h2>
@@ -119,9 +122,8 @@ export default function NotaFiscalMinuta({ onClose }) {
               {notas.map((nf, i) => (
                 <tr
                   key={i}
-                  className={`hover:bg-gray-50 ${
-                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
+                  className={`hover:bg-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
                 >
                   {Object.values(nf).map((v, j) => (
                     <td
