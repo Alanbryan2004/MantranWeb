@@ -1,4 +1,3 @@
-// ===== PARTE 1/4 =====
 // src/pages/Relatorios/base/RelatorioBase.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
@@ -58,10 +57,6 @@ function uid() {
     return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-function normalizeMoneyBR(val, minFrac = 2) {
-    return Number(val || 0).toLocaleString("pt-BR", { minimumFractionDigits: minFrac });
-}
-
 /* =========================================================
    PERSISTÊNCIA (localStorage)
 ========================================================= */
@@ -87,6 +82,14 @@ function savePreset(reportKey, preset) {
     }
 }
 
+function deletePreset(reportKey) {
+    try {
+        localStorage.removeItem(storageKey(reportKey));
+    } catch {
+        // ignora
+    }
+}
+
 /* =========================================================
    RELATORIO BASE (MOTOR)
 ========================================================= */
@@ -99,11 +102,12 @@ export default function RelatorioBase({
     logo = "", // base64/url
     orientation = "auto", // auto | portrait | landscape
 
-    // colunas "padrão Mantran" (o que o sistema traz como default)
+    // colunas padrão Mantran (o que aparece por default)
     columns = [], // [{id,label,accessor,width,align}]
     rows = [],
 
     // catálogo completo (para personalização)
+    // ✅ IMPORTANTE: passe aqui seus campos extras (GRIS, Advalorem, CST, CFOP...)
     // se não passar, o catálogo vira o próprio `columns`
     columnCatalog = null, // [{id,label,accessor,width,align, group?}]
 
@@ -119,10 +123,9 @@ export default function RelatorioBase({
     onClose, // se passar, botão Fechar chama; se não, usa history.back()
 
     // layout
-    topOffsetPx = 56, // altura do header fixo da aplicação
-    stickyTopPx = 44, // onde começa a toolbar do relatório
+    topOffsetPx = 56, // altura do header fixo da aplicação (pra calcular altura do scroll)
+    stickyTopPx = 44, // onde começa a toolbar do relatório (top do sticky)
     // se seu sidebar ocupa largura e "tapa" o conteúdo, informe aqui:
-    // (se não precisar, deixe 0)
     sidebarOffsetPx = 0,
 }) {
     const pagesRef = useRef([]);
@@ -142,7 +145,12 @@ export default function RelatorioBase({
     // drag state
     const [dragId, setDragId] = useState(null);
 
-    // ✅ catálogo completo de colunas
+    // layout topo
+    const [layoutMode, setLayoutMode] = useState("mantran"); // mantran | personalizado
+
+    /* =====================================================
+       0) CATÁLOGO COMPLETO (garante unicidade)
+    ====================================================== */
     const fullCatalog = useMemo(() => {
         const base = Array.isArray(columnCatalog) && columnCatalog.length ? columnCatalog : columns;
         const seen = new Set();
@@ -154,11 +162,19 @@ export default function RelatorioBase({
         });
     }, [columnCatalog, columns]);
 
-    // ✅ preset carregado (se existir)
+    /* =====================================================
+       0.1) PRESET SALVO
+    ====================================================== */
     const presetLoaded = useMemo(() => loadPreset(reportKey), [reportKey]);
 
-    // ✅ estado do preset aplicado
+    /* =====================================================
+       0.2) ESTADO DO PRESET APLICADO
+       - selectedColumnIds: ordem e seleção
+       - totalsConfig: o que soma/conta
+       - setAsDefault: define se este preset vira padrão do relatório
+    ====================================================== */
     const [selectedColumnIds, setSelectedColumnIds] = useState(() => {
+        // se tiver preset e ele estiver como padrão, aplica; senão usa columns
         const p = loadPreset(reportKey);
         if (p?.setAsDefault && Array.isArray(p.selectedColumnIds) && p.selectedColumnIds.length) {
             return p.selectedColumnIds;
@@ -172,14 +188,21 @@ export default function RelatorioBase({
         return totals || [];
     });
 
-    // (opcional) salvar como padrão
     const [setAsDefault, setSetAsDefault] = useState(() => {
         const p = loadPreset(reportKey);
         return !!p?.setAsDefault;
     });
 
+    // layoutMode inicial (se existe preset padrão, entra como personalizado)
+    useEffect(() => {
+        const p = loadPreset(reportKey);
+        if (p?.setAsDefault) setLayoutMode("personalizado");
+        else setLayoutMode("mantran");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reportKey]);
+
     /* =====================================================
-       1) ORIENTAÇÃO (AUTO)
+       1) ORIENTAÇÃO (AUTO) - usa colunas ativas
     ====================================================== */
     const resolvedOrientation = useMemo(() => {
         if (orientation !== "auto") return orientation;
@@ -205,6 +228,7 @@ export default function RelatorioBase({
             if (c) ordered.push(c);
         });
 
+        // fallback: se zerou tudo, volta pro padrão
         if (!ordered.length) return columns || [];
         return ordered;
     }, [selectedColumnIds, fullCatalog, columns]);
@@ -283,7 +307,7 @@ export default function RelatorioBase({
         el.addEventListener("scroll", onScroll, { passive: true });
         return () => el.removeEventListener("scroll", onScroll);
     }, []);
-    // ===== PARTE 2/4 =====
+
     /* =====================================================
        7) IMPRIMIR
     ====================================================== */
@@ -299,14 +323,14 @@ export default function RelatorioBase({
     };
 
     /* =====================================================
-       8) TOTAIS (só no final)
+       8) TOTAIS (só no final) - usa totalsConfig
     ====================================================== */
     const totalsValues = useMemo(() => {
         const out = {};
         (totalsConfig || []).forEach((t) => {
             if (t.type === "count") out[t.id] = rows.length;
             if (t.type === "sum") {
-                out[t.id] = rows.reduce((s, r) => s + (Number(r[t.accessor]) || 0), 0);
+                out[t.id] = rows.reduce((s, r) => s + (Number(r?.[t.accessor]) || 0), 0);
             }
         });
         return out;
@@ -314,6 +338,8 @@ export default function RelatorioBase({
 
     /* =====================================================
        9) EXPORT PDF (padrão)
+       - usa activeColumns e totalsConfig
+       - inclui/omite detalhes conforme printIncludeDetail
     ====================================================== */
     const exportPDFDefault = async () => {
         const file = `${guessFilename(titulo)}.pdf`;
@@ -330,6 +356,7 @@ export default function RelatorioBase({
         const addHeader = (page, total) => {
             const topY = 10;
 
+            // LOGO
             if (logo && logo.startsWith("data:")) {
                 try {
                     const fmt = guessImageFormat(logo);
@@ -339,16 +366,19 @@ export default function RelatorioBase({
                 }
             }
 
+            // TÍTULO
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(14);
             pdf.text(titulo || "Relatório", pageW / 2, topY + 6, { align: "center" });
 
+            // PERÍODO
             if (periodo) {
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.text(`Período ${periodo}`, pageW / 2, topY + 12, { align: "center" });
             }
 
+            // PAGINAÇÃO
             pdf.setFont("helvetica", "normal");
             pdf.setFontSize(9);
             pdf.text(`Página ${page} de ${total}`, pageW - marginX, topY + 6, { align: "right" });
@@ -362,6 +392,7 @@ export default function RelatorioBase({
         const detailEnabled = !!(detail?.enabled && detail?.key && detail?.columns?.length);
         const includeDet = !!(detailEnabled && printIncludeDetail);
 
+        // paginação mestre no PDF
         const pdfPages = [];
         for (let i = 0; i < rows.length; i += rowsPerPage) {
             pdfPages.push(rows.slice(i, i + rowsPerPage));
@@ -398,9 +429,9 @@ export default function RelatorioBase({
 
             let y = pdf.lastAutoTable?.finalY ?? 28;
 
+            // detalhe por linha (NF)
             if (includeDet) {
                 const dCols = detail.columns;
-
                 const dHead = [["Relação Notas Fiscais do CTe", ...new Array(dCols.length - 1).fill("")]];
                 const dHead2 = [dCols.map((c) => c.label)];
 
@@ -447,6 +478,7 @@ export default function RelatorioBase({
 
                     y = pdf.lastAutoTable?.finalY ?? y + 8;
 
+                    // totalizador das NFs (se existir peso/valorNF)
                     const totNFs = detRows.length;
                     const totPeso = detRows.reduce((s, x) => s + (Number(x.peso) || 0), 0);
                     const totValor = detRows.reduce((s, x) => s + (Number(x.valorNF) || 0), 0);
@@ -459,18 +491,25 @@ export default function RelatorioBase({
 
                     pdf.text("Totais das NFs:", colX + 90, lineY);
                     pdf.text(String(totNFs), colX + 120, lineY, { align: "right" });
-                    pdf.text(totPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 }), colX + 150, lineY, {
-                        align: "right",
-                    });
-                    pdf.text(totValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 }), colX + 190, lineY, {
-                        align: "right",
-                    });
+                    pdf.text(
+                        totPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 }),
+                        colX + 150,
+                        lineY,
+                        { align: "right" }
+                    );
+                    pdf.text(
+                        totValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+                        colX + 190,
+                        lineY,
+                        { align: "right" }
+                    );
 
                     pdf.setFont("helvetica", "normal");
                     y = lineY + 6;
                 }
             }
 
+            // Totais gerais só na última página do PDF
             if (idx === pdfTotalPages - 1 && (totalsConfig || []).length) {
                 const startY = Math.min((pdf.lastAutoTable?.finalY ?? 28) + 10, pageH - 25);
                 pdf.setFontSize(9.5);
@@ -483,7 +522,7 @@ export default function RelatorioBase({
                     const val =
                         t.type === "count"
                             ? rows.length
-                            : rows.reduce((s, r) => s + (Number(r[t.accessor]) || 0), 0);
+                            : rows.reduce((s, r) => s + (Number(r?.[t.accessor]) || 0), 0);
 
                     const formatted =
                         t.format === "money"
@@ -504,15 +543,17 @@ export default function RelatorioBase({
 
         pdf.save(file);
     };
-    // ===== PARTE 3/4 =====
+
     /* =====================================================
        10) EXPORT EXCEL (padrão)
+       - usa activeColumns e totalsConfig
+       - inclui/omite aba Notas conforme printIncludeDetail
     ====================================================== */
     const exportExcelDefault = () => {
         const file = `${guessFilename(titulo)}.xlsx`;
-
         const masterCols = activeColumns;
 
+        // Mestre
         const wsMasterData = [
             masterCols.map((c) => c.label),
             ...rows.map((r) => masterCols.map((c) => safeGet(r, c.accessor))),
@@ -522,6 +563,7 @@ export default function RelatorioBase({
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, wsMaster, "CTRC");
 
+        // Detalhe (Notas)
         const detailEnabled = !!(detail?.enabled && detail?.key && detail?.columns?.length);
         const includeDet = !!(detailEnabled && printIncludeDetail);
 
@@ -542,6 +584,7 @@ export default function RelatorioBase({
                     detRows.push([ctrcVal, ...dCols.map((c) => safeGet(dr, c.accessor))]);
                 });
 
+                // totalizador das NFs (se existirem campos peso/valorNF)
                 if (det.length) {
                     const totNFs = det.length;
                     const totPeso = det.reduce((s, x) => s + (Number(x.peso) || 0), 0);
@@ -555,13 +598,14 @@ export default function RelatorioBase({
             XLSX.utils.book_append_sheet(wb, wsDet, "Notas");
         }
 
+        // Totais (opcional) como última linha na aba CTRC
         if ((totalsConfig || []).length) {
             const totLine = [];
             (totalsConfig || []).forEach((t) => {
                 const val =
                     t.type === "count"
                         ? rows.length
-                        : rows.reduce((s, r) => s + (Number(r[t.accessor]) || 0), 0);
+                        : rows.reduce((s, r) => s + (Number(r?.[t.accessor]) || 0), 0);
 
                 const formatted =
                     t.format === "money"
@@ -573,7 +617,9 @@ export default function RelatorioBase({
 
             const range = XLSX.utils.decode_range(wsMaster["!ref"]);
             const newRowIndex = range.e.r + 2;
-            XLSX.utils.sheet_add_aoa(wsMaster, [[""], ["TOTAIS"], totLine], { origin: { r: newRowIndex, c: 0 } });
+            XLSX.utils.sheet_add_aoa(wsMaster, [[""], ["TOTAIS"], totLine], {
+                origin: { r: newRowIndex, c: 0 },
+            });
         }
 
         XLSX.writeFile(wb, file);
@@ -599,6 +645,10 @@ export default function RelatorioBase({
 
     /* =====================================================
        12) PERSONALIZAÇÃO
+       - adicionar/remover colunas
+       - ordenar por drag
+       - configurar totais
+       - salvar preset (e opcionalmente como padrão)
     ====================================================== */
     const availableColumns = useMemo(() => {
         const selected = new Set(selectedColumnIds);
@@ -651,10 +701,21 @@ export default function RelatorioBase({
         savePreset(reportKey, preset);
     };
 
+    const applySavedPreset = () => {
+        const p = loadPreset(reportKey);
+        if (!p) return false;
+        if (Array.isArray(p.selectedColumnIds) && p.selectedColumnIds.length) {
+            setSelectedColumnIds(p.selectedColumnIds);
+        }
+        if (Array.isArray(p.totalsConfig)) setTotalsConfig(p.totalsConfig);
+        setSetAsDefault(!!p.setAsDefault);
+        return true;
+    };
+
     /* =====================================================
        13) UI: TOTAIS EDITÁVEIS
     ====================================================== */
-    const [newTotalType, setNewTotalType] = useState("sum");
+    const [newTotalType, setNewTotalType] = useState("sum"); // sum|count
     const [newTotalAccessor, setNewTotalAccessor] = useState("");
     const [newTotalLabel, setNewTotalLabel] = useState("");
     const [newTotalFormat, setNewTotalFormat] = useState("");
@@ -673,13 +734,14 @@ export default function RelatorioBase({
             return;
         }
 
+        // sum
         if (!newTotalAccessor) return;
-
         const id = `sum_${newTotalAccessor}_${uid()}`;
-        const label =
-            newTotalLabel?.trim() ||
-            `Total ${selectableNumericAccessors.find((x) => x.accessor === newTotalAccessor)?.label || newTotalAccessor}`;
+        const baseLabel =
+            selectableNumericAccessors.find((x) => x.accessor === newTotalAccessor)?.label ||
+            newTotalAccessor;
 
+        const label = newTotalLabel?.trim() || `Total ${baseLabel}`;
         const format = newTotalFormat === "money" ? "money" : undefined;
 
         setTotalsConfig((prev) => [
@@ -694,6 +756,25 @@ export default function RelatorioBase({
 
     const removeTotal = (id) => {
         setTotalsConfig((prev) => prev.filter((t) => t.id !== id));
+    };
+
+    /* =====================================================
+       13.1) LAYOUT SELECT (topo)
+    ====================================================== */
+    const handleLayoutChange = (value) => {
+        if (value === "mantran") {
+            setLayoutMode("mantran");
+            resetToMantranDefault();
+            return;
+        }
+
+        // personalizado
+        setLayoutMode("personalizado");
+        const ok = applySavedPreset();
+        if (!ok) {
+            // não tem preset ainda: mantém como está, mas abre modal pra montar e salvar
+            setConfigOpen(true);
+        }
     };
 
     /* =====================================================
@@ -722,6 +803,29 @@ export default function RelatorioBase({
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap justify-end">
+                        {/* ✅ Layout: Padrão/Personalizado */}
+                        <div className="flex items-center gap-2 text-[12px] text-gray-600">
+                            <span>Layout:</span>
+                            <select
+                                className="h-[28px] border border-gray-300 rounded px-2 text-[12px]"
+                                value={layoutMode}
+                                onChange={(e) => handleLayoutChange(e.target.value)}
+                                title="Escolha o layout do relatório"
+                            >
+                                <option value="mantran">Padrão Mantran</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                            {presetLoaded?.savedAt ? (
+                                <span className="text-[11px] text-gray-400">
+                                    {new Date(presetLoaded.savedAt).toLocaleString("pt-BR")}
+                                    {presetLoaded?.setAsDefault ? " (padrão)" : ""}
+                                </span>
+                            ) : (
+                                <span className="text-[11px] text-gray-400">sem preset</span>
+                            )}
+                        </div>
+
+                        {/* ✅ Opção de impressão/exportação */}
                         {detail?.enabled ? (
                             <label className="flex items-center gap-2 text-[12px] text-gray-600 select-none">
                                 <input
@@ -733,14 +837,16 @@ export default function RelatorioBase({
                             </label>
                         ) : null}
 
+                        {/* ✅ Personalizar */}
                         <button
                             onClick={() => setConfigOpen(true)}
                             className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
                             title="Personalizar campos e totais"
                         >
-                            Campos
+                            + Campos
                         </button>
 
+                        {/* Página */}
                         <div className="flex items-center gap-2 text-[12px] text-gray-600">
                             <span>Página</span>
                             <input
@@ -767,6 +873,7 @@ export default function RelatorioBase({
                             </button>
                         </div>
 
+                        {/* Ações */}
                         <button
                             onClick={handlePrint}
                             className="px-3 h-[28px] bg-red-700 text-white rounded text-[12px]"
@@ -791,6 +898,7 @@ export default function RelatorioBase({
                             Excel
                         </button>
 
+                        {/* ✅ Fechar */}
                         <button
                             onClick={handleClose}
                             className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
@@ -822,6 +930,7 @@ export default function RelatorioBase({
                                 padding: PAGE_PADDING,
                             }}
                         >
+                            {/* ============ HEADER REPETE EM TODAS ============ */}
                             <RelatorioHeader
                                 logo={logo}
                                 titulo={titulo}
@@ -830,6 +939,7 @@ export default function RelatorioBase({
                                 totalPages={totalPages}
                             />
 
+                            {/* ============ TABELA ============ */}
                             <RelatorioTable
                                 columns={activeColumns}
                                 rows={pageRows}
@@ -840,13 +950,16 @@ export default function RelatorioBase({
                                 printIncludeDetail={printIncludeDetail}
                             />
 
+                            {/* ============ TOTAIS (SÓ NA ÚLTIMA) ============ */}
                             {pageIndex === totalPages - 1 && (totalsConfig || []).length > 0 && (
                                 <div className="mt-4 border-t pt-2 text-[12px] flex flex-wrap gap-x-6 gap-y-1">
                                     {(totalsConfig || []).map((t) => {
                                         const val = totalsValues[t.id];
                                         const formatted =
                                             t.format === "money"
-                                                ? `R$ ${Number(val || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                                                ? `R$ ${Number(val || 0).toLocaleString("pt-BR", {
+                                                    minimumFractionDigits: 2,
+                                                })}`
                                                 : Number(val || 0).toLocaleString("pt-BR");
                                         return (
                                             <div key={t.id}>
@@ -857,6 +970,7 @@ export default function RelatorioBase({
                                 </div>
                             )}
 
+                            {/* ============ FOOTER PÁGINA ============ */}
                             <div className="mt-2 text-[10px] text-gray-500 flex justify-between">
                                 <span></span>
                                 <span>
@@ -867,11 +981,12 @@ export default function RelatorioBase({
                     ))}
                 </div>
             </div>
-// ===== PARTE 4/4 =====
+
             {/* ================= MODAL CAMPOS/TOTAIS ================= */}
             {configOpen && (
                 <div className="fixed inset-0 z-50">
                     <div className="absolute inset-0 bg-black/30" onClick={() => setConfigOpen(false)} />
+
                     <div className="absolute right-0 top-0 h-full w-[520px] bg-white shadow-xl flex flex-col">
                         <div className="p-4 border-b flex items-center justify-between">
                             <div className="flex flex-col">
@@ -880,6 +995,7 @@ export default function RelatorioBase({
                                     Arraste para ordenar, adicione/remova campos e configure totais.
                                 </span>
                             </div>
+
                             <button
                                 onClick={() => setConfigOpen(false)}
                                 className="px-3 h-[30px] border border-gray-300 rounded text-[12px]"
@@ -889,6 +1005,7 @@ export default function RelatorioBase({
                         </div>
 
                         <div className="p-4 flex-1 overflow-auto">
+                            {/* salvar como padrão */}
                             <div className="mb-4 flex items-center justify-between gap-3">
                                 <label className="flex items-center gap-2 text-[12px] text-gray-700">
                                     <input
@@ -901,7 +1018,10 @@ export default function RelatorioBase({
 
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={resetToMantranDefault}
+                                        onClick={() => {
+                                            resetToMantranDefault();
+                                            setLayoutMode("mantran");
+                                        }}
                                         className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
                                         title="Voltar para o padrão Mantran"
                                     >
@@ -911,6 +1031,7 @@ export default function RelatorioBase({
                                     <button
                                         onClick={() => {
                                             saveUserPreset();
+                                            setLayoutMode("personalizado");
                                             setConfigOpen(false);
                                         }}
                                         className="px-3 h-[28px] bg-red-700 text-white rounded text-[12px]"
@@ -921,11 +1042,14 @@ export default function RelatorioBase({
                                 </div>
                             </div>
 
+                            {/* ======= COLUNAS ======= */}
                             <div className="grid grid-cols-2 gap-4">
+                                {/* disponíveis */}
                                 <div className="border rounded">
                                     <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
                                         Campos disponíveis ({availableColumns.length})
                                     </div>
+
                                     <div className="p-2 max-h-[260px] overflow-auto">
                                         {availableColumns.map((c) => (
                                             <div
@@ -936,6 +1060,7 @@ export default function RelatorioBase({
                                                     <b>{c.label}</b>
                                                     <div className="text-[11px] text-gray-400">{c.id}</div>
                                                 </div>
+
                                                 <button
                                                     onClick={() => addColumn(c.id)}
                                                     className="px-2 h-[26px] border border-gray-300 rounded text-[12px]"
@@ -944,16 +1069,19 @@ export default function RelatorioBase({
                                                 </button>
                                             </div>
                                         ))}
+
                                         {!availableColumns.length ? (
                                             <div className="p-3 text-[12px] text-gray-400">Nenhum campo disponível.</div>
                                         ) : null}
                                     </div>
                                 </div>
 
+                                {/* selecionadas */}
                                 <div className="border rounded">
                                     <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
                                         Campos selecionados ({selectedColumns.length})
                                     </div>
+
                                     <div className="p-2 max-h-[260px] overflow-auto">
                                         {selectedColumns.map((c) => (
                                             <div
@@ -997,12 +1125,14 @@ export default function RelatorioBase({
                                 </div>
                             </div>
 
+                            {/* ======= TOTAIS ======= */}
                             <div className="mt-6 border rounded">
                                 <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
                                     Totais no rodapé
                                 </div>
 
                                 <div className="p-3">
+                                    {/* lista */}
                                     {(totalsConfig || []).length ? (
                                         <div className="mb-3">
                                             {(totalsConfig || []).map((t) => (
@@ -1017,6 +1147,7 @@ export default function RelatorioBase({
                                                             {t.format ? `| ${t.format}` : ""}
                                                         </div>
                                                     </div>
+
                                                     <button
                                                         onClick={() => removeTotal(t.id)}
                                                         className="px-2 h-[26px] border border-gray-300 rounded text-[12px]"
@@ -1030,6 +1161,7 @@ export default function RelatorioBase({
                                         <div className="mb-3 text-[12px] text-gray-400">Nenhum total configurado.</div>
                                     )}
 
+                                    {/* adicionar */}
                                     <div className="grid grid-cols-12 gap-2 items-end">
                                         <div className="col-span-3">
                                             <label className="text-[11px] text-gray-600">Tipo</label>
@@ -1093,22 +1225,40 @@ export default function RelatorioBase({
                                         </div>
                                     </div>
 
-                                    <div className="mt-4 text-[11px] text-gray-500">
-                                        {presetLoaded ? (
-                                            <span>
-                                                Último preset salvo: {new Date(presetLoaded.savedAt).toLocaleString("pt-BR")}{" "}
-                                                {presetLoaded.setAsDefault ? "(padrão)" : ""}
-                                            </span>
-                                        ) : (
-                                            <span>Nenhum preset salvo ainda.</span>
-                                        )}
+                                    {/* info preset */}
+                                    <div className="mt-4 text-[11px] text-gray-500 flex items-center justify-between gap-2">
+                                        <div>
+                                            {presetLoaded ? (
+                                                <span>
+                                                    Último preset salvo: {new Date(presetLoaded.savedAt).toLocaleString("pt-BR")}{" "}
+                                                    {presetLoaded.setAsDefault ? "(padrão)" : ""}
+                                                </span>
+                                            ) : (
+                                                <span>Nenhum preset salvo ainda.</span>
+                                            )}
+                                        </div>
+
+                                        <button
+                                            onClick={() => {
+                                                deletePreset(reportKey);
+                                                setLayoutMode("mantran");
+                                                resetToMantranDefault();
+                                            }}
+                                            className="px-2 h-[26px] border border-gray-300 rounded text-[11px]"
+                                            title="Apaga o preset salvo deste relatório"
+                                        >
+                                            Limpar preset
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="p-4 border-t flex items-center justify-between">
-                            <div className="text-[11px] text-gray-500">Dica: arraste os campos do lado direito para reordenar ✨</div>
+                            <div className="text-[11px] text-gray-500">
+                                Dica: arraste os campos do lado direito para reordenar ✨
+                            </div>
+
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setConfigOpen(false)}
@@ -1116,9 +1266,11 @@ export default function RelatorioBase({
                                 >
                                     Cancelar
                                 </button>
+
                                 <button
                                     onClick={() => {
                                         saveUserPreset();
+                                        setLayoutMode("personalizado");
                                         setConfigOpen(false);
                                     }}
                                     className="px-3 h-[30px] bg-red-700 text-white rounded text-[12px]"
@@ -1169,6 +1321,7 @@ export default function RelatorioBase({
 function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
     return (
         <div className="flex items-start mb-4">
+            {/* LOGO */}
             <div className="w-[220px] h-[60px] flex items-center">
                 {logo ? (
                     <img src={logo} alt="Logo" className="max-h-full max-w-full object-contain" />
@@ -1177,11 +1330,13 @@ function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
                 )}
             </div>
 
+            {/* TÍTULO */}
             <div className="flex-1 text-center">
                 <h1 className="text-red-700 font-semibold text-[16px]">{titulo}</h1>
                 {periodo ? <div className="text-[12px] text-gray-600">Período {periodo}</div> : null}
             </div>
 
+            {/* PAGINAÇÃO */}
             <div className="text-xs text-gray-500 text-right">
                 Página {page} de {totalPages}
             </div>
@@ -1190,7 +1345,7 @@ function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
 }
 
 /* =========================================================
-   TABELA
+   TABELA (com + dentro da coluna definida em toggleColumnId)
 ========================================================= */
 function RelatorioTable({ columns, rows, detail, isExpanded, toggleRow, printMode, printIncludeDetail }) {
     return (
@@ -1275,6 +1430,7 @@ function RelatorioRow({ row, rowId, columns, detail, expanded, toggleRow, printM
                 })}
             </tr>
 
+            {/* DETALHE (NOTAS) */}
             {detail?.enabled && hasDetail && expanded && (
                 <tr>
                     <td colSpan={columns.length} className="border p-2 bg-gray-50">
@@ -1303,7 +1459,10 @@ function RelatorioDetailTable({ columns, rows }) {
         <table className="w-full border-collapse text-[11px]">
             <thead>
                 <tr className="bg-white">
-                    <th colSpan={columns.length} className="border border-gray-300 px-2 py-1 text-left font-semibold">
+                    <th
+                        colSpan={columns.length}
+                        className="border border-gray-300 px-2 py-1 text-left font-semibold"
+                    >
                         Relação Notas Fiscais do CTe
                     </th>
                 </tr>
@@ -1333,6 +1492,7 @@ function RelatorioDetailTable({ columns, rows }) {
                     </tr>
                 ))}
 
+                {/* Totalizador igual ao print */}
                 {has6 ? (
                     <tr className="bg-white">
                         <td colSpan={3} className="border border-gray-300 px-2 py-2 text-right font-semibold">
@@ -1350,7 +1510,10 @@ function RelatorioDetailTable({ columns, rows }) {
                     </tr>
                 ) : (
                     <tr className="bg-white">
-                        <td colSpan={columns.length} className="border border-gray-300 px-2 py-2 text-right font-semibold">
+                        <td
+                            colSpan={columns.length}
+                            className="border border-gray-300 px-2 py-2 text-right font-semibold"
+                        >
                             Totais das NFs: {totais.totalNFs} | Peso:{" "}
                             {totais.totalPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 })} | Valor:{" "}
                             {totais.totalValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}

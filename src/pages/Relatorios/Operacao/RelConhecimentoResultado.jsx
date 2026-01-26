@@ -6,8 +6,8 @@ export default function RelConhecimentoResultado() {
     const periodo = "23/01/2026 a 25/01/2026";
 
     /* =========================================================
-       1) CATÁLOGO COMPLETO (11 atuais + 7 extras disponíveis)
-       Obs: por enquanto o layout aplicado é o PADRÃO MANTRAN (11)
+       1) CATÁLOGO COMPLETO (inclui EXTRAS p/ aparecer em "Campos disponíveis")
+       ✅ O segredo é passar isso no prop `columnCatalog`
     ========================================================= */
     const catalogColumns = [
         { id: "ctrc", label: "CTRC", accessor: "ctrc", width: 90 },
@@ -93,9 +93,7 @@ export default function RelConhecimentoResultado() {
     ];
 
     /* =========================================================
-       2) LAYOUT ATUAL (PADRÃO MANTRAN - 11 colunas)
-       Depois vamos trocar isso pelo layout escolhido no Combo
-       ou pelo salvo no localStorage/banco.
+       2) LAYOUT PADRÃO MANTRAN (11 colunas)
     ========================================================= */
     const layoutPadraoMantran = [
         "ctrc",
@@ -111,13 +109,13 @@ export default function RelConhecimentoResultado() {
         "status",
     ];
 
-    // ✅ colunas efetivas renderizadas hoje (padrão)
+    // colunas efetivas renderizadas hoje (padrão)
     const columns = layoutPadraoMantran
         .map((id) => catalogColumns.find((c) => c.id === id))
         .filter(Boolean);
 
     /* =========================================================
-       3) DETALHE (NOTAS) - fechado por padrão no RelatorioBase
+       3) DETALHE (NOTAS)
     ========================================================= */
     const detailColumns = [
         { id: "nf", label: "Nº NF", accessor: "nf" },
@@ -167,8 +165,22 @@ export default function RelConhecimentoResultado() {
             placa: "ABC1D23",
 
             notas: [
-                { nf: "10251471", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 104.72, valorNF: 376401.03 },
-                { nf: "10251472", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 20.28, valorNF: 56408.95 },
+                {
+                    nf: "10251471",
+                    serie: "5",
+                    emissao: "22/01/2026",
+                    volumes: 2,
+                    peso: 104.72,
+                    valorNF: 376401.03,
+                },
+                {
+                    nf: "10251472",
+                    serie: "5",
+                    emissao: "22/01/2026",
+                    volumes: 2,
+                    peso: 20.28,
+                    valorNF: 56408.95,
+                },
             ],
         },
         {
@@ -193,9 +205,7 @@ export default function RelConhecimentoResultado() {
             motorista: "CARLOS PEREIRA",
             placa: "DEF4G56",
 
-            notas: [
-                { nf: "10251480", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 12.345, valorNF: 15400.55 },
-            ],
+            notas: [{ nf: "10251480", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 12.345, valorNF: 15400.55 }],
         },
         {
             ctrc: "181250",
@@ -218,9 +228,7 @@ export default function RelConhecimentoResultado() {
             motorista: "MARCOS LIMA",
             placa: "GHI7J89",
 
-            notas: [
-                { nf: "10251481", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 55.0, valorNF: 90210.0 },
-            ],
+            notas: [{ nf: "10251481", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 55.0, valorNF: 90210.0 }],
         },
         {
             ctrc: "181251",
@@ -243,9 +251,7 @@ export default function RelConhecimentoResultado() {
             motorista: "ANA SOUZA",
             placa: "KLM0N12",
 
-            notas: [
-                { nf: "10251482", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 18.765, valorNF: 24000.0 },
-            ],
+            notas: [{ nf: "10251482", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 18.765, valorNF: 24000.0 }],
         },
         {
             ctrc: "181252",
@@ -268,9 +274,7 @@ export default function RelConhecimentoResultado() {
             motorista: "RAFAEL MORAES",
             placa: "OPQ3R45",
 
-            notas: [
-                { nf: "10251483", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 9.123, valorNF: 9800.45 },
-            ],
+            notas: [{ nf: "10251483", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 9.123, valorNF: 9800.45 }],
         },
         {
             ctrc: "181253",
@@ -293,9 +297,7 @@ export default function RelConhecimentoResultado() {
             motorista: "BRUNO ALVES",
             placa: "STU6V78",
 
-            notas: [
-                { nf: "10251484", serie: "5", emissao: "22/01/2026", volumes: 4, peso: 60.111, valorNF: 120500.99 },
-            ],
+            notas: [{ nf: "10251484", serie: "5", emissao: "22/01/2026", volumes: 4, peso: 60.111, valorNF: 120500.99 }],
         },
         {
             ctrc: "181254",
@@ -318,9 +320,7 @@ export default function RelConhecimentoResultado() {
             motorista: "FERNANDA COSTA",
             placa: "WXY9Z01",
 
-            notas: [
-                { nf: "10251485", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 22.333, valorNF: 45000.0 },
-            ],
+            notas: [{ nf: "10251485", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 22.333, valorNF: 45000.0 }],
         },
         {
             ctrc: "181255",
@@ -369,9 +369,7 @@ export default function RelConhecimentoResultado() {
             motorista: "LUCAS MENDES",
             placa: "FGH5I67",
 
-            notas: [
-                { nf: "10251488", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 30.0, valorNF: 60000.0 },
-            ],
+            notas: [{ nf: "10251488", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 30.0, valorNF: 60000.0 }],
         },
         {
             ctrc: "181257",
@@ -394,9 +392,7 @@ export default function RelConhecimentoResultado() {
             motorista: "DIEGO ROCHA",
             placa: "JKL8M90",
 
-            notas: [
-                { nf: "10251489", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 14.25, valorNF: 22000.0 },
-            ],
+            notas: [{ nf: "10251489", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 14.25, valorNF: 22000.0 }],
         },
     ];
 
@@ -406,7 +402,7 @@ export default function RelConhecimentoResultado() {
     const rows = Array.from({ length: 10 }).flatMap((_, rep) =>
         base.map((b, idx) => ({
             ...b,
-            id: `${rep}-${idx}-${b.ctrc}`, // id obrigatório para expand funcionar bem
+            id: `${rep}-${idx}-${b.ctrc}`,
             ctrc: String(Number(b.ctrc) + rep * 20 + idx),
         }))
     );
@@ -420,18 +416,20 @@ export default function RelConhecimentoResultado() {
         { id: "imp", label: "Total Imposto", type: "sum", accessor: "imposto", format: "money" },
         { id: "frete", label: "Total Frete", type: "sum", accessor: "vrFrete", format: "money" },
 
-        // ✅ extras também podem ser totalizados (quando entrarem no layout)
+        // extras também podem ser totalizados
         { id: "gris", label: "Total Gris", type: "sum", accessor: "gris", format: "money" },
         { id: "adv", label: "Total Advalorem", type: "sum", accessor: "advalorem", format: "money" },
     ];
 
     return (
         <RelatorioBase
+            reportKey="operacao.conhecimento_emitidos"
             titulo="Relatório de CTRC´s Emitidos"
             periodo={periodo}
             logo={logo}
             orientation="auto"
             columns={columns}
+            columnCatalog={catalogColumns}   // ✅ AQUI: libera GRIS/Advalorem/CST/CFOP etc no modal
             rows={rows}
             detail={{
                 enabled: true,
@@ -441,7 +439,6 @@ export default function RelConhecimentoResultado() {
             }}
             totals={totals}
             topOffsetPx={56}
-
         // ✅ IMPORTANTE: não sobrescrever o export padrão do RelatorioBase
         // onExportPDF={...}
         // onExportExcel={...}
