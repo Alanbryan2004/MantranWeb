@@ -1074,6 +1074,38 @@ export default function Sidebar({ open }) {
                       CTes Emitidos
                     </Link>
                   </li>
+
+                  {/* === Cadastros Submenu === */}
+                  <li
+                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                    onMouseEnter={() => setActiveSubMenu("rel-cadastros")}
+                    onMouseLeave={() => setActiveSubMenu(null)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Cadastros</span>
+                      <ChevronRight size={13} className="text-gray-500" />
+                    </div>
+
+                    {activeSubMenu === "rel-cadastros" && (
+                      <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-48 p-1 z-50">
+                        <Link
+                          to="/rel-cliente"
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          Clientes
+                        </Link>
+                        {["Motoristas", "Veiculos", "Agregados"].map((item) => (
+                          <Link
+                            key={item}
+                            to="#"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </li>
                 </ul>
               </div>
             )}

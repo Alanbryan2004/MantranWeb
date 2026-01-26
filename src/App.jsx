@@ -100,6 +100,7 @@ import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
 import RelConhecimento from "./pages/RelConhecimento";
 import RelConhecimentoResultado from "./pages/Relatorios/Operacao/RelConhecimentoResultado";
+import RelCliente from "./pages/RelCliente";
 import ModuloParametro from "./pages/ModuloParametro";
 import GNREParametro from "./pages/GNREParametro";
 import CreditoCombustivelParametro from "./pages/CreditoCombustivelParametro";
@@ -279,6 +280,7 @@ export default function App() {
 
                 <Route path="/rel-conhecimento" element={<RelConhecimento open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/conhecimento/resultado" element={<RelConhecimentoResultado open={sidebarOpen} />} />
+                <Route path="/rel-cliente" element={<RelCliente open={sidebarOpen} />} />
 
                 <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
                 <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
