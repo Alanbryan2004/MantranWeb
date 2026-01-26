@@ -1,303 +1,450 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { XCircle, FileText, FileSpreadsheet } from "lucide-react";
-import { useIconColor } from "../../../context/IconColorContext";
+// src/pages/Relatorios/Operacao/RelConhecimentoResultado.jsx
+import RelatorioBase from "../base/RelatorioBase";
 
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { utils, writeFile } from "xlsx";
+export default function RelConhecimentoResultado() {
+    const logo = localStorage.getItem("param_logoBg") || "";
+    const periodo = "23/01/2026 a 25/01/2026";
 
-/* ================= HELPERS ================= */
-function LabelInfo({ children }) {
-    return <span className="text-[12px] text-gray-600">{children}</span>;
-}
+    /* =========================================================
+       1) CATÁLOGO COMPLETO (11 atuais + 7 extras disponíveis)
+       Obs: por enquanto o layout aplicado é o PADRÃO MANTRAN (11)
+    ========================================================= */
+    const catalogColumns = [
+        { id: "ctrc", label: "CTRC", accessor: "ctrc", width: 90 },
+        { id: "emissao", label: "Dt. Emis.", accessor: "emissao", width: 90 },
+        { id: "remetente", label: "Remetente", accessor: "remetente", width: 160 },
+        { id: "cidade", label: "Cidade", accessor: "cidade", width: 130 },
+        { id: "destinatario", label: "Destinatário", accessor: "destinatario", width: 170 },
+        { id: "cidadeEntrega", label: "Cidade Entrega", accessor: "cidadeEntrega", width: 150 },
 
-const formatarDataBR = (data) => {
-    if (!data) return "";
-    if (data.includes("/")) return data;
-    const [ano, mes, dia] = data.split("-");
-    return `${dia}/${mes}/${ano}`;
-};
-
-// (opcional) se a emissão vier dd/mm/aaaa, mantém; se vier yyyy-mm-dd, converte
-const formatarDataBRFlex = (data) => {
-    if (!data) return "";
-    return data.includes("-") ? formatarDataBR(data) : data;
-};
-
-/* ================= TELA ================= */
-export default function RelConhecimentoResultado({ open }) {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { footerIconColorNormal, footerIconColorHover } = useIconColor();
-
-    // ✅ logo vindo da tela Parametro
-    const logoCliente = localStorage.getItem("param_logoBg");
-
-    // filtros vindos da tela anterior
-    const filtros = location.state || {
-        cliente: "HNK-ITU (1) MATRIZ",
-        dataIni: "2025-12-01",
-        dataFim: "2025-12-16",
-        status: "Autorizado",
-        tipoData: "Emissão",
-    };
-
-    /* ================= MOCK (100 LINHAS) ================= */
-    const baseDados = [
-        { ctrc: "043001", cidade: "CAMPINAS/SP", peso: 1200, valor: 1540.75 },
-        { ctrc: "043002", cidade: "SÃO PAULO/SP", peso: 980, valor: 1120.0 },
-        { ctrc: "043003", cidade: "SOROCABA/SP", peso: 450, valor: 680.4 },
-        { ctrc: "043004", cidade: "JUNDIAÍ/SP", peso: 300, valor: 420.1 },
-        { ctrc: "043005", cidade: "RIBEIRÃO PRETO/SP", peso: 760, valor: 980.9 },
-        { ctrc: "043006", cidade: "BAURU/SP", peso: 510, valor: 740.0 },
-        { ctrc: "043007", cidade: "PIRACICABA/SP", peso: 640, valor: 860.3 },
-        { ctrc: "043008", cidade: "LIMEIRA/SP", peso: 390, valor: 510.6 },
-        { ctrc: "043009", cidade: "AMERICANA/SP", peso: 870, valor: 1190.2 },
-        { ctrc: "043010", cidade: "TAUBATÉ/SP", peso: 560, valor: 790.0 },
-    ];
-
-    // 10 registros diferentes repetidos 10x = 100 linhas
-    const dados = Array.from({ length: 10 }).flatMap((_, rep) =>
-        baseDados.map((b, i) => {
-            // varia a data só para você enxergar melhor no teste
-            const dia = String((i + rep) % 28 + 1).padStart(2, "0");
-            return {
-                ctrc: b.ctrc,
-                emissao: `${dia}/12/2025`,
-                remetente: "HNK-ITU (1) MATRIZ",
-                destinatario: "HNK-SP CD",
-                cidade: b.cidade,
-                peso: b.peso,
-                valor: b.valor,
-                status: "Autorizado",
-            };
-        })
-    );
-
-    const totalPeso = dados.reduce((s, d) => s + (Number(d.peso) || 0), 0);
-    const totalValor = dados.reduce((s, d) => s + (Number(d.valor) || 0), 0);
-
-    /* ================= EXPORTAR PDF (cabeçalho em todas páginas) ================= */
-    const exportToPDF = () => {
-        const doc = new jsPDF({
-            orientation: "landscape",
-            unit: "mm",
-            format: "a4",
-        });
-
-        const desenharCabecalho = () => {
-            // logo
-            if (logoCliente) {
-                // se der erro por formato, a gente troca o "PNG" por "JPEG"
-                doc.addImage(logoCliente, "PNG", 14, 8, 30, 15);
-            }
-
-            doc.setFontSize(14);
-            doc.text("Relatório de Conhecimentos Emitidos", 50, 14);
-
-            doc.setFontSize(10);
-            doc.text(
-                `Período: ${formatarDataBR(filtros.dataIni)} até ${formatarDataBR(
-                    filtros.dataFim
-                )}`,
-                50,
-                20
-            );
-        };
-
-        autoTable(doc, {
-            head: [
-                [
-                    "CTRC",
-                    "Emissão",
-                    "Remetente",
-                    "Destinatário",
-                    "Cidade",
-                    "Peso",
-                    "Valor Frete",
-                    "Status",
-                ],
-            ],
-            body: dados.map((d) => [
-                d.ctrc,
-                formatarDataBRFlex(d.emissao),
-                d.remetente,
-                d.destinatario,
-                d.cidade,
-                (Number(d.peso) || 0).toLocaleString("pt-BR"),
-                `R$ ${(Number(d.valor) || 0).toLocaleString("pt-BR", {
+        {
+            id: "peso",
+            label: "Peso",
+            accessor: (r) =>
+                Number(r.peso || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+            width: 80,
+            align: "right",
+        },
+        {
+            id: "imposto",
+            label: "Imposto",
+            accessor: (r) =>
+                `R$ ${Number(r.imposto || 0).toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                 })}`,
-                d.status,
-            ]),
-            startY: 28,
-            theme: "grid",
-            styles: { fontSize: 9, cellPadding: 2, valign: "middle" },
-            headStyles: { fillColor: [240, 240, 240], textColor: 20 },
-            columnStyles: {
-                5: { halign: "right" }, // Peso
-                6: { halign: "right" }, // Valor
-            },
-            margin: { left: 14, right: 14 },
+            width: 90,
+            align: "right",
+        },
+        {
+            id: "pedagio",
+            label: "Pedágio",
+            accessor: (r) =>
+                Number(r.pedagio || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+            width: 80,
+            align: "right",
+        },
+        {
+            id: "vrFrete",
+            label: "VR Frete",
+            accessor: (r) =>
+                `R$ ${Number(r.vrFrete || 0).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                })}`,
+            width: 95,
+            align: "right",
+        },
+        { id: "status", label: "Status", accessor: "status", width: 90 },
 
-            // ✅ esse é o ponto: cabeçalho em TODAS as páginas, antes da tabela desenhar
-            willDrawPage: () => {
-                desenharCabecalho();
-            },
-        });
+        // ======= EXTRAS (DISPONÍVEIS P/ PERSONALIZAÇÃO) =======
+        {
+            id: "gris",
+            label: "Gris",
+            accessor: (r) =>
+                `R$ ${Number(r.gris || 0).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                })}`,
+            width: 85,
+            align: "right",
+        },
+        {
+            id: "advalorem",
+            label: "Advalorem",
+            accessor: (r) =>
+                `R$ ${Number(r.advalorem || 0).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                })}`,
+            width: 95,
+            align: "right",
+        },
+        {
+            id: "aliquotaIcms",
+            label: "Al. ICMS",
+            accessor: (r) =>
+                `${Number(r.aliquotaIcms || 0).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                })}%`,
+            width: 80,
+            align: "right",
+        },
+        { id: "cfop", label: "CFOP", accessor: "cfop", width: 70 },
+        { id: "cst", label: "CST", accessor: "cst", width: 60 },
+        { id: "motorista", label: "Motorista", accessor: "motorista", width: 160 },
+        { id: "placa", label: "Placa", accessor: "placa", width: 85 },
+    ];
 
-        const y = doc.lastAutoTable.finalY + 8;
+    /* =========================================================
+       2) LAYOUT ATUAL (PADRÃO MANTRAN - 11 colunas)
+       Depois vamos trocar isso pelo layout escolhido no Combo
+       ou pelo salvo no localStorage/banco.
+    ========================================================= */
+    const layoutPadraoMantran = [
+        "ctrc",
+        "emissao",
+        "remetente",
+        "cidade",
+        "destinatario",
+        "cidadeEntrega",
+        "peso",
+        "imposto",
+        "pedagio",
+        "vrFrete",
+        "status",
+    ];
 
-        doc.setFontSize(10);
-        doc.text(`Total CTRCs: ${dados.length}`, 14, y);
-        doc.text(`Total Peso: ${totalPeso.toLocaleString("pt-BR")}`, 70, y);
-        doc.text(
-            `Total Valor: R$ ${totalValor.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-            })}`,
-            140,
-            y
-        );
+    // ✅ colunas efetivas renderizadas hoje (padrão)
+    const columns = layoutPadraoMantran
+        .map((id) => catalogColumns.find((c) => c.id === id))
+        .filter(Boolean);
 
-        doc.save("Relatorio_Conhecimentos_Emitidos.pdf");
-    };
+    /* =========================================================
+       3) DETALHE (NOTAS) - fechado por padrão no RelatorioBase
+    ========================================================= */
+    const detailColumns = [
+        { id: "nf", label: "Nº NF", accessor: "nf" },
+        { id: "serie", label: "Série", accessor: "serie" },
+        { id: "emissao", label: "Dt Emissão", accessor: "emissao" },
+        { id: "vol", label: "Vol.", accessor: "volumes", align: "right" },
+        {
+            id: "peso",
+            label: "Peso",
+            accessor: (r) =>
+                Number(r.peso || 0).toLocaleString("pt-BR", { minimumFractionDigits: 3 }),
+            align: "right",
+        },
+        {
+            id: "valorNF",
+            label: "Valor NF",
+            accessor: (r) =>
+                Number(r.valorNF || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
+            align: "right",
+        },
+    ];
 
-    /* ================= EXPORTAR EXCEL ================= */
-    const exportToExcel = () => {
-        const ws = utils.json_to_sheet(dados);
-        const wb = utils.book_new();
-        utils.book_append_sheet(wb, ws, "Relatório");
-        writeFile(wb, "Relatorio_Conhecimentos_Emitidos.xlsx");
-    };
+    /* =========================================================
+       4) MOCK DE 10 REGISTROS (com extras preenchidos)
+    ========================================================= */
+    const base = [
+        {
+            ctrc: "181248",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "AGENCIA DE VIAGENS LTDA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 10.0,
+            imposto: 16.81,
+            pedagio: 7.6,
+            vrFrete: 140.11,
+            status: "Impresso",
+
+            // extras
+            gris: 4.5,
+            advalorem: 12.3,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "JOÃO DA SILVA",
+            placa: "ABC1D23",
+
+            notas: [
+                { nf: "10251471", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 104.72, valorNF: 376401.03 },
+                { nf: "10251472", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 20.28, valorNF: 56408.95 },
+            ],
+        },
+        {
+            ctrc: "181249",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "VACANZA AGENCIA LTDA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 8.5,
+            imposto: 14.2,
+            pedagio: 6.3,
+            vrFrete: 132.5,
+            status: "Impresso",
+
+            // extras
+            gris: 3.9,
+            advalorem: 10.8,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "CARLOS PEREIRA",
+            placa: "DEF4G56",
+
+            notas: [
+                { nf: "10251480", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 12.345, valorNF: 15400.55 },
+            ],
+        },
+        {
+            ctrc: "181250",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "KM AGENCIA LTDA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 11.2,
+            imposto: 18.05,
+            pedagio: 7.6,
+            vrFrete: 155.0,
+            status: "Impresso",
+
+            gris: 5.1,
+            advalorem: 13.2,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "MARCOS LIMA",
+            placa: "GHI7J89",
+
+            notas: [
+                { nf: "10251481", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 55.0, valorNF: 90210.0 },
+            ],
+        },
+        {
+            ctrc: "181251",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "PRC VIAGENS LTDA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 9.75,
+            imposto: 15.5,
+            pedagio: 7.6,
+            vrFrete: 141.2,
+            status: "Impresso",
+
+            gris: 4.2,
+            advalorem: 11.0,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "ANA SOUZA",
+            placa: "KLM0N12",
+
+            notas: [
+                { nf: "10251482", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 18.765, valorNF: 24000.0 },
+            ],
+        },
+        {
+            ctrc: "181252",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "CCB 8899 VIAGENS",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 10.0,
+            imposto: 16.81,
+            pedagio: 7.6,
+            vrFrete: 140.11,
+            status: "Impresso",
+
+            gris: 4.6,
+            advalorem: 12.1,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "RAFAEL MORAES",
+            placa: "OPQ3R45",
+
+            notas: [
+                { nf: "10251483", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 9.123, valorNF: 9800.45 },
+            ],
+        },
+        {
+            ctrc: "181253",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "KM AGENCIA DE VIAGENS",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 12.3,
+            imposto: 19.4,
+            pedagio: 7.6,
+            vrFrete: 161.0,
+            status: "Impresso",
+
+            gris: 5.4,
+            advalorem: 14.0,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "BRUNO ALVES",
+            placa: "STU6V78",
+
+            notas: [
+                { nf: "10251484", serie: "5", emissao: "22/01/2026", volumes: 4, peso: 60.111, valorNF: 120500.99 },
+            ],
+        },
+        {
+            ctrc: "181254",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "CVC BRASIL OPERADORA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 7.8,
+            imposto: 13.3,
+            pedagio: 6.9,
+            vrFrete: 128.7,
+            status: "Impresso",
+
+            gris: 3.5,
+            advalorem: 10.2,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "FERNANDA COSTA",
+            placa: "WXY9Z01",
+
+            notas: [
+                { nf: "10251485", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 22.333, valorNF: 45000.0 },
+            ],
+        },
+        {
+            ctrc: "181255",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "GBP VIAGENS LTDA",
+            cidadeEntrega: "SAO PAULO - SP",
+            peso: 9.0,
+            imposto: 14.9,
+            pedagio: 7.1,
+            vrFrete: 136.25,
+            status: "Impresso",
+
+            gris: 3.8,
+            advalorem: 10.9,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "PEDRO HENRIQUE",
+            placa: "BCD2E34",
+
+            notas: [
+                { nf: "10251486", serie: "5", emissao: "22/01/2026", volumes: 1, peso: 5.555, valorNF: 8700.0 },
+                { nf: "10251487", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 15.111, valorNF: 19500.0 },
+            ],
+        },
+        {
+            ctrc: "181256",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "CVC BRASIL OPERADORA",
+            cidadeEntrega: "SANTO ANDRE - SP",
+            peso: 10.0,
+            imposto: 16.81,
+            pedagio: 7.6,
+            vrFrete: 140.11,
+            status: "Impresso",
+
+            gris: 4.7,
+            advalorem: 12.4,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "LUCAS MENDES",
+            placa: "FGH5I67",
+
+            notas: [
+                { nf: "10251488", serie: "5", emissao: "22/01/2026", volumes: 3, peso: 30.0, valorNF: 60000.0 },
+            ],
+        },
+        {
+            ctrc: "181257",
+            emissao: "23/01/2026",
+            remetente: "SESTINI ITAJAI",
+            cidade: "NAVEGANTES - SC",
+            destinatario: "YELLOW & BLUE",
+            cidadeEntrega: "SAO CAETANO - SP",
+            peso: 10.0,
+            imposto: 16.81,
+            pedagio: 7.6,
+            vrFrete: 140.11,
+            status: "Impresso",
+
+            gris: 4.2,
+            advalorem: 11.8,
+            aliquotaIcms: 12.0,
+            cfop: "5353",
+            cst: "00",
+            motorista: "DIEGO ROCHA",
+            placa: "JKL8M90",
+
+            notas: [
+                { nf: "10251489", serie: "5", emissao: "22/01/2026", volumes: 2, peso: 14.25, valorNF: 22000.0 },
+            ],
+        },
+    ];
+
+    /* =========================================================
+       5) 100 LINHAS (10 diferentes x 10 repetições)
+    ========================================================= */
+    const rows = Array.from({ length: 10 }).flatMap((_, rep) =>
+        base.map((b, idx) => ({
+            ...b,
+            id: `${rep}-${idx}-${b.ctrc}`, // id obrigatório para expand funcionar bem
+            ctrc: String(Number(b.ctrc) + rep * 20 + idx),
+        }))
+    );
+
+    /* =========================================================
+       6) TOTAIS (NO FINAL)
+    ========================================================= */
+    const totals = [
+        { id: "qtd", label: "Total de CTRC", type: "count" },
+        { id: "peso", label: "Total Peso", type: "sum", accessor: "peso" },
+        { id: "imp", label: "Total Imposto", type: "sum", accessor: "imposto", format: "money" },
+        { id: "frete", label: "Total Frete", type: "sum", accessor: "vrFrete", format: "money" },
+
+        // ✅ extras também podem ser totalizados (quando entrarem no layout)
+        { id: "gris", label: "Total Gris", type: "sum", accessor: "gris", format: "money" },
+        { id: "adv", label: "Total Advalorem", type: "sum", accessor: "advalorem", format: "money" },
+    ];
 
     return (
-        <div
-            className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 
-      bg-gray-50 h-[calc(100vh-56px)] flex flex-col
-      ${open ? "ml-[192px]" : "ml-[56px]"}`}
-        >
-            {/* ================= CABEÇALHO DO RELATÓRIO ================= */}
-            <div className="border-b border-gray-300 bg-white p-3">
-                <div className="grid grid-cols-12 gap-3 items-center">
-                    {/* LOGO CLIENTE */}
-                    <div className="col-span-2 flex items-center justify-center border border-gray-300 h-[70px]">
-                        {logoCliente ? (
-                            <img
-                                src={logoCliente}
-                                alt="Logo Cliente"
-                                className="max-h-[60px] object-contain"
-                            />
-                        ) : (
-                            <span className="text-gray-400 text-[11px]">SEM LOGO</span>
-                        )}
-                    </div>
+        <RelatorioBase
+            titulo="Relatório de CTRC´s Emitidos"
+            periodo={periodo}
+            logo={logo}
+            orientation="auto"
+            columns={columns}
+            rows={rows}
+            detail={{
+                enabled: true,
+                key: "notas",
+                columns: detailColumns,
+                toggleColumnId: "ctrc",
+            }}
+            totals={totals}
+            topOffsetPx={56}
 
-                    {/* TÍTULO */}
-                    <div className="col-span-7 text-center">
-                        <h2 className="text-red-700 font-semibold text-[15px]">
-                            RELATÓRIO DE CONHECIMENTOS EMITIDOS
-                        </h2>
-                        <p className="text-[12px] text-gray-600">
-                            Período: {formatarDataBR(filtros.dataIni)} até{" "}
-                            {formatarDataBR(filtros.dataFim)}
-                        </p>
-                    </div>
-
-                    {/* INFO EMPRESA */}
-                    <div className="col-span-3 text-right">
-                        <LabelInfo>Empresa: MANTRAN</LabelInfo>
-                        <br />
-                        <LabelInfo>Filial: 001</LabelInfo>
-                        <br />
-                        <LabelInfo>Gerado em: {new Date().toLocaleString("pt-BR")}</LabelInfo>
-                    </div>
-                </div>
-            </div>
-
-            {/* ================= SUBCABEÇALHO ================= */}
-            <div className="bg-gray-100 border-b border-gray-300 p-2 grid grid-cols-12 gap-2 text-[12px]">
-                <div className="col-span-4">
-                    <b>Cliente:</b> {filtros.cliente}
-                </div>
-                <div className="col-span-4">
-                    <b>Status CT-e:</b> {filtros.status}
-                </div>
-                <div className="col-span-4">
-                    <b>Tipo Data:</b> {filtros.tipoData}
-                </div>
-            </div>
-
-            {/* ================= GRID ================= */}
-            <div className="flex-1 overflow-y-auto bg-white border-x border-b border-gray-300">
-                <table className="w-full text-[12px]">
-                    <thead className="bg-gray-100 sticky top-0">
-                        <tr>
-                            <th className="border px-2 py-1">CTRC</th>
-                            <th className="border px-2 py-1">Emissão</th>
-                            <th className="border px-2 py-1">Remetente</th>
-                            <th className="border px-2 py-1">Destinatário</th>
-                            <th className="border px-2 py-1">Cidade</th>
-                            <th className="border px-2 py-1 text-right">Peso</th>
-                            <th className="border px-2 py-1 text-right">Valor Frete</th>
-                            <th className="border px-2 py-1">Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {dados.map((d, idx) => (
-                            <tr key={idx} className="hover:bg-red-100">
-                                <td className="border px-2 py-1">{d.ctrc}</td>
-                                <td className="border px-2 py-1">{formatarDataBRFlex(d.emissao)}</td>
-                                <td className="border px-2 py-1">{d.remetente}</td>
-                                <td className="border px-2 py-1">{d.destinatario}</td>
-                                <td className="border px-2 py-1">{d.cidade}</td>
-                                <td className="border px-2 py-1 text-right">
-                                    {(Number(d.peso) || 0).toLocaleString("pt-BR")}
-                                </td>
-                                <td className="border px-2 py-1 text-right">
-                                    R$ {(Number(d.valor) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                                </td>
-                                <td className="border px-2 py-1">{d.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* ================= TOTAIS ================= */}
-            <div className="bg-gray-100 border-t border-gray-300 px-4 py-2 text-[12px] flex gap-6">
-                <b>Total CTRCs:</b> {dados.length}
-                <b>Peso Total:</b> {totalPeso.toLocaleString("pt-BR")}
-                <b>Valor Total:</b> R{"$ "}
-                {totalValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-            </div>
-
-            {/* ================= RODAPÉ ================= */}
-            <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
-                <button
-                    onClick={() => navigate(-1)}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                    <XCircle size={20} />
-                    <span>Voltar</span>
-                </button>
-
-                <button
-                    onClick={exportToPDF}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                    <FileText size={20} />
-                    <span>PDF</span>
-                </button>
-
-                <button
-                    onClick={exportToExcel}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
-                >
-                    <FileSpreadsheet size={20} />
-                    <span>Excel</span>
-                </button>
-            </div>
-        </div>
+        // ✅ IMPORTANTE: não sobrescrever o export padrão do RelatorioBase
+        // onExportPDF={...}
+        // onExportExcel={...}
+        />
     );
 }
