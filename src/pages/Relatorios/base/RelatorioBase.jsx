@@ -1,3 +1,4 @@
+// ===== PARTE 1/4 =====
 // src/pages/Relatorios/base/RelatorioBase.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import jsPDF from "jspdf";
@@ -53,25 +54,76 @@ function guessImageFormat(logo) {
     return "PNG";
 }
 
+function uid() {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+function normalizeMoneyBR(val, minFrac = 2) {
+    return Number(val || 0).toLocaleString("pt-BR", { minimumFractionDigits: minFrac });
+}
+
+/* =========================================================
+   PERSISTÊNCIA (localStorage)
+========================================================= */
+function storageKey(reportKey) {
+    return `mantran_relatorio_preset__${reportKey || "default"}`;
+}
+
+function loadPreset(reportKey) {
+    try {
+        const raw = localStorage.getItem(storageKey(reportKey));
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch {
+        return null;
+    }
+}
+
+function savePreset(reportKey, preset) {
+    try {
+        localStorage.setItem(storageKey(reportKey), JSON.stringify(preset));
+    } catch {
+        // ignora
+    }
+}
+
 /* =========================================================
    RELATORIO BASE (MOTOR)
 ========================================================= */
 export default function RelatorioBase({
+    // identidade do relatório (pra salvar preset individual)
+    reportKey = "RelatorioBase",
+
     titulo = "Relatório",
     periodo = "", // "dd/mm/aaaa a dd/mm/aaaa"
     logo = "", // base64/url
     orientation = "auto", // auto | portrait | landscape
 
+    // colunas "padrão Mantran" (o que o sistema traz como default)
     columns = [], // [{id,label,accessor,width,align}]
     rows = [],
 
+    // catálogo completo (para personalização)
+    // se não passar, o catálogo vira o próprio `columns`
+    columnCatalog = null, // [{id,label,accessor,width,align, group?}]
+
+    // detalhe (NF)
     detail, // { enabled, key, columns:[], toggleColumnId?: "ctrc" }
+
+    // totais padrão (pode ser customizado pelo usuário na tela)
     totals = [], // [{id,label,type:"sum"|"count", accessor, format?:"money"}]
 
-    onExportPDF, // opcional (se passar, usa o seu; senão, usa o padrão abaixo)
-    onExportExcel, // opcional (se passar, usa o seu; senão, usa o padrão abaixo)
+    // callbacks opcionais
+    onExportPDF, // se passar, usa o seu; senão usa o default
+    onExportExcel, // se passar, usa o seu; senão usa o default
+    onClose, // se passar, botão Fechar chama; se não, usa history.back()
 
-    topOffsetPx = 56, // ajuste conforme seu header fixo
+    // layout
+    topOffsetPx = 56, // altura do header fixo da aplicação
+    stickyTopPx = 44, // onde começa a toolbar do relatório
+    // se seu sidebar ocupa largura e "tapa" o conteúdo, informe aqui:
+    // (se não precisar, deixe 0)
+    sidebarOffsetPx = 0,
 }) {
     const pagesRef = useRef([]);
     const scrollRef = useRef(null);
@@ -80,10 +132,51 @@ export default function RelatorioBase({
     const [jumpPage, setJumpPage] = useState("1");
     const [expanded, setExpanded] = useState(() => new Set());
 
-    // ✅ opções de impressão/exportação
+    // impressão/exports
     const [printMode, setPrintMode] = useState(false);
-    const [includeDetail, setIncludeDetail] = useState(false); // tela: expand por clique
     const [printIncludeDetail, setPrintIncludeDetail] = useState(true); // impressão/PDF/Excel
+
+    // personalização
+    const [configOpen, setConfigOpen] = useState(false);
+
+    // drag state
+    const [dragId, setDragId] = useState(null);
+
+    // ✅ catálogo completo de colunas
+    const fullCatalog = useMemo(() => {
+        const base = Array.isArray(columnCatalog) && columnCatalog.length ? columnCatalog : columns;
+        const seen = new Set();
+        return (base || []).filter((c) => {
+            if (!c?.id) return false;
+            if (seen.has(c.id)) return false;
+            seen.add(c.id);
+            return true;
+        });
+    }, [columnCatalog, columns]);
+
+    // ✅ preset carregado (se existir)
+    const presetLoaded = useMemo(() => loadPreset(reportKey), [reportKey]);
+
+    // ✅ estado do preset aplicado
+    const [selectedColumnIds, setSelectedColumnIds] = useState(() => {
+        const p = loadPreset(reportKey);
+        if (p?.setAsDefault && Array.isArray(p.selectedColumnIds) && p.selectedColumnIds.length) {
+            return p.selectedColumnIds;
+        }
+        return (columns || []).map((c) => c.id);
+    });
+
+    const [totalsConfig, setTotalsConfig] = useState(() => {
+        const p = loadPreset(reportKey);
+        if (p?.setAsDefault && Array.isArray(p.totalsConfig)) return p.totalsConfig;
+        return totals || [];
+    });
+
+    // (opcional) salvar como padrão
+    const [setAsDefault, setSetAsDefault] = useState(() => {
+        const p = loadPreset(reportKey);
+        return !!p?.setAsDefault;
+    });
 
     /* =====================================================
        1) ORIENTAÇÃO (AUTO)
@@ -91,23 +184,37 @@ export default function RelatorioBase({
     const resolvedOrientation = useMemo(() => {
         if (orientation !== "auto") return orientation;
 
-        const totalWidth = columns.reduce((s, c) => s + (c.width || 110), 0);
+        const cols = selectedColumnIds
+            .map((id) => fullCatalog.find((c) => c.id === id))
+            .filter(Boolean);
+
+        const totalWidth = cols.reduce((s, c) => s + (c.width || 110), 0);
         return totalWidth > 750 ? "landscape" : "portrait";
-    }, [orientation, columns]);
+    }, [orientation, selectedColumnIds, fullCatalog]);
 
     const pageSize = PAGE[resolvedOrientation];
 
     /* =====================================================
-       2) PAGINAÇÃO DE LINHAS (mestre)
+       2) COLUNAS ATIVAS (conforme preset)
+    ====================================================== */
+    const activeColumns = useMemo(() => {
+        const map = new Map(fullCatalog.map((c) => [c.id, c]));
+        const ordered = [];
+        selectedColumnIds.forEach((id) => {
+            const c = map.get(id);
+            if (c) ordered.push(c);
+        });
+
+        if (!ordered.length) return columns || [];
+        return ordered;
+    }, [selectedColumnIds, fullCatalog, columns]);
+
+    /* =====================================================
+       3) PAGINAÇÃO DE LINHAS (mestre)
     ====================================================== */
     const rowsPerPage = useMemo(() => {
         const usable =
-            pageSize.height -
-            PAGE_PADDING * 2 -
-            HEADER_HEIGHT -
-            TABLE_HEADER_HEIGHT -
-            FOOTER_HEIGHT;
-
+            pageSize.height - PAGE_PADDING * 2 - HEADER_HEIGHT - TABLE_HEADER_HEIGHT - FOOTER_HEIGHT;
         return Math.max(8, Math.floor(usable / ROW_HEIGHT));
     }, [pageSize.height]);
 
@@ -122,7 +229,7 @@ export default function RelatorioBase({
     const totalPages = pages.length;
 
     /* =====================================================
-       3) EXPAND / COLLAPSE (por linha) - apenas na tela
+       4) EXPAND / COLLAPSE (por linha) - apenas na tela
     ====================================================== */
     const toggleRow = (rowId) => {
         setExpanded((prev) => {
@@ -136,7 +243,7 @@ export default function RelatorioBase({
     const isExpanded = (rowId) => expanded.has(rowId);
 
     /* =====================================================
-       4) NAVEGAÇÃO DE PÁGINA (scroll)
+       5) NAVEGAÇÃO DE PÁGINA (scroll)
     ====================================================== */
     const goToPage = (p) => {
         const target = clamp(p, 1, totalPages);
@@ -149,7 +256,7 @@ export default function RelatorioBase({
     };
 
     /* =====================================================
-       5) SCROLL -> detectar página atual
+       6) SCROLL -> detectar página atual
     ====================================================== */
     useEffect(() => {
         const el = scrollRef.current;
@@ -176,10 +283,9 @@ export default function RelatorioBase({
         el.addEventListener("scroll", onScroll, { passive: true });
         return () => el.removeEventListener("scroll", onScroll);
     }, []);
-
+    // ===== PARTE 2/4 =====
     /* =====================================================
-       6) IMPRIMIR
-       - printMode ativa o CSS e "expansão forçada" conforme opção
+       7) IMPRIMIR
     ====================================================== */
     useEffect(() => {
         const after = () => setPrintMode(false);
@@ -193,22 +299,21 @@ export default function RelatorioBase({
     };
 
     /* =====================================================
-       7) TOTAIS (só no final)
+       8) TOTAIS (só no final)
     ====================================================== */
     const totalsValues = useMemo(() => {
         const out = {};
-        totals.forEach((t) => {
+        (totalsConfig || []).forEach((t) => {
             if (t.type === "count") out[t.id] = rows.length;
             if (t.type === "sum") {
                 out[t.id] = rows.reduce((s, r) => s + (Number(r[t.accessor]) || 0), 0);
             }
         });
         return out;
-    }, [totals, rows]);
+    }, [totalsConfig, rows]);
 
     /* =====================================================
-       8) EXPORT PDF (padrão)
-       - inclui/omite detalhes conforme printIncludeDetail
+       9) EXPORT PDF (padrão)
     ====================================================== */
     const exportPDFDefault = async () => {
         const file = `${guessFilename(titulo)}.pdf`;
@@ -225,7 +330,6 @@ export default function RelatorioBase({
         const addHeader = (page, total) => {
             const topY = 10;
 
-            // LOGO
             if (logo && logo.startsWith("data:")) {
                 try {
                     const fmt = guessImageFormat(logo);
@@ -235,32 +339,29 @@ export default function RelatorioBase({
                 }
             }
 
-            // TÍTULO
             pdf.setFont("helvetica", "bold");
             pdf.setFontSize(14);
             pdf.text(titulo || "Relatório", pageW / 2, topY + 6, { align: "center" });
 
-            // PERÍODO
             if (periodo) {
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(10);
                 pdf.text(`Período ${periodo}`, pageW / 2, topY + 12, { align: "center" });
             }
 
-            // PAGINAÇÃO
             pdf.setFont("helvetica", "normal");
             pdf.setFontSize(9);
             pdf.text(`Página ${page} de ${total}`, pageW - marginX, topY + 6, { align: "right" });
         };
 
-        const masterHead = [columns.map((c) => c.label)];
+        const masterCols = activeColumns;
+        const masterHead = [masterCols.map((c) => c.label)];
         const makeMasterBody = (pageRows) =>
-            pageRows.map((r) => columns.map((c) => toText(safeGet(r, c.accessor))));
+            pageRows.map((r) => masterCols.map((c) => toText(safeGet(r, c.accessor))));
 
         const detailEnabled = !!(detail?.enabled && detail?.key && detail?.columns?.length);
         const includeDet = !!(detailEnabled && printIncludeDetail);
 
-        // paginação mestre no PDF
         const pdfPages = [];
         for (let i = 0; i < rows.length; i += rowsPerPage) {
             pdfPages.push(rows.slice(i, i + rowsPerPage));
@@ -272,7 +373,6 @@ export default function RelatorioBase({
 
             addHeader(idx + 1, pdfTotalPages);
 
-            // tabela mestre
             autoTable(pdf, {
                 head: masterHead,
                 body: makeMasterBody(pageRows),
@@ -290,7 +390,7 @@ export default function RelatorioBase({
                     fontStyle: "bold",
                 },
                 margin: { left: marginX, right: marginX },
-                columnStyles: columns.reduce((acc, c, i) => {
+                columnStyles: masterCols.reduce((acc, c, i) => {
                     if (c.align === "right") acc[i] = { halign: "right" };
                     return acc;
                 }, {}),
@@ -298,9 +398,9 @@ export default function RelatorioBase({
 
             let y = pdf.lastAutoTable?.finalY ?? 28;
 
-            // detalhe por linha (NF)
             if (includeDet) {
                 const dCols = detail.columns;
+
                 const dHead = [["Relação Notas Fiscais do CTe", ...new Array(dCols.length - 1).fill("")]];
                 const dHead2 = [dCols.map((c) => c.label)];
 
@@ -347,7 +447,6 @@ export default function RelatorioBase({
 
                     y = pdf.lastAutoTable?.finalY ?? y + 8;
 
-                    // totalizador das NFs
                     const totNFs = detRows.length;
                     const totPeso = detRows.reduce((s, x) => s + (Number(x.peso) || 0), 0);
                     const totValor = detRows.reduce((s, x) => s + (Number(x.valorNF) || 0), 0);
@@ -360,26 +459,19 @@ export default function RelatorioBase({
 
                     pdf.text("Totais das NFs:", colX + 90, lineY);
                     pdf.text(String(totNFs), colX + 120, lineY, { align: "right" });
-                    pdf.text(
-                        totPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 }),
-                        colX + 150,
-                        lineY,
-                        { align: "right" }
-                    );
-                    pdf.text(
-                        totValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 }),
-                        colX + 190,
-                        lineY,
-                        { align: "right" }
-                    );
+                    pdf.text(totPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 }), colX + 150, lineY, {
+                        align: "right",
+                    });
+                    pdf.text(totValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 }), colX + 190, lineY, {
+                        align: "right",
+                    });
 
                     pdf.setFont("helvetica", "normal");
                     y = lineY + 6;
                 }
             }
 
-            // Totais gerais só na última página do PDF
-            if (idx === pdfTotalPages - 1 && totals?.length) {
+            if (idx === pdfTotalPages - 1 && (totalsConfig || []).length) {
                 const startY = Math.min((pdf.lastAutoTable?.finalY ?? 28) + 10, pageH - 25);
                 pdf.setFontSize(9.5);
                 pdf.setFont("helvetica", "bold");
@@ -387,7 +479,7 @@ export default function RelatorioBase({
                 let x = marginX;
                 let yTot = startY;
 
-                totals.forEach((t) => {
+                (totalsConfig || []).forEach((t) => {
                     const val =
                         t.type === "count"
                             ? rows.length
@@ -412,34 +504,33 @@ export default function RelatorioBase({
 
         pdf.save(file);
     };
-
+    // ===== PARTE 3/4 =====
     /* =====================================================
-       9) EXPORT EXCEL (padrão)
-       - inclui/omite aba Notas conforme printIncludeDetail
+       10) EXPORT EXCEL (padrão)
     ====================================================== */
     const exportExcelDefault = () => {
         const file = `${guessFilename(titulo)}.xlsx`;
 
-        // Mestre
+        const masterCols = activeColumns;
+
         const wsMasterData = [
-            columns.map((c) => c.label),
-            ...rows.map((r) => columns.map((c) => safeGet(r, c.accessor))),
+            masterCols.map((c) => c.label),
+            ...rows.map((r) => masterCols.map((c) => safeGet(r, c.accessor))),
         ];
         const wsMaster = XLSX.utils.aoa_to_sheet(wsMasterData);
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, wsMaster, "CTRC");
 
-        // Detalhe (Notas)
         const detailEnabled = !!(detail?.enabled && detail?.key && detail?.columns?.length);
         const includeDet = !!(detailEnabled && printIncludeDetail);
 
         if (includeDet) {
             const dCols = detail.columns;
 
-            const masterKeyCol = detail.toggleColumnId || columns?.[0]?.id;
+            const masterKeyCol = detail.toggleColumnId || masterCols?.[0]?.id;
             const masterKeyAccessor =
-                columns.find((c) => c.id === masterKeyCol)?.accessor || columns?.[0]?.accessor;
+                masterCols.find((c) => c.id === masterKeyCol)?.accessor || masterCols?.[0]?.accessor;
 
             const detHeader = ["CTRC", ...dCols.map((c) => c.label)];
             const detRows = [];
@@ -464,6 +555,27 @@ export default function RelatorioBase({
             XLSX.utils.book_append_sheet(wb, wsDet, "Notas");
         }
 
+        if ((totalsConfig || []).length) {
+            const totLine = [];
+            (totalsConfig || []).forEach((t) => {
+                const val =
+                    t.type === "count"
+                        ? rows.length
+                        : rows.reduce((s, r) => s + (Number(r[t.accessor]) || 0), 0);
+
+                const formatted =
+                    t.format === "money"
+                        ? `R$ ${Number(val || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                        : Number(val || 0).toLocaleString("pt-BR");
+
+                totLine.push(`${t.label}: ${formatted}`);
+            });
+
+            const range = XLSX.utils.decode_range(wsMaster["!ref"]);
+            const newRowIndex = range.e.r + 2;
+            XLSX.utils.sheet_add_aoa(wsMaster, [[""], ["TOTAIS"], totLine], { origin: { r: newRowIndex, c: 0 } });
+        }
+
         XLSX.writeFile(wb, file);
     };
 
@@ -478,20 +590,138 @@ export default function RelatorioBase({
     };
 
     /* =====================================================
-       10) RENDER
+       11) FECHAR
+    ====================================================== */
+    const handleClose = () => {
+        if (typeof onClose === "function") return onClose();
+        window.history.back();
+    };
+
+    /* =====================================================
+       12) PERSONALIZAÇÃO
+    ====================================================== */
+    const availableColumns = useMemo(() => {
+        const selected = new Set(selectedColumnIds);
+        return fullCatalog.filter((c) => !selected.has(c.id));
+    }, [fullCatalog, selectedColumnIds]);
+
+    const selectedColumns = useMemo(() => {
+        const map = new Map(fullCatalog.map((c) => [c.id, c]));
+        return selectedColumnIds.map((id) => map.get(id)).filter(Boolean);
+    }, [selectedColumnIds, fullCatalog]);
+
+    const addColumn = (id) => {
+        setSelectedColumnIds((prev) => {
+            if (prev.includes(id)) return prev;
+            return [...prev, id];
+        });
+    };
+
+    const removeColumn = (id) => {
+        setSelectedColumnIds((prev) => prev.filter((x) => x !== id));
+    };
+
+    const moveColumn = (fromId, toId) => {
+        setSelectedColumnIds((prev) => {
+            const fromIdx = prev.indexOf(fromId);
+            const toIdx = prev.indexOf(toId);
+            if (fromIdx < 0 || toIdx < 0) return prev;
+
+            const next = [...prev];
+            next.splice(fromIdx, 1);
+            next.splice(toIdx, 0, fromId);
+            return next;
+        });
+    };
+
+    const resetToMantranDefault = () => {
+        setSelectedColumnIds((columns || []).map((c) => c.id));
+        setTotalsConfig(totals || []);
+        setSetAsDefault(false);
+    };
+
+    const saveUserPreset = () => {
+        const preset = {
+            id: uid(),
+            savedAt: new Date().toISOString(),
+            selectedColumnIds,
+            totalsConfig,
+            setAsDefault,
+        };
+        savePreset(reportKey, preset);
+    };
+
+    /* =====================================================
+       13) UI: TOTAIS EDITÁVEIS
+    ====================================================== */
+    const [newTotalType, setNewTotalType] = useState("sum");
+    const [newTotalAccessor, setNewTotalAccessor] = useState("");
+    const [newTotalLabel, setNewTotalLabel] = useState("");
+    const [newTotalFormat, setNewTotalFormat] = useState("");
+
+    const selectableNumericAccessors = useMemo(() => {
+        const cols = fullCatalog.filter((c) => typeof c.accessor === "string");
+        return cols.map((c) => ({ id: c.id, label: c.label, accessor: c.accessor }));
+    }, [fullCatalog]);
+
+    const addTotal = () => {
+        if (newTotalType === "count") {
+            const id = `count_${uid()}`;
+            const label = newTotalLabel?.trim() || "Total";
+            setTotalsConfig((prev) => [...prev, { id, label, type: "count" }]);
+            setNewTotalLabel("");
+            return;
+        }
+
+        if (!newTotalAccessor) return;
+
+        const id = `sum_${newTotalAccessor}_${uid()}`;
+        const label =
+            newTotalLabel?.trim() ||
+            `Total ${selectableNumericAccessors.find((x) => x.accessor === newTotalAccessor)?.label || newTotalAccessor}`;
+
+        const format = newTotalFormat === "money" ? "money" : undefined;
+
+        setTotalsConfig((prev) => [
+            ...prev,
+            { id, label, type: "sum", accessor: newTotalAccessor, ...(format ? { format } : {}) },
+        ]);
+
+        setNewTotalLabel("");
+        setNewTotalAccessor("");
+        setNewTotalFormat("");
+    };
+
+    const removeTotal = (id) => {
+        setTotalsConfig((prev) => prev.filter((t) => t.id !== id));
+    };
+
+    /* =====================================================
+       14) RENDER
     ====================================================== */
     return (
-        <div id="relatorio-print-root" className="w-full">
+        <div
+            id="relatorio-print-root"
+            className="w-full"
+            style={{
+                paddingLeft: sidebarOffsetPx ? `${sidebarOffsetPx}px` : undefined,
+            }}
+        >
             {/* ================= TOOLBAR FIXA ================= */}
-            <div className="sticky top-[44px] z-40 bg-white border-b border-gray-300">
+            <div
+                className="sticky z-40 bg-white border-b border-gray-300"
+                style={{
+                    top: `${stickyTopPx}px`,
+                    left: sidebarOffsetPx ? `${sidebarOffsetPx}px` : 0,
+                }}
+            >
                 <div className="px-4 py-2 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-[12px] text-gray-600">
-                        <b className="text-gray-700">{titulo}</b>
-                        {periodo ? <span className="text-gray-500">(Período {periodo})</span> : null}
+                    <div className="flex items-center gap-2 text-[12px] text-gray-600 min-w-0">
+                        <b className="text-gray-700 truncate">{titulo}</b>
+                        {periodo ? <span className="text-gray-500 truncate">(Período {periodo})</span> : null}
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        {/* ✅ Opção de impressão/exportação */}
+                    <div className="flex items-center gap-3 flex-wrap justify-end">
                         {detail?.enabled ? (
                             <label className="flex items-center gap-2 text-[12px] text-gray-600 select-none">
                                 <input
@@ -503,7 +733,14 @@ export default function RelatorioBase({
                             </label>
                         ) : null}
 
-                        {/* Página */}
+                        <button
+                            onClick={() => setConfigOpen(true)}
+                            className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
+                            title="Personalizar campos e totais"
+                        >
+                            Campos
+                        </button>
+
                         <div className="flex items-center gap-2 text-[12px] text-gray-600">
                             <span>Página</span>
                             <input
@@ -530,7 +767,6 @@ export default function RelatorioBase({
                             </button>
                         </div>
 
-                        {/* Ações */}
                         <button
                             onClick={handlePrint}
                             className="px-3 h-[28px] bg-red-700 text-white rounded text-[12px]"
@@ -553,6 +789,14 @@ export default function RelatorioBase({
                             title={printIncludeDetail ? "Exportar Excel (com Notas)" : "Exportar Excel (sem Notas)"}
                         >
                             Excel
+                        </button>
+
+                        <button
+                            onClick={handleClose}
+                            className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
+                            title="Fechar relatório"
+                        >
+                            Fechar
                         </button>
                     </div>
                 </div>
@@ -578,7 +822,6 @@ export default function RelatorioBase({
                                 padding: PAGE_PADDING,
                             }}
                         >
-                            {/* ============ HEADER REPETE EM TODAS ============ */}
                             <RelatorioHeader
                                 logo={logo}
                                 titulo={titulo}
@@ -587,28 +830,23 @@ export default function RelatorioBase({
                                 totalPages={totalPages}
                             />
 
-                            {/* ============ TABELA ============ */}
                             <RelatorioTable
-                                columns={columns}
+                                columns={activeColumns}
                                 rows={pageRows}
                                 detail={detail}
                                 isExpanded={isExpanded}
                                 toggleRow={toggleRow}
-                                // ✅ printMode decide se expande tudo; mas respeita printIncludeDetail
                                 printMode={printMode}
                                 printIncludeDetail={printIncludeDetail}
                             />
 
-                            {/* ============ TOTAIS (SÓ NA ÚLTIMA) ============ */}
-                            {pageIndex === totalPages - 1 && totals.length > 0 && (
+                            {pageIndex === totalPages - 1 && (totalsConfig || []).length > 0 && (
                                 <div className="mt-4 border-t pt-2 text-[12px] flex flex-wrap gap-x-6 gap-y-1">
-                                    {totals.map((t) => {
+                                    {(totalsConfig || []).map((t) => {
                                         const val = totalsValues[t.id];
                                         const formatted =
                                             t.format === "money"
-                                                ? `R$ ${Number(val || 0).toLocaleString("pt-BR", {
-                                                    minimumFractionDigits: 2,
-                                                })}`
+                                                ? `R$ ${Number(val || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
                                                 : Number(val || 0).toLocaleString("pt-BR");
                                         return (
                                             <div key={t.id}>
@@ -619,9 +857,8 @@ export default function RelatorioBase({
                                 </div>
                             )}
 
-                            {/* ============ FOOTER PÁGINA ============ */}
                             <div className="mt-2 text-[10px] text-gray-500 flex justify-between">
-                                <span>localhost</span>
+                                <span></span>
                                 <span>
                                     {new Date().toLocaleString("pt-BR")} | Página {pageIndex + 1}/{totalPages}
                                 </span>
@@ -630,37 +867,295 @@ export default function RelatorioBase({
                     ))}
                 </div>
             </div>
+// ===== PARTE 4/4 =====
+            {/* ================= MODAL CAMPOS/TOTAIS ================= */}
+            {configOpen && (
+                <div className="fixed inset-0 z-50">
+                    <div className="absolute inset-0 bg-black/30" onClick={() => setConfigOpen(false)} />
+                    <div className="absolute right-0 top-0 h-full w-[520px] bg-white shadow-xl flex flex-col">
+                        <div className="p-4 border-b flex items-center justify-between">
+                            <div className="flex flex-col">
+                                <b className="text-[14px]">Personalizar Relatório</b>
+                                <span className="text-[12px] text-gray-500">
+                                    Arraste para ordenar, adicione/remova campos e configure totais.
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => setConfigOpen(false)}
+                                className="px-3 h-[30px] border border-gray-300 rounded text-[12px]"
+                            >
+                                X
+                            </button>
+                        </div>
+
+                        <div className="p-4 flex-1 overflow-auto">
+                            <div className="mb-4 flex items-center justify-between gap-3">
+                                <label className="flex items-center gap-2 text-[12px] text-gray-700">
+                                    <input
+                                        type="checkbox"
+                                        checked={setAsDefault}
+                                        onChange={(e) => setSetAsDefault(e.target.checked)}
+                                    />
+                                    Definir meu layout como padrão
+                                </label>
+
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={resetToMantranDefault}
+                                        className="px-3 h-[28px] border border-gray-300 rounded text-[12px]"
+                                        title="Voltar para o padrão Mantran"
+                                    >
+                                        Padrão Mantran
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            saveUserPreset();
+                                            setConfigOpen(false);
+                                        }}
+                                        className="px-3 h-[28px] bg-red-700 text-white rounded text-[12px]"
+                                        title="Salvar personalização"
+                                    >
+                                        Salvar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="border rounded">
+                                    <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
+                                        Campos disponíveis ({availableColumns.length})
+                                    </div>
+                                    <div className="p-2 max-h-[260px] overflow-auto">
+                                        {availableColumns.map((c) => (
+                                            <div
+                                                key={c.id}
+                                                className="flex items-center justify-between gap-2 px-2 py-1 border-b last:border-b-0"
+                                            >
+                                                <div className="text-[12px] text-gray-700">
+                                                    <b>{c.label}</b>
+                                                    <div className="text-[11px] text-gray-400">{c.id}</div>
+                                                </div>
+                                                <button
+                                                    onClick={() => addColumn(c.id)}
+                                                    className="px-2 h-[26px] border border-gray-300 rounded text-[12px]"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {!availableColumns.length ? (
+                                            <div className="p-3 text-[12px] text-gray-400">Nenhum campo disponível.</div>
+                                        ) : null}
+                                    </div>
+                                </div>
+
+                                <div className="border rounded">
+                                    <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
+                                        Campos selecionados ({selectedColumns.length})
+                                    </div>
+                                    <div className="p-2 max-h-[260px] overflow-auto">
+                                        {selectedColumns.map((c) => (
+                                            <div
+                                                key={c.id}
+                                                className={`flex items-center justify-between gap-2 px-2 py-1 border-b last:border-b-0 rounded ${dragId === c.id ? "bg-gray-100" : ""
+                                                    }`}
+                                                draggable
+                                                onDragStart={() => setDragId(c.id)}
+                                                onDragEnd={() => setDragId(null)}
+                                                onDragOver={(e) => e.preventDefault()}
+                                                onDrop={() => {
+                                                    if (!dragId || dragId === c.id) return;
+                                                    moveColumn(dragId, c.id);
+                                                    setDragId(null);
+                                                }}
+                                                title="Arraste para reordenar"
+                                            >
+                                                <div className="text-[12px] text-gray-700">
+                                                    <b>{c.label}</b>
+                                                    <div className="text-[11px] text-gray-400">{c.id}</div>
+                                                </div>
+
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[12px] text-gray-400 cursor-grab">☰</span>
+                                                    <button
+                                                        onClick={() => removeColumn(c.id)}
+                                                        className="px-2 h-[26px] border border-gray-300 rounded text-[12px]"
+                                                    >
+                                                        –
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {!selectedColumns.length ? (
+                                            <div className="p-3 text-[12px] text-gray-400">
+                                                Nenhum campo selecionado. Adicione pelo lado esquerdo.
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 border rounded">
+                                <div className="px-3 py-2 border-b bg-gray-50 text-[12px] font-semibold">
+                                    Totais no rodapé
+                                </div>
+
+                                <div className="p-3">
+                                    {(totalsConfig || []).length ? (
+                                        <div className="mb-3">
+                                            {(totalsConfig || []).map((t) => (
+                                                <div
+                                                    key={t.id}
+                                                    className="flex items-center justify-between gap-2 border-b last:border-b-0 py-2"
+                                                >
+                                                    <div className="text-[12px] text-gray-700">
+                                                        <b>{t.label}</b>
+                                                        <div className="text-[11px] text-gray-400">
+                                                            {t.type === "count" ? "count" : `sum(${t.accessor})`}{" "}
+                                                            {t.format ? `| ${t.format}` : ""}
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => removeTotal(t.id)}
+                                                        className="px-2 h-[26px] border border-gray-300 rounded text-[12px]"
+                                                    >
+                                                        Remover
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="mb-3 text-[12px] text-gray-400">Nenhum total configurado.</div>
+                                    )}
+
+                                    <div className="grid grid-cols-12 gap-2 items-end">
+                                        <div className="col-span-3">
+                                            <label className="text-[11px] text-gray-600">Tipo</label>
+                                            <select
+                                                className="w-full h-[32px] border border-gray-300 rounded px-2 text-[12px]"
+                                                value={newTotalType}
+                                                onChange={(e) => setNewTotalType(e.target.value)}
+                                            >
+                                                <option value="sum">Somatório</option>
+                                                <option value="count">Contagem</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col-span-4">
+                                            <label className="text-[11px] text-gray-600">Campo (para somatório)</label>
+                                            <select
+                                                className="w-full h-[32px] border border-gray-300 rounded px-2 text-[12px]"
+                                                value={newTotalAccessor}
+                                                onChange={(e) => setNewTotalAccessor(e.target.value)}
+                                                disabled={newTotalType !== "sum"}
+                                            >
+                                                <option value="">Selecione</option>
+                                                {selectableNumericAccessors.map((a) => (
+                                                    <option key={a.accessor} value={a.accessor}>
+                                                        {a.label} ({a.accessor})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="col-span-3">
+                                            <label className="text-[11px] text-gray-600">Formato</label>
+                                            <select
+                                                className="w-full h-[32px] border border-gray-300 rounded px-2 text-[12px]"
+                                                value={newTotalFormat}
+                                                onChange={(e) => setNewTotalFormat(e.target.value)}
+                                                disabled={newTotalType !== "sum"}
+                                            >
+                                                <option value="">Normal</option>
+                                                <option value="money">Moeda</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="col-span-2">
+                                            <button
+                                                onClick={addTotal}
+                                                className="w-full h-[32px] bg-gray-900 text-white rounded text-[12px]"
+                                            >
+                                                Adicionar
+                                            </button>
+                                        </div>
+
+                                        <div className="col-span-12">
+                                            <label className="text-[11px] text-gray-600">Rótulo (opcional)</label>
+                                            <input
+                                                className="w-full h-[32px] border border-gray-300 rounded px-2 text-[12px]"
+                                                value={newTotalLabel}
+                                                onChange={(e) => setNewTotalLabel(e.target.value)}
+                                                placeholder="Ex: Total Frete"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 text-[11px] text-gray-500">
+                                        {presetLoaded ? (
+                                            <span>
+                                                Último preset salvo: {new Date(presetLoaded.savedAt).toLocaleString("pt-BR")}{" "}
+                                                {presetLoaded.setAsDefault ? "(padrão)" : ""}
+                                            </span>
+                                        ) : (
+                                            <span>Nenhum preset salvo ainda.</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 border-t flex items-center justify-between">
+                            <div className="text-[11px] text-gray-500">Dica: arraste os campos do lado direito para reordenar ✨</div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setConfigOpen(false)}
+                                    className="px-3 h-[30px] border border-gray-300 rounded text-[12px]"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        saveUserPreset();
+                                        setConfigOpen(false);
+                                    }}
+                                    className="px-3 h-[30px] bg-red-700 text-white rounded text-[12px]"
+                                >
+                                    Salvar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ================= PRINT CSS ================= */}
             <style>{`
         @media print {
-          /* esconde tudo do app */
           body * { visibility: hidden !important; }
 
-          /* deixa visível só o relatório */
           #relatorio-print-root, #relatorio-print-root * {
             visibility: visible !important;
           }
 
-          /* posiciona o relatório no topo esquerdo */
           #relatorio-print-root {
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
+            padding-left: 0 !important;
           }
 
-          /* remove fundos/sombras */
           .bg-gray-200 { background: white !important; }
           .shadow { box-shadow: none !important; }
 
-          /* some a toolbar */
           .sticky { display: none !important; }
+          .fixed { display: none !important; }
 
-          /* libera overflow/altura */
           .overflow-y-auto { overflow: visible !important; height: auto !important; }
 
-          /* quebra páginas nas folhas */
           .bg-white.shadow { break-after: page; page-break-after: always; }
         }
       `}</style>
@@ -674,7 +1169,6 @@ export default function RelatorioBase({
 function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
     return (
         <div className="flex items-start mb-4">
-            {/* LOGO */}
             <div className="w-[220px] h-[60px] flex items-center">
                 {logo ? (
                     <img src={logo} alt="Logo" className="max-h-full max-w-full object-contain" />
@@ -683,13 +1177,11 @@ function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
                 )}
             </div>
 
-            {/* TÍTULO */}
             <div className="flex-1 text-center">
                 <h1 className="text-red-700 font-semibold text-[16px]">{titulo}</h1>
                 {periodo ? <div className="text-[12px] text-gray-600">Período {periodo}</div> : null}
             </div>
 
-            {/* PAGINAÇÃO */}
             <div className="text-xs text-gray-500 text-right">
                 Página {page} de {totalPages}
             </div>
@@ -698,23 +1190,19 @@ function RelatorioHeader({ logo, titulo, periodo, page, totalPages }) {
 }
 
 /* =========================================================
-   TABELA (com + dentro da coluna definida em toggleColumnId)
+   TABELA
 ========================================================= */
-function RelatorioTable({
-    columns,
-    rows,
-    detail,
-    isExpanded,
-    toggleRow,
-    printMode,
-    printIncludeDetail,
-}) {
+function RelatorioTable({ columns, rows, detail, isExpanded, toggleRow, printMode, printIncludeDetail }) {
     return (
         <table className="w-full border-collapse text-[12px]">
             <thead>
                 <tr className="bg-gray-100">
                     {columns.map((col) => (
-                        <th key={col.id} className="border px-2 py-1" style={{ width: col.width }}>
+                        <th
+                            key={col.id}
+                            className={`border px-2 py-1 ${col.align === "right" ? "text-right" : ""}`}
+                            style={{ width: col.width }}
+                        >
                             {col.label}
                         </th>
                     ))}
@@ -729,10 +1217,7 @@ function RelatorioTable({
                         rowId={row.id ?? String(idx)}
                         columns={columns}
                         detail={detail}
-                        expanded={
-                            // ✅ no print: expande tudo SOMENTE se o usuário marcou "com notas"
-                            printMode ? !!printIncludeDetail : isExpanded(row.id ?? String(idx))
-                        }
+                        expanded={printMode ? !!printIncludeDetail : isExpanded(row.id ?? String(idx))}
                         toggleRow={toggleRow}
                         printMode={printMode}
                     />
@@ -790,7 +1275,6 @@ function RelatorioRow({ row, rowId, columns, detail, expanded, toggleRow, printM
                 })}
             </tr>
 
-            {/* DETALHE (NOTAS) */}
             {detail?.enabled && hasDetail && expanded && (
                 <tr>
                     <td colSpan={columns.length} className="border p-2 bg-gray-50">
@@ -819,10 +1303,7 @@ function RelatorioDetailTable({ columns, rows }) {
         <table className="w-full border-collapse text-[11px]">
             <thead>
                 <tr className="bg-white">
-                    <th
-                        colSpan={columns.length}
-                        className="border border-gray-300 px-2 py-1 text-left font-semibold"
-                    >
+                    <th colSpan={columns.length} className="border border-gray-300 px-2 py-1 text-left font-semibold">
                         Relação Notas Fiscais do CTe
                     </th>
                 </tr>
@@ -830,8 +1311,7 @@ function RelatorioDetailTable({ columns, rows }) {
                     {columns.map((c) => (
                         <th
                             key={c.id}
-                            className={`border border-gray-300 px-2 py-1 ${c.align === "right" ? "text-right" : ""
-                                }`}
+                            className={`border border-gray-300 px-2 py-1 ${c.align === "right" ? "text-right" : ""}`}
                         >
                             {c.label}
                         </th>
@@ -845,8 +1325,7 @@ function RelatorioDetailTable({ columns, rows }) {
                         {columns.map((c) => (
                             <td
                                 key={c.id}
-                                className={`border border-gray-300 px-2 py-1 ${c.align === "right" ? "text-right" : ""
-                                    }`}
+                                className={`border border-gray-300 px-2 py-1 ${c.align === "right" ? "text-right" : ""}`}
                             >
                                 {safeGet(r, c.accessor)}
                             </td>
@@ -854,13 +1333,9 @@ function RelatorioDetailTable({ columns, rows }) {
                     </tr>
                 ))}
 
-                {/* Totalizador igual ao print */}
                 {has6 ? (
                     <tr className="bg-white">
-                        <td
-                            colSpan={3}
-                            className="border border-gray-300 px-2 py-2 text-right font-semibold"
-                        >
+                        <td colSpan={3} className="border border-gray-300 px-2 py-2 text-right font-semibold">
                             Totais das NFs:
                         </td>
                         <td className="border border-gray-300 px-2 py-2 text-right font-semibold">
@@ -875,10 +1350,7 @@ function RelatorioDetailTable({ columns, rows }) {
                     </tr>
                 ) : (
                     <tr className="bg-white">
-                        <td
-                            colSpan={columns.length}
-                            className="border border-gray-300 px-2 py-2 text-right font-semibold"
-                        >
+                        <td colSpan={columns.length} className="border border-gray-300 px-2 py-2 text-right font-semibold">
                             Totais das NFs: {totais.totalNFs} | Peso:{" "}
                             {totais.totalPeso.toLocaleString("pt-BR", { minimumFractionDigits: 3 })} | Valor:{" "}
                             {totais.totalValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
