@@ -107,6 +107,8 @@ import RelMotorista from "./pages/RelMotorista";
 import RelMotoristaResultado from "./pages/Relatorios/Operacao/RelMotoristaResultado";
 import RelAgregado from "./pages/RelAgregado";
 import RelAgregadoResultado from "./pages/Relatorios/Operacao/RelAgregadoResultado";
+import RelAnaliseProdutividade from "./pages/RelAnaliseProdutividade";
+import RelAnaliseProdutividadeResultado from "./pages/Relatorios/Operacao/RelAnaliseProdutividadeResultado";
 import RelVeiculo from "./pages/RelVeiculo";
 import ModuloParametro from "./pages/ModuloParametro";
 import GNREParametro from "./pages/GNREParametro";
@@ -295,6 +297,8 @@ export default function App() {
                 <Route path="/relatorios/operacao/motoristas/resultado" element={<RelMotoristaResultado open={sidebarOpen} />} />
                 <Route path="/rel-agregado" element={<RelAgregado open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/agregados/resultado" element={<RelAgregadoResultado open={sidebarOpen} />} />
+                <Route path="/rel-analise-produtividade" element={<RelAnaliseProdutividade open={sidebarOpen} />} />
+                <Route path="/relatorios/operacao/analise-produtividade/resultado" element={<RelAnaliseProdutividadeResultado open={sidebarOpen} />} />
                 <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
                 <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
                 <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />

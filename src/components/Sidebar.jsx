@@ -1115,6 +1115,51 @@ export default function Sidebar({ open }) {
                       </div>
                     )}
                   </li>
+
+                  {/* === Veículos Submenu === */}
+                  <li
+                    className="px-3 py-[2px] hover:bg-gray-100 rounded cursor-pointer relative"
+                    onMouseEnter={() => setActiveSubMenu("rel-veiculos")}
+                    onMouseLeave={() => setActiveSubMenu(null)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Veículos</span>
+                      <ChevronRight size={13} className="text-gray-500" />
+                    </div>
+
+                    {activeSubMenu === "rel-veiculos" && (
+                      <div className="absolute top-0 left-full bg-white border border-gray-200 shadow-md rounded-md w-48 p-1 z-50">
+                        {["IPVA", "Licenciamento", "Multas / Infrações", "Seguro"].map((item) => (
+                          <Link
+                            key={item}
+                            to="#"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+
+                        {/* Linha semi-transparente */}
+                        <div className="border-t border-gray-300 opacity-50 my-1" />
+
+                        <Link
+                          to="/rel-analise-produtividade"
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          Análise de Produtividade
+                        </Link>
+                        {["Análise de Lucratividade"].map((item) => (
+                          <Link
+                            key={item}
+                            to="#"
+                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </li>
                 </ul>
               </div>
             )}
