@@ -1094,15 +1094,24 @@ export default function Sidebar({ open }) {
                         >
                           Clientes
                         </Link>
-                        {["Motoristas", "Veiculos", "Agregados"].map((item) => (
-                          <Link
-                            key={item}
-                            to="#"
-                            className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
-                          >
-                            {item}
-                          </Link>
-                        ))}
+                        <Link
+                          to="/rel-veiculo"
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          Veículos
+                        </Link>
+                        <Link
+                          to="/rel-motorista"
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          Motoristas
+                        </Link>
+                        <Link
+                          to="/rel-agregado"
+                          className="block px-3 py-[2px] hover:bg-gray-100 rounded text-gray-700"
+                        >
+                          Agregados
+                        </Link>
                       </div>
                     )}
                   </li>

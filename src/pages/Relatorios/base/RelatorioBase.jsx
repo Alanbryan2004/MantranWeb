@@ -1365,19 +1365,60 @@ function RelatorioTable({ columns, rows, detail, isExpanded, toggleRow, printMod
             </thead>
 
             <tbody>
-                {rows.map((row, idx) => (
-                    <RelatorioRow
-                        key={row.id ?? idx}
-                        row={row}
-                        rowId={row.id ?? String(idx)}
-                        columns={columns}
-                        detail={detail}
-                        expanded={printMode ? !!printIncludeDetail : isExpanded(row.id ?? String(idx))}
-                        toggleRow={toggleRow}
-                        printMode={printMode}
-                    />
-                ))}
+                {rows.map((row, idx) => {
+                    const rowId = row.id ?? String(idx);
+
+                    // ✅ 1) Detecta linhas de agrupamento (Filial / Classe / Qtde)
+                    const isGroup =
+                        row?.__type === "filial" || row?.__type === "classe" || row?.__type === "qtde";
+
+                    if (isGroup) {
+                        // ✅ 2) Texto do agrupamento (vem do seu RelVeiculoResultado)
+                        const text =
+                            row?.__type === "filial"
+                                ? row.filialLabel || ""
+                                : row?.__type === "classe"
+                                    ? row.classeLabel || ""
+                                    : `Qtde: ${row.qtde ?? 0}`;
+
+                        // ✅ 3) Cor de fundo (cinza claro, mas diferente do cabeçalho)
+                        // Cabeçalho = bg-gray-100. Então aqui usamos 50/75.
+                        const bg =
+                            row?.__type === "filial"
+                                ? "bg-gray-75"
+                                : row?.__type === "classe"
+                                    ? "bg-gray-50"
+                                    : "bg-gray-50";
+
+                        const font =
+                            row?.__type === "filial" ? "font-semibold" : "font-medium";
+
+                        return (
+                            <tr key={rowId} className={bg}>
+                                {/* ✅ MESCLA A LINHA TODA */}
+                                <td colSpan={columns.length} className={`border px-2 py-1 text-[12px] text-gray-800 ${font}`}>
+                                    {text}
+                                </td>
+                            </tr>
+                        );
+                    }
+
+                    // ✅ 4) Linha normal continua igual
+                    return (
+                        <RelatorioRow
+                            key={rowId}
+                            row={row}
+                            rowId={rowId}
+                            columns={columns}
+                            detail={detail}
+                            expanded={printMode ? !!printIncludeDetail : isExpanded(rowId)}
+                            toggleRow={toggleRow}
+                            printMode={printMode}
+                        />
+                    );
+                })}
             </tbody>
+
         </table>
     );
 }

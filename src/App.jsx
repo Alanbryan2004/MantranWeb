@@ -14,6 +14,8 @@ import HeaderWMS from "./components/HeaderWMS";
 import SidebarWMS from "./components/SidebarWMS";
 
 // Páginas principais
+import RelVeiculoResultado from "./pages/Relatorios/Operacao/RelVeiculoResultado";
+import RelClienteResultado from "./pages/Relatorios/Operacao/RelClienteResultado";
 import { FilialProvider } from "./context/FilialContext";
 import Agenda from "./pages/Agenda";
 import CTePage from "./pages/CTePage";
@@ -101,6 +103,11 @@ import HomeFinanceiro from "./pages/HomeFinanceiro";
 import RelConhecimento from "./pages/RelConhecimento";
 import RelConhecimentoResultado from "./pages/Relatorios/Operacao/RelConhecimentoResultado";
 import RelCliente from "./pages/RelCliente";
+import RelMotorista from "./pages/RelMotorista";
+import RelMotoristaResultado from "./pages/Relatorios/Operacao/RelMotoristaResultado";
+import RelAgregado from "./pages/RelAgregado";
+import RelAgregadoResultado from "./pages/Relatorios/Operacao/RelAgregadoResultado";
+import RelVeiculo from "./pages/RelVeiculo";
 import ModuloParametro from "./pages/ModuloParametro";
 import GNREParametro from "./pages/GNREParametro";
 import CreditoCombustivelParametro from "./pages/CreditoCombustivelParametro";
@@ -281,7 +288,13 @@ export default function App() {
                 <Route path="/rel-conhecimento" element={<RelConhecimento open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/conhecimento/resultado" element={<RelConhecimentoResultado open={sidebarOpen} />} />
                 <Route path="/rel-cliente" element={<RelCliente open={sidebarOpen} />} />
-
+                <Route path="/relatorios/cadastro/clientes/resultado" element={<RelClienteResultado open={sidebarOpen} />} />
+                <Route path="/rel-veiculo" element={<RelVeiculo open={sidebarOpen} />} />
+                <Route path="/relatorios/operacao/veiculos/resultado" element={<RelVeiculoResultado open={sidebarOpen} />} />
+                <Route path="/rel-motorista" element={<RelMotorista open={sidebarOpen} />} />
+                <Route path="/relatorios/operacao/motoristas/resultado" element={<RelMotoristaResultado open={sidebarOpen} />} />
+                <Route path="/rel-agregado" element={<RelAgregado open={sidebarOpen} />} />
+                <Route path="/relatorios/operacao/agregados/resultado" element={<RelAgregadoResultado open={sidebarOpen} />} />
                 <Route path="/veiculo" element={<Veiculo open={sidebarOpen} />} />
                 <Route path="/veiculo-modelo" element={<VeiculoModelo open={sidebarOpen} />} />
                 <Route path="/veiculo-combustivel" element={<VeiculoCombustivel open={sidebarOpen} />} />
