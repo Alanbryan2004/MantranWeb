@@ -16,6 +16,7 @@ import SidebarWMS from "./components/SidebarWMS";
 // Páginas principais
 import RelVeiculoResultado from "./pages/Relatorios/Operacao/RelVeiculoResultado";
 import RelClienteResultado from "./pages/Relatorios/Operacao/RelClienteResultado";
+import RelFatura from "./pages/Relatorios/Faturamento/RelFatura";
 import { FilialProvider } from "./context/FilialContext";
 import Agenda from "./pages/Agenda";
 import CTePage from "./pages/CTePage";
@@ -342,7 +343,7 @@ export default function App() {
                 <Route path="/embalagem" element={<Embalagem open={sidebarOpen} />} />
                 <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
                 <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
-
+                <Route path="/relatorios/faturamento/fatura" element={<RelFatura />} />
 
 
                 <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />

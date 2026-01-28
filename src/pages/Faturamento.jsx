@@ -83,11 +83,11 @@ export default function Faturamento({ open }) {
   const [activeTab, setActiveTab] = useState("fatura");
 
 
-const [showModalDesconto, setShowModalDesconto] = useState(false);
-const [modalDescontoValues, setModalDescontoValues] = useState({
-  vrDesconto: "",
-  percDesconto: "",
-});
+  const [showModalDesconto, setShowModalDesconto] = useState(false);
+  const [modalDescontoValues, setModalDescontoValues] = useState({
+    vrDesconto: "",
+    percDesconto: "",
+  });
 
 
   // controla qual subcard está ativo (aba Consulta)
@@ -147,12 +147,12 @@ const [modalDescontoValues, setModalDescontoValues] = useState({
   const [showMsgIncluir, setShowMsgIncluir] = useState(false);
 
   // Modal Alterar Vencimento
-const [showModalVencimento, setShowModalVencimento] = useState(false);
-const [novoVencimento, setNovoVencimento] = useState("");
+  const [showModalVencimento, setShowModalVencimento] = useState(false);
+  const [novoVencimento, setNovoVencimento] = useState("");
 
   // Modal Alterar Valor Total Da Fatura
-const [showModalAlterarTotal, setShowModalAlterarTotal] = useState(false);
-const [modalNovoTotal, setModalNovoTotal] = useState("");
+  const [showModalAlterarTotal, setShowModalAlterarTotal] = useState(false);
+  const [modalNovoTotal, setModalNovoTotal] = useState("");
 
 
 
@@ -194,7 +194,7 @@ const [modalNovoTotal, setModalNovoTotal] = useState("");
 
   const [listaFaturas, setListaFaturas] = useState([]);
 
-  {/* FUNÇÕES ALTERAÇÕES GERAIS */}
+  {/* FUNÇÕES ALTERAÇÕES GERAIS */ }
   // quando mudar algum campo de valor de recebimento, recalcula Valor Receber
   const handleRecebimentoChange = (field) => (e) => {
     const value = e.target.value;
@@ -216,35 +216,35 @@ const [modalNovoTotal, setModalNovoTotal] = useState("");
     });
   };
 
-const handleAlterarTotal = () => {
-  const novo = parseNumero(modalNovoTotal);
+  const handleAlterarTotal = () => {
+    const novo = parseNumero(modalNovoTotal);
 
-  setValores(prev => ({
-    ...prev,
-    totalTitulo: novo,
-    valorLiquido: novo - prev.vrDesconto // mantém desconto aplicado
-  }));
+    setValores(prev => ({
+      ...prev,
+      totalTitulo: novo,
+      valorLiquido: novo - prev.vrDesconto // mantém desconto aplicado
+    }));
 
-  setRecebimento(prev => ({
-    ...prev,
-    valorReceber: novo - valores.vrDesconto
-  }));
+    setRecebimento(prev => ({
+      ...prev,
+      valorReceber: novo - valores.vrDesconto
+    }));
 
-  setShowModalAlterarTotal(false);
-};
+    setShowModalAlterarTotal(false);
+  };
 
 
   const handleAlterarVencimento = () => {
-  if (!novoVencimento) {
-    alert("Informe o novo vencimento!");
-    return;
-  }
+    if (!novoVencimento) {
+      alert("Informe o novo vencimento!");
+      return;
+    }
 
-  // Atualiza no card Informações da Fatura
-  document.getElementById("inputVencimento").value = novoVencimento;
+    // Atualiza no card Informações da Fatura
+    document.getElementById("inputVencimento").value = novoVencimento;
 
-  setShowModalVencimento(false);
-};
+    setShowModalVencimento(false);
+  };
 
 
 
@@ -252,35 +252,35 @@ const handleAlterarTotal = () => {
 
 
   const handleAplicarDesconto = () => {
-  const vr = parseNumero(modalDescontoValues.vrDesconto);
-  const perc = parseNumero(modalDescontoValues.percDesconto);
+    const vr = parseNumero(modalDescontoValues.vrDesconto);
+    const perc = parseNumero(modalDescontoValues.percDesconto);
 
-  let valorDescontoCalculado = vr;
+    let valorDescontoCalculado = vr;
 
-  // Se % desconto foi informado, recalcula VR desconto
-  if (perc > 0) {
-    valorDescontoCalculado = (valores.totalTitulo * perc) / 100;
-  }
+    // Se % desconto foi informado, recalcula VR desconto
+    if (perc > 0) {
+      valorDescontoCalculado = (valores.totalTitulo * perc) / 100;
+    }
 
-  // Novo valor líquido
-  const novoValorLiquido = valores.totalTitulo - valorDescontoCalculado;
+    // Novo valor líquido
+    const novoValorLiquido = valores.totalTitulo - valorDescontoCalculado;
 
-  // Atualiza valores da fatura
-  setValores(prev => ({
-    ...prev,
-    vrDesconto: valorDescontoCalculado,
-    percDesconto: perc,
-    valorLiquido: novoValorLiquido,
-  }));
+    // Atualiza valores da fatura
+    setValores(prev => ({
+      ...prev,
+      vrDesconto: valorDescontoCalculado,
+      percDesconto: perc,
+      valorLiquido: novoValorLiquido,
+    }));
 
-  // Atualiza automaticamente o Valor Receber
-  setRecebimento(prev => ({
-    ...prev,
-    valorReceber: novoValorLiquido,
-  }));
+    // Atualiza automaticamente o Valor Receber
+    setRecebimento(prev => ({
+      ...prev,
+      valorReceber: novoValorLiquido,
+    }));
 
-  setShowModalDesconto(false);
-};
+    setShowModalDesconto(false);
+  };
 
   const handlePesquisarConsulta = () => {
     // simples: carrega os mocks
@@ -368,9 +368,8 @@ const handleAlterarTotal = () => {
 
   return (
     <div
-      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${
-        open ? "ml-[192px]" : "ml-[56px]"
-      }`}
+      className={`transition-all duration-300 mt-[44px] text-[13px] text-gray-700 bg-gray-50 h-[calc(100vh-56px)] flex flex-col ${open ? "ml-[192px]" : "ml-[56px]"
+        }`}
     >
       {/* Título */}
       <h1 className="text-center text-red-700 font-semibold py-1 text-sm border-b border-gray-300">
@@ -383,11 +382,10 @@ const handleAlterarTotal = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${
-              activeTab === tab
+            className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === tab
                 ? "bg-white text-red-700 border-gray-300"
                 : "bg-gray-100 text-gray-600 border-transparent"
-            } ${tab !== "fatura" ? "ml-1" : ""}`}
+              } ${tab !== "fatura" ? "ml-1" : ""}`}
           >
             {tab === "fatura" ? "Fatura" : "Consulta"}
           </button>
@@ -581,12 +579,12 @@ const handleAlterarTotal = () => {
                   {/* Vencimento */}
                   <div className="col-span-3 flex items-center gap-1">
                     <Label className="min-w-[70px]">Vencimento</Label>
-                   <Txt
-  id="inputVencimento"
-  type="date"
-  className="flex-1"
-  onFocus={fillTodayIfEmpty}
-/>
+                    <Txt
+                      id="inputVencimento"
+                      type="date"
+                      className="flex-1"
+                      onFocus={fillTodayIfEmpty}
+                    />
                   </div>
 
                   {/* Cond Pagto */}
@@ -726,19 +724,19 @@ const handleAlterarTotal = () => {
                   />
 
                   <Label className="col-span-1 text-right">Vr. Desconto</Label>
-                 <Txt
-  className="col-span-1 text-right bg-gray-200"
-  readOnly
-  value={formatNumero(valores.vrDesconto)}
-/>
+                  <Txt
+                    className="col-span-1 text-right bg-gray-200"
+                    readOnly
+                    value={formatNumero(valores.vrDesconto)}
+                  />
 
 
                   <Label className="col-span-1 text-right">% Desconto</Label>
                   <Txt
-  className="col-span-1 text-right bg-gray-200"
-  readOnly
-  value={formatNumero(valores.percDesconto)}
-/>
+                    className="col-span-1 text-right bg-gray-200"
+                    readOnly
+                    value={formatNumero(valores.percDesconto)}
+                  />
 
                   {/* Botão confirmar desconto */}
                   <div className="col-span-4 flex justify-end">
@@ -771,9 +769,8 @@ const handleAlterarTotal = () => {
               </div>
 
               <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  isBaixaOpen ? "max-h-[260px]" : "max-h-[0px]"
-                }`}
+                className={`overflow-hidden transition-all duration-500 ease-in-out ${isBaixaOpen ? "max-h-[260px]" : "max-h-[0px]"
+                  }`}
               >
                 <div className="p-3 space-y-2">
                   {/* LINHA 1 */}
@@ -835,9 +832,8 @@ const handleAlterarTotal = () => {
               </div>
 
               <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  isRecebOpen ? "max-h-[900px]" : "max-h-[0px]"
-                }`}
+                className={`overflow-hidden transition-all duration-500 ease-in-out ${isRecebOpen ? "max-h-[900px]" : "max-h-[0px]"
+                  }`}
               >
                 <div className="p-3 space-y-3">
                   {/* LINHA 1 */}
@@ -1383,71 +1379,71 @@ const handleAlterarTotal = () => {
           <span>Documentos</span>
         </button>
 
-       {/* Relatório de Rateio */}
-<button
-  title="Relatório de Rateio"
-  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
->
-  <FileSpreadsheet size={20} />
-  <span>Rel. Rateio</span>
-</button>
-
-{/* Alterações Gerais */}
-<div className="relative">
-  <button
-  onClick={() => setShowAlteracoesMenu((prev) => !prev)}
-  title="Alterações Gerais"
-  className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
->
-  <Settings size={20} />
-  <span>Alterações</span>
-</button>
-
-
-  {showAlteracoesMenu && (
-    <div className="absolute bottom-[44px] left-1/2 -translate-x-1/2 bg-white border border-gray-300 shadow-lg rounded-md text-[12px] min-w-[230px] py-1 z-50">
-      {[
-        "Desconto",
-        "Alterar Vencimento",
-        "Trocar Portador",
-        "Contestação",
-        "Trocar Devedor",
-        "Trocar Tipo Fatura",
-        "Alterar Valor Total da Fatura",
-        "Alterar Data Emissão",
-        "Estornar Integração SAP",
-      ].map((opt) => (
+        {/* Relatório de Rateio */}
         <button
-          key={opt}
-          className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
-         onClick={() => {
-  if (opt === "Desconto") {
-    setShowAlteracoesMenu(false);
-    setModalDescontoValues({
-      vrDesconto: valores.vrDesconto,
-      percDesconto: valores.percDesconto,
-    });
-    setShowModalDesconto(true);
-
-  } else if (opt === "Alterar Valor Total da Fatura") {
-    setShowAlteracoesMenu(false);
-    setModalNovoTotal(valores.totalTitulo);
-    setShowModalAlterarTotal(true);
-
-  } else {
-    alert(`Opção '${opt}' selecionada (mock).`);
-    setShowAlteracoesMenu(false);
-  }
-}}
-
-
+          title="Relatório de Rateio"
+          className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
         >
-          {opt}
+          <FileSpreadsheet size={20} />
+          <span>Rel. Rateio</span>
         </button>
-      ))}
-    </div>
-  )}
-</div>
+
+        {/* Alterações Gerais */}
+        <div className="relative">
+          <button
+            onClick={() => setShowAlteracoesMenu((prev) => !prev)}
+            title="Alterações Gerais"
+            className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+          >
+            <Settings size={20} />
+            <span>Alterações</span>
+          </button>
+
+
+          {showAlteracoesMenu && (
+            <div className="absolute bottom-[44px] left-1/2 -translate-x-1/2 bg-white border border-gray-300 shadow-lg rounded-md text-[12px] min-w-[230px] py-1 z-50">
+              {[
+                "Desconto",
+                "Alterar Vencimento",
+                "Trocar Portador",
+                "Contestação",
+                "Trocar Devedor",
+                "Trocar Tipo Fatura",
+                "Alterar Valor Total da Fatura",
+                "Alterar Data Emissão",
+                "Estornar Integração SAP",
+              ].map((opt) => (
+                <button
+                  key={opt}
+                  className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
+                  onClick={() => {
+                    if (opt === "Desconto") {
+                      setShowAlteracoesMenu(false);
+                      setModalDescontoValues({
+                        vrDesconto: valores.vrDesconto,
+                        percDesconto: valores.percDesconto,
+                      });
+                      setShowModalDesconto(true);
+
+                    } else if (opt === "Alterar Valor Total da Fatura") {
+                      setShowAlteracoesMenu(false);
+                      setModalNovoTotal(valores.totalTitulo);
+                      setShowModalAlterarTotal(true);
+
+                    } else {
+                      alert(`Opção '${opt}' selecionada (mock).`);
+                      setShowAlteracoesMenu(false);
+                    }
+                  }}
+
+
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Imprimir */}
         <div className="relative">
@@ -1467,7 +1463,9 @@ const handleAlterarTotal = () => {
                   key={opt}
                   className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
                   onClick={() => {
-                    alert(`${opt} (mock).`);
+                    navigate("/relatorios/faturamento/fatura", {
+                      state: { numeroFatura }
+                    });
                     setShowImprimirMenu(false);
                   }}
                 >
@@ -1547,151 +1545,151 @@ const handleAlterarTotal = () => {
         />
       )}
 
-        {/* MODAIS INTERNO */}
+      {/* MODAIS INTERNO */}
       {showModalDesconto && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
 
-      <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
-        Aplicar Desconto
-      </h2>
+            <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
+              Aplicar Desconto
+            </h2>
 
-      {/* VR Desconto */}
-      <div className="mb-2">
-        <Label>Vr. Desconto</Label>
-        <Txt
-          className="w-full text-right"
-          value={modalDescontoValues.vrDesconto}
-          onChange={(e) =>
-            setModalDescontoValues(prev => ({
-              ...prev,
-              vrDesconto: e.target.value
-            }))
-          }
-        />
-      </div>
+            {/* VR Desconto */}
+            <div className="mb-2">
+              <Label>Vr. Desconto</Label>
+              <Txt
+                className="w-full text-right"
+                value={modalDescontoValues.vrDesconto}
+                onChange={(e) =>
+                  setModalDescontoValues(prev => ({
+                    ...prev,
+                    vrDesconto: e.target.value
+                  }))
+                }
+              />
+            </div>
 
-      {/* Perc. Desconto */}
-      <div className="mb-4">
-        <Label>% Desconto</Label>
-        <Txt
-          className="w-full text-right"
-          value={modalDescontoValues.percDesconto}
-          onChange={(e) =>
-            setModalDescontoValues(prev => ({
-              ...prev,
-              percDesconto: e.target.value
-            }))
-          }
-        />
-      </div>
+            {/* Perc. Desconto */}
+            <div className="mb-4">
+              <Label>% Desconto</Label>
+              <Txt
+                className="w-full text-right"
+                value={modalDescontoValues.percDesconto}
+                onChange={(e) =>
+                  setModalDescontoValues(prev => ({
+                    ...prev,
+                    percDesconto: e.target.value
+                  }))
+                }
+              />
+            </div>
 
-      <div className="flex justify-end gap-2">
-        <button
-          className="px-3 py-1 border rounded text-[13px]"
-          onClick={() => setShowModalDesconto(false)}
-        >
-          Cancelar
-        </button>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 border rounded text-[13px]"
+                onClick={() => setShowModalDesconto(false)}
+              >
+                Cancelar
+              </button>
 
-        <button
-          className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
-          onClick={handleAplicarDesconto}
-        >
-          Confirmar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-{showModalVencimento && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
-
-      <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
-        Alterar Vencimento
-      </h2>
-
-      <div className="mb-4">
-        <Label>Novo Vencimento</Label>
-        <Txt
-          type="date"
-          className="w-full"
-          value={novoVencimento}
-          onChange={(e) => setNovoVencimento(e.target.value)}
-        />
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <button
-          className="px-3 py-1 border rounded text-[13px]"
-          onClick={() => setShowModalVencimento(false)}
-        >
-          Voltar
-        </button>
-
-        <button
-          className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
-          onClick={handleAlterarVencimento}
-        >
-          Alterar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <button
+                className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
+                onClick={handleAplicarDesconto}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
+      {showModalVencimento && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
 
-{showModalAlterarTotal && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
+            <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
+              Alterar Vencimento
+            </h2>
 
-      <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
-        Alterar Total do Título
-      </h2>
+            <div className="mb-4">
+              <Label>Novo Vencimento</Label>
+              <Txt
+                type="date"
+                className="w-full"
+                value={novoVencimento}
+                onChange={(e) => setNovoVencimento(e.target.value)}
+              />
+            </div>
 
-      {/* Total Atual */}
-      <div className="mb-2">
-        <Label>Total do Título</Label>
-        <Txt
-          className="w-full text-right bg-gray-200"
-          readOnly
-          value={formatNumero(valores.totalTitulo)}
-        />
-      </div>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 border rounded text-[13px]"
+                onClick={() => setShowModalVencimento(false)}
+              >
+                Voltar
+              </button>
 
-      {/* Novo Total */}
-      <div className="mb-4">
-        <Label>Novo Total Título</Label>
-        <Txt
-          className="w-full text-right"
-          value={modalNovoTotal}
-          onChange={(e) => setModalNovoTotal(e.target.value)}
-        />
-      </div>
+              <button
+                className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
+                onClick={handleAlterarVencimento}
+              >
+                Alterar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="flex justify-end gap-2">
-        <button
-          className="px-3 py-1 border rounded text-[13px]"
-          onClick={() => setShowModalAlterarTotal(false)}
-        >
-          Voltar
-        </button>
 
-        <button
-          className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
-          onClick={handleAlterarTotal}
-        >
-          Alterar
-        </button>
-      </div>
 
-    </div>
-  </div>
-)}
+      {showModalAlterarTotal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white w-[360px] rounded-md shadow-xl p-4">
+
+            <h2 className="text-[14px] font-semibold text-gray-800 mb-3">
+              Alterar Total do Título
+            </h2>
+
+            {/* Total Atual */}
+            <div className="mb-2">
+              <Label>Total do Título</Label>
+              <Txt
+                className="w-full text-right bg-gray-200"
+                readOnly
+                value={formatNumero(valores.totalTitulo)}
+              />
+            </div>
+
+            {/* Novo Total */}
+            <div className="mb-4">
+              <Label>Novo Total Título</Label>
+              <Txt
+                className="w-full text-right"
+                value={modalNovoTotal}
+                onChange={(e) => setModalNovoTotal(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 border rounded text-[13px]"
+                onClick={() => setShowModalAlterarTotal(false)}
+              >
+                Voltar
+              </button>
+
+              <button
+                className="px-3 py-1 bg-red-700 text-white rounded text-[13px]"
+                onClick={handleAlterarTotal}
+              >
+                Alterar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
 
     </div>
