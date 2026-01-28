@@ -1368,40 +1368,53 @@ function RelatorioTable({ columns, rows, detail, isExpanded, toggleRow, printMod
                 {rows.map((row, idx) => {
                     const rowId = row.id ?? String(idx);
 
-                    // ✅ 1) Detecta linhas de agrupamento (Filial / Classe / Qtde)
+                    // ✅ 1) Detecta linhas de agrupamento (Filial / Classe / Qtde / Group)
                     const isGroup =
-                        row?.__type === "filial" || row?.__type === "classe" || row?.__type === "qtde";
+                        row?.__type === "filial" ||
+                        row?.__type === "classe" ||
+                        row?.__type === "qtde" ||
+                        row?.__type === "group";
 
                     if (isGroup) {
-                        // ✅ 2) Texto do agrupamento (vem do seu RelVeiculoResultado)
+                        // ✅ 2) Texto do agrupamento
                         const text =
                             row?.__type === "filial"
                                 ? row.filialLabel || ""
                                 : row?.__type === "classe"
                                     ? row.classeLabel || ""
-                                    : `Qtde: ${row.qtde ?? 0}`;
+                                    : row?.__type === "qtde"
+                                        ? `Qtde: ${row.qtde ?? 0}`
+                                        : row?.groupLabel || "";
 
-                        // ✅ 3) Cor de fundo (cinza claro, mas diferente do cabeçalho)
-                        // Cabeçalho = bg-gray-100. Então aqui usamos 50/75.
+                        // ✅ 3) Cor de fundo
                         const bg =
                             row?.__type === "filial"
                                 ? "bg-gray-75"
                                 : row?.__type === "classe"
                                     ? "bg-gray-50"
-                                    : "bg-gray-50";
+                                    : row?.__type === "qtde"
+                                        ? "bg-gray-50"
+                                        : "bg-gray-75"; // group
 
                         const font =
-                            row?.__type === "filial" ? "font-semibold" : "font-medium";
+                            row?.__type === "filial" ? "font-semibold" :
+                                row?.__type === "group" ? "font-semibold" :
+                                    row?.__type === "classe" ? "font-medium" :
+                                        "font-medium";
 
                         return (
                             <tr key={rowId} className={bg}>
                                 {/* ✅ MESCLA A LINHA TODA */}
-                                <td colSpan={columns.length} className={`border px-2 py-1 text-[12px] text-gray-800 ${font}`}>
+                                <td
+                                    colSpan={columns.length}
+                                    className={`border px-2 py-1 text-[12px] text-gray-800 ${font}`}
+                                >
                                     {text}
                                 </td>
                             </tr>
                         );
                     }
+
 
                     // ✅ 4) Linha normal continua igual
                     return (
