@@ -43,15 +43,6 @@ function Sel({ children, className = "", ...rest }) {
     );
 }
 
-function Radio({ name, value, checked, onChange, label }) {
-    return (
-        <label className="flex items-center gap-2 text-[13px] text-gray-700 select-none">
-            <input type="radio" name={name} value={value} checked={checked} onChange={onChange} />
-            {label}
-        </label>
-    );
-}
-
 function toISODate(d) {
     // dd/mm/aaaa -> aaaa-mm-dd
     if (!d) return "";
@@ -67,24 +58,24 @@ export default function RelAnaliseProdutividade({ open }) {
     const { footerIconColorNormal, footerIconColorHover } = useIconColor();
 
     const [dados, setDados] = useState({
-        empresa: "TODAS",
-        filial: "999",
+        // Empresa fixa (apenas 1 opção)
+        empresa: "MANTRAN_TEC",
 
-        // período Emissão
+        // Filial
+        filial: "999", // 999 = Todas
+
+        // Período Emissão
         dtIni: "2026-01-01",
         dtFim: "2026-01-26",
 
         recalcularValores: false,
         relFretePeso: false,
 
-        // Agrupar: 1=Motorista | 2=Veículo
-        agruparPor: "2",
+        // Agrupar por: E=Emissão | V=Veículo | M=Motorista
+        agruparPor: "V",
 
-        // Veículo: T=Todos ou placa
+        // Veículo (filtro): T=Todos | A=Agregado | F=Frota
         veiculo: "T",
-
-        // Opção Relatório: V=Viagem | M=Manifesto
-        opcao: "V",
     });
 
     const handleChange = (campo) => (e) =>
@@ -95,15 +86,14 @@ export default function RelAnaliseProdutividade({ open }) {
 
     const limpar = () => {
         setDados({
-            empresa: "TODAS",
+            empresa: "MANTRAN_TEC",
             filial: "999",
             dtIni: "2026-01-01",
             dtFim: "2026-01-26",
             recalcularValores: false,
             relFretePeso: false,
-            agruparPor: "2",
+            agruparPor: "V",
             veiculo: "T",
-            opcao: "V",
         });
     };
 
@@ -127,15 +117,15 @@ export default function RelAnaliseProdutividade({ open }) {
             {/* CONTEÚDO */}
             <div className="flex-1 p-3 bg-white border-x border-b border-gray-300 rounded-b-md overflow-y-auto flex flex-col gap-3">
                 <fieldset className="border border-gray-300 rounded p-3 bg-white">
-                    <legend className="px-2 text-red-700 font-semibold text-[13px]">Opções do Relatório</legend>
+                    <legend className="px-2 text-red-700 font-semibold text-[13px]">
+                        Opções do Relatório
+                    </legend>
 
                     {/* LINHA 1 - EMPRESA */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-2">Empresa</Label>
                         <Sel className="col-span-10" value={dados.empresa} onChange={handleChange("empresa")}>
-                            <option value="TODAS">TODAS</option>
-                            <option value="DIFALUX">DIFALUX TRANSPORTES LTDA ME</option>
-                            <option value="MANTRAN">MANTRAN</option>
+                            <option value="MANTRAN_TEC">MANTRAN TECNOLOGIAS LTDA ME</option>
                         </Sel>
                     </div>
 
@@ -144,6 +134,7 @@ export default function RelAnaliseProdutividade({ open }) {
                         <Label className="col-span-2">Filial</Label>
                         <Sel className="col-span-10" value={dados.filial} onChange={handleChange("filial")}>
                             <option value="999">Todas</option>
+                            {/* mock pra ficar real no front; quando ligar WebApi vem do banco */}
                             <option value="001">001 - MATRIZ</option>
                             <option value="002">002 - FILIAL 02</option>
                             <option value="003">003 - FILIAL 03</option>
@@ -191,48 +182,24 @@ export default function RelAnaliseProdutividade({ open }) {
                         </div>
                     </div>
 
-                    {/* LINHA 4 - AGRUPAR POR */}
+                    {/* LINHA 4 - AGRUPAR POR (3 opções) */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-2">Agrupar por</Label>
                         <Sel className="col-span-10" value={dados.agruparPor} onChange={handleChange("agruparPor")}>
-                            <option value="1">1 - Motorista</option>
-                            <option value="2">2 - Veículo</option>
+                            <option value="E">Emissão</option>
+                            <option value="V">Veículo</option>
+                            <option value="M">Motorista</option>
                         </Sel>
                     </div>
 
-                    {/* LINHA 5 - VEÍCULO */}
+                    {/* LINHA 5 - VEÍCULO (Filtro: Todos / Agregado / Frota) */}
                     <div className="grid grid-cols-12 gap-2 mb-2">
                         <Label className="col-span-2">Veículo</Label>
                         <Sel className="col-span-10" value={dados.veiculo} onChange={handleChange("veiculo")}>
-                            <option value="T">* - Todos</option>
-                            <option value="FFG-0326">FFG-0326</option>
-                            <option value="CUX-0118">CUX-0118</option>
-                            <option value="GAJ-3H08">GAJ-3H08</option>
+                            <option value="T">Todos</option>
+                            <option value="A">Agregado</option>
+                            <option value="F">Frota</option>
                         </Sel>
-                    </div>
-
-                    {/* LINHA 6 - OPÇÃO RELATÓRIO */}
-                    <div className="grid grid-cols-12 gap-2">
-                        <div className="col-span-6" />
-                        <div className="col-span-6 border border-gray-300 rounded p-2">
-                            <div className="text-[12px] text-gray-600 mb-1">Opção Relatório</div>
-                            <div className="flex items-center gap-10">
-                                <Radio
-                                    name="opcao"
-                                    value="V"
-                                    checked={dados.opcao === "V"}
-                                    onChange={handleChange("opcao")}
-                                    label="Viagem"
-                                />
-                                <Radio
-                                    name="opcao"
-                                    value="M"
-                                    checked={dados.opcao === "M"}
-                                    onChange={handleChange("opcao")}
-                                    label="Manifesto"
-                                />
-                            </div>
-                        </div>
                     </div>
                 </fieldset>
             </div>
@@ -241,7 +208,8 @@ export default function RelAnaliseProdutividade({ open }) {
             <div className="border-t border-gray-300 bg-white py-2 px-4 flex items-center gap-6">
                 <button
                     onClick={() => navigate(-1)}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                    className={`flex flex-col items-center text-[11px]
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
                 >
                     <XCircle size={20} />
                     <span>Fechar</span>
@@ -249,7 +217,8 @@ export default function RelAnaliseProdutividade({ open }) {
 
                 <button
                     onClick={limpar}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                    className={`flex flex-col items-center text-[11px]
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
                 >
                     <RotateCcw size={20} />
                     <span>Limpar</span>
@@ -257,14 +226,16 @@ export default function RelAnaliseProdutividade({ open }) {
 
                 <button
                     onClick={gerar}
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                    className={`flex flex-col items-center text-[11px]
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
                 >
                     <Search size={20} />
                     <span>Gerar</span>
                 </button>
 
                 <button
-                    className={`flex flex-col items-center text-[11px] ${footerIconColorNormal} hover:${footerIconColorHover}`}
+                    className={`flex flex-col items-center text-[11px]
+            ${footerIconColorNormal} hover:${footerIconColorHover}`}
                     title="(posteriormente) exportar direto da tela de filtro"
                 >
                     <FileSpreadsheet size={20} />

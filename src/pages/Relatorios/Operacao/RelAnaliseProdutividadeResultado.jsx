@@ -14,6 +14,11 @@ function brMoney(n) {
     return v.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 }
 
+function brPct(n) {
+    const v = Number(n || 0);
+    return `${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}%`;
+}
+
 function parseISO(d) {
     // aceita "aaaa-mm-dd" ou "dd/mm/aaaa"
     if (!d) return null;
@@ -33,26 +38,74 @@ function inRange(dateISO, ini, fim) {
     return d >= a && d <= b;
 }
 
+function isoToBR(d) {
+    // "2026-01-05" -> "05/01/2026"
+    if (!d) return "";
+    const s = String(d);
+    if (s.includes("/")) return s;
+    const [aa, mm, dd] = s.split("-");
+    if (!aa || !mm || !dd) return s;
+    return `${dd}/${mm}/${aa}`;
+}
+
+function NegSpan({ value, children }) {
+    const v = Number(value || 0);
+    const cls = v < 0 ? "text-red-600 font-semibold" : "";
+    return <span className={cls}>{children}</span>;
+}
+
 /* =========================================================
-   AGRUPAMENTO (Motorista ou Veículo)
-   - cria linhas "sintéticas" sem mexer no RelatorioBase
+   AGRUPAMENTO (Emissão / Veículo / Motorista)
+   - cria linhas "sintéticas" (group/total) sem mexer no RelatorioBase
 ========================================================= */
 function buildGroupedRows(items, agruparPor) {
-    const byMotorista = String(agruparPor || "2") === "1";
+    // agruparPor: E=Emissão | V=Veículo | M=Motorista
+    const mode = String(agruparPor || "V").toUpperCase();
 
     const sorted = [...items].sort((a, b) => {
-        const kA = byMotorista ? String(a.nomeMotorista || "") : String(a.placa || "");
-        const kB = byMotorista ? String(b.nomeMotorista || "") : String(b.placa || "");
-        const c = kA.localeCompare(kB);
-        if (c !== 0) return c;
+        if (mode === "E") {
+            const da = parseISO(a.dtEmissao)?.getTime() ?? 0;
+            const db = parseISO(b.dtEmissao)?.getTime() ?? 0;
+            if (da !== db) return da - db;
 
-        const fa = onlyDigits(a.filialCod);
-        const fb = onlyDigits(b.filialCod);
-        if (fa !== fb) return fa.localeCompare(fb);
+            // desempate: placa, viagem
+            const pa = String(a.placa || "");
+            const pb = String(b.placa || "");
+            const c1 = pa.localeCompare(pb);
+            if (c1 !== 0) return c1;
 
-        return String(a.nrViagem || a.nrManifesto || "").localeCompare(
-            String(b.nrViagem || b.nrManifesto || "")
-        );
+            return String(a.nrViagem || "").localeCompare(String(b.nrViagem || ""));
+        }
+
+        if (mode === "V") {
+            const pa = String(a.placa || "");
+            const pb = String(b.placa || "");
+            const c1 = pa.localeCompare(pb);
+            if (c1 !== 0) return c1;
+
+            // desempate: data, viagem
+            const da = parseISO(a.dtEmissao)?.getTime() ?? 0;
+            const db = parseISO(b.dtEmissao)?.getTime() ?? 0;
+            if (da !== db) return da - db;
+
+            return String(a.nrViagem || "").localeCompare(String(b.nrViagem || ""));
+        }
+
+        // mode === "M"
+        const ma = String(a.nomeMotorista || "");
+        const mb = String(b.nomeMotorista || "");
+        const c0 = ma.localeCompare(mb);
+        if (c0 !== 0) return c0;
+
+        // desempate: placa, data
+        const pa = String(a.placa || "");
+        const pb = String(b.placa || "");
+        const c1 = pa.localeCompare(pb);
+        if (c1 !== 0) return c1;
+
+        const da = parseISO(a.dtEmissao)?.getTime() ?? 0;
+        const db = parseISO(b.dtEmissao)?.getTime() ?? 0;
+        return da - db;
     });
 
     const out = [];
@@ -64,29 +117,46 @@ function buildGroupedRows(items, agruparPor) {
 
     const flushTotal = () => {
         if (!lastKey) return;
+        const totalPerc = sumFrete > 0 ? (sumRes / sumFrete) * 100 : 0;
+
         out.push({
-            id: `tot_${lastKey}_${out.length}`,
+            id: `tot_${onlyDigits(lastKey) || String(lastKey).slice(0, 12)}_${out.length}`,
             __type: "total",
             totalFrete: sumFrete,
             totalDesp: sumDesp,
             totalRes: sumRes,
+            totalPerc,
         });
+
         sumFrete = 0;
         sumDesp = 0;
         sumRes = 0;
     };
 
     sorted.forEach((r, i) => {
-        const groupKey = byMotorista ? String(r.nomeMotorista || "") : `${r.placa || ""} ${r.descVeiculo || ""}`.trim();
+        const groupKey =
+            mode === "E"
+                ? String(r.dtEmissao || "")
+                : mode === "V"
+                    ? String(r.placa || "")
+                    : String(r.nomeMotorista || "");
+
+        const groupLabel =
+            mode === "E"
+                ? isoToBR(r.dtEmissao)
+                : mode === "V"
+                    ? `${r.placa || ""}  ${r.descVeiculo || ""}`.trim()
+                    : String(r.nomeMotorista || "");
 
         if (groupKey !== lastKey) {
             flushTotal();
             lastKey = groupKey;
 
+            // linha “mesclada”: só a primeira coluna mostra texto; as outras ficam vazias
             out.push({
                 id: `grp_${groupKey}_${i}`,
                 __type: "group",
-                groupLabel: groupKey,
+                groupLabel,
             });
         }
 
@@ -119,7 +189,8 @@ export default function RelAnaliseProdutividadeResultado() {
     const filtros = state?.filtros || {};
 
     const titulo = "Produção Veículo";
-    const periodo = filtros?.dtIni && filtros?.dtFim ? `${filtros.dtIni} a ${filtros.dtFim}` : "";
+    const periodo =
+        filtros?.dtIni && filtros?.dtFim ? `${isoToBR(filtros.dtIni)} a ${isoToBR(filtros.dtFim)}` : "";
 
     /* =========================================================
        1) CATÁLOGO COMPLETO (+Campos)
@@ -132,7 +203,7 @@ export default function RelAnaliseProdutividadeResultado() {
             accessor: (r) => {
                 if (r?.__type === "group") return r.groupLabel || "";
                 if (r?.__type === "total") return "";
-                return filtros?.opcao === "M" ? (r.nrManifesto || "") : (r.nrViagem || "");
+                return r.nrViagem || "";
             },
         },
         {
@@ -142,7 +213,6 @@ export default function RelAnaliseProdutividadeResultado() {
             accessor: (r) => {
                 if (r?.__type === "group") return "";
                 if (r?.__type === "total") return "TOTAL";
-                if (!r?.id) return "";
                 return `${String(r.filialCod || "").padStart(3, "0")}  ${r.placa || ""}`;
             },
         },
@@ -150,40 +220,56 @@ export default function RelAnaliseProdutividadeResultado() {
             id: "tp",
             label: "TP",
             width: 45,
-            accessor: (r) => (r?.__type ? "" : (r.tpVeiculo || "")),
+            accessor: (r) => (r?.__type ? "" : r.tpVeiculo || ""),
             align: "center",
         },
         {
             id: "descVeiculo",
             label: "Descrição Veículo",
             width: 170,
-            accessor: (r) => (r?.__type ? "" : (r.descVeiculo || "")),
+            accessor: (r) => (r?.__type ? "" : r.descVeiculo || ""),
         },
         {
             id: "nomeMotorista",
             label: "Nome Motorista",
             width: 230,
-            accessor: (r) => (r?.__type ? "" : (r.nomeMotorista || "")),
+            accessor: (r) => (r?.__type ? "" : r.nomeMotorista || ""),
         },
         {
             id: "vrFrete",
             label: "Vr Frete",
             width: 90,
-            accessor: (r) => (r?.__type === "total" ? brMoney(r.totalFrete) : r?.__type ? "" : brMoney(r.vrFrete)),
+            accessor: (r) =>
+                r?.__type === "total" ? brMoney(r.totalFrete) : r?.__type ? "" : brMoney(r.vrFrete),
             align: "right",
         },
         {
             id: "vrDespesa",
             label: "Vr Despesa",
             width: 90,
-            accessor: (r) => (r?.__type === "total" ? brMoney(r.totalDesp) : r?.__type ? "" : brMoney(r.vrDespesa)),
+            accessor: (r) =>
+                r?.__type === "total" ? brMoney(r.totalDesp) : r?.__type ? "" : brMoney(r.vrDespesa),
             align: "right",
         },
         {
             id: "resultado",
             label: "Resultado",
             width: 90,
-            accessor: (r) => (r?.__type === "total" ? brMoney(r.totalRes) : r?.__type ? "" : brMoney(r.resultado)),
+            accessor: (r) => {
+                if (r?.__type === "group") return "";
+                if (r?.__type === "total") {
+                    return (
+                        <NegSpan value={r.totalRes}>
+                            {brMoney(r.totalRes)}
+                        </NegSpan>
+                    );
+                }
+                return (
+                    <NegSpan value={r.resultado}>
+                        {brMoney(r.resultado)}
+                    </NegSpan>
+                );
+            },
             align: "right",
         },
         {
@@ -191,20 +277,28 @@ export default function RelAnaliseProdutividadeResultado() {
             label: "Perc.",
             width: 70,
             accessor: (r) => {
-                if (r?.__type) return "";
-                const p = Number(r.perc || 0);
-                return `${p.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}%`;
+                if (r?.__type === "group") return "";
+                if (r?.__type === "total") {
+                    return (
+                        <NegSpan value={r.totalPerc}>
+                            {brPct(r.totalPerc)}
+                        </NegSpan>
+                    );
+                }
+                return (
+                    <NegSpan value={r.perc}>
+                        {brPct(r.perc)}
+                    </NegSpan>
+                );
             },
             align: "right",
         },
 
         // ===== EXTRAS (+Campos) =====
-        { id: "empresa", label: "Empresa", accessor: "empresa", width: 140 },
-        { id: "dtEmissao", label: "Emissão", accessor: "dtEmissao", width: 95 },
-        { id: "km", label: "KM", accessor: "km", width: 70, align: "right" },
-        { id: "peso", label: "Peso", accessor: "peso", width: 85, align: "right" },
-        { id: "nrManifesto", label: "Manifesto", accessor: "nrManifesto", width: 90 },
-        { id: "nrViagem", label: "Viagem", accessor: "nrViagem", width: 90 },
+        { id: "empresa", label: "Empresa", accessor: "empresa", width: 170 },
+        { id: "dtEmissao", label: "Emissão", accessor: (r) => (r?.__type ? "" : isoToBR(r.dtEmissao)), width: 95 },
+        { id: "km", label: "KM", accessor: (r) => (r?.__type ? "" : String(r.km ?? "")), width: 70, align: "right" },
+        { id: "peso", label: "Peso", accessor: (r) => (r?.__type ? "" : String(r.peso ?? "")), width: 85, align: "right" },
     ];
 
     /* =========================================================
@@ -226,16 +320,16 @@ export default function RelAnaliseProdutividadeResultado() {
 
     /* =========================================================
        3) MOCK (substitui depois por WebApi)
+       - tpVeiculo: F=Frota | A=Agregado
     ========================================================= */
     const base = [
-        // Motorista 1
+        // Grupo FROTA
         {
-            empresa: "DIFALUX",
+            empresa: "MANTRAN TECNOLOGIAS LTDA ME",
             filialCod: "003",
             filialNome: "FILIAL 03",
             dtEmissao: "2026-01-05",
             nrViagem: "079377",
-            nrManifesto: "M-12001",
             placa: "FFG-0326",
             tpVeiculo: "F",
             descVeiculo: "TRUCK",
@@ -246,12 +340,11 @@ export default function RelAnaliseProdutividadeResultado() {
             peso: 9800,
         },
         {
-            empresa: "DIFALUX",
+            empresa: "MANTRAN TECNOLOGIAS LTDA ME",
             filialCod: "003",
             filialNome: "FILIAL 03",
             dtEmissao: "2026-01-08",
             nrViagem: "079423",
-            nrManifesto: "M-12005",
             placa: "FFG-0326",
             tpVeiculo: "F",
             descVeiculo: "TRUCK",
@@ -262,30 +355,28 @@ export default function RelAnaliseProdutividadeResultado() {
             peso: 11200,
         },
 
-        // Motorista 2
+        // Grupo FROTA
         {
-            empresa: "DIFALUX",
+            empresa: "MANTRAN TECNOLOGIAS LTDA ME",
             filialCod: "003",
             filialNome: "FILIAL 03",
             dtEmissao: "2026-01-09",
             nrViagem: "079811",
-            nrManifesto: "M-12110",
             placa: "CUX-0118",
             tpVeiculo: "F",
             descVeiculo: "FH 460",
             nomeMotorista: "ADRIANO RODRIGUES DO NASCIMENTO",
             vrFrete: 0,
-            vrDespesa: 117.80,
+            vrDespesa: 117.8,
             km: 85,
             peso: 3200,
         },
         {
-            empresa: "DIFALUX",
+            empresa: "MANTRAN TECNOLOGIAS LTDA ME",
             filialCod: "003",
             filialNome: "FILIAL 03",
             dtEmissao: "2026-01-12",
             nrViagem: "079500",
-            nrManifesto: "M-12180",
             placa: "CUX-0118",
             tpVeiculo: "F",
             descVeiculo: "FH 460",
@@ -296,49 +387,48 @@ export default function RelAnaliseProdutividadeResultado() {
             peso: 15800,
         },
 
-        // Motorista 3
+        // Grupo AGREGADO (pra testar filtro A e valores negativos)
         {
-            empresa: "MANTRAN",
+            empresa: "MANTRAN TECNOLOGIAS LTDA ME",
             filialCod: "002",
             filialNome: "FILIAL 02",
             dtEmissao: "2026-01-18",
             nrViagem: "078538",
-            nrManifesto: "M-99001",
             placa: "GAJ-3H08",
-            tpVeiculo: "F",
+            tpVeiculo: "A",
             descVeiculo: "FIAT DOBLO",
             nomeMotorista: "AFONSO DOS PASSOS JUNIOR",
             vrFrete: 0,
-            vrDespesa: 117.80,
+            vrDespesa: 117.8,
             km: 40,
             peso: 300,
         },
     ];
 
-    // multiplica pra dar “cara” de relatório grande
+    // multiplica pra ficar “cara” de relatório grande
     const rowsMock = Array.from({ length: 6 }).flatMap((_, rep) =>
         base.map((r, idx) => {
             const n = rep * 100 + idx;
-            const frete = Number(r.vrFrete || 0) + (rep === 0 ? 0 : (idx % 2 ? 421.74 : 0));
+
+            // alterna pra criar alguns resultados negativos e positivos no mock
+            const extraFrete = rep === 0 ? 0 : idx % 2 ? 421.74 : 0;
+            const extraDesp = rep === 0 ? 0 : idx % 3 === 0 ? 85.6 : 0;
+
             return {
                 ...r,
-                id: `${rep}-${idx}-${r.nrViagem || r.nrManifesto}`,
-                nrViagem: r.nrViagem ? String(Number(r.nrViagem) + n) : "",
-                nrManifesto: r.nrManifesto ? `${r.nrManifesto}-${rep}` : "",
-                vrFrete: frete,
+                id: `${rep}-${idx}-${r.nrViagem}`,
+                nrViagem: String(Number(r.nrViagem) + n),
+                vrFrete: Number(r.vrFrete || 0) + extraFrete,
+                vrDespesa: Number(r.vrDespesa || 0) + extraDesp,
             };
         })
     );
 
     /* =========================================================
-       4) APLICA FILTROS
+       4) APLICA FILTROS (conforme tela)
+       - veiculo: T=Todos | A=Agregado | F=Frota
     ========================================================= */
     let filtrados = [...rowsMock];
-
-    // Empresa
-    if (String(filtros?.empresa || "TODAS") !== "TODAS") {
-        filtrados = filtrados.filter((r) => String(r.empresa) === String(filtros.empresa));
-    }
 
     // Filial
     if (String(filtros?.filial || "999") !== "999") {
@@ -350,12 +440,15 @@ export default function RelAnaliseProdutividadeResultado() {
         filtrados = filtrados.filter((r) => inRange(r.dtEmissao, filtros.dtIni, filtros.dtFim));
     }
 
-    // Veículo
-    if (String(filtros?.veiculo || "T") !== "T") {
-        filtrados = filtrados.filter((r) => String(r.placa) === String(filtros.veiculo));
+    // Veículo (Filtro por tipo)
+    // A = Agregado | F = Frota
+    if (String(filtros?.veiculo || "T") === "A") {
+        filtrados = filtrados.filter((r) => String(r.tpVeiculo) === "A");
+    } else if (String(filtros?.veiculo || "T") === "F") {
+        filtrados = filtrados.filter((r) => String(r.tpVeiculo) === "F");
     }
 
-    // Rel por Frete Peso (mock): se marcado, ajusta frete proporcional ao peso (só pra simular comportamento)
+    // Rel. por Frete Peso (mock): simula recalculo usando peso
     if (filtros?.relFretePeso) {
         filtrados = filtrados.map((r) => {
             const peso = Number(r.peso || 0);
@@ -364,7 +457,7 @@ export default function RelAnaliseProdutividadeResultado() {
         });
     }
 
-    // Recalcular valores (mock): aplica um “rebalance” bobo, só pra mostrar que muda
+    // Recalcular valores (mock): só pra mostrar mudança
     if (filtros?.recalcularValores) {
         filtrados = filtrados.map((r) => {
             const frete = Number(r.vrFrete || 0);
@@ -374,9 +467,10 @@ export default function RelAnaliseProdutividadeResultado() {
     }
 
     /* =========================================================
-       5) AGRUPA (Motorista ou Veículo)
+       5) AGRUPA
+       - E=Emissão | V=Veículo | M=Motorista
     ========================================================= */
-    const rows = buildGroupedRows(filtrados, filtros?.agruparPor || "2");
+    const rows = buildGroupedRows(filtrados, filtros?.agruparPor || "V");
 
     /* =========================================================
        6) TOTAIS GERAIS
