@@ -244,8 +244,8 @@ export default function Minuta({ open }) {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-1 text-sm font-medium border-t border-x rounded-t-md ${activeTab === tab.id
-                ? "bg-white text-red-700 border-gray-300"
-                : "bg-gray-100 text-gray-600 border-transparent"
+              ? "bg-white text-red-700 border-gray-300"
+              : "bg-gray-100 text-gray-600 border-transparent"
               } ${tab.id !== "cadastro" ? "ml-1" : ""}`}
           >
             {tab.label}
@@ -1070,8 +1070,17 @@ export default function Minuta({ open }) {
                   key={opt}
                   className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
                   onClick={() => {
-                    alert(`${opt} (mock).`);
                     setShowImprimirMenu(false);
+                    if (opt === "Padrão") {
+                      navigate("/relatorios/operacao/minuta", {
+                        state: {
+                          numeroMinuta: dadosMinuta.numero, // Passando o número da minuta atual
+                          templateId: "padrao",
+                        },
+                      });
+                    } else {
+                      alert(`${opt} (mock).`);
+                    }
                   }}
                 >
                   {opt}

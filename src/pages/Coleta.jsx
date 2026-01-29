@@ -75,10 +75,23 @@ export default function Coleta({ open }) {
   const [showComex, setShowComex] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [filialSelecionada, setFilialSelecionada] = useState("");
+  // === Modal de Impressão ===
+  const [showPrintModal, setShowPrintModal] = useState(false);
+
+  const [printEmpresa, setPrintEmpresa] = useState("001");
+  const [printFilial, setPrintFilial] = useState("");
+
+  const [printTipo, setPrintTipo] = useState("meia"); // meia | inteira
+  const [printNrInicial, setPrintNrInicial] = useState("");
+  const [printNrFinal, setPrintNrFinal] = useState("");
+
+  // guarda a coleta selecionada (na aba consulta)
+  const [selectedColetaNumero, setSelectedColetaNumero] = useState("");
 
   useEffect(() => {
     if (filialAtiva) {
       setFilialSelecionada(filialAtiva.codigo);
+      setPrintFilial(filialAtiva.codigo);
     }
   }, [filialAtiva]);
   const navigate = useNavigate();
@@ -737,10 +750,25 @@ export default function Coleta({ open }) {
                             <td className="px-2 py-[4px] border-r">
                               <input
                                 type="checkbox"
-                                onChange={() => setSelectedStatus(item.status)}
+                                checked={selectedColetaNumero === `18570${i}`}
+                                onChange={(e) => {
+                                  const num = `18570${i}`;
+                                  if (e.target.checked) {
+                                    setSelectedStatus(item.status);
+                                    setSelectedColetaNumero(num);
+
+                                    // já prepara a impressão
+                                    setPrintNrInicial(num);
+                                    setPrintNrFinal(num);
+                                  } else {
+                                    setSelectedColetaNumero("");
+                                    setSelectedStatus(null);
+                                  }
+                                }}
                                 name="coleta"
                                 className="cursor-pointer"
                               />
+
                             </td>
                             <td className={`px-2 py-[4px] font-semibold border-r ${item.cor}`}>
                               {item.status}
@@ -894,6 +922,14 @@ export default function Coleta({ open }) {
         {/* IMPRIMIR COLETA */}
         <button
           title="Imprimir Coleta"
+          onClick={() => {
+            // se tiver uma coleta selecionada, já deixa preenchido
+            if (selectedColetaNumero) {
+              setPrintNrInicial(selectedColetaNumero);
+              setPrintNrFinal(selectedColetaNumero);
+            }
+            setShowPrintModal(true);
+          }}
           className={`flex flex-col items-center text-[11px]
       ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
         >
@@ -902,6 +938,129 @@ export default function Coleta({ open }) {
         </button>
 
       </div>
+      {showPrintModal && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40">
+          <div className="w-[760px] max-w-[95vw] bg-white border border-gray-300 rounded shadow-lg">
+            {/* Cabeçalho */}
+            <div className="relative border-b border-gray-300 py-2">
+              <div className="text-center text-red-700 font-semibold text-[13px]">
+                IMPRESSÃO DE COLETAS
+              </div>
+
+              <button
+                onClick={() => setShowPrintModal(false)}
+                className="absolute right-2 top-2 text-gray-500 hover:text-gray-800"
+                title="Fechar"
+              >
+                <XCircle size={18} />
+              </button>
+            </div>
+
+            {/* Corpo */}
+            <div className="p-3">
+              {/* Linha 1 - Empresa / Filial */}
+              <div className="grid grid-cols-12 gap-2 items-center mb-3">
+                <Label className="col-span-1">Empresa</Label>
+                <Sel
+                  className="col-span-5"
+                  value={printEmpresa}
+                  onChange={(e) => setPrintEmpresa(e.target.value)}
+                >
+                  <option value="001">001 - MANTRAN TRANSPORTES LTDA</option>
+                  {/* depois você substitui por lista real */}
+                </Sel>
+
+                <Label className="col-span-1">Filial</Label>
+                <Sel
+                  className="col-span-5"
+                  value={printFilial}
+                  onChange={(e) => setPrintFilial(e.target.value)}
+                >
+                  {filialAtiva ? (
+                    <option value={filialAtiva.codigo}>
+                      {filialAtiva.codigo} - {filialAtiva.nome}
+                    </option>
+                  ) : (
+                    <option value="">Selecione</option>
+                  )}
+                </Sel>
+              </div>
+
+              {/* Linha 2 - Nº Inicial / Nº Final */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-1">Nº inicial</Label>
+                <Txt
+                  className="col-span-2"
+                  value={printNrInicial}
+                  onChange={(e) => setPrintNrInicial(e.target.value)}
+                />
+
+                <Label className="col-span-1">Nº final</Label>
+                <Txt
+                  className="col-span-2"
+                  value={printNrFinal}
+                  onChange={(e) => setPrintNrFinal(e.target.value)}
+                />
+
+                <div className="col-span-6" />
+              </div>
+            </div>
+
+            {/* Rodapé do Modal */}
+            <div className="border-t border-gray-300 bg-gray-50 p-2 flex items-center justify-between">
+              {/* Esquerda: Tipo */}
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-gray-700">Tipo</span>
+                <Sel
+                  className="w-[180px]"
+                  value={printTipo}
+                  onChange={(e) => setPrintTipo(e.target.value)}
+                >
+                  <option value="meia">Meia folha</option>
+                  <option value="inteira">Folha inteira</option>
+                </Sel>
+              </div>
+
+              {/* Direita: botões */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowPrintModal(false)}
+                  className="border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 px-4 py-[2px] rounded text-[12px]"
+                >
+                  Fechar
+                </button>
+
+                <button
+                  onClick={() => {
+                    // validação simples
+                    const ini = (printNrInicial || "").trim();
+                    const fim = (printNrFinal || "").trim();
+
+                    if (!ini || !fim) return;
+
+                    setShowPrintModal(false);
+
+                    if (printTipo === "meia") {
+                      navigate("/relatorios/operacao/coleta-meia-folha", {
+                        state: { numeroOrdem: ini, templateId: "padrao" },
+                      });
+                    } else {
+                      navigate("/relatorios/operacao/coleta-folha-inteira", {
+                        state: { numeroOrdem: ini, templateId: "inteiro" },
+                      });
+                    }
+                  }}
+                  className="border border-gray-300 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-[2px] rounded text-[12px] flex items-center gap-2"
+                >
+                  <Printer size={16} />
+                  Imprimir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -14,9 +14,11 @@ import HeaderWMS from "./components/HeaderWMS";
 import SidebarWMS from "./components/SidebarWMS";
 
 // Páginas principais
+import RelColetaFolhaInteira from "./pages/Relatorios/Operacao/RelColetaFolhaInteira";
 import RelVeiculoResultado from "./pages/Relatorios/Operacao/RelVeiculoResultado";
 import RelClienteResultado from "./pages/Relatorios/Operacao/RelClienteResultado";
 import RelFatura from "./pages/Relatorios/Faturamento/RelFatura";
+import RelMinuta from "./pages/Relatorios/Operacao/RelMinuta";
 import { FilialProvider } from "./context/FilialContext";
 import Agenda from "./pages/Agenda";
 import CTePage from "./pages/CTePage";
@@ -103,6 +105,7 @@ import HomeOperacao from "./pages/HomeOperacao";
 import HomeFinanceiro from "./pages/HomeFinanceiro";
 import RelConhecimento from "./pages/RelConhecimento";
 import RelConhecimentoResultado from "./pages/Relatorios/Operacao/RelConhecimentoResultado";
+import RelColetaMeiaFolha from "./pages/Relatorios/Operacao/RelColetaMeiaFolha";
 import RelCliente from "./pages/RelCliente";
 import RelMotorista from "./pages/RelMotorista";
 import RelMotoristaResultado from "./pages/Relatorios/Operacao/RelMotoristaResultado";
@@ -116,6 +119,7 @@ import GNREParametro from "./pages/GNREParametro";
 import CreditoCombustivelParametro from "./pages/CreditoCombustivelParametro";
 import CreditoCombustivelLancamento from "./pages/CreditoCombustivelLancamento";
 import CreditoCombustivelHistorico from "./pages/CreditoCombustivelHistorico";
+
 
 // Home WMS (fica em pages, como você pediu)
 import HomeWMS from "./pages/HomeWMS";
@@ -344,7 +348,8 @@ export default function App() {
                 <Route path="/produto-predominante" element={<ProdutoPredominante open={sidebarOpen} />} />
                 <Route path="/evento-despesa" element={<EventoDespesa open={sidebarOpen} />} />
                 <Route path="/relatorios/faturamento/fatura" element={<RelFatura />} />
-
+                <Route path="/relatorios/operacao/coleta-meia-folha" element={<RelColetaMeiaFolha />} />
+                <Route path="/relatorios/operacao/coleta-folha-inteira" element={<RelColetaFolhaInteira />} />
 
                 <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
                 <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
@@ -357,10 +362,8 @@ export default function App() {
                 <Route path="/perfil" element={<Perfil open={sidebarOpen} />} />
 
                 <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
-                <Route
-                  path="/modulo-financeiro/financeiro-parametros"
-                  element={<ParametroFinanceiro open={sidebarOpen} />}
-                />
+                <Route path="/modulo-financeiro/financeiro-parametros" element={<ParametroFinanceiro open={sidebarOpen} />} />
+                <Route path="/relatorios/operacao/minuta" element={<RelMinuta />} />
 
 
                 <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />

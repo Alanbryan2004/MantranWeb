@@ -574,12 +574,13 @@ export default function DocumentoBase({
                 className="bg-gray-200 w-full overflow-y-auto"
                 style={{ height: `calc(100vh - ${topOffsetPx}px)` }}
             >
-                <div className="flex flex-col items-center gap-6 py-6">
+                <div className="documento-pages flex flex-col items-center gap-6 py-6">
+
                     {pages.map((p, pageIndex) => (
                         <div
                             key={p.id || pageIndex}
                             ref={(el) => (pagesRef.current[pageIndex] = el)}
-                            className="bg-white shadow relative"
+                            className="documento-page bg-white shadow relative"
                             style={{
                                 width: pageSize.width,
                                 minHeight: pageSize.height,
@@ -882,36 +883,49 @@ export default function DocumentoBase({
 
             {/* ================= PRINT CSS ================= */}
             <style>{`
-  @media print {
-    body * { visibility: hidden !important; }
+@media print {
+  @page { margin: 0; }
 
-    #documento-print-root, #documento-print-root * {
-      visibility: visible !important;
-    }
-
-    #documento-print-root {
-      position: absolute !important;
-      left: 0 !important;
-      top: 0 !important;
-      width: 100% !important;
-      padding-left: 0 !important;
-    }
-
-    .bg-gray-200 { background: white !important; }
-    .shadow { box-shadow: none !important; }
-    .sticky { display: none !important; }
-    .fixed { display: none !important; }
-
-    .overflow-y-auto { overflow: visible !important; height: auto !important; }
-
-    /* ✅ quebra só ENTRE páginas, não depois da última */
-    .bg-white.shadow { break-after: auto; page-break-after: auto; }
-    .bg-white.shadow:not(:last-child) {
-      break-after: page;
-      page-break-after: always;
-    }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
   }
+
+  /* some com toolbar / modal / overlays */
+  .sticky, .fixed { display: none !important; }
+
+  /* remove fundo cinza e sombras */
+  .bg-gray-200 { background: #fff !important; }
+  .shadow { box-shadow: none !important; }
+
+  /* tira scroll no print */
+  .overflow-y-auto { overflow: visible !important; height: auto !important; }
+
+  /* tira o “respiro” que pode virar página vazia */
+  .documento-pages {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  /* IMPORTANTÍSSIMO: volta a página para o tamanho em PX do seu sistema */
+  .documento-page {
+    width: 794px !important;
+    height: 1123px !important;      /* trava em 1 A4 do seu padrão */
+    min-height: 1123px !important;
+    margin: 0 !important;
+    break-after: page !important;   /* quebra depois de cada página... */
+    page-break-after: always !important;
+  }
+
+  /* ...menos depois da última (senão cria folha branca) */
+  .documento-page:last-of-type {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+}
 `}</style>
+
 
         </div>
     );
