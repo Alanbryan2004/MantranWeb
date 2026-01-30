@@ -14,6 +14,8 @@ import HeaderWMS from "./components/HeaderWMS";
 import SidebarWMS from "./components/SidebarWMS";
 
 // Páginas principais
+import RelMinutaRetContainer from "./pages/Relatorios/Operacao/RelMinutaRetContainer";
+import RelMinutaDevolContainer from "./pages/Relatorios/Operacao/RelMinutaDevolContainer";
 import RelColetaFolhaInteira from "./pages/Relatorios/Operacao/RelColetaFolhaInteira";
 import RelVeiculoResultado from "./pages/Relatorios/Operacao/RelVeiculoResultado";
 import RelClienteResultado from "./pages/Relatorios/Operacao/RelClienteResultado";
@@ -350,7 +352,7 @@ export default function App() {
                 <Route path="/relatorios/faturamento/fatura" element={<RelFatura />} />
                 <Route path="/relatorios/operacao/coleta-meia-folha" element={<RelColetaMeiaFolha />} />
                 <Route path="/relatorios/operacao/coleta-folha-inteira" element={<RelColetaFolhaInteira />} />
-
+                <Route path="/relatorios/operacao/minuta-devolucao-container" element={<RelMinutaDevolContainer />} />
                 <Route path="/prazo-entrega" element={<PrazoEntrega open={sidebarOpen} />} />
                 <Route path="/seguradora" element={<Seguradora open={sidebarOpen} />} />
                 <Route path="/viagem" element={<Viagem open={sidebarOpen} />} />
@@ -364,6 +366,7 @@ export default function App() {
                 <Route path="/parametros" element={<Parametro open={sidebarOpen} />} />
                 <Route path="/modulo-financeiro/financeiro-parametros" element={<ParametroFinanceiro open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/minuta" element={<RelMinuta />} />
+                <Route path="/relatorios/operacao/minuta-retirada-container" element={<RelMinutaRetContainer />} />
 
 
                 <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />

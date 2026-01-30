@@ -1,3 +1,4 @@
+// Minuta.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CustosAdicionaisModal from "./CustosAdicionaisModal";
@@ -72,13 +73,37 @@ const minutasMock = [
     status: "SEM CTRC",
     filial: "001",
     numeroMinuta: "36092",
+
+    // ✅ CLIENTE (mock)
+    clienteCnpj: "35912495000100",
+    clienteRazao: "RODONAVES TRANSPORTES MULTIMODAL LTDA",
+    clienteCidade: "SAO PAULO",
+    clienteUf: "SP",
+
+    // ✅ REMETENTE / DESTINATÁRIO (mock)
+    remetenteCnpj: "50221019000136",
     remetente: "HNK-ITU (1) MATRIZ",
+    destinatarioCnpj: "00000000000000",
     destinatario: "HNK-SALVADOR-AGUA MI",
+
     enderecoEntrega: "AV JEQUITAIÁ",
     bairro: "AGUA DE MENINOS",
     cidadeEntrega: "SALVADOR",
     uf: "BA",
+
+    // ✅ MOTORISTA (mock)
     motorista: "ALAN DA COSTA",
+    motoristaCnh: "01628446760",
+    motoristaCpf: "13092060822",
+    motoristaCelular: "71999999999",
+
+    // ✅ TRAÇÃO / REBOQUE (mock)
+    tracaoCodigo: "01",
+    tracaoPlacaDesc: "RXW4156",
+    reboqueCodigo: "01",
+    reboquePlacaDesc: "ABC1D23",
+
+    // antigos
     placa: "RXW4156",
     ddd: "71",
     fone: "000000000",
@@ -88,14 +113,38 @@ const minutasMock = [
     id: 2,
     status: "SEM CTRC",
     filial: "001",
-    numeroMinuta: "36078",
+    numeroMinuta: "360_sr4",
+
+    // ✅ CLIENTE (mock)
+    clienteCnpj: "00000000000000",
+    clienteRazao: "CLIENTE TESTE",
+    clienteCidade: "SAO PAULO",
+    clienteUf: "SP",
+
+    // ✅ REMETENTE / DESTINATÁRIO (mock)
+    remetenteCnpj: "00000000000000",
     remetente: "TESTE",
+    destinatarioCnpj: "00000000000000",
     destinatario: "ABC & VISUAL CONFECCOES",
+
     enderecoEntrega: "R ITINGUCU",
     bairro: "NA",
     cidadeEntrega: "SAO PAULO",
     uf: "SP",
+
+    // ✅ MOTORISTA (mock)
     motorista: "JOSE MOTORISTA",
+    motoristaCnh: "00000000000",
+    motoristaCpf: "00000000000",
+    motoristaCelular: "",
+
+    // ✅ TRAÇÃO / REBOQUE (mock)
+    tracaoCodigo: "02",
+    tracaoPlacaDesc: "AAA0A00",
+    reboqueCodigo: "",
+    reboquePlacaDesc: "",
+
+    // antigos
     placa: "AAA0A00",
     ddd: "11",
     fone: "999999999",
@@ -115,17 +164,35 @@ export default function Minuta({ open }) {
   // truque pra resetar campos não-controlados
   const [formKey, setFormKey] = useState(0);
 
-  // campos que realmente precisamos controlar (pra trazer da aba Consulta)
+  // ✅ campos controlados (pra trazer da aba Consulta e imprimir completo)
   const [dadosMinuta, setDadosMinuta] = useState({
     numero: "",
     motoristaCnh: "",
     motoristaNome: "",
+
+    // ✅ novos (motorista)
+    motoristaCpf: "",
+    motoristaCelular: "",
+
+    // ✅ novos (cliente)
+    clienteCnpj: "",
+    clienteRazao: "",
+    clienteCidade: "",
+    clienteUf: "",
+
+    // já existiam
     remetenteCnpj: "",
     remetenteRazao: "",
     destinatarioCnpj: "",
     destinatarioRazao: "",
     cidadeDestino: "",
     ufDestino: "",
+
+    // ✅ novos (Tração / Reboque)
+    tracaoCodigo: "",
+    tracaoPlacaDesc: "",
+    reboqueCodigo: "",
+    reboquePlacaDesc: "",
   });
 
   // filtros / lista da aba Consulta
@@ -147,15 +214,115 @@ export default function Minuta({ open }) {
     faturada: "TODAS",
     semViagem: false,
   });
+
   const [listaConsulta, setListaConsulta] = useState([]);
   const [openValores, setOpenValores] = useState(false);
-
 
   // modais
   const [showCustos, setShowCustos] = useState(false);
   const [showNotas, setShowNotas] = useState(false);
   const [showComex, setShowComex] = useState(false);
   const [showImprimirMenu, setShowImprimirMenu] = useState(false);
+  // ========================= Impressão (payload) =========================
+  function buildPrintPayload() {
+    // Monte aqui no formato que o RelMinuta.jsx espera
+    return {
+      empresa: {
+        nomeTopo: "W L S BARROS - RECIFE",
+        enderecoTopo: "R ITAMARACA, 335 - IMBIRIBEIRA - RECIFE - PE",
+        foneTopo: "()",
+      },
+
+      minuta: {
+        // Se depois você controlar o campo Data, substitui por ele
+        dataCadastro: new Date().toLocaleDateString("pt-BR"),
+        numero: dadosMinuta.numero || "",
+      },
+
+      // ✅ Cliente agora vem do state (preenche na tela e no relatório)
+      cliente: {
+        cnpj: dadosMinuta.clienteCnpj || "35912495000100",
+        razao: dadosMinuta.clienteRazao || "RODONAVES TRANSPORTES MULTIMODAL LTDA",
+        endereco: "AV ALEXANDRE COLARES",
+        numero: "500",
+        bairro: "VILA JAGUARA",
+        cidade: dadosMinuta.clienteCidade || "SAO PAULO",
+        uf: dadosMinuta.clienteUf || "SP",
+      },
+
+      remetente: {
+        cnpj: dadosMinuta.remetenteCnpj || "",
+        razao: dadosMinuta.remetenteRazao || "",
+        endereco: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        uf: "",
+      },
+
+      destinatario: {
+        cnpj: dadosMinuta.destinatarioCnpj || "",
+        razao: dadosMinuta.destinatarioRazao || "",
+        endereco: "",
+        numero: "",
+        bairro: "",
+        cidade: dadosMinuta.cidadeDestino || "",
+        uf: dadosMinuta.ufDestino || "",
+      },
+
+      // Recebedor / Redespacho ainda não está controlado (por enquanto vai vazio)
+      redespacho: {
+        nome: "",
+        endereco: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        uf: "",
+      },
+
+      motorista: {
+        nome: dadosMinuta.motoristaNome || "",
+        cpf: dadosMinuta.motoristaCpf || "",
+        celular: dadosMinuta.motoristaCelular || "",
+      },
+
+      // ✅ Tração e Reboque agora vão no payload
+      veiculo: {
+        placa: dadosMinuta.tracaoPlacaDesc || "",
+        reboque: dadosMinuta.reboquePlacaDesc || "",
+        isento: "ISENTO",
+      },
+
+      // Nota ainda não está no state
+      nota: {
+        nf: "",
+        emissao: "",
+        qtdeVol: 0,
+        peso: 0,
+        cubagem: 0,
+        valorNF: 0,
+      },
+
+      // Valores do frete hoje estão em inputs com defaultValue (não-controlados)
+      // então por enquanto vai zerado. Depois a gente controla e manda certinho.
+      valores: {
+        cat: 0,
+        despacho: 0,
+        pedagio: 0,
+        fretePeso: 400, // ✅ aqui você coloca o valor
+        freteValor: 0,
+        coletaEntrega: 0,
+        outros: 0,
+        freteTotal: 400,
+      },
+
+      // Observação da tela também não está controlada hoje, então vai vazio.
+      observacao: "",
+
+      aviso:
+        "Após a conferência física e protocolo de recebimento, a transportadora não se responsabiliza por quaisquer danos, falta e/ou, avarias que porventura vierem a ocorrer nas mercadorias entregues.\nPara sua segurança acompanhe o recebimento e conferência.",
+    };
+  }
 
   /* ========================= Handlers ========================= */
 
@@ -173,12 +340,25 @@ export default function Minuta({ open }) {
       numero: "",
       motoristaCnh: "",
       motoristaNome: "",
+      motoristaCpf: "",
+      motoristaCelular: "",
+
+      clienteCnpj: "",
+      clienteRazao: "",
+      clienteCidade: "",
+      clienteUf: "",
+
       remetenteCnpj: "",
       remetenteRazao: "",
       destinatarioCnpj: "",
       destinatarioRazao: "",
       cidadeDestino: "",
       ufDestino: "",
+
+      tracaoCodigo: "",
+      tracaoPlacaDesc: "",
+      reboqueCodigo: "",
+      reboquePlacaDesc: "",
     });
     setFormKey((k) => k + 1);
   };
@@ -211,18 +391,32 @@ export default function Minuta({ open }) {
   const handleSelecionarMinuta = (m) => {
     setDadosMinuta({
       numero: m.numeroMinuta,
-      motoristaCnh: "01628446760",
-      motoristaNome: m.motorista,
-      remetenteCnpj: "50221019000136",
-      remetenteRazao: m.remetente,
-      destinatarioCnpj: "00000000000000",
-      destinatarioRazao: m.destinatario,
-      cidadeDestino: m.cidadeEntrega,
-      ufDestino: m.uf,
+
+      motoristaCnh: m.motoristaCnh || "01628446760",
+      motoristaNome: m.motorista || "",
+      motoristaCpf: m.motoristaCpf || "",
+      motoristaCelular: m.motoristaCelular || "",
+
+      clienteCnpj: m.clienteCnpj || "",
+      clienteRazao: m.clienteRazao || "",
+      clienteCidade: m.clienteCidade || "",
+      clienteUf: m.clienteUf || "",
+
+      remetenteCnpj: m.remetenteCnpj || "50221019000136",
+      remetenteRazao: m.remetente || "",
+      destinatarioCnpj: m.destinatarioCnpj || "00000000000000",
+      destinatarioRazao: m.destinatario || "",
+      cidadeDestino: m.cidadeEntrega || "",
+      ufDestino: m.uf || "",
+
+      tracaoCodigo: m.tracaoCodigo || "",
+      tracaoPlacaDesc: m.tracaoPlacaDesc || (m.placa ? `${m.placa}` : ""),
+      reboqueCodigo: m.reboqueCodigo || "",
+      reboquePlacaDesc: m.reboquePlacaDesc || "",
     });
+
     setActiveTab("cadastro");
   };
-
   /* ========================= Render ========================= */
   return (
     <div
@@ -280,18 +474,16 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Nº Fatura</Label>
                 <Txt className="col-span-1 bg-gray-200" readOnly />
                 <Label className="col-span-2 text-right">Operador</Label>
-                <Txt
-                  className="col-span-2 bg-gray-200"
-                  readOnly
-                  defaultValue="SUPORTE"
-                />
-
+                <Txt className="col-span-2 bg-gray-200" readOnly defaultValue="SUPORTE" />
               </div>
 
               {/* Linha 2 - Empresa / Filial / Divisão */}
               <div className="grid grid-cols-12 gap-2 items-center">
                 <Label className="col-span-1 text-right">Empresa</Label>
-                <Sel className="col-span-3 w-full" defaultValue="001 - MANTRAN TRANSPORTES LTDA">
+                <Sel
+                  className="col-span-3 w-full"
+                  defaultValue="001 - MANTRAN TRANSPORTES LTDA"
+                >
                   <option>001 - MANTRAN TRANSPORTES LTDA</option>
                 </Sel>
 
@@ -311,7 +503,6 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Data</Label>
                 <Txt type="date" className="col-span-2" defaultValue={getHojeISO()} />
 
-
                 <Txt
                   maxLength={5}
                   placeholder="00:00"
@@ -328,9 +519,6 @@ export default function Minuta({ open }) {
 
                 <Label className="col-span-1 text-right">Nº Solicitação</Label>
                 <Txt className="col-span-1" />
-
-
-
 
                 <Label className="col-span-2 text-right">Veículo</Label>
                 <Sel className="col-span-2 w-full">
@@ -365,19 +553,26 @@ export default function Minuta({ open }) {
                 <Label className="col-span-1 text-right">Cotação</Label>
                 <Txt className="col-span-1" />
 
-
-
                 <Label className="col-span-2 text-right">NF Serviço</Label>
                 <Txt className="col-span-2" />
               </div>
 
-              {/* Linha 5 - Tração */}
+              {/* Linha 5 - Tração / Reboque (CONTROLADOS) */}
               <div className="grid grid-cols-12 gap-2 items-center">
-
                 {/* === Tração === */}
                 <Label className="col-span-1 text-right">Tração</Label>
-                <Txt className="col-span-1" placeholder="Código" />
-                <Txt className="col-span-3" placeholder="Placa / Descrição" />
+                <Txt
+                  className="col-span-1"
+                  placeholder="Código"
+                  value={dadosMinuta.tracaoCodigo}
+                  onChange={handleDadosChange("tracaoCodigo")}
+                />
+                <Txt
+                  className="col-span-3"
+                  placeholder="Placa / Descrição"
+                  value={dadosMinuta.tracaoPlacaDesc}
+                  onChange={handleDadosChange("tracaoPlacaDesc")}
+                />
 
                 {/* Bloco Lápis + A (Agora col-span-1) */}
                 <div className="col-span-1 flex items-center gap-1">
@@ -394,7 +589,12 @@ export default function Minuta({ open }) {
 
                 {/* === Reboque === */}
                 <Label className="col-span-1 text-right">Reboque</Label>
-                <Txt className="col-span-1" placeholder="Código" />
+                <Txt
+                  className="col-span-1"
+                  placeholder="Código"
+                  value={dadosMinuta.reboqueCodigo}
+                  onChange={handleDadosChange("reboqueCodigo")}
+                />
 
                 {/* Ícone + Placa/Descrição juntos */}
                 <div className="col-span-4 flex items-center gap-1">
@@ -406,29 +606,17 @@ export default function Minuta({ open }) {
                   <Txt
                     className="flex-1"
                     placeholder="Placa / Descrição"
+                    value={dadosMinuta.reboquePlacaDesc}
+                    onChange={handleDadosChange("reboquePlacaDesc")}
                   />
                 </div>
-
-
-
-
-
               </div>
 
-
-
-              {/* Linha 6 - Reboque */}
-              <div className="grid grid-cols-12 gap-2 items-center">
-
-
-
-              </div>
-
+              {/* Linha 6 - Reboque (mantida como estava) */}
+              <div className="grid grid-cols-12 gap-2 items-center"></div>
 
               {/* Participantes (Cliente / Remetente / Destinatário / Expedidor / Recebedor) */}
               <div className="border border-gray-300 rounded p-2 bg-white space-y-1 mt-2">
-
-
                 {/* Cabeçalho */}
                 <div className="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600 mb-1">
                   <div className="col-span-1" />
@@ -439,22 +627,17 @@ export default function Minuta({ open }) {
                   <div className="col-span-1" />
                 </div>
 
-                {/* Cliente */}
+                {/* Cliente (CONTROLADO) */}
                 <div className="grid grid-cols-12 gap-2 items-center">
                   <Label className="col-span-1 text-right">Cliente</Label>
-                  <Txt className="col-span-2" />
                   <Txt
-                    className="col-span-4 bg-gray-200"
-                    readOnly
+                    className="col-span-2"
+                    value={dadosMinuta.clienteCnpj}
+                    onChange={handleDadosChange("clienteCnpj")}
                   />
-                  <Txt
-                    className="col-span-3 bg-gray-200"
-                    readOnly
-                  />
-                  <Txt
-                    className="col-span-1 bg-gray-200 text-center"
-                    readOnly
-                  />
+                  <Txt className="col-span-4 bg-gray-200" readOnly value={dadosMinuta.clienteRazao} />
+                  <Txt className="col-span-3 bg-gray-200" readOnly value={dadosMinuta.clienteCidade} />
+                  <Txt className="col-span-1 bg-gray-200 text-center" readOnly value={dadosMinuta.clienteUf} />
                   <div className="col-span-1 flex justify-center">
                     <IconeLapis title="Abrir cadastro Cliente" onClick={() => { }} />
                   </div>
@@ -497,13 +680,9 @@ export default function Minuta({ open }) {
 
                   {/* Ícone lápis (já existia) */}
                   <div className="col-span-1 flex justify-center">
-                    <IconeLapis
-                      title="Abrir cadastro Remetente"
-                      onClick={() => { }}
-                    />
+                    <IconeLapis title="Abrir cadastro Remetente" onClick={() => { }} />
                   </div>
                 </div>
-
 
                 {/* Destinatário */}
                 <div className="grid grid-cols-12 gap-2 items-center">
@@ -529,10 +708,7 @@ export default function Minuta({ open }) {
                     value={dadosMinuta.ufDestino}
                   />
                   <div className="col-span-1 flex justify-center">
-                    <IconeLapis
-                      title="Abrir cadastro Destinatário"
-                      onClick={() => { }}
-                    />
+                    <IconeLapis title="Abrir cadastro Destinatário" onClick={() => { }} />
                   </div>
                 </div>
 
@@ -570,21 +746,12 @@ export default function Minuta({ open }) {
 
                 <Label className="col-span-2 text-right">Cidade Destino</Label>
                 <Txt className="col-span-1" placeholder="CEP" />
-                <Txt
-                  className="col-span-2 bg-gray-200"
-                  readOnly
-                  value={dadosMinuta.cidadeDestino}
-                />
-                <Txt
-                  className="col-span-1 bg-gray-200 text-center"
-                  readOnly
-                  value={dadosMinuta.ufDestino}
-                />
+                <Txt className="col-span-2 bg-gray-200" readOnly value={dadosMinuta.cidadeDestino} />
+                <Txt className="col-span-1 bg-gray-200 text-center" readOnly value={dadosMinuta.ufDestino} />
               </div>
 
               {/* Linha 14 - Rota / Peso / Volume / Seguro */}
               <div className="grid grid-cols-12 gap-2 items-center">
-
                 <Label className="col-span-1 text-right">Tab. Frete</Label>
                 <Sel className="col-span-3 w-full">
                   <option>000083 - TESTE HNK</option>
@@ -605,12 +772,10 @@ export default function Minuta({ open }) {
                 <Txt className="col-span-1" />
                 <Label className="col-span-1 text-right">VR Mercadoria</Label>
                 <Txt className="col-span-1 bg-gray-200 text-right" readOnly />
-
               </div>
 
-              {/* Linha 15 - Tabela Frete / Ajudante / Custos / Tarifa / VR Mercadoria */}
+              {/* Linha 15 - Observação / Seguro / TP Frete */}
               <div className="grid grid-cols-12 gap-2 items-center">
-
                 <Label className="col-span-1 text-right">Observação</Label>
                 <Txt className="col-span-6" />
                 <Label className="col-span-1 text-right">Seguro</Label>
@@ -626,13 +791,8 @@ export default function Minuta({ open }) {
                   <option value="P">P - Pago</option>
                   <option value="C">C - Cortesia</option>
                 </Sel>
-
-
-
               </div>
             </div>
-
-
 
             <fieldset className="border border-gray-300 rounded p-3 bg-white space-y-2">
               <legend
@@ -645,9 +805,7 @@ export default function Minuta({ open }) {
                 </span>
               </legend>
 
-              {/* =====================
-      SEMPRE EXIBIR — Linha 1
-  ====================== */}
+              {/* SEMPRE EXIBIR — Linha 1 */}
               <div className="grid grid-cols-12 gap-2 items-center">
                 <Label className="col-span-1 text-right">Frete Peso</Label>
                 <Txt className="col-span-1 text-right" defaultValue="0,00" />
@@ -670,9 +828,7 @@ export default function Minuta({ open }) {
                 <div className="col-span-2" />
               </div>
 
-              {/* =====================
-      CONTEÚDO EXPANDIDO
-  ====================== */}
+              {/* CONTEÚDO EXPANDIDO */}
               {openValores && (
                 <>
                   {/* Linha 2 */}
@@ -733,29 +889,25 @@ export default function Minuta({ open }) {
                     <Txt className="col-span-1 bg-gray-200 text-right" readOnly />
 
                     <Label className="col-span-1 text-right">Total</Label>
-                    <Txt className="col-span-1 text-right bg-gray-200" readOnly defaultValue="0,00" />
+                    <Txt
+                      className="col-span-1 text-right bg-gray-200"
+                      readOnly
+                      defaultValue="0,00"
+                    />
                   </div>
                 </>
               )}
 
-              {/* =====================
-      SEMPRE EXIBIR — Linha 6
-  ====================== */}
-              <div className="grid grid-cols-12 gap-2 items-center">
-
-
-              </div>
+              {/* Linha 6 (mantida como estava) */}
+              <div className="grid grid-cols-12 gap-2 items-center"></div>
             </fieldset>
 
             {/* CARD 3 - Não Averbado + Cadastro/Subtotal */}
             <div className="text-center text-red-700 font-semibold text-[13px]">
               Não Averbado
             </div>
-
-
           </div>
         )}
-
         {/* ======================= ABA CONSULTA ======================= */}
         {activeTab === "consulta" && (
           <>
@@ -818,8 +970,6 @@ export default function Minuta({ open }) {
                   onChange={handleFiltroChange("periodoAte")}
                 />
 
-
-
                 <Label className="col-span-2 text-right">Motorista</Label>
                 <Txt
                   className="col-span-1"
@@ -857,8 +1007,6 @@ export default function Minuta({ open }) {
                   value={filtros.solicitacao}
                   onChange={handleFiltroChange("solicitacao")}
                 />
-
-
 
                 <Label className="col-span-1 text-right">Data de</Label>
                 <Sel
@@ -972,12 +1120,8 @@ export default function Minuta({ open }) {
 
                     {listaConsulta.length === 0 && (
                       <tr>
-                        <td
-                          colSpan={15}
-                          className="border p-2 text-center text-gray-500"
-                        >
-                          Nenhuma minuta localizada. Informe os filtros e clique
-                          em Pesquisar.
+                        <td colSpan={15} className="border p-2 text-center text-gray-500">
+                          Nenhuma minuta localizada. Informe os filtros e clique em Pesquisar.
                         </td>
                       </tr>
                     )}
@@ -1060,32 +1204,172 @@ export default function Minuta({ open }) {
 
           {showImprimirMenu && (
             <div className="absolute bottom-[44px] left-1/2 -translate-x-1/2 bg-white border border-gray-300 shadow-lg rounded-md text-[12px] min-w-[220px] py-1 z-50">
-              {[
-                "Padrão",
-                "Etiqueta em Lote",
-                "Minuta de Retirada",
-                "Minuta de Devolução",
-              ].map((opt) => (
-                <button
-                  key={opt}
-                  className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
-                  onClick={() => {
-                    setShowImprimirMenu(false);
-                    if (opt === "Padrão") {
-                      navigate("/relatorios/operacao/minuta", {
-                        state: {
-                          numeroMinuta: dadosMinuta.numero, // Passando o número da minuta atual
+              {["Padrão", "Etiqueta em Lote", "Minuta de Retirada", "Minuta de Devolução"].map(
+                (opt) => (
+                  <button
+                    key={opt}
+                    className="w-full text-left px-3 py-[3px] hover:bg-gray-100"
+                    onClick={() => {
+                      setShowImprimirMenu(false);
+
+                      // 1) valida igual você já faz no Padrão
+                      if (!dadosMinuta.numero) {
+                        alert("Informe/seleciona uma minuta antes de imprimir.");
+                        return;
+                      }
+
+                      // 2) payload base (o mesmo que você já usa)
+                      const payload = buildPrintPayload();
+
+                      // 3) decide rota conforme opção
+                      if (opt === "Padrão") {
+                        navigate("/relatorios/operacao/minuta", {
+                          state: {
+                            numeroMinuta: dadosMinuta.numero,
+                            templateId: "padrao",
+                            data: payload,
+                          },
+                        });
+                        return;
+                      }
+
+                      if (opt === "Minuta de Devolução") {
+                        // monta no formato que o RelMinutaDevolContainer espera
+                        const devolPayload = {
                           templateId: "padrao",
-                        },
-                      });
-                    } else {
+                          empresa: {
+                            nome: payload?.empresa?.nomeTopo || "",
+                            // ✅ aqui é o CNPJ que você quer no topo da minuta
+                            cnpj: dadosMinuta.clienteCnpj || payload?.cliente?.cnpj || "",
+                            fone: payload?.empresa?.foneTopo || "",
+                          },
+                          devol: {
+                            terminal: "",
+                            endereco: "",
+                            textoSolicitacao:
+                              "Solicitamos gentilmente a recepção do equipamento, conforme dados abaixo:",
+
+                            transportadora: payload?.empresa?.nomeTopo || "",
+                            contato: "",
+
+                            importador:
+                              dadosMinuta.destinatarioRazao ||
+                              dadosMinuta.clienteRazao ||
+                              "",
+
+                            container: "",
+                            tipoEquipamento: "",
+                            quantidade: "",
+                            pesoCargaKg: "",
+                            navio: "",
+                            armador: "",
+
+                            motorista: dadosMinuta.motoristaNome || "",
+                            cpf: dadosMinuta.motoristaCpf || "",
+                            cnh: dadosMinuta.motoristaCnh || "",
+                            celular: dadosMinuta.motoristaCelular || "",
+
+                            // ✅ placas agora preenchem
+                            placaCavalo: dadosMinuta.tracaoPlacaDesc || "",
+                            placaCarreta: dadosMinuta.reboquePlacaDesc || "",
+
+                            idNextel: "",
+
+                            // ✅ agora é Nº Minuta
+                            numeroMinuta: dadosMinuta.numero || "",
+                          },
+                        };
+
+                        navigate("/relatorios/operacao/minuta-devolucao-container", {
+                          state: {
+                            templateId: "padrao",
+                            numeroMinuta: dadosMinuta.numero,
+                            data: devolPayload,
+                          },
+                        });
+
+                        return;
+                      }
+
+                      // opcional: se ainda não criou o relatório de retirada, fica mock
+                      // ✅ Minuta de Retirada
+                      if (opt === "Minuta de Retirada") {
+                        const payload = buildPrintPayload();
+
+                        // monta no formato que o RelMinutaRetContainer espera
+                        const retPayload = {
+                          templateId: "padrao",
+                          empresa: {
+                            // você pode decidir de onde vem o CNPJ do topo (cliente ou empresa)
+                            // no exemplo do seu relatório, você exibiu CNPJ no topo,
+                            // então vou usar o cnpj do Cliente (igual você fez na devolução)
+                            nome: payload?.empresa?.nomeTopo || "",
+                            cnpj: payload?.cliente?.cnpj || "",
+                            fone: payload?.empresa?.foneTopo || "",
+                          },
+                          ret: {
+                            terminal: "",
+                            endereco: "",
+                            textoSolicitacao:
+                              "Solicitamos gentilmente a liberação do equipamento, conforme dados abaixo:",
+
+                            transportadora: payload?.empresa?.nomeTopo || "",
+                            contato: "",
+
+                            // no PDF da retirada normalmente é Exportador e Booking
+                            exportador:
+                              payload?.remetente?.razao ||
+                              payload?.destinatario?.razao ||
+                              payload?.cliente?.razao ||
+                              "",
+
+                            booking: "",
+
+                            tipoEquipamento: "",
+                            quantidade: "",
+                            pesoCargaKg: "",
+                            navio: "",
+                            armador: "",
+
+                            motorista: payload?.motorista?.nome || dadosMinuta.motoristaNome || "",
+                            celular: "",
+
+                            cpf: "",
+                            cnh: dadosMinuta.motoristaCnh || "",
+
+                            // ⚠️ aqui você queria preencher Tração/Reboque:
+                            // como na sua tela esses campos ainda não estão controlados por state,
+                            // vai ficar vazio por enquanto (assim que você controlar eu plugo aqui)
+                            placaCavalo: "",
+                            placaCarreta: "",
+
+                            idNextel: "",
+
+                            // ✅ agora é Nº Minuta
+                            numeroMinuta: dadosMinuta.numero || "",
+                          },
+                        };
+
+                        navigate("/relatorios/operacao/minuta-retirada-container", {
+                          state: {
+                            templateId: "padrao",
+                            numeroMinuta: dadosMinuta.numero, // topo do relatório
+                            data: retPayload,
+                          },
+                        });
+
+                        return;
+                      }
+
+
+                      // fallback
                       alert(`${opt} (mock).`);
-                    }
-                  }}
-                >
-                  {opt}
-                </button>
-              ))}
+                    }}
+                  >
+                    {opt}
+                  </button>
+                )
+              )}
             </div>
           )}
         </div>
@@ -1112,22 +1396,11 @@ export default function Minuta({ open }) {
       </div>
 
       {/* ======================== MODAIS ======================== */}
-      {showCustos && (
-        <CustosAdicionaisModal onClose={() => setShowCustos(false)} />
-      )}
+      {showCustos && <CustosAdicionaisModal onClose={() => setShowCustos(false)} />}
 
-      <NotaFiscalMinuta
-        isOpen={showNotas}
-        onClose={() => setShowNotas(false)}
-      />
+      <NotaFiscalMinuta isOpen={showNotas} onClose={() => setShowNotas(false)} />
 
-
-
-      <NotasFiscalModal
-        isOpen={showNotasRemetente}
-        onClose={() => setShowNotasRemetente(false)}
-      />
-
+      <NotasFiscalModal isOpen={showNotasRemetente} onClose={() => setShowNotasRemetente(false)} />
 
       {showComex && <Comex onClose={() => setShowComex(false)} />}
     </div>
