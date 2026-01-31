@@ -30,6 +30,7 @@
     "lucide-react": "^0.546.0",
     "mssql": "^12.2.0",
     "multer": "^2.0.2",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-draggable": "^4.4.6",

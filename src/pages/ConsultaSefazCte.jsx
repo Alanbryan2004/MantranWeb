@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -55,7 +55,6 @@ function Sel({ children, className = "", ...rest }) {
   );
 }
 
-
 export default function ConsultaSefazCte({ onClose }) {
   const isGlobalModal = !!onClose;
   const navigate = useNavigate();
@@ -65,6 +64,7 @@ export default function ConsultaSefazCte({ onClose }) {
   const [showPrintMenu, setShowPrintMenu] = useState(false);
   const [showGNREMenu, setShowGNREMenu] = useState(false);
   const [showParametros, setShowParametros] = useState(false);
+
   // Estado para o modal de Cancelamento
   const [showCancel, setShowCancel] = useState(false);
   const [justificativa, setJustificativa] = useState("");
@@ -102,24 +102,32 @@ export default function ConsultaSefazCte({ onClose }) {
   const gnreRef = useRef(null);
 
   // Itens simulados para tabela
-  const data = Array.from({ length: 6 }).map((_, idx) => ({
-    id: idx,
-    controle: `00025${idx}`,
-    cte: `001${idx}`,
-    emissao: "06/11/2025",
-    status: "A",
-    retorno: "100 - Autorizado o uso do CT-e",
-    email: "Enviado",
-    chave: "35251061069373006144550010025440331777658307",
-    protocolo: `13525000${idx}`,
-    recibo: `2510048${idx}`,
-    cce: "01",
-    protocoloCce: `98765${idx}`,
-  }));
+  const data = useMemo(
+    () =>
+      Array.from({ length: 6 }).map((_, idx) => ({
+        id: idx,
+        controle: `00025${idx}`,
+        cte: `001${idx}`,
+        emissao: "06/11/2025",
+        status: "A",
+        retorno: "100 - Autorizado o uso do CT-e",
+        email: "Enviado",
+        chave: "35251061069373006144550010025440331777658307",
+        protocolo: `13525000${idx}`,
+        recibo: `2510048${idx}`,
+        cce: "01",
+        protocoloCce: `98765${idx}`,
+        qtdEmbalagens: idx === 0 ? 3 : 1, // mock: o primeiro CT-e tem 3 embalagens
+
+      })),
+    []
+  );
 
   const [checkedItems, setCheckedItems] = useState(
     Array(data.length).fill(false)
   );
+
+
 
   // Controle de seleção individual
   const handleCheckboxChange = (index) => {
@@ -181,8 +189,115 @@ export default function ConsultaSefazCte({ onClose }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // =============================
+  // IMPRESSÃO: ETIQUETA CT-E
+  // =============================
+  const handlePrintEtiquetaCte = () => {
+    const selecionados = data.filter((_, idx) => checkedItems[idx]);
+
+    if (selecionados.length === 0) {
+      alert("⚠️ Selecione pelo menos 1 CT-e na grid para imprimir a etiqueta.");
+      return;
+    }
+
+    // regra: somente autorizado
+    const naoAutorizados = selecionados.filter((r) => {
+      const retorno = String(r.retorno || "").toLowerCase();
+      const status = String(r.status || "").toUpperCase();
+      const okPorStatus = status === "A";
+      const okPorRetorno = retorno.includes("autorizado");
+      return !(okPorStatus || okPorRetorno);
+    });
+
+    if (naoAutorizados.length > 0) {
+      const lista = naoAutorizados
+        .slice(0, 10)
+        .map((r) => `CT-e ${r.cte} | ${r.retorno || r.status}`)
+        .join("\n");
+
+      alert(
+        `⚠️ Existem CT-es selecionados que NÃO estão autorizados.\n\n` +
+        `${lista}` +
+        (naoAutorizados.length > 10 ? `\n... (+${naoAutorizados.length - 10})` : "")
+      );
+      return;
+    }
+
+    // navega para o relatório de etiqueta (você cria a rota no App.jsx)
+    navigate("/relatorios/operacao/rel-etiqueta-ctrc", {
+      state: {
+        selectedCtes: selecionados.map((r) => ({
+          // o relatório procura por: ctrc || CTRC || numero || nr_ctrc
+          ctrc: r.cte, // aqui você está usando o nº CT-e como ctrc (mock). Se tiver CTRC real, troque pra ele.
+          embalagemTotal: Number(r.qtdEmbalagens || 1),
+
+          // opcionais (se depois você mapear no RelEtiquetaCTRC pra usar dados reais)
+          emissao: r.emissao,
+          retorno: r.retorno,
+          chave: r.chave,
+          protocolo: r.protocolo,
+          recibo: r.recibo,
+        })),
+
+        labelConfig: {
+          widthMm: 200,
+          heightMm: 120,
+          gapMm: 0,
+          marginMm: 0,
+          dpi: 203,
+        },
+      },
+    });
+
+
+  };
+
+  // opções do menu imprimir (agora com ação na Etiqueta CT-e)
+  const printOptions = [
+    {
+      label: "Impressão sem valores",
+      onClick: () => {
+        alert("🖨️ (mock) Impressão sem valores");
+      },
+    },
+    {
+      label: "Impressão CCE",
+      onClick: () => {
+        alert("🖨️ (mock) Impressão CCE");
+      },
+    },
+    {
+      label: "Impressão Etiqueta CT-e (Somente Autorizado)",
+      onClick: handlePrintEtiquetaCte,
+    },
+    {
+      label: "Download XML",
+      onClick: () => {
+        alert("⬇️ (mock) Download XML");
+      },
+    },
+    {
+      label: "Download PDF",
+      onClick: () => {
+        alert("⬇️ (mock) Download PDF");
+      },
+    },
+    {
+      label: "Download XML/PDF",
+      onClick: () => {
+        alert("⬇️ (mock) Download XML/PDF");
+      },
+    },
+  ];
+
   return (
-    <div className={isGlobalModal ? "fixed inset-0 bg-black/40 flex items-center justify-center z-50" : "w-full h-full flex items-center justify-center"}>
+    <div
+      className={
+        isGlobalModal
+          ? "fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          : "w-full h-full flex items-center justify-center"
+      }
+    >
       <div className="bg-white w-[1100px] rounded shadow-lg border border-gray-300 p-4 relative">
         <h2 className="text-center text-red-700 font-semibold text-[14px] border-b pb-2">
           CONHECIMENTO ELETRÔNICO
@@ -191,7 +306,6 @@ export default function ConsultaSefazCte({ onClose }) {
         {/* === CARD 1 - Filtros === */}
         <div className="border border-gray-300 rounded p-3 bg-white mt-3">
           <div className="space-y-2">
-
             {/* LINHA 01 — FILTRO / CLIENTE */}
             <div className="grid grid-cols-12 gap-2 items-center">
               <Label className="col-span-1">Filtrar CTe</Label>
@@ -302,7 +416,6 @@ export default function ConsultaSefazCte({ onClose }) {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -423,20 +536,16 @@ export default function ConsultaSefazCte({ onClose }) {
                   className={`absolute right-0 w-[230px] bg-white border border-gray-300 rounded shadow-lg text-[12px] z-50 ${printMenuDirection === "up" ? "bottom-full mb-1" : "mt-1"
                     }`}
                 >
-                  {[
-                    "Impressão sem valores",
-                    "Impressão CCE",
-                    "Impressão Etiqueta CT-e (Somente Autorizado)",
-                    "Download XML",
-                    "Download PDF",
-                    "Download XML/PDF",
-                  ].map((opt, i) => (
+                  {printOptions.map((opt, i) => (
                     <div
                       key={i}
-                      onClick={() => setShowPrintMenu(false)}
+                      onClick={() => {
+                        setShowPrintMenu(false);
+                        opt.onClick?.();
+                      }}
                       className="px-3 py-[4px] hover:bg-gray-100 cursor-pointer"
                     >
-                      {opt}
+                      {opt.label}
                     </div>
                   ))}
                 </div>
@@ -450,7 +559,6 @@ export default function ConsultaSefazCte({ onClose }) {
               <FileText size={14} className="text-yellow-600" /> CCe
             </button>
 
-
             <button className="border border-gray-300 rounded px-3 py-1 bg-yellow-50 hover:bg-yellow-100 flex items-center gap-1">
               <Mail size={14} className="text-yellow-600" /> E-mail
             </button>
@@ -461,7 +569,6 @@ export default function ConsultaSefazCte({ onClose }) {
             >
               <XCircle size={14} className="text-red-600" /> Cancelar
             </button>
-
 
             {/* === BOTÃO GNRE COM MENU === */}
             <div className="relative" ref={gnreRef}>
@@ -499,7 +606,6 @@ export default function ConsultaSefazCte({ onClose }) {
             </div>
           </div>
         </div>
-
 
         {/* === MODAL CANCELAMENTO === */}
         {showCancel && (
@@ -547,9 +653,6 @@ export default function ConsultaSefazCte({ onClose }) {
             </div>
           </div>
         )}
-
-
-
 
         {/* === MODAL CARTA DE CORREÇÃO === */}
         {showCCe && (
@@ -691,8 +794,6 @@ export default function ConsultaSefazCte({ onClose }) {
             </div>
           </div>
         )}
-
-
 
         {/* === MODAL DE PARÂMETROS GNRE === */}
         {showParametros && (

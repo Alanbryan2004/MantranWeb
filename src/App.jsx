@@ -14,6 +14,7 @@ import HeaderWMS from "./components/HeaderWMS";
 import SidebarWMS from "./components/SidebarWMS";
 
 // Páginas principais
+import RelEtiquetaCTRC from "./pages/Relatorios/Operacao/RelEtiquetaCTRC";
 import RelEtiquetasColeta from "./pages/Relatorios/Operacao/RelEtiquetasColeta";
 import RelMinutaRetContainer from "./pages/Relatorios/Operacao/RelMinutaRetContainer";
 import RelMinutaDevolContainer from "./pages/Relatorios/Operacao/RelMinutaDevolContainer";
@@ -295,6 +296,7 @@ export default function App() {
                 <Route path="/empresa" element={<Empresa open={sidebarOpen} />} />
                 <Route path="/empresa-agregado" element={<EmpresaAgregado open={sidebarOpen} />} />
 
+                <Route path="/relatorios/operacao/rel-etiqueta-ctrc" element={<RelEtiquetaCTRC />} />
                 <Route path="/rel-conhecimento" element={<RelConhecimento open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/conhecimento/resultado" element={<RelConhecimentoResultado open={sidebarOpen} />} />
                 <Route path="/rel-cliente" element={<RelCliente open={sidebarOpen} />} />
