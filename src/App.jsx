@@ -14,6 +14,7 @@ import HeaderWMS from "./components/HeaderWMS";
 import SidebarWMS from "./components/SidebarWMS";
 
 // Páginas principais
+import RelEtiquetasColeta from "./pages/Relatorios/Operacao/RelEtiquetasColeta";
 import RelMinutaRetContainer from "./pages/Relatorios/Operacao/RelMinutaRetContainer";
 import RelMinutaDevolContainer from "./pages/Relatorios/Operacao/RelMinutaDevolContainer";
 import RelColetaFolhaInteira from "./pages/Relatorios/Operacao/RelColetaFolhaInteira";
@@ -367,7 +368,7 @@ export default function App() {
                 <Route path="/modulo-financeiro/financeiro-parametros" element={<ParametroFinanceiro open={sidebarOpen} />} />
                 <Route path="/relatorios/operacao/minuta" element={<RelMinuta />} />
                 <Route path="/relatorios/operacao/minuta-retirada-container" element={<RelMinutaRetContainer />} />
-
+                <Route path="/relatorios/operacao/etiquetas-coleta" element={<RelEtiquetasColeta />} />
 
                 <Route path="/notafiscaledi" element={<NotaFiscalEDI open={sidebarOpen} />} />
                 <Route path="/operacao-shopee" element={<OperacaoShopee open={sidebarOpen} />} />

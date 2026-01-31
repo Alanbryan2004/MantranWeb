@@ -8,6 +8,10 @@ import App from "./App.jsx";
 import { IconColorProvider } from "./context/IconColorContext";
 import { ModulosProvider } from "./context/ModulosContext";
 
+/* ===================== FONTES ===================== */
+import "@fontsource/roboto-mono/400.css";
+import "@fontsource/roboto-mono/600.css";
+
 /* ===================== MENU RÁPIDO ===================== */
 import { MenuRapidoProvider } from "./context/MenuRapidoContext"; // Operação
 import { MenuRapidoFinanceiroProvider } from "./context/MenuRapidoFinanceiroContext"; // Financeiro

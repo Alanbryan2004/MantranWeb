@@ -77,6 +77,16 @@ export default function Coleta({ open }) {
   const [filialSelecionada, setFilialSelecionada] = useState("");
   // === Modal de Impressão ===
   const [showPrintModal, setShowPrintModal] = useState(false);
+  // === Modal de Etiquetas ===
+  const [showEtiquetaModal, setShowEtiquetaModal] = useState(false);
+  const [etqNrInicial, setEtqNrInicial] = useState("");
+  const [etqNrFinal, setEtqNrFinal] = useState("");
+
+  // confirmação padrão (Sim/Não)
+  const [modalMsg, setModalMsg] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmText, setConfirmText] = useState("");
+
 
   const [printEmpresa, setPrintEmpresa] = useState("001");
   const [printFilial, setPrintFilial] = useState("");
@@ -760,6 +770,10 @@ export default function Coleta({ open }) {
                                     // já prepara a impressão
                                     setPrintNrInicial(num);
                                     setPrintNrFinal(num);
+
+                                    // já prepara etiqueta também
+                                    setEtqNrInicial(num);
+                                    setEtqNrFinal(num);
                                   } else {
                                     setSelectedColetaNumero("");
                                     setSelectedStatus(null);
@@ -912,12 +926,20 @@ export default function Coleta({ open }) {
         {/* ETIQUETAS EM LOTE */}
         <button
           title="Imprimir Etiquetas em Lote"
+          onClick={() => {
+            if (selectedColetaNumero) {
+              setEtqNrInicial(selectedColetaNumero);
+              setEtqNrFinal(selectedColetaNumero);
+            }
+            setShowEtiquetaModal(true);
+          }}
           className={`flex flex-col items-center text-[11px]
-      ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
+    ${footerIconColorNormal} hover:${footerIconColorHover} transition`}
         >
           <FileText size={18} />
           <span>Etiquetas</span>
         </button>
+
 
         {/* IMPRIMIR COLETA */}
         <button
@@ -1060,6 +1082,139 @@ export default function Coleta({ open }) {
           </div>
         </div>
       )}
+
+      {showEtiquetaModal && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40">
+          <div className="w-[760px] max-w-[95vw] bg-white border border-gray-300 rounded shadow-lg">
+            {/* Cabeçalho */}
+            <div className="relative border-b border-gray-300 py-2">
+              <div className="text-center text-red-700 font-semibold text-[13px]">
+                IMPRESSÃO DE ETIQUETAS
+              </div>
+
+              <button
+                onClick={() => setShowEtiquetaModal(false)}
+                className="absolute right-2 top-2 text-gray-500 hover:text-gray-800"
+                title="Fechar"
+              >
+                <XCircle size={18} />
+              </button>
+            </div>
+
+            {/* Corpo */}
+            <div className="p-3">
+              <div className="grid grid-cols-12 gap-2 items-center">
+                <Label className="col-span-2">Nº inicial</Label>
+                <Txt
+                  className="col-span-3"
+                  value={etqNrInicial}
+                  onChange={(e) => setEtqNrInicial(e.target.value)}
+                />
+
+                <Label className="col-span-2">Nº final</Label>
+                <Txt
+                  className="col-span-3"
+                  value={etqNrFinal}
+                  onChange={(e) => setEtqNrFinal(e.target.value)}
+                />
+                <div className="col-span-2" />
+              </div>
+            </div>
+
+            {/* Rodapé com 3 ícones */}
+            <div className="border-t border-gray-300 bg-gray-50 p-2 flex items-center justify-end gap-4">
+              {/* FECHAR */}
+              <button
+                title="Fechar Tela"
+                onClick={() => setShowEtiquetaModal(false)}
+                className="flex flex-col items-center text-[11px] text-gray-700 hover:text-gray-900"
+              >
+                <Undo2 size={18} />
+                <span>Fechar</span>
+              </button>
+
+              {/* CÓDIGO DE BARRAS */}
+              <button
+                title="Imprimir etiqueta com Código de Barras"
+                onClick={() => {
+                  const ini = (etqNrInicial || "").trim();
+                  const fim = (etqNrFinal || "").trim();
+                  if (!ini || !fim) return;
+
+                  setConfirmText(`Confirmar impressão de etiquetas (Código de Barras) de ${ini} a ${fim}?`);
+                  setConfirmAction(() => () => {
+                    setShowEtiquetaModal(false);
+                    setModalMsg(false);
+                    navigate("/relatorios/operacao/etiquetas-coleta", {
+                      state: { ini, fim, labelKind: "barcode", templateId: "auto" },
+                    });
+                  });
+                  setModalMsg(true);
+                }}
+                className="flex flex-col items-center text-[11px] text-gray-700 hover:text-gray-900"
+              >
+                <FileText size={18} />
+                <span>Barras</span>
+              </button>
+
+              {/* QRCODE */}
+              <button
+                title="Imprimir etiqueta com QRCode"
+                onClick={() => {
+                  const ini = (etqNrInicial || "").trim();
+                  const fim = (etqNrFinal || "").trim();
+                  if (!ini || !fim) return;
+
+                  setConfirmText(`Confirmar impressão de etiquetas (QRCode) de ${ini} a ${fim}?`);
+                  setConfirmAction(() => () => {
+                    setShowEtiquetaModal(false);
+                    setModalMsg(false);
+                    navigate("/relatorios/operacao/etiquetas-coleta", {
+                      state: { ini, fim, labelKind: "qrcode", templateId: "auto" },
+                    });
+                  });
+                  setModalMsg(true);
+                }}
+                className="flex flex-col items-center text-[11px] text-gray-700 hover:text-gray-900"
+              >
+                <FileText size={18} />
+                <span>QRCode</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalMsg && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[90]">
+          <div className="bg-white p-6 shadow-lg rounded border text-center w-[340px]">
+            <p className="text-gray-800 font-semibold mb-4">
+              {confirmText || "Confirmar ação?"}
+            </p>
+
+            <div className="flex justify-center gap-2">
+              <button
+                className="px-3 py-1 border border-gray-300 rounded"
+                onClick={() => {
+                  setModalMsg(false);
+                  setConfirmAction(null);
+                }}
+              >
+                Não
+              </button>
+
+              <button
+                className="px-3 py-1 bg-red-700 text-white rounded"
+                onClick={() => {
+                  if (typeof confirmAction === "function") confirmAction();
+                }}
+              >
+                Sim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </div>
   );

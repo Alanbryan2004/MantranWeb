@@ -21,8 +21,8 @@ function mockMinutaDevolContainer(numeroMinuta = "122226") {
     return {
         templateId: "padrao",
         empresa: {
-            nome: "BELMAR TRANSPORTES",
-            cnpj: "08.011.564/0001-31",
+            nome: "MANTRAN TRANSPORTES",
+            cnpj: "10.545.575/0001-31",
             fone: "013 32298800",
         },
         devol: {
